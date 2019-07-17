@@ -822,7 +822,8 @@ namespace WzComparerR2.Avatar
                     Skin skin = new Skin();
                     skin.Name = linkPartNode.ParentNode.ParentNode.ParentNode.Text;
                     skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
-                    var zNode = linkPartNode.ParentNode.FindNodeByPath("z");
+                    var zNode = linkPartNode.ParentNode.FindNodeByPath("z");//Find 'z'
+                    var pos = linkPartNode.ParentNode.FindNodeByPath("pos");
                     if (zNode != null)
                     {
                         var val = zNode.Value;
@@ -836,9 +837,18 @@ namespace WzComparerR2.Avatar
                             skin.Z = zNode.GetValue<string>();//z가 string이면 여기로
                         }
                     }
+
+                    if((pos != null) && (Convert.ToInt32(pos.Value) == 1))
+                    {
+                        AppendBone(root, null, skin, "brow", new Point(0, 0));
+                    }
+                    else
+                    {
+                        AppendBone(root, null, skin, "@root", new Point(0, 0));
+                    }
                     //Read Bone!!!!!
                     //Bone 만들좌....
-                    AppendBone(root, null, skin, "brow", new Point(0, 0));
+                    
                 }
             }
         }
