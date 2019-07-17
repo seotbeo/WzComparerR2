@@ -45,7 +45,8 @@ namespace WzComparerR2
         private void GetPluginInfo()
         {
             this.advTree1.Nodes.Clear();
-
+            this.advTree1.Nodes.Add(new Node(string.Format("KMS-MixEff <font color=\"#808080\">Beta v0.0.1</font>")));
+            this.advTree1.Nodes.Add(new Node(string.Format("[MixEff] 믹스 염색, 아이템 이펙트 출력 <font color=\"#808080\">옴마</font>")));
             this.advTree1.Nodes.Add(new Node(string.Format("KMS <font color=\"#808080\">v3.1.1</font>")));
             this.advTree1.Nodes.Add(new Node(string.Format("[KMS] 각종 기능 추가, 최종 번역 <font color=\"#808080\">박현민</font>")));
             this.advTree1.Nodes.Add(new Node(string.Format("[KMS] 문자열 번역 <font color=\"#808080\">슈린냥</font>")));

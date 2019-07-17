@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using WzComparerR2.WzLib;
 using WzComparerR2.CharaSim;
+using System.Drawing.Imaging;
 
 namespace WzComparerR2.Avatar
 {
@@ -250,7 +251,7 @@ namespace WzComparerR2.Avatar
 
         public AvatarPart AddPart(Wz_Node imgNode)
         {
-            Wz_Node infoNode = imgNode.FindNodeByPath("info");
+            Wz_Node infoNode = imgNode.FindNodeByPath("info");//info가 있는 노드를 찾는다.
             if (infoNode == null)
             {
                 return null;
@@ -275,7 +276,7 @@ namespace WzComparerR2.Avatar
                 case GearType.demonShield:
                 case GearType.soulShield:
                 case GearType.katara: this.SubWeapon = part; break;
-                case GearType.cape: this.Cape = part; break;
+                case GearType.cape: this.Cape = part; break;//망토에 part를 넣어줌.
                 case GearType.shovel:
                 case GearType.pickaxe:
                 case GearType.cashWeapon: this.Weapon = part; break;
@@ -297,13 +298,29 @@ namespace WzComparerR2.Avatar
 
             return part;
         }
+        /*
+        //마개조
+        public ActionFrame[] GetEffectActionFrames(string actionName)
+        {
+            Action action = this.Actions.Find(act => act.Name == actionName);//Actions에서 actionName이랑 같은 action을 찾아라.
+            ActionFrame
+            foreach (var pts in this.Parts)
+            {
 
+            }
+            if (action == null)
+            {
+                return new ActionFrame[0];
+            }
+        }
+        */
+        //마개조 End
         /// <summary>
-        /// 获取角色动作的动画帧。
+        /// Get the animation frame of the character action.
         /// </summary>
         public ActionFrame[] GetActionFrames(string actionName)
         {
-            Action action = this.Actions.Find(act => act.Name == actionName);
+            Action action = this.Actions.Find(act => act.Name == actionName);//Actions에서 actionName이랑 같은 action을 찾아라.
             if (action == null)
             {
                 return new ActionFrame[0];
@@ -465,7 +482,7 @@ namespace WzComparerR2.Avatar
         }
 
         /// <summary>
-        /// 读取扩展属性。
+        /// Read extended attributes.
         /// </summary>
         private void LoadActionFrameDesc(Wz_Node frameNode, ActionFrame actionFrame)
         {
@@ -530,11 +547,11 @@ namespace WzComparerR2.Avatar
         }
 
         /// <summary>
-        /// 计算角色骨骼层次结构。
+        /// Calculate the character bone hierarchy(계층).
         /// </summary>
         /// <param name="frame"></param>
         /// <returns></returns>
-        public Bone CreateFrame(int bodyFrame, int faceFrame, int tamingFrame)
+        public Bone CreateFrame(int bodyFrame, int faceFrame, int tamingFrame, List<EffectStruction> efs = null, MixHairInfo mixHair = null)//여기 마지막 인자에 {아이템코드, 프레임넘버} 구조를 가지고 있는 리스트가 들어가야 가능.
         {
             ActionFrame bodyAction = null, faceAction = null, tamingAction = null;
             string actionName = this.ActionName,
@@ -542,7 +559,7 @@ namespace WzComparerR2.Avatar
                 tamingActionName = this.TamingActionName;
             bool bodyFlip = false;
 
-            //获取骑宠
+            //Get riding pet
             if (this.Taming != null)
             {
                 tamingAction = GetTamingFrame(tamingActionName, tamingFrame);
@@ -592,19 +609,22 @@ namespace WzComparerR2.Avatar
                 faceAction = GetFaceFrame(emotionName, faceFrame);
             }
 
-            return CreateFrame(bodyAction, faceAction, tamingAction);
+            return CreateFrame(bodyAction, faceAction, tamingAction, efs, mixHair);
         }
 
-        public Bone CreateFrame(ActionFrame bodyAction, ActionFrame faceAction, ActionFrame tamingAction)
+        public Bone CreateFrame(ActionFrame bodyAction, ActionFrame faceAction, ActionFrame tamingAction, List<EffectStruction> efs = null, MixHairInfo mixHair = null)
         {
-            //获取所有部件
-            Wz_Node[] playerNodes = LinkPlayerParts(bodyAction, faceAction);
+            //Get all parts
+            Wz_Node[] playerNodes = LinkPlayerParts(bodyAction, faceAction);//노드를 갖고옴.
             Wz_Node[] tamingNodes = LinkTamingParts(tamingAction);
-
+            //마개조
+            Wz_Node[] EffectNodes = LinkEffectParts(bodyAction, efs, mixHair);//bodyAction을 따라감.
             //根骨骼 作为角色原点
             Bone bodyRoot = new Bone("@root");
             bodyRoot.Position = Point.Empty;
-            CreateBone(bodyRoot, playerNodes, bodyAction.Face);
+            CreateBone(bodyRoot, playerNodes, bodyAction.Face);//이미지 생성, Bone 생성하고 Skin 조립함.
+            //여기서 Bone Injection : Effect 넣어야함.
+            InjectEffectBone(bodyRoot, EffectNodes, mixHair);
             SetBonePoperty(bodyRoot, BoneGroup.Character, bodyAction);
 
             if (tamingNodes != null && tamingNodes.Length > 0)
@@ -671,7 +691,161 @@ namespace WzComparerR2.Avatar
                 p.Parent = childBone;
             }
         }
+        //WzComparerR2 마개조
+        private void InjectEffectBone(Bone root, Wz_Node[] frameNodes, MixHairInfo mixHair = null)//만들어진 Bone에 Effect들을 Inject합니다.
+        {
+            foreach (Wz_Node partNode in frameNodes)
+            {
+                //이때 partNode는 자세\0입니다.
+                Wz_Node linkPartNode = partNode;
+                while (linkPartNode.Value is Wz_Uol)
+                {
+                    linkPartNode = linkPartNode.GetValue<Wz_Uol>().HandleUol(linkPartNode);
+                }
+                if (linkPartNode == null)
+                {
+                    continue;
+                }
+                //헤어 구분
+                if ((linkPartNode.ParentNode.ParentNode.Text.Contains("img")) && (int.TryParse(linkPartNode.ParentNode.ParentNode.Text.Replace(".img", ""), out int itemcode)) && (itemcode >= 30000) && (itemcode < 50000))
+                {
+                    //이러면 헤어다...
+                    foreach (Wz_Node childNode in linkPartNode.Nodes) //Analysis component
+                    {
+                        Wz_Node linkNode = childNode;
+                        while (linkNode?.Value is Wz_Uol)
+                        {
+                            linkNode = ((Wz_Uol)childNode.Value).HandleUol(linkNode);
+                        }
+                        if (linkNode == null)
+                        {
+                            continue;
+                        }
+                        if (childNode.Text == "hairShade")
+                        {
+                            linkNode = childNode.FindNodeByPath("0");
+                            if (linkNode == null)
+                            {
+                                continue;
+                            }
+                        }
+                        if (linkNode.Value is Wz_Png)
+                        {
+                            //过滤纹理
+                            switch (childNode.Text)
+                            {
+                                case "hairOverHead":
+                                case "backHairOverCape":
+                                case "backHair": if (HairCover) continue; break;
+                                case "hair":
+                                case "backHairBelowCap": if (!HairCover) continue; break;
+                                case "hairShade": if (!ShowHairShade) continue; break;
+                                default:
+                                    if (childNode.Text.StartsWith("weapon"))
+                                    {
+                                        //检查是否多武器颜色
+                                        if (linkNode.ParentNode.FindNodeByPath("weapon1") != null)
+                                        {
+                                            //只追加限定武器
+                                            string weaponName = "weapon" + (this.WeaponIndex == 0 ? "" : this.WeaponIndex.ToString());
+                                            if (childNode.Text != weaponName)
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
+                            //Skin
+                            Skin skin = new Skin();
+                            skin.Name = childNode.Text;
+                            skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
+                            BitmapOrigin beforBitmapOrigin = skin.Image;
+                            //투명도 설정
+                            Bitmap BeforeBitmap = beforBitmapOrigin.Bitmap;
+                            beforBitmapOrigin.Bitmap = ChangeBitmapOpacity(BeforeBitmap, ((float)mixHair.MixHairOpacity / 100));
+                            skin.Image = beforBitmapOrigin;
+                            var zNode = linkNode.FindNodeByPath("z");
+                            if (zNode != null)
+                            {
+                                var val = zNode.Value;
+                                var zIndex = zNode.GetValueEx<int?>(null);
+                                if (zIndex != null)
+                                {
+                                    skin.ZIndex = zIndex.Value;//z가 int이면 여기로
+                                }
+                                else
+                                {
+                                    skin.Z = zNode.GetValue<string>();//z가 string이면 여기로
+                                    skin.ZIndex = 1;
+                                }
+                            }
 
+                            //Read bone
+                            Wz_Node mapNode = linkNode.FindNodeByPath("map");
+                            if (mapNode != null)
+                            {
+                                Bone parentBone = null;
+                                foreach (var map in mapNode.Nodes)
+                                {
+                                    string mapName = map.Text;
+                                    Point mapOrigin = map.GetValue<Wz_Vector>();
+
+                                    if (mapName == "muzzle") //特殊处理 忽略
+                                    {
+                                        continue;
+                                    }
+
+                                    if (parentBone == null) //Main skeleton
+                                    {
+                                        parentBone = AppendBone(root, null, skin, mapName, mapOrigin);
+                                    }
+                                    else //级联骨骼
+                                    {
+                                        AppendBone(root, parentBone, skin, mapName, mapOrigin);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                root.Skins.Add(skin);
+                            }
+
+
+                        }
+                    }
+                }
+                else if (linkPartNode.Value is Wz_Png)
+                {
+                    //스킨 생성
+                    //커플링 예외는 나중에....
+                    Skin skin = new Skin();
+                    skin.Name = linkPartNode.ParentNode.ParentNode.ParentNode.Text;
+                    skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
+                    var zNode = linkPartNode.ParentNode.FindNodeByPath("z");
+                    if (zNode != null)
+                    {
+                        var val = zNode.Value;
+                        var zIndex = zNode.GetValueEx<int?>(null);
+                        if (zIndex != null)
+                        {
+                            skin.ZIndex = zIndex.Value;//z가 int이면 여기로
+                        }
+                        else
+                        {
+                            skin.Z = zNode.GetValue<string>();//z가 string이면 여기로
+                        }
+                    }
+                    //Read Bone!!!!!
+                    //Bone 만들좌....
+                    AppendBone(root, null, skin, "brow", new Point(0, 0));
+                }
+            }
+        }
+
+
+
+        //마개조 End
         private void CreateBone(Bone root, Wz_Node[] frameNodes, bool? bodyFace = null)
         {
             bool face = true;
@@ -684,12 +858,12 @@ namespace WzComparerR2.Avatar
                     linkPartNode = linkPartNode.GetValue<Wz_Uol>().HandleUol(linkPartNode);
                 }
 
-                foreach (Wz_Node childNode in linkPartNode.Nodes) //分析部件
+                foreach (Wz_Node childNode in linkPartNode.Nodes) //Analysis component
                 {
                     Wz_Node linkNode = childNode;
                     while (linkNode?.Value is Wz_Uol)
                     {
-                        linkNode = ((Wz_Uol)linkNode.Value).HandleUol(linkNode);
+                        linkNode = ((Wz_Uol)childNode.Value).HandleUol(linkNode);
                     }
                     if (linkNode == null)
                     {
@@ -735,7 +909,7 @@ namespace WzComparerR2.Avatar
                                 break;
                         }
 
-                        //读取纹理
+                        //Read texture
                         Skin skin = new Skin();
                         skin.Name = childNode.Text;
                         skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
@@ -746,15 +920,15 @@ namespace WzComparerR2.Avatar
                             var zIndex = zNode.GetValueEx<int?>(null);
                             if (zIndex != null)
                             {
-                                skin.ZIndex = zIndex.Value;
+                                skin.ZIndex = zIndex.Value;//z가 int이면 여기로
                             }
                             else
                             {
-                                skin.Z = zNode.GetValue<string>();
+                                skin.Z = zNode.GetValue<string>();//z가 string이면 여기로
                             }
                         }
 
-                        //读取骨骼
+                        //Read bone
                         Wz_Node mapNode = linkNode.FindNodeByPath("map");
                         if (mapNode != null)
                         {
@@ -769,7 +943,7 @@ namespace WzComparerR2.Avatar
                                     continue;
                                 }
 
-                                if (parentBone == null) //主骨骼
+                                if (parentBone == null) //Main skeleton
                                 {
                                     parentBone = AppendBone(root, null, skin, mapName, mapOrigin);
                                 }
@@ -799,7 +973,7 @@ namespace WzComparerR2.Avatar
 
         private Bone AppendBone(Bone root, Bone parentBone, Skin skin, string mapName, Point mapOrigin)
         {
-            Bone bone = root.FindChild(mapName);
+            Bone bone = root.FindChild(mapName);//mapName인 bone 찾기
             bool exists;
             if (bone == null) //创建骨骼
             {
@@ -812,16 +986,16 @@ namespace WzComparerR2.Avatar
                 exists = true;
             }
 
-            if (parentBone == null) //主骨骼
+            if (parentBone == null) //Main skeleton
             {
-                if (!exists) //基准骨骼不存在 加到root
+                if (!exists) //The baseline bone does not exist. Add to root
                 {
                     parentBone = root;
                     bone.Parent = parentBone;
                     bone.Skins.Add(skin);
                     skin.Offset = new Point(-mapOrigin.X, -mapOrigin.Y);
                 }
-                else //如果已存在 创建一个关节
+                else //If it already exists, create a joint, Effect는 무조건 여기로 들어감.
                 {
                     Bone bone0 = new Bone("@" + bone.Name + "_" + skin.Name);
                     bone0.Position = new Point(-mapOrigin.X, -mapOrigin.Y);
@@ -881,9 +1055,10 @@ namespace WzComparerR2.Avatar
 
         public BitmapOrigin[] CreateFrameLayers(Bone bone)
         {
-            List<AvatarLayer> layers = GenerateLayer(bone);
-            layers.Sort((l0, l1) => l1.ZIndex.CompareTo(l0.ZIndex));
-
+            List<AvatarLayer> layers = GenerateLayer(bone);//여기서z값 정렬함.
+            layers.Sort(
+                (l0, l1) => l1.ZIndex.CompareTo(l0.ZIndex)
+                );//z값 오름차순 정렬(작은거->큰거)
             var bmpLayers = new BitmapOrigin[layers.Count];
             for (int i = 0; i < bmpLayers.Length; i++)
             {
@@ -923,8 +1098,8 @@ namespace WzComparerR2.Avatar
         private List<AvatarLayer> GenerateLayer(Bone bone)
         {
             var layers = new List<AvatarLayer>();
-
-            //计算角色原点，用于翻转偏移
+            
+            //Calculate the origin of the character for flipping the offset
             var rootBone = bone.FindChild("@root");
             Point rootPos = Point.Empty;
             {
@@ -949,7 +1124,7 @@ namespace WzComparerR2.Avatar
                     var position = new Point(pos.X + skin.Offset.X - skin.Image.Origin.X,
                         pos.Y + skin.Offset.Y - skin.Image.Origin.Y);
 
-                    //计算身体旋转和反转
+                    //Calculate body rotation and reversal
                     if (parent.Group == BoneGroup.Character && prop != null)
                     {
                         Bitmap bmp2;
@@ -968,6 +1143,7 @@ namespace WzComparerR2.Avatar
 
                     layer.Bitmap = bmp;
                     layer.Position = position;
+                    //z값 정수로 책정. 값이 작을수록 앞으로나감.
                     if (!string.IsNullOrEmpty(skin.Z))
                     {
                         layer.ZIndex = this.ZMap.IndexOf(skin.Z);
@@ -975,9 +1151,12 @@ namespace WzComparerR2.Avatar
                         {
                             layer.ZIndex = this.ZMap.Count;
                         }
+                        layer.ZIndex = layer.ZIndex - skin.ZIndex;
+                           
                     }
                     else
                     {
+                        //ItemEff.img애들은 여기로 오게 해야함.
                         layer.ZIndex = (skin.ZIndex < 0) ? (this.ZMap.Count - skin.ZIndex) : (-1 - skin.ZIndex);
                     }
                     layers.Add(layer);
@@ -1053,23 +1232,83 @@ namespace WzComparerR2.Avatar
                 return false;
             }
         }
-
-        private Wz_Node[] LinkPlayerParts(ActionFrame bodyAction, ActionFrame faceAction)
+        private Wz_Node[] LinkEffectParts(ActionFrame bodyAction, List<EffectStruction> efs, MixHairInfo mixHair = null)
         {
-            //寻找所有部件
-            List<Wz_Node> partNode = new List<Wz_Node>();
-
-            //链接人
+            //Find all parts
+            List<Wz_Node> partNode = new List<Wz_Node>(); //이 partNode는 Effect만 담는 Node입니다.
+            //Linker
             if (this.Body != null && this.Head != null && bodyAction != null
                 && this.Body.Visible && this.Head.Visible)
             {
-                //身体
+                if (mixHair != null)
+                {
+                    Wz_Node bodyNode = FindBodyActionNode(bodyAction);
+                    //Computing face
+                    bool? face = bodyAction.Face; //Extended action prescribed head
+                    if (face == null && bodyNode != null) //Within the body of the link
+                    {
+                        Wz_Node propNode = bodyNode.FindNodeByPath("face");
+                        if (propNode != null)
+                        {
+                            face = propNode.GetValue<int>(0) != 0;
+                        }
+                    }
+                    //hair
+                    if (this.Hair != null && this.Hair.Visible)
+                    {
+                        var hairNode = FindActionFrameNode(this.Hair.MixedNodes[mixHair.MixHairColor], bodyAction);//
+                        if (hairNode == null)
+                        {
+                            string actName = this.GetHairActionName(bodyAction.Action, face);
+                            if (actName != null)
+                            {
+                                ActionFrame hairAction = new ActionFrame() { Action = actName, Frame = 0 };
+                                hairNode = FindActionFrameNode(this.Hair.MixedNodes[mixHair.MixHairColor], hairAction);//
+                            }
+                        }
+                        partNode.Add(hairNode);
+                    }
+                }
+                //Another
+                for (int i = 4; i < 16; i++)
+                {
+                    var part = this.Parts[i];
+                    ActionFrame CloneAction = bodyAction;
+                    if (part != null && part.Visible && part.ItemEff != null)
+                    {
+                        foreach (var es in efs)
+                        {
+                            if (es.itemcode == part.ID.Value)
+                            {
+                                CloneAction.Frame = es.frame;
+                                break;
+                            }
+                        }
+                        partNode.Add(FindActionFrameNode(part.ItemEff, CloneAction, true));
+
+                    }
+                }
+            }
+            partNode.RemoveAll(node => node == null);
+            return partNode.ToArray();
+        }
+
+        private Wz_Node[] LinkPlayerParts(ActionFrame bodyAction, ActionFrame faceAction)
+        {
+            //Find all parts
+            List<Wz_Node> partNode = new List<Wz_Node>();
+
+            //Linker
+            if (this.Body != null && this.Head != null && bodyAction != null
+                && this.Body.Visible && this.Head.Visible)
+            {
+                //body
                 Wz_Node bodyNode = FindBodyActionNode(bodyAction);
                 partNode.Add(bodyNode);
 
-                //计算面向
-                bool? face = bodyAction.Face; //扩展动作规定头部
-                if (face == null && bodyNode != null) //链接的body内规定
+                //Computing face
+                bool? face = bodyAction.Face; //Extended action prescribed head
+                if (face == null && bodyNode != null) //Within the body of the link
                 {
                     Wz_Node propNode = bodyNode.FindNodeByPath("face");
                     if (propNode != null)
@@ -1078,14 +1317,14 @@ namespace WzComparerR2.Avatar
                     }
                 }
 
-                //脸饰附加属性
+                //Face decoration attached attribute
                 bool invisibleFace = false;
                 if (this.FaceAccessory != null && this.FaceAccessory.Visible)
                 {
                     invisibleFace = this.FaceAccessory.Node.FindNodeByPath(@"info\invisibleFace").GetValueEx(0) != 0;
                 }
 
-                //头部
+                //head
                 var headNode = FindActionFrameNode(this.Head.Node, bodyAction);
                 if (headNode == null)
                 {
@@ -1098,7 +1337,7 @@ namespace WzComparerR2.Avatar
                 }
                 partNode.Add(headNode);
 
-                //脸
+                //face
                 if (this.Face != null && this.Face.Visible && faceAction != null)
                 {
                     if ((face ?? true) && !invisibleFace)
@@ -1106,7 +1345,7 @@ namespace WzComparerR2.Avatar
                         partNode.Add(FindActionFrameNode(this.Face.Node, faceAction));
                     }
                 }
-                //毛
+                //hair
                 if (headNode != null && this.Hair != null && this.Hair.Visible)
                 {
                     var hairNode = FindActionFrameNode(this.Hair.Node, bodyAction);
@@ -1121,27 +1360,28 @@ namespace WzComparerR2.Avatar
                     }
                     partNode.Add(hairNode);
                 }
-                //其他部件
+                //Other parts
                 for (int i = 4; i < 16; i++)
                 {
                     var part = this.Parts[i];
                     if (part != null && part.Visible)
                     {
-                        if (i == 12 && Gear.GetGearType(part.ID.Value) == GearType.cashWeapon) //点装武器
+                        if (i == 12 && Gear.GetGearType(part.ID.Value) == GearType.cashWeapon) //Point weapon
                         {
                             var wpNode = part.Node.FindNodeByPath(this.WeaponType.ToString());
                             partNode.Add(FindActionFrameNode(wpNode, bodyAction));
                         }
-                        else if (i == 14) //脸
+                        else if (i == 14) //face Accessory
                         {
                             if (face ?? true)
                             {
                                 partNode.Add(FindActionFrameNode(part.Node, faceAction));
                             }
                         }
-                        else //其他部件
+                        else //Other parts
                         {
                             partNode.Add(FindActionFrameNode(part.Node, bodyAction));
+
                         }
                     }
                 }
@@ -1191,7 +1431,7 @@ namespace WzComparerR2.Avatar
             return actionNode;
         }
 
-        private Wz_Node FindActionFrameNode(Wz_Node parent, ActionFrame actionFrame)
+        private Wz_Node FindActionFrameNode(Wz_Node parent, ActionFrame actionFrame, bool isEffect = false)
         {
             if (parent == null || actionFrame == null)
             {
@@ -1203,7 +1443,12 @@ namespace WzComparerR2.Avatar
                 if (actionNode != null && !string.IsNullOrEmpty(path))
                 {
                     actionNode = actionNode.FindNodeByPath(path);
-
+                    //effect에서는 null값이 돌아올 가능성 존재.
+                    if((actionNode == null) &&isEffect)//Effect.wz
+                    {
+                        actionNode = parent;
+                        actionNode = actionNode.FindNodeByPath("default");
+                    }
                     //处理uol
                     Wz_Uol uol;
                     while ((uol = actionNode.GetValueEx<Wz_Uol>(null)) != null)
@@ -1481,6 +1726,20 @@ namespace WzComparerR2.Avatar
                     mt1.m31 * mt2.m11 + mt1.m32 * mt2.m21 + mt2.m31,
                     mt1.m31 * mt2.m12 + mt1.m32 * mt2.m22 + mt2.m32);
             }
+        }
+
+
+        private Bitmap ChangeBitmapOpacity(Image img,float opacityValue)
+        {
+            Bitmap bmp = new Bitmap(img.Width, img.Height);
+            Graphics graphics = Graphics.FromImage(bmp);
+            ColorMatrix colormatrix = new ColorMatrix();
+            colormatrix.Matrix33 = opacityValue;
+            ImageAttributes imgAttribute = new ImageAttributes();
+            imgAttribute.SetColorMatrix(colormatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            graphics.DrawImage(img, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imgAttribute);
+            graphics.Dispose();
+            return bmp;
         }
     }
 }

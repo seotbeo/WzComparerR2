@@ -48,9 +48,9 @@ namespace WzComparerR2.PluginBase
         }
 
         /// <summary>
-        /// 通过wz完整路径查找对应的Wz_Node，若没有找到则返回null。
+        /// Find the corresponding Wz_Node through the wz full path, or null if it is not found.
         /// </summary>
-        /// <param name="fullPath">要查找节点的完整路径，可用'/'或者'\'作分隔符，如"Mob/8144006.img/die1/6"。</param>
+        /// <param name="fullPath">To find the full path of a node, use '/' or '\' as a separator, such as "Mob/8144006.img/die1/6".</param>
         /// <returns></returns>
         public static Wz_Node FindWz(string fullPath)
         {
@@ -170,7 +170,7 @@ namespace WzComparerR2.PluginBase
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show("插件初始化失败。\r\n" + ex.Message, plugin.Instance.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxEx.Show("Plugin initialization failed.\r\n" + ex.Message, plugin.Instance.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

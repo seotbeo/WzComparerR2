@@ -11,20 +11,60 @@ using DevComponents.DotNetBar.Controls;
 using WzComparerR2.Common;
 using WzComparerR2.WzLib;
 using WzComparerR2.PluginBase;
+using System.Collections;
+using System.Data;
 
 namespace WzComparerR2.Avatar.UI
 {
-    internal partial class AvatarForm : DevComponents.DotNetBar.OfficeForm
+    
+    public partial class AvatarForm : DevComponents.DotNetBar.OfficeForm
     {
+        EffectForm effectForm;
+        List<EffectStruction> effectStruct = new List<EffectStruction>();
+        MixHairInfo AvatarMixHair;
+
+        public string es_ToArray(List<EffectStruction> es)
+        {
+            if(es != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var ess in es)
+                {
+                    sb.Append(ess.ToString() + "_");
+                }
+                return sb.ToString();
+            }
+            else
+            {
+                return "";
+            }
+            
+        }
+
+        public string AMH(MixHairInfo mhi)
+        {
+            if(mhi != null)
+            {
+                return mhi.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public AvatarForm()
         {
             InitializeComponent();
             this.avatar = new AvatarCanvas();
             this.animator = new Animator();
+            this.effectanimator = new EffectAnimator();
             btnReset_Click(btnReset, EventArgs.Empty);
             FillWeaponIdx();
             FillEarSelection();
 
+            effectForm = new EffectForm(this);
+            AvatarMixHair = new MixHairInfo(0, 0);
 #if !DEBUG
             buttonItem1.Visible = false;
 #endif
@@ -51,6 +91,7 @@ namespace WzComparerR2.Avatar.UI
         bool suspendUpdate;
         bool needUpdate;
         Animator animator;
+        EffectAnimator effectanimator;
 
         BackgroundWorker worker;
         ProgressDialog progressDialog;
@@ -79,7 +120,7 @@ namespace WzComparerR2.Avatar.UI
                     if (wzImg != null && wzImg.TryExtract())
                     {
                         this.SuspendUpdateDisplay();
-                        LoadPart(wzImg.Node);
+                        LoadPart(wzImg.Node);//추출한 img로 파트 로딩.
                         this.ResumeUpdateDisplay();
                     }
                     break;
@@ -138,11 +179,11 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            AvatarPart part = this.avatar.AddPart(imgNode);
+            AvatarPart part = this.avatar.AddPart(imgNode);//갖고온 img로 part추가.
             if (part != null)
             {
-                OnNewPartAdded(part);
-                FillAvatarParts();
+                OnNewPartAdded(part);//새 파트가 추가되었음. 얼굴 싱크용
+                FillAvatarParts();//리스트 업데이트. 비트맵과 상관 X
                 UpdateDisplay();
             }
         }
@@ -154,7 +195,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            if (part == avatar.Body) //同步head
+            if (part == avatar.Body) //Sync head
             {
                 int headID = 10000 + part.ID.Value % 10000;
                 if (avatar.Head == null || avatar.Head.ID != headID)
@@ -166,7 +207,7 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
             }
-            else if (part == avatar.Head) //同步body
+            else if (part == avatar.Head) //Sync body
             {
                 int bodyID = part.ID.Value % 10000;
                 if (avatar.Body == null || avatar.Body.ID != bodyID)
@@ -178,30 +219,30 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
             }
-            else if (part == avatar.Face) //同步表情
+            else if (part == avatar.Face) //Synchronous expression
             {
                 this.avatar.LoadEmotions();
                 FillEmotion();
             }
-            else if (part == avatar.Taming) //同步座驾动作
+            else if (part == avatar.Taming) //Synchronous ride action
             {
                 this.avatar.LoadTamingActions();
                 FillTamingAction();
                 SetTamingDefaultBodyAction();
                 SetTamingDefault();
             }
-            else if (part == avatar.Weapon) //同步武器类型
+            else if (part == avatar.Weapon) //Synchronous weapon type
             {
                 FillWeaponTypes();
             }
-            else if (part == avatar.Pants || part == avatar.Coat) //隐藏套装
+            else if (part == avatar.Pants || part == avatar.Coat) //Hidden suit
             {
                 if (avatar.Longcoat != null)
                 {
                     avatar.Longcoat.Visible = false;
                 }
             }
-            else if (part == avatar.Longcoat) //还是。。隐藏套装
+            else if (part == avatar.Longcoat) //still is. . Hidden suit
             {
                 if (avatar.Pants != null && avatar.Pants.Visible
                     || avatar.Coat != null && avatar.Coat.Visible)
@@ -232,7 +273,7 @@ namespace WzComparerR2.Avatar.UI
         /// <summary>
         /// 更新画布。
         /// </summary>
-        private void UpdateDisplay()
+        public void UpdateDisplay()
         {
             if (suspendUpdate)
             {
@@ -241,12 +282,12 @@ namespace WzComparerR2.Avatar.UI
             }
 
             string newPartsTag = GetAllPartsTag();
-            if (this.partsTag != newPartsTag)
+            if (this.partsTag != newPartsTag)//변경전 partsTag와 변경후 newPartsTag(GetAllPartsTag로 불러옴)을 비교.
             {
                 this.partsTag = newPartsTag;
-                this.avatarContainer1.ClearAllCache();
+                this.avatarContainer1.ClearAllCache();//비트맵 캐시를 비웁니다.
             }
-
+            //actionTag (자세, 프레임번호) 생성.
             ComboItem selectedItem;
             //同步角色动作
             selectedItem = this.cmbActionBody.SelectedItem as ComboItem;
@@ -277,7 +318,7 @@ namespace WzComparerR2.Avatar.UI
             selectedItem = this.cmbEar.SelectedItem as ComboItem;
             this.avatar.EarType = selectedItem != null ? Convert.ToInt32(selectedItem.Text) : 0;
 
-            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10}",
+            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11},{12}",
                 this.avatar.ActionName,
                 bodyFrame,
                 this.avatar.EmotionName,
@@ -288,21 +329,25 @@ namespace WzComparerR2.Avatar.UI
                 this.avatar.ShowHairShade ? 1 : 0,
                 this.avatar.EarType,
                 this.avatar.WeaponType,
-                this.avatar.WeaponIndex);
-
-            if (!avatarContainer1.HasCache(actionTag))
+                this.avatar.WeaponIndex,
+                es_ToArray(effectStruct),
+                AMH(AvatarMixHair)
+                ) ;
+            //이미지 생성
+            if (!avatarContainer1.HasCache(actionTag))//이미지 캐시가 없는 경우
             {
                 try
                 {
-                    var actionFrames = avatar.GetActionFrames(avatar.ActionName);
+                    var actionFrames = avatar.GetActionFrames(avatar.ActionName);//행동을 가져옴
+                    //var effectActionFrames = avatar.GetEffectActionFrames(avatar.ActionName);
                     ActionFrame f = null;
                     if (bodyFrame > -1 && bodyFrame < actionFrames.Length)
                     {
                         f = actionFrames[bodyFrame];
                     }
-
-                    var bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame);
-                    var layers = avatar.CreateFrameLayers(bone);
+                    //EffectAction 생성
+                    var bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame, effectStruct, AvatarMixHair);//Bone 생성
+                    var layers = avatar.CreateFrameLayers(bone);//레이어에 올라갈 이미지 생성
                     avatarContainer1.AddCache(actionTag, layers);
                 }
                 catch
@@ -310,10 +355,10 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
 
-            avatarContainer1.SetKey(actionTag);
+            avatarContainer1.SetKey(actionTag);//다시 그립니다.
         }
 
-        private string GetAllPartsTag()
+        private string GetAllPartsTag(bool effectCode = false)
         {
             string[] partsID = new string[avatar.Parts.Length];
             for (int i = 0; i < avatar.Parts.Length; i++)
@@ -321,7 +366,15 @@ namespace WzComparerR2.Avatar.UI
                 var part = avatar.Parts[i];
                 if (part != null && part.Visible)
                 {
-                    partsID[i] = part.ID.ToString();
+                    if(effectCode && (part.ItemEff!=null))
+                    {
+                        partsID[i] = part.ID.ToString() + "_" + part.ID.ToString();
+                    }
+                    else
+                    {
+                        partsID[i] = part.ID.ToString();
+                    }
+                    
                 }
             }
             return string.Join(",", partsID);
@@ -373,7 +426,7 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
         }
-
+        
         #region 同步界面
         private void FillBodyAction()
         {
@@ -471,22 +524,30 @@ namespace WzComparerR2.Avatar.UI
         }
 
         /// <summary>
-        /// 更新当前显示部件列表。
+        /// Update the list of currently displayed parts.
         /// </summary>
-        private void FillAvatarParts()
+        private void FillAvatarParts()//레이어 채우기. + effectForm에 이펙트 레이어도 생성하기
         {
+            EffectStruction efs;
             itemPanel1.BeginUpdate();
             itemPanel1.Items.Clear();
+            effectForm.ItemEffectListBox1.Items.Clear();//ListBox의 아이템 모두 지움.
+            int itemid = 0;
+            effectForm.effectDelayList.Clear();//DelayList 지움
             foreach (var part in avatar.Parts)
             {
+                
                 if (part != null)
                 {
+                    efs = new EffectStruction(part.ID.Value, 0);
                     var btn = new AvatarPartButtonItem();
                     var stringLinker = this.PluginEntry.Context.DefaultStringLinker;
                     StringResult sr;
                     string text;
+                    string itemname = "";
                     if (part.ID != null && stringLinker.StringEqp.TryGetValue(part.ID.Value, out sr))
                     {
+                        itemname = sr.Name;
                         text = string.Format("{0}\r\n{1}", sr.Name, part.ID);
                     }
                     else
@@ -499,10 +560,170 @@ namespace WzComparerR2.Avatar.UI
                     btn.Checked = part.Visible;
                     btn.btnItemShow.Click += BtnItemShow_Click;
                     btn.btnItemDel.Click += BtnItemDel_Click;
-                    btn.CheckedChanged += Btn_CheckedChanged;
+                    btn.CheckedChanged += Btn_CheckedChanged;//보이기/감추기(일반좌클릭)
                     itemPanel1.Items.Add(btn);
+                    if(part.ItemEff != null)
+                    {
+                        //아이템 이펙트가 있을 경우
+                        if(part.ID != null)
+                        {
+                            if(!effectForm.itemDescDic.ContainsKey(Convert.ToInt32(part.ID)))
+                            {
+                                EffectForm.EffectLayer eLayer;
+                                eLayer.itemcode = part.ID.Value;
+                                effectForm.itemDescDic.Add((Convert.ToInt32(part.ID)), itemname);
+                                efs.itemcode = (Convert.ToInt32(part.ID));
+                                effectStruct.Add(efs);
+                                Wz_Node searchNode = part.ItemEff;
+                                string Action = effectForm.EffectTextBox.Text;
+                                if (string.IsNullOrEmpty(Action))
+                                {
+                                    Action = "default";
+                                }
+                                Wz_Node FrameNode = searchNode.FindNodeByPath(Action);
+                                if (FrameNode == null)
+                                {
+                                    FrameNode = searchNode.FindNodeByPath("default");
+                                }
+                                eLayer.delays=(FindEffectDelay(FrameNode));
+                                eLayer.currentFrame = 0;
+                                eLayer.animated = false;
+                                effectForm.EffectLayerGroup.Add(part.ID.Value,eLayer);//List Test
+                            }
+                        }
+                        
+                    }
+                    //헤어
+                    if((part.ID.Value >= 30000) && (part.ID.Value < 50000))
+                    {
+                        effectForm.BaseHairText.Text = itemname;
+                        //ComboBox 생성
+                        int BlackHairCode = ((part.ID.Value / 10) * 10);
+                        BlackHairCode = BlackHairCode - (BlackHairCode % 10);
+                        int Hair_Black = BlackHairCode;
+                        int Hair_Red = BlackHairCode + 1;
+                        int Hair_Orange = BlackHairCode + 2;
+                        int Hair_Yellow = BlackHairCode + 3;
+                        int Hair_Green = BlackHairCode + 4;
+                        int Hair_Blue = BlackHairCode + 5;
+                        int Hair_Purple = BlackHairCode + 6;
+                        int Hair_Brown = BlackHairCode + 7;
+                        StringResult HairNameResult;
+                        DataTable HairBox = new DataTable();
+                        DataRow HairStringRow = null;
+                        HairBox.Columns.Add(new DataColumn("itemcode", typeof(int)));
+                        HairBox.Columns.Add(new DataColumn("name", typeof(string)));
+                        //black
+                        stringLinker.StringEqp.TryGetValue(Hair_Black, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Black;
+                        if(HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Black : " + Hair_Black.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Red
+                        stringLinker.StringEqp.TryGetValue(Hair_Red, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Red;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Red : " + Hair_Red.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Orange
+                        stringLinker.StringEqp.TryGetValue(Hair_Orange, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Orange;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Orange : " + Hair_Orange.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Hair_Yellow
+                        stringLinker.StringEqp.TryGetValue(Hair_Yellow, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Yellow;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Yellow : " + Hair_Yellow.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Hair_Green
+                        stringLinker.StringEqp.TryGetValue(Hair_Green, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Green;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Green : " + Hair_Green.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Hair_Blue
+                        stringLinker.StringEqp.TryGetValue(Hair_Blue, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Blue;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Blue : " + Hair_Blue.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Hair_Purple
+                        stringLinker.StringEqp.TryGetValue(Hair_Purple, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Purple;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Purple : " + Hair_Purple.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        //Hair_Brown
+                        stringLinker.StringEqp.TryGetValue(Hair_Brown, out HairNameResult);
+                        HairStringRow = HairBox.NewRow();
+                        HairStringRow["itemcode"] = Hair_Brown;
+                        if (HairNameResult != null)
+                        {
+                            HairStringRow["name"] = HairNameResult.Name;
+                        }
+                        else
+                        {
+                            HairStringRow["name"] = "Hair_Brown : " + Hair_Brown.ToString();
+                        }
+                        HairBox.Rows.Add(HairStringRow);
+                        effectForm.MixHairComboBox.DataSource = HairBox;
+                        effectForm.MixHairComboBox.ValueMember = "itemcode";
+                        effectForm.MixHairComboBox.DisplayMember = "name";
+                    }
                 }
             }
+            FillEffectListbox();
             itemPanel1.EndUpdate();
         }
 
@@ -547,14 +768,14 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
         }
-
+        
         private void FillBodyActionFrame()
         {
             ComboItem actionItem = cmbActionBody.SelectedItem as ComboItem;
             if (actionItem != null)
             {
-                var frames = avatar.GetActionFrames(actionItem.Text);
-                FillComboItems(cmbBodyFrame, frames);
+                var frames = avatar.GetActionFrames(actionItem.Text);//actionItem.Text로 된 프레임들을 가져옵니다.(body 에서 갖고오는거라 상관X)
+                FillComboItems(cmbBodyFrame, frames);//프레임 콤보박스를 채웁니다.
             }
             else
             {
@@ -673,6 +894,7 @@ namespace WzComparerR2.Avatar.UI
         {
             this.SuspendUpdateDisplay();
             FillBodyActionFrame();
+             FillCmbEffect(effectForm.recentitem);
             this.ResumeUpdateDisplay();
             UpdateDisplay();
         }
@@ -697,6 +919,7 @@ namespace WzComparerR2.Avatar.UI
 
         private void cmbBodyFrame_SelectedIndexChanged(object sender, EventArgs e)
         {
+            effectForm.EffectTextBox.Text = (cmbActionBody.SelectedItem.ToString());
             UpdateDisplay();
         }
 
@@ -738,7 +961,7 @@ namespace WzComparerR2.Avatar.UI
                 int? delay;
                 if (item != null && ((delay = item.Tag as int?) != null) && delay.Value >= 0)
                 {
-                    this.animator.BodyDelay = delay.Value;
+                    this.animator.BodyDelay = delay.Value;//animator에 있는 BodyDelay값에 저장되어있는 delay값을 넣어줌.
                 }
             }
             else
@@ -748,6 +971,56 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
+        public void resetEffectDelay(int itemcode)
+        {
+            switch ((int)(itemcode / 10000))
+            {
+                case 100:
+                    effectanimator.HatDelay = -1;
+                    break;
+
+                case 101:
+                    effectanimator.FaceDelay = -1;
+                    break;
+
+                case 105:
+                    effectanimator.LongCoatDelay = -1;
+                    break;
+
+                case 107:
+                    effectanimator.ShoesDelay = -1;
+                    break;
+
+                case 110:
+                    effectanimator.CapeDelay = -1;
+                    break;
+            }
+        }
+        public void setEffectDelay(int itemcode)
+        {
+            switch((int)(itemcode / 10000))
+            {
+                case 100:
+                    effectanimator.HatDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+
+                case 101:
+                    effectanimator.FaceDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+
+                case 105:
+                    effectanimator.LongCoatDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+
+                case 107:
+                    effectanimator.ShoesDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+
+                case 110:
+                    effectanimator.CapeDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+            }
+        }
         private void chkEmotionPlay_CheckedChanged(object sender, EventArgs e)
         {
             if (chkEmotionPlay.Checked)
@@ -804,10 +1077,10 @@ namespace WzComparerR2.Avatar.UI
             UpdateDisplay();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)//Tick마다 실행이 됨.
         {
-            this.animator.Elapse(timer1.Interval);
-            this.AnimateUpdate();
+            this.animator.Elapse(timer1.Interval);//delays 배열에 있는 delay값들을 모두 깐다.(시간이 흐른 만큼)
+            this.AnimateUpdate();//콤보박스를 다음걸로 넘김
             int interval = this.animator.NextFrameDelay;
 
             if (interval <= 0)
@@ -820,11 +1093,149 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
-        private void AnimateUpdate()
+        private void effectTimer_Tick(object sender, EventArgs e)//Tick마다 실행이 됨.
+        {
+            this.effectanimator.Elapse(effectTimer.Interval);//delays 배열에 있는 delay값들을 모두 깐다.(시간이 흐른 만큼)
+            this.EffectAnimateUpdate();//콤보박스를 다음걸로 넘김
+            int interval = this.effectanimator.NextFrameDelay;
+
+            if (interval <= 0)
+            {
+                this.effectTimer.Stop();
+            }
+            else
+            {
+                this.effectTimer.Interval = interval;
+            }
+        }
+        private void EffectAnimateUpdate()//EffectLayer을 넘겨서 다음걸로 넘어가게 하기
+        {
+            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
+            foreach (var lys in effectForm.EffectLayerGroup)
+            {
+                switch ((int)(lys.Key/10000))
+                {
+                    case 100:
+                        Hatcode = lys.Key;
+                        break;
+                    case 101:
+                        FaceCode = lys.Key;
+                        break;
+                    case 105:
+                        LongCoatCode = lys.Key;
+                        break;
+                    case 107:
+                        ShoesCode = lys.Key;
+                        break;
+                    case 110:
+                        CapeCode = lys.Key;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            this.SuspendUpdateDisplay();
+            if(this.effectanimator.HatDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(Hatcode))
+            {
+                effectForm.EffectLayerGroup[Hatcode] = FindNextFrameE(effectForm.EffectLayerGroup[Hatcode]);
+                this.effectanimator.HatDelay = effectForm.EffectLayerGroup[Hatcode].delays[effectForm.EffectLayerGroup[Hatcode].currentFrame];
+                ChangeEffectStruct(Hatcode, effectForm.EffectLayerGroup[Hatcode].currentFrame);
+            }
+            if (this.effectanimator.FaceDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(FaceCode))
+            {
+                effectForm.EffectLayerGroup[FaceCode] = FindNextFrameE(effectForm.EffectLayerGroup[FaceCode]);
+                this.effectanimator.FaceDelay = effectForm.EffectLayerGroup[FaceCode].delays[effectForm.EffectLayerGroup[FaceCode].currentFrame];
+                ChangeEffectStruct(FaceCode, effectForm.EffectLayerGroup[FaceCode].currentFrame);
+            }
+            if (this.effectanimator.LongCoatDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(LongCoatCode))
+            {
+                effectForm.EffectLayerGroup[LongCoatCode] = FindNextFrameE(effectForm.EffectLayerGroup[LongCoatCode]);
+                this.effectanimator.LongCoatDelay = effectForm.EffectLayerGroup[LongCoatCode].delays[effectForm.EffectLayerGroup[LongCoatCode].currentFrame];
+                ChangeEffectStruct(LongCoatCode, effectForm.EffectLayerGroup[LongCoatCode].currentFrame);
+            }
+            if (this.effectanimator.ShoesDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(ShoesCode))
+            {
+                effectForm.EffectLayerGroup[ShoesCode] = FindNextFrameE(effectForm.EffectLayerGroup[ShoesCode]);
+                this.effectanimator.ShoesDelay = effectForm.EffectLayerGroup[ShoesCode].delays[effectForm.EffectLayerGroup[ShoesCode].currentFrame];
+                ChangeEffectStruct(ShoesCode, effectForm.EffectLayerGroup[ShoesCode].currentFrame);
+            }
+            if (this.effectanimator.CapeDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(CapeCode))
+            {
+                effectForm.EffectLayerGroup[CapeCode] = FindNextFrameE(effectForm.EffectLayerGroup[CapeCode]);
+                this.effectanimator.CapeDelay = effectForm.EffectLayerGroup[CapeCode].delays[effectForm.EffectLayerGroup[CapeCode].currentFrame];
+                ChangeEffectStruct(CapeCode, effectForm.EffectLayerGroup[CapeCode].currentFrame);
+            }
+            this.ResumeUpdateDisplay();
+
+        }
+        public void EffectAnimateStart()
+        {
+            EffectTimerEnabledCheck();//타이머를 돌린다.
+            if (effectTimer.Enabled)
+            {
+                EffectAnimateUpdate();//콤보박스를 다음 프레임으로 넘긴다
+            }
+        }
+
+        public void EffectTimerEnabledCheck()
+        {
+            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
+            foreach (var lys in effectForm.EffectLayerGroup)
+            {
+                switch ((int)(lys.Key / 10000))
+                {
+                    case 100:
+                        Hatcode = lys.Key;
+                        break;
+                    case 101:
+                        FaceCode = lys.Key;
+                        break;
+                    case 105:
+                        LongCoatCode = lys.Key;
+                        break;
+                    case 107:
+                        ShoesCode = lys.Key;
+                        break;
+                    case 110:
+                        CapeCode = lys.Key;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            if (
+                (effectForm.EffectLayerGroup.ContainsKey(Hatcode) && effectForm.EffectLayerGroup[Hatcode].animated) ||
+                (effectForm.EffectLayerGroup.ContainsKey(FaceCode) && effectForm.EffectLayerGroup[FaceCode].animated) ||
+                (effectForm.EffectLayerGroup.ContainsKey(LongCoatCode) && effectForm.EffectLayerGroup[LongCoatCode].animated) ||
+                (effectForm.EffectLayerGroup.ContainsKey(ShoesCode) && effectForm.EffectLayerGroup[ShoesCode].animated) ||
+                (effectForm.EffectLayerGroup.ContainsKey(CapeCode) && effectForm.EffectLayerGroup[CapeCode].animated) 
+                )
+            {
+                if (!this.effectTimer.Enabled)
+                {
+                    this.effectTimer.Interval = 1;//미싫행중이면 타이머 가동후 즉시 tick이벤트 실시.
+                    this.effectTimer.Start();
+                }
+            }
+            else
+            {
+                EffectAnimateStop();
+            }
+        }
+
+        private void EffectAnimateStop()
+        {
+            effectForm.AnimateAllStop();
+
+            this.effectTimer.Stop();
+        }
+        private void AnimateUpdate()//콤보박스를 넘겨서 다음걸로 넘어가게 하기
         {
             this.SuspendUpdateDisplay();
 
-            if (this.animator.BodyDelay == 0 && FindNextFrame(cmbBodyFrame))
+            if (this.animator.BodyDelay == 0 && FindNextFrame(cmbBodyFrame))//콤보박스를 다음걸로 넘김
             {
                 this.animator.BodyDelay = (int)(cmbBodyFrame.SelectedItem as ComboItem).Tag;
             }
@@ -844,10 +1255,10 @@ namespace WzComparerR2.Avatar.UI
 
         private void AnimateStart()
         {
-            TimerEnabledCheck();
+            TimerEnabledCheck();//타이머를 돌린다.
             if (timer1.Enabled)
             {
-                AnimateUpdate();
+                AnimateUpdate();//콤보박스를 다음 프레임으로 넘긴다
             }
         }
 
@@ -857,7 +1268,7 @@ namespace WzComparerR2.Avatar.UI
             {
                 if (!this.timer1.Enabled)
                 {
-                    this.timer1.Interval = 1;
+                    this.timer1.Interval = 1;//미싫행중이면 타이머 가동후 즉시 tick이벤트 실시.
                     this.timer1.Start();
                 }
             }
@@ -872,8 +1283,27 @@ namespace WzComparerR2.Avatar.UI
             chkBodyPlay.Checked = false;
             chkEmotionPlay.Checked = false;
             chkTamingPlay.Checked = false;
+
             this.timer1.Stop();
         }
+
+        private EffectForm.EffectLayer FindNextFrameE(EffectForm.EffectLayer eLayer)
+        {
+            int delay = 0;
+            if (eLayer.delays != null)
+            {
+                int i = eLayer.currentFrame;
+                i = (++i) % eLayer.delays.Length;
+                delay = eLayer.delays[i];
+                if (delay > 0)
+                {
+                    eLayer.currentFrame = i;
+                }
+            }
+            return eLayer;
+
+        }
+        
 
         private bool FindNextFrame(ComboBoxEx cmbFrames)
         {
@@ -1055,12 +1485,98 @@ namespace WzComparerR2.Avatar.UI
 
             return null;
         }
+        public class EffectAnimator
+        {
+            private int[] EffectDelays;
+            public int NextFrameDelay { get; private set; }
+            public EffectAnimator()
+            {
+                this.EffectDelays = new int[5] { -1, -1, -1, -1, -1 };
+            }
 
+            public int HatDelay//모자 100
+            {
+                get { return this.EffectDelays[0]; }
+                set
+                {
+                    this.EffectDelays[0] = value;
+                    Update();
+                }
+            }
+
+            public int FaceDelay//얼굴장식 101
+            {
+                get { return this.EffectDelays[1]; }
+                set
+                {
+                    this.EffectDelays[1] = value;
+                    Update();
+                }
+            }
+
+
+
+            public int LongCoatDelay //한벌옷 105
+            {
+                get { return this.EffectDelays[2]; }
+                set
+                {
+                    this.EffectDelays[2] = value;
+                    Update();
+                }
+            }
+
+            public int ShoesDelay //신발 107
+            {
+                get { return this.EffectDelays[3]; }
+                set
+                {
+                    this.EffectDelays[3] = value;
+                    Update();
+                }
+            }
+
+            public int CapeDelay //망토 110
+            {
+                get { return this.EffectDelays[4]; }
+                set
+                {
+                    this.EffectDelays[4] = value;
+                    Update();
+                }
+            }
+
+            public void Elapse(int millisecond)
+            {
+                //밀리초마다 실행되며, millisecond를 받아서 시간을 체크하는 용도.
+                for (int i = 0; i < EffectDelays.Length; i++)
+                {
+                    if (EffectDelays[i] >= 0)
+                    {
+                        EffectDelays[i] = EffectDelays[i] > millisecond ? (EffectDelays[i] - millisecond) : 0;
+                    }
+                }
+            }
+
+            private void Update()//타이머 다음 딜레이 시간을 정하는 함수
+            {
+                int nextFrame = 0;
+                foreach (int delay in this.EffectDelays)
+                {
+                    if (delay > 0)
+                    {
+                        nextFrame = nextFrame <= 0 ? delay : Math.Min(nextFrame, delay);
+                    }
+                }
+                this.NextFrameDelay = nextFrame;
+            }
+
+        }
         private class Animator
         {
             public Animator()
             {
-                this.delays = new int[3] { -1, -1, -1 };
+                this.delays = new int[3] { -1, -1, -1};
             }
 
             private int[] delays;
@@ -1097,8 +1613,10 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
 
+
             public void Elapse(int millisecond)
             {
+                //밀리초마다 실행되며, millisecond를 받아서 시간을 체크하는 용도.
                 for (int i = 0; i < delays.Length; i++)
                 {
                     if (delays[i] >= 0)
@@ -1108,7 +1626,7 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
 
-            private void Update()
+            private void Update()//타이머 다음 딜레이 시간을 정하는 함수
             {
                 int nextFrame = 0;
                 foreach (int delay in this.delays)
@@ -1135,6 +1653,13 @@ namespace WzComparerR2.Avatar.UI
         private void btnExport_Click(object sender, EventArgs e)
         {
             ExportAvatar(sender, e, true);
+        }
+
+        private void btnEffect_Click(object sender, EventArgs e)
+        {
+            //Effect(아이템이펙트)
+            effectForm.Show();
+            effectForm.Activate();
         }
 
         private void ExportAvatar(object sender, EventArgs e, bool all)
@@ -1175,7 +1700,16 @@ namespace WzComparerR2.Avatar.UI
 
             if (!all && !(this.chkBodyPlay.Checked || this.chkTamingPlay.Checked))
             {
-                var bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame);
+                Bone bone;
+                if(effectStruct.Count > 0)
+                {
+                    bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame, this.effectStruct, AvatarMixHair);
+                }
+                else
+                {
+                    bone = avatar.CreateFrame(bodyFrame, emoFrame, tamingFrame,null, AvatarMixHair);
+                }
+                
                 var bmp = avatar.DrawFrame(bone);
 
                 string pngFileName = "avatar"
@@ -1302,27 +1836,220 @@ namespace WzComparerR2.Avatar.UI
             var actionFrames = avatar.GetActionFrames(avatar.ActionName);
             var faceFrames = avatar.GetFaceFrames(avatar.EmotionName);
             var tamingFrames = avatar.GetTamingFrames(avatar.TamingActionName);
+            int HatCode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
+            int HatMaxFrame = 0, FaceMaxFrame = 0, LongCoatMaxFrame = 0, ShoesMaxFrame = 0, CapeMaxFrame = 0;
+            foreach (var lys in effectForm.EffectLayerGroup)
+            {
+                switch ((int)(lys.Key / 10000))
+                {
+                    case 100:
+                        HatCode = lys.Key;
+                        HatMaxFrame = lys.Value.delays.Length;
+                        break;
+                    case 101:
+                        FaceCode = lys.Key;
+                        FaceMaxFrame = lys.Value.delays.Length;
+                        break;
+                    case 105:
+                        LongCoatCode = lys.Key;
+                        LongCoatMaxFrame = lys.Value.delays.Length;
+                        break;
+                    case 107:
+                        ShoesCode = lys.Key;
+                        ShoesMaxFrame = lys.Value.delays.Length;
+                        break;
+                    case 110:
+                        CapeCode = lys.Key;
+                        CapeMaxFrame = lys.Value.delays.Length;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            int tp = 0;
             if (emoFrame <= -1 || emoFrame >= faceFrames.Length)
             {
                 return;
             }
-            
             foreach (var frame in string.IsNullOrEmpty(avatar.TamingActionName) ? actionFrames : tamingFrames)
             {
+                
                 if (frame.Delay != 0)
                 {
-                    var bone = string.IsNullOrEmpty(avatar.TamingActionName) ? avatar.CreateFrame(frame, faceFrames[emoFrame], null) : avatar.CreateFrame(actionFrames[bodyFrame], faceFrames[emoFrame], frame);
+                    if (HatMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(HatCode, tp%HatMaxFrame);
+                    }
+                    if (FaceMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(FaceCode, tp%FaceMaxFrame);
+                    }
+                    if (LongCoatMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(LongCoatCode, tp%LongCoatMaxFrame);
+                    }
+                    if (ShoesMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(ShoesCode, tp%ShoesMaxFrame);
+                    }
+                    if (CapeMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(CapeCode, tp%CapeMaxFrame);
+                    }
+                    Bone bone;
+                    if (effectStruct.Count > 0)
+                    {
+                        bone = string.IsNullOrEmpty(avatar.TamingActionName) ? avatar.CreateFrame(frame, faceFrames[emoFrame], null, effectStruct, AvatarMixHair) : avatar.CreateFrame(actionFrames[bodyFrame], faceFrames[emoFrame], frame, effectStruct, AvatarMixHair);
+                    }
+                    else
+                    {
+                        bone = string.IsNullOrEmpty(avatar.TamingActionName) ? avatar.CreateFrame(frame, faceFrames[emoFrame], null, null, AvatarMixHair) : avatar.CreateFrame(actionFrames[bodyFrame], faceFrames[emoFrame], frame, null, AvatarMixHair);
+                    }
                     var bmp = avatar.DrawFrame(bone);
 
                     Point pos = bmp.OpOrigin;
                     pos.Offset(frame.Flip ? new Point(-frame.Move.X, frame.Move.Y) : frame.Move);
                     GifFrame f = new GifFrame(bmp.Bitmap, new Point(-pos.X, -pos.Y), Math.Abs(frame.Delay));
                     gif.Frames.Add(f);
+                    tp+=1;
                 }
             }
 
             GifEncoder enc = AnimateEncoderFactory.CreateEncoder(fileName, gif.GetRect().Width, gif.GetRect().Height, config);
             gif.SaveGif(enc, fileName, Color.Transparent);
         }
+
+        //마개조
+        public void FillCmbEffect(int itemcode)//자세/선택한 아이템이 바뀌면 이펙트 번호 다시 들고와야함.
+        {
+            //아이템 이름 바꾸기
+            var stringLinker = this.PluginEntry.Context.DefaultStringLinker;
+            StringResult sr;
+            string itemname = "";
+            Wz_Node searchNode = null;
+            Wz_Node FrameNode = null;
+            string Action = "default";
+            for(int i = 0; i < avatar.Parts.Length; i++)
+            {
+                if(avatar.Parts[i] != null)
+                {
+                    if((avatar.Parts[i] != null) && (avatar.Parts[i].ID.Value == itemcode))
+                    {
+                        searchNode = avatar.Parts[i].ItemEff;
+                        if (stringLinker.StringEqp.TryGetValue(avatar.Parts[i].ID.Value, out sr))
+                        {
+                            itemname = sr.Name;
+                        }
+                        break;
+                    }
+                }
+            }
+            /*
+            foreach (var pts in avatar.Parts)
+            {
+                if(pts != null)
+                {
+                    if ((pts.ItemEff != null) && (pts.ID.Value == itemcode))
+                    {
+                        searchNode = pts.ItemEff;
+                        if (stringLinker.StringEqp.TryGetValue(pts.ID.Value, out sr))
+                        {
+                            itemname = sr.Name;
+                        }
+                        break;
+                    }
+                }
+            }
+            */
+            effectForm.ItemDescBox.Text = itemcode.ToString() + " : " + itemname;
+            //이펙트 번호 들고 오기
+            var oldSelection = Convert.ToInt32(effectForm.EffectComboBox.SelectedItem);
+            effectForm.EffectComboBox.Items.Clear();
+            if (searchNode != null)
+            {
+                Action = effectForm.EffectTextBox.Text;
+                if(string.IsNullOrEmpty(Action))
+                {
+                    Action = "default";
+                }
+                //자식 노드 찾기
+                FrameNode = searchNode.FindNodeByPath(Action);
+                if(FrameNode == null)
+                {
+                    FrameNode = searchNode.FindNodeByPath("default");
+                }
+                foreach (var childnode in FrameNode.Nodes)
+                {
+                    if(int.TryParse(childnode.Text,out int frameNum))
+                    {
+                        effectForm.EffectComboBox.Items.Add(frameNum.ToString());
+                    }
+                }
+                EffectForm.EffectLayer eLayer;
+                eLayer = effectForm.EffectLayerGroup[itemcode];
+                eLayer.delays = FindEffectDelay(FrameNode);
+                eLayer.currentFrame = 0;
+                effectForm.EffectLayerGroup[itemcode] = eLayer;
+                //effectForm.effectDelayList.Add(FindEffectDelay(FrameNode));
+            }
+            effectForm.EffectComboBox.SelectedItem = 0;
+        }
+
+        public int[] FindEffectDelay(Wz_Node targetNode) //이펙트에서 default, walk1 이런 노드를 받아서 돌려주는거.
+        {
+            int framecount = targetNode.Nodes.Count;
+            List<int> frameList = new List<int>(new int[framecount]);
+            Wz_Node delayNode;
+            foreach (var childnode in targetNode.Nodes)
+            {
+                if (int.TryParse(childnode.Text, out int frameNum))
+                {
+                    delayNode = childnode.FindNodeByPath("delay");
+                    if(delayNode == null)
+                    {
+                        frameList[frameNum] = 100;
+                    }
+                    else
+                    {
+                        frameList[frameNum] = Convert.ToInt32(delayNode.Value);
+                    }
+                }
+            }
+            frameList.RemoveAll(frms => frms == 0);
+            return frameList.ToArray();
+        }
+        public void FillEffectListbox()//리스트박스 채우기
+        {
+            effectForm.ItemEffectListBox1.Items.Clear();
+            foreach(var pts in avatar.Parts)
+            {
+                if((pts!=null) && pts.Visible && (pts.ItemEff!=null))
+                {
+                    effectForm.ItemEffectListBox1.Items.Add(pts.ID.Value);
+                }
+            }
+        }
+
+        public void ChangeEffectStruct(int itemcode, int Frame)//그 아이템의 프레임 바꾸는 함수
+        {
+            foreach(EffectStruction es in effectStruct)
+            {
+                if(es.itemcode == itemcode)
+                {
+                    es.frame = Frame;
+                    break;
+                }
+            }
+        }
+
+        public void ChangeMixHair(int colorcode, int opacity)
+        {
+            AvatarMixHair.MixHairColor = colorcode;
+            AvatarMixHair.MixHairOpacity = opacity;
+            UpdateDisplay();
+        }
+
+
     }
 }

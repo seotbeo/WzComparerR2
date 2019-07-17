@@ -92,7 +92,7 @@ namespace WzComparerR2.CharaSim
         {
             if (LoadedCommoditiesBySN.Count == 0 && LoadedCommoditiesByItemId.Count == 0)
             {
-                LoadCommodities();
+                LoadExclusiveEquips();
             }
         }
 

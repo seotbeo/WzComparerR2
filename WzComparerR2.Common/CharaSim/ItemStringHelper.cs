@@ -461,7 +461,7 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.pathOfAbyss: return GetExtraJobReqString(155);
 
-                case GearType.fanPendulum: return GetExtraJobReqString(164);
+                case GearType.fanPendulum: return "호영 직업군 착용 가능";
 
                 default: return null;
             }
@@ -496,7 +496,6 @@ namespace WzComparerR2.CharaSim
                 case 142: return "키네시스 착용 가능";
                 case 152: return "일리움 착용 가능";
                 case 155: return "아크 착용 가능";
-                case 164: return "호영 직업군 착용 가능";
                 default: return null;
             }
         }

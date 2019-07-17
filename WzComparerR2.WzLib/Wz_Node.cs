@@ -482,9 +482,9 @@ namespace WzComparerR2.WzLib
         }
 
         /// <summary>
-        /// 搜索node所属的wz_file，若搜索不到则返回null。
+        /// Search for the wz_file to which the node belongs. If the search fails, it returns null.
         /// </summary>
-        /// <param Name="node">要搜索的wznode。</param>
+        /// <param Name="node">The wznode to search for.</param>
         /// <returns></returns>
         public static Wz_File GetNodeWzFile(this Wz_Node node)
         {
