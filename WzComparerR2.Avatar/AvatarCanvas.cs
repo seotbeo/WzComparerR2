@@ -614,11 +614,13 @@ namespace WzComparerR2.Avatar
 
         public Bone CreateFrame(ActionFrame bodyAction, ActionFrame faceAction, ActionFrame tamingAction, List<EffectStruction> efs = null, MixHairInfo mixHair = null)
         {
-            //Get all parts
+           //Get all parts
             Wz_Node[] playerNodes = LinkPlayerParts(bodyAction, faceAction);//노드를 갖고옴.
             Wz_Node[] tamingNodes = LinkTamingParts(tamingAction);
             //마개조
             Wz_Node[] EffectNodes = LinkEffectParts(bodyAction, efs, mixHair);//bodyAction을 따라감.
+
+
             //根骨骼 作为角色原点
             Bone bodyRoot = new Bone("@root");
             bodyRoot.Position = Point.Empty;
@@ -772,7 +774,7 @@ namespace WzComparerR2.Avatar
                                 var zIndex = zNode.GetValueEx<int?>(null);
                                 if (zIndex != null)
                                 {
-                                    skin.ZIndex = zIndex.Value;//z가 int이면 여기로
+                                    skin.ZIndex = zIndex.Value * 2;//z가 int이면 여기로
                                 }
                                 else
                                 {
@@ -830,7 +832,7 @@ namespace WzComparerR2.Avatar
                         var zIndex = zNode.GetValueEx<int?>(null);
                         if (zIndex != null)
                         {
-                            skin.ZIndex = zIndex.Value;//z가 int이면 여기로
+                            skin.ZIndex = zIndex.Value * 2;//z가 int이면 여기로
                         }
                         else
                         {
@@ -1156,10 +1158,10 @@ namespace WzComparerR2.Avatar
                     //z값 정수로 책정. 값이 작을수록 앞으로나감.
                     if (!string.IsNullOrEmpty(skin.Z))
                     {
-                        layer.ZIndex = this.ZMap.IndexOf(skin.Z);
+                        layer.ZIndex = this.ZMap.IndexOf(skin.Z) * 2;
                         if (layer.ZIndex < 0)
                         {
-                            layer.ZIndex = this.ZMap.Count;
+                            layer.ZIndex = this.ZMap.Count * 2;
                         }
                         layer.ZIndex = layer.ZIndex - skin.ZIndex;
                            
@@ -1167,7 +1169,7 @@ namespace WzComparerR2.Avatar
                     else
                     {
                         //ItemEff.img애들은 여기로 오게 해야함.
-                        layer.ZIndex = (skin.ZIndex < 0) ? (this.ZMap.Count - skin.ZIndex) : (-1 - skin.ZIndex);
+                        layer.ZIndex = (skin.ZIndex < 0) ? (this.ZMap.Count * 2 - skin.ZIndex * 2) : (-2 - skin.ZIndex * 2);
                     }
                     layers.Add(layer);
                 }
