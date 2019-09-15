@@ -26,6 +26,7 @@ namespace WzComparerR2.Avatar
             var tabCtrl = f.GetTabPanel();
             Context.AddTab(f.Text, tabCtrl);
             Context.SelectedNode1Changed += f.OnSelectedNode1Changed;
+            Context.SelectedNode2Changed += f.OnSelectedNode2Changed;
             Context.WzClosing += f.OnWzClosing;
             this.Tab = tabCtrl.TabItem;
         }

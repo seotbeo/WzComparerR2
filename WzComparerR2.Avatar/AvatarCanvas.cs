@@ -18,7 +18,7 @@ namespace WzComparerR2.Avatar
             this.Actions = new List<Action>();
             this.Emotions = new List<string>();
             this.TamingActions = new List<string>();
-            this.Parts = new AvatarPart[18];
+            this.Parts = new AvatarPart[19];
             this.EarType = 0;
             this.WeaponIndex = 0;
         }
@@ -292,6 +292,10 @@ namespace WzComparerR2.Avatar
                     if (Gear.IsWeapon(gearType))
                     {
                         this.Weapon = part;
+                    }
+                    if (part.ItemEff != null)
+                    {
+                        this.Effect = part;
                     }
                     break;
             }
@@ -1282,7 +1286,7 @@ namespace WzComparerR2.Avatar
                     }
                 }
                 //Another
-                for (int i = 4; i < 16; i++)
+                for (int i = 4; i < Parts.Length; i++)
                 {
                     var part = this.Parts[i];
                     ActionFrame CloneAction = bodyAction;
@@ -1683,6 +1687,12 @@ namespace WzComparerR2.Avatar
         {
             get { return this.Parts[17]; }
             set { this.Parts[17] = value; }
+        }
+
+        public AvatarPart Effect
+        {
+            get { return this.Parts[18]; }
+            set { this.Parts[18] = value; }
         }
 
         #endregion

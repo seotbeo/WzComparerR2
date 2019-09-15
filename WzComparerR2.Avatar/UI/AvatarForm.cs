@@ -127,6 +127,33 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
+        public void OnSelectedNode2Changed(object sender, WzNodeEventArgs e)
+        {
+            if (PluginEntry.Context.SelectedTab != PluginEntry.Tab || e.Node == null
+                || this.btnLock.Checked)
+            {
+                return;
+            }
+
+            Wz_File file = e.Node.GetNodeWzFile();
+            if (file == null)
+            {
+                return;
+            }
+
+            switch (file.Type)
+            {
+                case Wz_Type.Item:
+                    if (Regex.IsMatch(e.Node.FullPathToFile, @"Item\\Cash\\0501\.img\\\d+"))
+                    {
+                        this.SuspendUpdateDisplay();
+                        LoadPart(e.Node);
+                        this.ResumeUpdateDisplay();
+                    }
+                    break;
+            }
+        }
+
         public void OnWzClosing(object sender, WzStructureEventArgs e)
         {
             bool hasChanged = false;
@@ -545,7 +572,7 @@ namespace WzComparerR2.Avatar.UI
                     StringResult sr;
                     string text;
                     string itemname = "";
-                    if (part.ID != null && stringLinker.StringEqp.TryGetValue(part.ID.Value, out sr))
+                    if (part.ID != null && (stringLinker.StringEqp.TryGetValue(part.ID.Value, out sr) || stringLinker.StringItem.TryGetValue(part.ID.Value, out sr)))
                     {
                         itemname = sr.Name;
                         text = string.Format("{0}\r\n{1}", sr.Name, part.ID);
@@ -994,6 +1021,10 @@ namespace WzComparerR2.Avatar.UI
                 case 110:
                     effectanimator.CapeDelay = -1;
                     break;
+
+                case 501:
+                    effectanimator.EffectDelay = -1;
+                    break;
             }
         }
         public void setEffectDelay(int itemcode)
@@ -1018,6 +1049,10 @@ namespace WzComparerR2.Avatar.UI
 
                 case 110:
                     effectanimator.CapeDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
+                    break;
+
+                case 501:
+                    effectanimator.EffectDelay = effectForm.EffectLayerGroup[itemcode].delays[effectForm.EffectLayerGroup[itemcode].currentFrame];
                     break;
             }
         }
@@ -1110,7 +1145,7 @@ namespace WzComparerR2.Avatar.UI
         }
         private void EffectAnimateUpdate()//EffectLayer을 넘겨서 다음걸로 넘어가게 하기
         {
-            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
+            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0, EffectCode = 0;
             foreach (var lys in effectForm.EffectLayerGroup)
             {
                 switch ((int)(lys.Key/10000))
@@ -1129,6 +1164,9 @@ namespace WzComparerR2.Avatar.UI
                         break;
                     case 110:
                         CapeCode = lys.Key;
+                        break;
+                    case 501:
+                        EffectCode = lys.Key;
                         break;
 
                     default:
@@ -1166,6 +1204,12 @@ namespace WzComparerR2.Avatar.UI
                 this.effectanimator.CapeDelay = effectForm.EffectLayerGroup[CapeCode].delays[effectForm.EffectLayerGroup[CapeCode].currentFrame];
                 ChangeEffectStruct(CapeCode, effectForm.EffectLayerGroup[CapeCode].currentFrame);
             }
+            if (this.effectanimator.EffectDelay == 0 && effectForm.EffectLayerGroup.ContainsKey(EffectCode))
+            {
+                effectForm.EffectLayerGroup[EffectCode] = FindNextFrameE(effectForm.EffectLayerGroup[EffectCode]);
+                this.effectanimator.EffectDelay = effectForm.EffectLayerGroup[EffectCode].delays[effectForm.EffectLayerGroup[EffectCode].currentFrame];
+                ChangeEffectStruct(EffectCode, effectForm.EffectLayerGroup[EffectCode].currentFrame);
+            }
             this.ResumeUpdateDisplay();
 
         }
@@ -1180,7 +1224,7 @@ namespace WzComparerR2.Avatar.UI
 
         public void EffectTimerEnabledCheck()
         {
-            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
+            int Hatcode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0, EffectCode = 0;
             foreach (var lys in effectForm.EffectLayerGroup)
             {
                 switch ((int)(lys.Key / 10000))
@@ -1200,6 +1244,9 @@ namespace WzComparerR2.Avatar.UI
                     case 110:
                         CapeCode = lys.Key;
                         break;
+                    case 501:
+                        EffectCode = lys.Key;
+                        break;
 
                     default:
                         break;
@@ -1210,7 +1257,8 @@ namespace WzComparerR2.Avatar.UI
                 (effectForm.EffectLayerGroup.ContainsKey(FaceCode) && effectForm.EffectLayerGroup[FaceCode].animated) ||
                 (effectForm.EffectLayerGroup.ContainsKey(LongCoatCode) && effectForm.EffectLayerGroup[LongCoatCode].animated) ||
                 (effectForm.EffectLayerGroup.ContainsKey(ShoesCode) && effectForm.EffectLayerGroup[ShoesCode].animated) ||
-                (effectForm.EffectLayerGroup.ContainsKey(CapeCode) && effectForm.EffectLayerGroup[CapeCode].animated) 
+                (effectForm.EffectLayerGroup.ContainsKey(CapeCode) && effectForm.EffectLayerGroup[CapeCode].animated) ||
+                (effectForm.EffectLayerGroup.ContainsKey(EffectCode) && effectForm.EffectLayerGroup[EffectCode].animated)
                 )
             {
                 if (!this.effectTimer.Enabled)
@@ -1395,6 +1443,13 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
+            var itemWz = PluginManager.FindWz(Wz_Type.Item);
+            if (itemWz == null)
+            {
+                MessageBoxEx.Show("Item.wz 파일을 열 수 없습니다.", "오류");
+                return;
+            }
+
             //试图初始化
             if (!this.inited && !this.AvatarInit())
             {
@@ -1414,7 +1469,7 @@ namespace WzComparerR2.Avatar.UI
                 int gearID;
                 if (Int32.TryParse(m.Result("$1"), out gearID))
                 {
-                    Wz_Node imgNode = FindNodeByGearID(characWz, gearID);
+                    Wz_Node imgNode = FindNodeByGearID(characWz, itemWz, gearID);
                     if (imgNode != null)
                     {
                         var part = this.avatar.AddPart(imgNode);
@@ -1445,9 +1500,10 @@ namespace WzComparerR2.Avatar.UI
 
         }
 
-        private Wz_Node FindNodeByGearID(Wz_Node characWz, int id)
+        private Wz_Node FindNodeByGearID(Wz_Node characWz, Wz_Node itemWz, int id)
         {
             string imgName = id.ToString("D8") + ".img";
+            string nodeName = id.ToString("D8");
             Wz_Node imgNode = null;
 
             foreach (var node1 in characWz.Nodes)
@@ -1474,6 +1530,14 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
 
+            foreach (var node in itemWz.FindNodeByPath(@"Cash\0501.img", true).Nodes)
+            {
+                if (node.Text == nodeName)
+                {
+                    return node;
+                }
+            }
+
             if (imgNode != null)
             {
                 Wz_Image img = imgNode.GetValue<Wz_Image>();
@@ -1491,7 +1555,7 @@ namespace WzComparerR2.Avatar.UI
             public int NextFrameDelay { get; private set; }
             public EffectAnimator()
             {
-                this.EffectDelays = new int[5] { -1, -1, -1, -1, -1 };
+                this.EffectDelays = new int[6] { -1, -1, -1, -1, -1, -1 };
             }
 
             public int HatDelay//모자 100
@@ -1542,6 +1606,16 @@ namespace WzComparerR2.Avatar.UI
                 set
                 {
                     this.EffectDelays[4] = value;
+                    Update();
+                }
+            }
+
+            public int EffectDelay
+            {
+                get { return this.EffectDelays[5]; }
+                set
+                {
+                    this.EffectDelays[5] = value;
                     Update();
                 }
             }
@@ -1836,8 +1910,8 @@ namespace WzComparerR2.Avatar.UI
             var actionFrames = avatar.GetActionFrames(avatar.ActionName);
             var faceFrames = avatar.GetFaceFrames(avatar.EmotionName);
             var tamingFrames = avatar.GetTamingFrames(avatar.TamingActionName);
-            int HatCode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0;
-            int HatMaxFrame = 0, FaceMaxFrame = 0, LongCoatMaxFrame = 0, ShoesMaxFrame = 0, CapeMaxFrame = 0;
+            int HatCode = 0, FaceCode = 0, LongCoatCode = 0, ShoesCode = 0, CapeCode = 0, EffectCode = 0;
+            int HatMaxFrame = 0, FaceMaxFrame = 0, LongCoatMaxFrame = 0, ShoesMaxFrame = 0, CapeMaxFrame = 0, EffectMaxFrame = 0;
             foreach (var lys in effectForm.EffectLayerGroup)
             {
                 switch ((int)(lys.Key / 10000))
@@ -1861,6 +1935,10 @@ namespace WzComparerR2.Avatar.UI
                     case 110:
                         CapeCode = lys.Key;
                         CapeMaxFrame = lys.Value.delays.Length;
+                        break;
+                    case 501:
+                        EffectCode = lys.Key;
+                        EffectMaxFrame = lys.Value.delays.Length;
                         break;
 
                     default:
@@ -1896,6 +1974,10 @@ namespace WzComparerR2.Avatar.UI
                     if (CapeMaxFrame > 0)
                     {
                         ChangeEffectStruct(CapeCode, tp%CapeMaxFrame);
+                    }
+                    if (EffectMaxFrame > 0)
+                    {
+                        ChangeEffectStruct(EffectCode, tp % EffectMaxFrame);
                     }
                     Bone bone;
                     if (effectStruct.Count > 0)
@@ -1937,7 +2019,7 @@ namespace WzComparerR2.Avatar.UI
                     if((avatar.Parts[i] != null) && (avatar.Parts[i].ID.Value == itemcode))
                     {
                         searchNode = avatar.Parts[i].ItemEff;
-                        if (stringLinker.StringEqp.TryGetValue(avatar.Parts[i].ID.Value, out sr))
+                        if (stringLinker.StringEqp.TryGetValue(avatar.Parts[i].ID.Value, out sr) || stringLinker.StringItem.TryGetValue(avatar.Parts[i].ID.Value, out sr))
                         {
                             itemname = sr.Name;
                         }

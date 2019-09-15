@@ -37,7 +37,7 @@ namespace WzComparerR2.Avatar
 
         private void LoadInfo()
         {
-            var m = Regex.Match(Node.Text, @"^(\d+)\.img$");
+            var m = Regex.Match(Node.Text, @"^(\d+)(\.img)?$");
             if (m.Success)
             {
                 this.ID = Convert.ToInt32(m.Result("$1"));
@@ -66,6 +66,11 @@ namespace WzComparerR2.Avatar
 
         private void LoadEffectInfo()
         {
+            if (this.Node.Nodes["effect"] != null)
+            {
+                ItemEff = this.Node.Nodes["effect"];
+                return;
+            }
             Wz_Node itemEff = PluginBase.PluginManager.FindWz("Effect\\ItemEff.img");
             if(itemEff == null)
             {
