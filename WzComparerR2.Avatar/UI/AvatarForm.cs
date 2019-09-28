@@ -612,10 +612,13 @@ namespace WzComparerR2.Avatar.UI
                                 {
                                     FrameNode = searchNode.FindNodeByPath("default");
                                 }
-                                eLayer.delays=(FindEffectDelay(FrameNode));
-                                eLayer.currentFrame = 0;
-                                eLayer.animated = false;
-                                effectForm.EffectLayerGroup.Add(part.ID.Value,eLayer);//List Test
+                                if (FrameNode != null)
+                                {
+                                    eLayer.delays=(FindEffectDelay(FrameNode));
+                                    eLayer.currentFrame = 0;
+                                    eLayer.animated = false;
+                                    effectForm.EffectLayerGroup.Add(part.ID.Value,eLayer);//List Test
+                                }
                             }
                         }
                         
