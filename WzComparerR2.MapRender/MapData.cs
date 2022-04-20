@@ -304,15 +304,24 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private string FindGraphNum(int? mapID)
+        private string GetGraphNum(int? mapID)
         {
             var ftwo = int.Parse(mapID.ToString().Substring(0, 2));
-            if (ftwo >= 99) return "99";
+            if (ftwo == 99) return "99";
+            if (ftwo == 80) return "10";
             if (ftwo >= 92) return "92";
             if (ftwo >= 91) return "91";
             if (ftwo >= 90) return "90";
+            if (ftwo >= 87) return "87";
+            if (ftwo >= 86) return "86";
+            if (ftwo >= 74) return "74";
+            if (ftwo >= 70) return "70";
             if (ftwo >= 68) return "68";
+            if (ftwo >= 61) return "61";
             if (ftwo >= 60) return "60";
+            if (ftwo >= 55) return "55";
+            if (ftwo >= 54) return "54";
+            if (ftwo >= 51) return "51";
             if (ftwo >= 50) return "50";
             if (ftwo >= 45) return "45";
             if (ftwo >= 40) return "40";
@@ -340,7 +349,7 @@ namespace WzComparerR2.MapRender
         {
             int? mapID = this.ID;
             var portalTooltipNode = PluginManager.FindWz("String/ToolTipHelp.img/PortalTooltip/" + mapID); 
-            var scMapNode = PluginManager.FindWz("Map/Map/Graph.img/" + FindGraphNum(mapID) + "/" + mapID + "/portal");
+            var graphMapNode = PluginManager.FindWz("Map/Map/Graph.img/" + GetGraphNum(mapID) + "/" + mapID + "/portal");
 
             foreach (var node in portalNode.Nodes)
             {
@@ -368,22 +377,24 @@ namespace WzComparerR2.MapRender
                         item.Tooltip = tooltip;
                     }
                 }
-                //섣버 - Graph.img에 따른 이동경로 출력
-                List<string> Temp = new List<string>();
-
-                foreach (var scNextMapNode in scMapNode.Nodes)
+                //Graph.img에 따른 이동경로 출력
+                if (graphMapNode != null)
                 {
-                    if (item.Index == scNextMapNode.Nodes["portalNum"].GetValueEx<int>())
+                    List<string> temp = new List<string>();
+
+                    foreach (var graphPortalNode in graphMapNode.Nodes)
                     {
-                        var scdata = scNextMapNode.Nodes["targetMap"].GetValueEx<string>(null);
-                        if (scdata != null)
+                        if (item.Index == graphPortalNode.Nodes["portalNum"].GetValueEx<int>())
                         {
-                            Temp.Add(scdata);
+                            var targetMapID = graphPortalNode.Nodes["targetMap"].GetValueEx<string>(null);
+                            if (targetMapID != null)
+                            {
+                                temp.Add(targetMapID);
+                            }
                         }
                     }
+                    item.GraphTargetMap = temp;
                 }
-                item.Scmap = Temp;
-
                 Scene.Fly.Portal.Slots.Add(item);
             }
         }
