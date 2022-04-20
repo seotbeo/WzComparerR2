@@ -309,6 +309,7 @@ namespace WzComparerR2.MapRender
             var ftwo = int.Parse(mapID.ToString().Substring(0, 2));
             if (ftwo == 99) return "99";
             if (ftwo == 80) return "10";
+            if (ftwo == 12) return "10";
             if (ftwo >= 92) return "92";
             if (ftwo >= 91) return "91";
             if (ftwo >= 90) return "90";
