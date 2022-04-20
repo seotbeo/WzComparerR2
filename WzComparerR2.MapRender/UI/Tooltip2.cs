@@ -213,6 +213,24 @@ namespace WzComparerR2.MapRender.UI
                 sb.Append("스크립트: ").AppendLine(item.Script);
             }
 
+            //섣버 - Graph.img에 따른 이동경로 출력
+            if (!string.IsNullOrEmpty(item.Index.ToString()))
+            {
+                sb.Append("포탈 넘버: ").AppendLine(item.Index.ToString());
+            }
+            
+            sb.Append("스크립트 연결 맵: ");
+            foreach (var scmap in item.Scmap)
+            {
+                sb.Append(scmap);
+                if (scmap != null)
+                {
+                    this.StringLinker?.StringMap.TryGetValue(int.Parse(scmap), out sr);
+                    string toMapName = sr?.Name;
+                    sb.Append("(").Append(sr?.Name ?? "null").Append(")");
+                }
+                sb.AppendLine();
+            }
             sb.Length -= 2;
 
             blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, sb.ToString(), ref current, Color.White, ref size.X));
