@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,6 +8,8 @@ using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
+using WzComparerR2.Comparer;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -30,6 +33,8 @@ namespace WzComparerR2.CharaSimControl
         public bool DisplayCooltimeMSAsSec { get; set; } = true;
         public bool DisplayPermyriadAsPercent { get; set; } = true;
         public bool IsWideMode { get; set; } = true;
+        public bool DoSetDiffColor { get; set; } = false;
+        public Dictionary<string, List<string>> diffSkillTags = new Dictionary<string, List<string>>();
 
         public TooltipRender LinkRidingGearRender { get; set; }
 
@@ -186,11 +191,57 @@ namespace WzComparerR2.CharaSimControl
 
             if (Skill.Level > 0)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                string hStr = null; ;
+                // 스킬 변경점에 초록색 칠하기
+                if (DoSetDiffColor)
                 {
-                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                    ConvertPerM = this.DisplayPermyriadAsPercent
-                });
+                    //code from SummaryParser
+                    string h = null;
+                    if (Skill.PreBBSkill) //用level声明的技能
+                    {
+                        string hs;
+                        if (Skill.Common.TryGetValue("hs", out hs))
+                        {
+                            h = sr[hs];
+                        }
+                        else if (sr.SkillH.Count >= Skill.Level)
+                        {
+                            h = sr.SkillH[Skill.Level - 1];
+                        }
+                    }
+                    else
+                    {
+                        if (sr.SkillH.Count > 0)
+                        {
+                            h = sr.SkillH[0];
+                        }
+                    }
+                    if (diffSkillTags.ContainsKey(Skill.SkillID.ToString()))
+                    {
+                        diffSkillTags[Skill.SkillID.ToString()] = diffSkillTags[Skill.SkillID.ToString()].OrderByDescending(s => s.Length).ToList();
+                        foreach (var tags in diffSkillTags[Skill.SkillID.ToString()])
+                        {
+                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-z0-9])", "#g@" + tags + "$1"));
+                        }
+                        foreach (var tags in diffSkillTags[Skill.SkillID.ToString()])
+                        {
+                            h = (h == null ? null : Regex.Replace(h, "#g@" + tags + @"([^a-z0-9])", "#g#" + tags + "#$1"));
+                        }
+                    }
+                    hStr = SummaryParser.GetSkillSummary(h, Skill.Level, Skill.Common, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent
+                    });
+                }
+                else
+                {
+                    hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent
+                    });
+                }
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
