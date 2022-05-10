@@ -36,6 +36,7 @@ namespace WzComparerR2.Comparer
         public bool OutputAddedImg { get; set; }
         public bool OutputRemovedImg { get; set; }
         public bool EnableDarkMode { get; set; }
+        public bool saveSkillTooltip { get; set; }
         public string StateInfo
         {
             get { return stateInfo; }
@@ -536,7 +537,7 @@ namespace WzComparerR2.Comparer
                 }
                 OnPatchingStateChanged(new Patcher.PatchingEventArgs(null, Patcher.PatchingState.CompareFinished));
             }
-            if (type.ToString() =="String" && TooltipInfo != null)
+            if (saveSkillTooltip && type.ToString() =="String" && TooltipInfo != null)
             {
                 StateInfo = "Skill 변경점 이미지로 출력중...";
                 StateDetail = "";
@@ -555,6 +556,8 @@ namespace WzComparerR2.Comparer
             slOld.Load(stringWzOld, itemWzOld, etcWzOld);
             skillRenderNew.StringLinker = slNew;
             skillRenderOld.StringLinker = slOld;
+            skillRenderNew.ShowObjectID = true;
+            skillRenderOld.ShowObjectID = true;
 
             foreach (var skillID in TooltipInfo)
             {
@@ -698,7 +701,7 @@ namespace WzComparerR2.Comparer
                 count[idx]++;
 
                 // 변경된 스킬 툴팁 출력
-                if (outputDir.Contains("Skill"))
+                if (saveSkillTooltip && outputDir.Contains("Skill"))
                 {
                     if (diff.NodeNew != null)
                     {
@@ -709,7 +712,7 @@ namespace WzComparerR2.Comparer
                         getIDFromSkill(diff.NodeOld);
                     }
                 }
-                if (outputDir.Contains("String"))
+                if (saveSkillTooltip && outputDir.Contains("String"))
                 {
                     if (diff.NodeNew != null)
                     {
@@ -765,7 +768,7 @@ namespace WzComparerR2.Comparer
                     sw.Write("<td>{0}</td>", OutputNodeValue(fullPath, node, 0, outputDir) ?? " ");
                     sw.WriteLine("</tr>");
 
-                    if (outputDir.Contains("Skill")) // 변경된 스킬 툴팁 출력
+                    if (saveSkillTooltip && outputDir.Contains("Skill")) // 변경된 스킬 툴팁 출력
                     {
                         getIDFromSkill(node);
                     }

@@ -409,6 +409,7 @@ namespace WzComparerR2
                             comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                             comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
                             comparer.EnableDarkMode = chkEnableDarkMode.Checked;
+                            comparer.saveSkillTooltip = chkSaveSkillTooltip.Checked;
                             comparer.Comparer.PngComparison = (WzPngComparison)cmbComparePng.SelectedItem;
                             comparer.Comparer.ResolvePngLink = chkResolvePngLink.Checked;
                             comparer.PatchingStateChanged += new EventHandler<PatchingEventArgs>(patcher_PatchingStateChanged);
