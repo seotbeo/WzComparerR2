@@ -580,6 +580,7 @@ namespace WzComparerR2.Comparer
                 Bitmap skillImageOld = null;
                 string skillType = "_삭제";
                 string skillNodePath = int.Parse(skillID) / 10000000 == 8 ? String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 100, skillID) : String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 10000, skillID);
+                if (int.Parse(skillID) / 10000 == 0) skillNodePath = String.Format(@"\000.img\skill\{0:D7}", skillID);
                 int heightNew = 0, heightOld = 0;
                 int width = 0;
 
