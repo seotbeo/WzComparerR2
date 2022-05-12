@@ -649,28 +649,21 @@ namespace WzComparerR2.Comparer
         private void getIDFromSkill(Wz_Node node)
         {
             var tag = node.Text;
-            if (!(tag == "psd" || tag == "origin" || tag == "delay" || tag == "z" || tag == "fix" ||
-                 tag == "isCancelableBuff" || tag == "psdSkill" || tag == "effect0" || tag == "effect" ||
-                 tag == "end" || tag == "loop" || tag == "pre" || tag == "mob" ||
-                 tag == "die" || tag == "hit" || tag == "special" || tag == "special0" ||
-                tag == "_outlink" || tag == "_inlink" || tag == "hash" || int.TryParse(tag, out int i)))
+            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders).*");
+            if (match.Success)
             {
-                Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)");
-                if (match.Success)
+                string skillID = match.Groups[1].ToString();
+                if (!TooltipInfo.Contains(skillID) && skillID != null)
                 {
-                    string skillID = match.Groups[1].ToString();
-                    if (!TooltipInfo.Contains(skillID) && skillID != null)
+                    TooltipInfo.Add(skillID);
+                    diffSkillTags[skillID] = new List<string>();
+                    diffSkillTags[skillID].Add(tag);
+                }
+                else if (TooltipInfo.Contains(skillID) && skillID != null)
+                {
+                    if (!diffSkillTags[skillID].Contains(tag))
                     {
-                        TooltipInfo.Add(skillID);
-                        diffSkillTags[skillID] = new List<string>();
                         diffSkillTags[skillID].Add(tag);
-                    }
-                    else if (TooltipInfo.Contains(skillID) && skillID != null)
-                    {
-                        if (!diffSkillTags[skillID].Contains(tag))
-                        {
-                            diffSkillTags[skillID].Add(tag);
-                        }
                     }
                 }
             }
@@ -679,7 +672,7 @@ namespace WzComparerR2.Comparer
         // String diff 노드에서 스킬 ID 얻기
         private void getIDFromString(Wz_Node node)
         {
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).+");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*");
             if (match.Success)
             {
                 string skillID = match.Groups[1].ToString();
