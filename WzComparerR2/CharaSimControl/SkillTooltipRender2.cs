@@ -35,6 +35,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IsWideMode { get; set; } = true;
         public bool DoSetDiffColor { get; set; } = false;
         public Dictionary<string, List<string>> diffSkillTags = new Dictionary<string, List<string>>();
+        public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
 
@@ -228,6 +229,11 @@ namespace WzComparerR2.CharaSimControl
                             h = (h == null ? null : Regex.Replace(h, "#g@" + tags + @"([^a-z0-9])", "#g#" + tags + "#$1"));
                         }
                     }
+                    if (Skill.SkillID / 100000 == 4000)
+                    {
+                        if (Skill.VSkillValue == 2) Skill.Level = 60;
+                        if (Skill.VSkillValue == 1) Skill.Level = 30;
+                    }
                     hStr = SummaryParser.GetSkillSummary(h, Skill.Level, Skill.Common, SummaryParams.Default, new SkillSummaryOptions
                     {
                         ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
@@ -373,7 +379,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 foreach (string action in Skill.Action)
                 {
-                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action) + " ms#");
+                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action, this.wzNode) + " ms#");
                 }
             }
 

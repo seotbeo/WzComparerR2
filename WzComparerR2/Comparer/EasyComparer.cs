@@ -93,12 +93,6 @@ namespace WzComparerR2.Comparer
 
                 this.wzNew = fileNew.Node;
                 this.wzOld = fileOld.Node;
-                this.stringWzNew = wzNew?.FindNodeByPath("String").GetNodeWzFile();
-                this.itemWzNew = wzNew?.FindNodeByPath("Item").GetNodeWzFile();
-                this.etcWzNew = wzNew?.FindNodeByPath("Etc").GetNodeWzFile();
-                this.stringWzOld = wzOld?.FindNodeByPath("String").GetNodeWzFile();
-                this.itemWzOld = wzOld?.FindNodeByPath("Item").GetNodeWzFile();
-                this.etcWzOld = wzOld?.FindNodeByPath("Etc").GetNodeWzFile();
                 
                 var dictNew = SplitVirtualNode(virtualNodeNew);
                 var dictOld = SplitVirtualNode(virtualNodeOld);
@@ -559,14 +553,25 @@ namespace WzComparerR2.Comparer
             int count = 0;
             int allCount = TooltipInfo.Count;
 
+            this.stringWzNew = wzNew?.FindNodeByPath("String").GetNodeWzFile();
+            this.itemWzNew = wzNew?.FindNodeByPath("Item").GetNodeWzFile();
+            this.etcWzNew = wzNew?.FindNodeByPath("Etc").GetNodeWzFile();
+            this.stringWzOld = wzOld?.FindNodeByPath("String").GetNodeWzFile();
+            this.itemWzOld = wzOld?.FindNodeByPath("Item").GetNodeWzFile();
+            this.etcWzOld = wzOld?.FindNodeByPath("Etc").GetNodeWzFile();
+
             slNew.Load(stringWzNew, itemWzNew, etcWzNew);
             slOld.Load(stringWzOld, itemWzOld, etcWzOld);
             skillRenderNew.StringLinker = slNew;
             skillRenderOld.StringLinker = slOld;
             skillRenderNew.ShowObjectID = true;
-            skillRenderOld.ShowObjectID = true;
+            skillRenderOld.ShowObjectID = true; 
+            skillRenderNew.ShowDelay = true;
+            skillRenderOld.ShowDelay = true;
             skillRenderNew.DoSetDiffColor = true;
             skillRenderOld.DoSetDiffColor = true;
+            skillRenderNew.wzNode = wzNew;
+            skillRenderOld.wzNode = wzOld;
             skillRenderNew.diffSkillTags = this.diffSkillTags;
             skillRenderOld.diffSkillTags = this.diffSkillTags;
 
@@ -649,7 +654,7 @@ namespace WzComparerR2.Comparer
         private void getIDFromSkill(Wz_Node node)
         {
             var tag = node.Text;
-            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action).*");
             if (match.Success)
             {
                 string skillID = match.Groups[1].ToString();

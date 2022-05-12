@@ -62,6 +62,7 @@ namespace WzComparerR2.CharaSim
         public bool CombatOrders { get; set; }
         public bool NotRemoved { get; set; }
         public bool VSkill { get; set; }
+        public int VSkillValue { get; set; }
         public bool TimeLimited { get; set; }
         public Tuple<int, int> RelationSkill { get; set; }
         public bool IsPetAutoBuff { get; set; }
@@ -161,6 +162,7 @@ namespace WzComparerR2.CharaSim
                         break;
                     case "vSkill":
                         skill.VSkill = childNode.GetValue<int>() != 0;
+                        skill.VSkillValue = childNode.GetValue<int>();
                         break;
                     case "timeLimited":
                         skill.TimeLimited = childNode.GetValue<int>() != 0;
