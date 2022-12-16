@@ -222,11 +222,11 @@ namespace WzComparerR2.CharaSimControl
                         diffSkillTags[Skill.SkillID.ToString()] = diffSkillTags[Skill.SkillID.ToString()].OrderByDescending(s => s.Length).ToList();
                         foreach (var tags in diffSkillTags[Skill.SkillID.ToString()])
                         {
-                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-z0-9])", "#g@" + tags + "$1"));
+                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g@" + tags + "$1"));
                         }
                         foreach (var tags in diffSkillTags[Skill.SkillID.ToString()])
                         {
-                            h = (h == null ? null : Regex.Replace(h, "#g@" + tags + @"([^a-z0-9])", "#g#" + tags + "#$1"));
+                            h = (h == null ? null : Regex.Replace(h, "#g@" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
                         }
                     }
                     if (Skill.SkillID / 100000 == 4000)
