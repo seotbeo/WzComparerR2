@@ -695,6 +695,10 @@ namespace WzComparerR2.CharaSim
                 case 531: return "캐논블래스터";
                 case 532: return "캐논마스터";
 
+                case 800:
+                case 900: return "운영자";
+
+
                 case 1000: return "노블레스";
                 case 1100: return "소울마스터(1차)";
                 case 1110: return "소울마스터(2차)";
@@ -787,16 +791,16 @@ namespace WzComparerR2.CharaSim
                 case 3711: return "블래스터(3차)";
                 case 3712: return "블래스터(4차)";
 
-                case 4001: return "剑豪";
-                case 4002: return "阴阳师";
-                case 4100: return "剑豪(1次)";
-                case 4110: return "剑豪(2次)";
-                case 4111: return "剑豪(3次)";
-                case 4112: return "剑豪(4次)";
-                case 4200: return "阴阳师(1次)";
-                case 4210: return "阴阳师(2次)";
-                case 4211: return "阴阳师(3次)";
-                case 4212: return "阴阳师(4次)";
+                case 4001: return "칸나";
+                case 4002: return "칸나";
+                case 4100: return "하야토(1차)";
+                case 4110: return "하야토(2차)";
+                case 4111: return "하야토(3차)";
+                case 4112: return "하야토(4차)";
+                case 4200: return "칸나(1차)";
+                case 4210: return "칸나(2차)";
+                case 4211: return "칸나(3차)";
+                case 4212: return "칸나(4차)";
 
 
                 case 5000: return "미하일";
@@ -827,17 +831,31 @@ namespace WzComparerR2.CharaSim
                 case 6511: return "엔젤릭버스터(3차)";
                 case 6512: return "엔젤릭버스터(4차)";
 
+
+                case 7000: return "어빌리티";
+                case 7100: return "유니온";
+                case 7200: return "몬스터라이프";
+
+
+                case 9100: return "길드";
+                case 9200:
+                case 9201:
+                case 9202:
+                case 9203:
+                case 9204: return "전문기술";
+
+
                 case 10000: return "제로";
                 case 10100: return "제로(1차)";
                 case 10110: return "제로(2차)";
                 case 10111: return "제로(3차)";
                 case 10112: return "제로(4차)";
 
-                case 11000: return "林之灵";
-                case 11200: return "林之灵(1次)";
-                case 11210: return "林之灵(2次)";
-                case 11211: return "林之灵(3次)";
-                case 11212: return "林之灵(4次)";
+                case 11000: return "비스트테이머";
+                case 11200: return "비스트테이머(1차)";
+                case 11210: return "비스트테이머(2차)";
+                case 11211: return "비스트테이머(3차)";
+                case 11212: return "비스트테이머(4차)";
 
                 case 13000: return "핑크빈";
                 case 13001: return "예티";
@@ -853,6 +871,7 @@ namespace WzComparerR2.CharaSim
                 case 15000: return "일리움";
                 case 15001: return "아크";
                 case 15002: return "아델";
+                case 15003: return "칼리";
                 case 15100: return "아델(1차)";
                 case 15110: return "아델(2차)";
                 case 15111: return "아델(3차)";
@@ -861,6 +880,10 @@ namespace WzComparerR2.CharaSim
                 case 15210: return "일리움(2차)";
                 case 15211: return "일리움(3차)";
                 case 15212: return "일리움(4차)";
+                case 15400: return "칼리(1차)";
+                case 15410: return "칼리(2차)";
+                case 15411: return "칼리(3차)";
+                case 15412: return "칼리(4차)";
                 case 15500: return "아크(1차)";
                 case 15510: return "아크(2차)";
                 case 15511: return "아크(3차)";
@@ -876,6 +899,20 @@ namespace WzComparerR2.CharaSim
                 case 16410: return "호영(2차)";
                 case 16411: return "호영(3차)";
                 case 16412: return "호영(4차)";
+
+                case 17000: return "묵현";
+                case 17500: return "묵현(1차)";
+                case 17510: return "묵현(2차)";
+                case 17511: return "묵현(3차)";
+                case 17512: return "묵현(4차)";
+
+
+                case 40000: return "5차";
+                case 40001: return "5차(전사)";
+                case 40002: return "5차(마법사)";
+                case 40003: return "5치(궁수)";
+                case 40004: return "5차(도적)";
+                case 40005: return "5치(해적)";
             }
             return null;
         }
