@@ -295,8 +295,8 @@ namespace WzComparerR2.CharaSim
                 case GearType.petEquip: return "펫장비";
                 case GearType.taming:
                 case GearType.taming2:
-                case GearType.taming3: 
-                case GearType.tamingChair: return "라이딩";
+                case GearType.taming3: return "라이딩";
+                case GearType.tamingChair: return "라이딩의자";
                 case GearType.saddle: return "안장";
                 case GearType.katana: return "武士刀";
                 case GearType.fan: return "折扇";
@@ -361,6 +361,9 @@ namespace WzComparerR2.CharaSim
                 case GearType.weaponBelt: return "웨폰 벨트";
 
                 case GearType.ornament: return "노리개";
+
+                case GearType.cakram: return "차크람";
+                case GearType.hexSeeker: return "헥스시커";
                 default: return null;
             }
         }
@@ -425,7 +428,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.connonGunPowder: 
                 case GearType.connonGunPowder2: return "캐논 슈터 직업군 착용 가능";
                 case GearType.box:
-                case GearType.boxingClaw: return "龙的传人可穿戴装备";
+                case GearType.boxingClaw: return "용의 전인 착용 가능";
                 case GearType.relic: return "패스파인더 직업군 착용 가능";
 
                 //1xxx
@@ -463,8 +466,8 @@ namespace WzComparerR2.CharaSim
 
                 //4xxx
                 case GearType.katana:
-                case GearType.katana2: return "剑豪可穿戴装备";
-                case GearType.fan: return "阴阳师可穿戴装备";
+                case GearType.katana2: return "하야토 착용 가능";
+                case GearType.fan: return "칸나 착용 가능";
 
                 //5xxx
                 case GearType.soulShield: return "미하일 착용 가능";
@@ -502,6 +505,9 @@ namespace WzComparerR2.CharaSim
                 case GearType.boxingSky: return GetExtraJobReqString(175);
 
                 case GearType.ornament: return GetExtraJobReqString(162);
+
+                case GearType.cakram:
+                case GearType.hexSeeker: return GetExtraJobReqString(174);
                 default: return null;
             }
         }
@@ -524,22 +530,23 @@ namespace WzComparerR2.CharaSim
                 case 31: return "데몬 직업군 착용 가능";
                 case 36: return "제논 착용 가능";
                 case 37: return "블래스터 착용 가능";
-                case 41: return "剑豪可穿戴装备";
-                case 42: return "阴阳师可穿戴装备";
+                case 41: return "하야토 착용 가능";
+                case 42: return "칸나 착용 가능";
                 case 51: return "미하일 착용 가능";
                 case 61: return "카이저 착용 가능";
                 case 63: return "카인 착용 가능";
                 case 64: return "카데나 착용 가능";
                 case 65: return "엔젤릭 버스터 착용 가능";
                 case 101: return "제로 착용 가능";
-                case 112: return "林之灵可穿戴装备";
+                case 112: return "비스트테이머 착용 가능";
                 case 142: return "키네시스 착용 가능";
                 case 151: return "아델 착용 가능";
                 case 152: return "일리움 착용 가능";
+                case 154: return "칼리 착용 가능";
                 case 155: return "아크 착용 가능";
                 case 162: return "라라 착용 가능";
                 case 164: return "호영 착용 가능";
-                case 175: return "墨玄可穿戴装备";
+                case 175: return "묵현 착용 가능";
                 default: return null;
             }
         }
@@ -910,9 +917,9 @@ namespace WzComparerR2.CharaSim
                 case 40000: return "5차";
                 case 40001: return "5차(전사)";
                 case 40002: return "5차(마법사)";
-                case 40003: return "5치(궁수)";
+                case 40003: return "5차(궁수)";
                 case 40004: return "5차(도적)";
-                case 40005: return "5치(해적)";
+                case 40005: return "5차(해적)";
             }
             return null;
         }
