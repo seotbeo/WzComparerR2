@@ -406,7 +406,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 차크람 140_4xxx
         /// </summary>
-        cakram = 1404,
+        chakram = 1404,
         /// <summary>
         /// 双手斧 141
         /// </summary>

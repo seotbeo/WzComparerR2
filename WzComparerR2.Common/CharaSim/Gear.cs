@@ -399,7 +399,7 @@ namespace WzComparerR2.CharaSim
                 case 1403:
                     return GearType.boxingCannon;
                 case 1404:
-                    return GearType.cakram;
+                    return GearType.chakram;
             }
             if (code / 10000 == 135)
             {

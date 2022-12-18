@@ -362,7 +362,7 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.ornament: return "노리개";
 
-                case GearType.cakram: return "차크람";
+                case GearType.chakram: return "차크람";
                 case GearType.hexSeeker: return "헥스시커";
                 default: return null;
             }
@@ -428,7 +428,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.connonGunPowder: 
                 case GearType.connonGunPowder2: return "캐논 슈터 직업군 착용 가능";
                 case GearType.box:
-                case GearType.boxingClaw: return "용의 전인 착용 가능";
+                case GearType.boxingClaw: return "제트 착용 가능";
                 case GearType.relic: return "패스파인더 직업군 착용 가능";
 
                 //1xxx
@@ -506,8 +506,8 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.ornament: return GetExtraJobReqString(162);
 
-                case GearType.cakram:
-                case GearType.hexSeeker: return GetExtraJobReqString(174);
+                case GearType.chakram:
+                case GearType.hexSeeker: return GetExtraJobReqString(154);
                 default: return null;
             }
         }
