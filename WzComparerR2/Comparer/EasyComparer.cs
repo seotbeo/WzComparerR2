@@ -342,10 +342,6 @@ namespace WzComparerR2.Comparer
                 Directory.CreateDirectory(srcDirPath);
             }
             string skillTooltipPath = Path.Combine(outputDir, "스킬 툴팁");
-            if (saveSkillTooltip && !Directory.Exists(skillTooltipPath))
-            {
-                Directory.CreateDirectory(skillTooltipPath);
-            }
 
             FileStream htmlFile = null;
             StreamWriter sw = null;
@@ -539,6 +535,10 @@ namespace WzComparerR2.Comparer
             }
             if (saveSkillTooltip && type.ToString() =="String" && TooltipInfo != null)
             {
+                if (!Directory.Exists(skillTooltipPath))
+                {
+                    Directory.CreateDirectory(skillTooltipPath);
+                }
                 saveTooltip(skillTooltipPath);
             }
         }
@@ -641,7 +641,7 @@ namespace WzComparerR2.Comparer
                 string imageName = Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + ']' + skillType + ".png");
                 if (!File.Exists(imageName))
                 {
-                    resultImage.Save(Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + ']' + skillType + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                    resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
                 }
                 resultImage.Dispose();
                 g.Dispose();
