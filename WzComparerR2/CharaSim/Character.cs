@@ -771,7 +771,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 220 && level <= 224)
             {
-                exp = (long)(ExpToNextLevel(219) * 1.6);
+                exp = (long)(ExpToNextLevel(219) * 1.3);
                 while (level > 220)
                 {
                     exp = (long)(exp * 1.07);
@@ -781,7 +781,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 225 && level <= 229)
             {
-                exp = (long)(ExpToNextLevel(224) * 1.3);
+                exp = (long)(ExpToNextLevel(224) * 1.38);
                 while (level > 225)
                 {
                     exp = (long)(exp * 1.05);
@@ -801,7 +801,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 235 && level <= 239)
             {
-                exp = (long)(ExpToNextLevel(234) * 1.3);
+                exp = (long)(ExpToNextLevel(234) * 1.38);
                 while (level > 235)
                 {
                     exp = (long)(exp * 1.03);
@@ -821,7 +821,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 245 && level <= 249)
             {
-                exp = (long)(ExpToNextLevel(244) * 1.3);
+                exp = (long)(ExpToNextLevel(244) * 1.38);
                 while (level > 245)
                 {
                     exp = (long)(exp * 1.03);

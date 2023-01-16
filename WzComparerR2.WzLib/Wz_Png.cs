@@ -114,7 +114,7 @@ namespace WzComparerR2.WzLib
                     int blocksize = 0;
                     int endPosition = (int)(this.DataLength + this.WzFile.FileStream.Position);
 
-                    var encKeys = this.WzImage.Encryption.keys;
+                    var encKeys = this.WzImage.EncKeys;
 
                     while (this.WzFile.FileStream.Position < endPosition)
                     {

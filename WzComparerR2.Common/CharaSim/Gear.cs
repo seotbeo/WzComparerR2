@@ -261,7 +261,7 @@ namespace WzComparerR2.CharaSim
             return (_type >= 140 && _type <= 149)
                 || (_type >= 152 && _type <= 159)
                 || type == GearType.boxingCannon
-                || ((int)type / 10) == 140;
+                || type == GearType.chakram;
         }
 
         public static bool IsMechanicGear(GearType type)

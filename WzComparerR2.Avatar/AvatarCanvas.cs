@@ -1370,7 +1370,7 @@ namespace WzComparerR2.Avatar
 
         private byte BlendColors(byte baseColor, float baseOpacity, byte mixColor, float mixOpacity)
         {
-            return (byte)((byte)((baseColor >> 4) * baseOpacity + (mixColor >> 4) * mixOpacity) * 17);
+            return (byte)((byte)((float)((baseColor >> 4) * baseOpacity) + (float)((mixColor >> 4) * mixOpacity)) * 17);
         }
 
         #region parts
