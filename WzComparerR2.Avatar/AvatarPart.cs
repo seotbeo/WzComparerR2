@@ -125,6 +125,10 @@ namespace WzComparerR2.Avatar
             {
                 this.MixNodes[i] = PluginBase.PluginManager.FindWz(string.Format(@"Character\{0}\{1:D8}.img", dir, baseID + i * multiplier));
             }
+            if (this.MixNodes[0] == null)
+            {
+                this.MixNodes[0] = PluginBase.PluginManager.FindWz(string.Format(@"Character\{0}\{1:D8}.img", dir, baseID + 8 * multiplier));
+            }
         }
     }
 }

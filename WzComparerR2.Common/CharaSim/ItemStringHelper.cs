@@ -69,8 +69,8 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incINTr: return "INT : " + sign + value + "%";
                 case GearPropType.incLUK: return "LUK : " + sign + value;
                 case GearPropType.incLUKr: return "LUK : " + sign + value + "%";
-                case GearPropType.incAllStat: return "올스탯: " + sign + value;
-                case GearPropType.statR: return "올스탯: " + sign + value + "%";
+                case GearPropType.incAllStat: return "올스탯 : " + sign + value;
+                case GearPropType.statR: return "올스탯 : " + sign + value + "%";
                 case GearPropType.incMHP: return "최대 HP : " + sign + value;
                 case GearPropType.incMHPr: return "최대 HP : " + sign + value + "%";
                 case GearPropType.incMMP: return "최대 MP : " + sign + value;

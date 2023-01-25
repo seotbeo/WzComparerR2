@@ -40,6 +40,7 @@ namespace WzComparerR2.MapRender
         public int? ReturnMap { get; set; }
         public bool HideMinimap { get; set; }
         public int FieldLimit { get; set; }
+        public string FieldScript { get; set; }
 
         public MiniMap MiniMap { get; private set; }
         #endregion
@@ -174,6 +175,7 @@ namespace WzComparerR2.MapRender
             this.ReturnMap = infoNode.Nodes["returnMap"].GetValueEx<int>();
             this.HideMinimap = infoNode.Nodes["hideMinimap"].GetValueEx(false);
             this.FieldLimit = infoNode.Nodes["fieldLimit"].GetValueEx(0);
+            this.FieldScript = infoNode.Nodes["fieldScript"].GetValueEx<string>(null);
         }
 
         private void LoadMinimap(Wz_Node miniMapNode, ResourceLoader resLoader)

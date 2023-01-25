@@ -31,7 +31,7 @@ namespace WzComparerR2.Avatar.UI
                 {
                     colorsRef = LensColors;
                     resourceType = "MixLens";
-                    color = ID / 100 % 10;
+                    color = (ID / 100 % 10) % 8;
                 }
                 else
                 {

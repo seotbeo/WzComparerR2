@@ -827,25 +827,35 @@ namespace WzComparerR2.CharaSimControl
                 if (item.SamplePath != null)
                 {
                     Wz_Node sampleNode = PluginManager.FindWz(item.SamplePath);
-                    int sampleW = 15;
-                    for (int i = 1; ; i++)
+                    if (sampleNode.Text == "effect")
                     {
-                        Wz_Node effectNode = sampleNode.FindNodeByPath(string.Format("{0}{1:D4}\\effect\\0", sampleNode.Text, i));
-                        if (effectNode == null)
-                        {
-                            break;
-                        }
-
+                        Wz_Node effectNode = sampleNode.Nodes["0"];
                         BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz);
-                        if (sampleW + 87 >= tooltip.Width)
-                        {
-                            picH += 62;
-                            sampleW = 15;
-                        }
-                        g.DrawImage(effect.Bitmap, sampleW + (85 - effect.Bitmap.Width - 1) / 2, picH + (62 - effect.Bitmap.Height - 1) / 2);
-                        sampleW += 87;
+                        g.DrawImage(effect.Bitmap, 38 + (85 - effect.Bitmap.Width - 1) / 2, picH - 8 + (62 - effect.Bitmap.Height - 1) / 2);
+                        picH += 73;
                     }
-                    picH += 62;
+                    else
+                    {
+                        int sampleW = 15;
+                        for (int i = 1; ; i++)
+                        {
+                            Wz_Node effectNode = sampleNode.FindNodeByPath(string.Format("{0}{1:D4}\\effect\\0", sampleNode.Text, i));
+                            if (effectNode == null)
+                            {
+                                break;
+                            }
+
+                            BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz);
+                            if (sampleW + 87 >= tooltip.Width)
+                            {
+                                picH += 62;
+                                sampleW = 15;
+                            }
+                            g.DrawImage(effect.Bitmap, sampleW + (85 - effect.Bitmap.Width - 1) / 2, picH + (62 - effect.Bitmap.Height - 1) / 2);
+                            sampleW += 87;
+                        }
+                        picH += 62;
+                    }
                 }
                 if (nickResNode != null)
                 {

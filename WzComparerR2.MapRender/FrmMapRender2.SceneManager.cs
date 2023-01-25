@@ -326,7 +326,7 @@ namespace WzComparerR2.MapRender
                     });
                 }
             }
-            if (mapData.MapMark == "MonsterPark")
+            if (mapData.MapMark == "MonsterPark" || string.Compare(mapData.FieldScript, "morassDQ", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 foreach (var mob in mapData.Scene.Mobs)
                 {
