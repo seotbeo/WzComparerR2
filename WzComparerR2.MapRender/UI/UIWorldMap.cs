@@ -224,7 +224,7 @@ namespace WzComparerR2.MapRender.UI
             foreach (var search in new[] { "worldSearch", "regionSearch1", "regionSearch2", "regionSearch3" })
             {
                 var searchNode = uiNode.FindNodeByPath("combo:" + search + "\\contents\\" + search);
-                foreach (var unitNode in searchNode.Nodes)
+                foreach (var unitNode in searchNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                 {
                     string dataValue = unitNode.Nodes["data"].GetValueEx<string>(null);
                     string stringValue = unitNode.Nodes["string"].GetValueEx<string>(null);
