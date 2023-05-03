@@ -401,6 +401,11 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "BTS 라벨", GearGraphics.EquipDetailFont, new Point(tooltip.Width, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
+            else if (Item.Props.TryGetValue(ItemPropType.BLACKPINKLabel, out value) && value > 0)
+            {
+                TextRenderer.DrawText(g, "BLACKPINK 라벨", GearGraphics.EquipDetailFont, new Point(tooltip.Width, picH), Color.FromArgb(255, 136, 170), TextFormatFlags.HorizontalCenter);
+                picH += 15;
+            }
 
             //额外特性
             var attrList = GetItemAttributeString();
@@ -526,6 +531,11 @@ namespace WzComparerR2.CharaSimControl
                 else if (Item.Props.TryGetValue(ItemPropType.BTSLabel, out value) && value > 0)
                 {
                     cashImg = Resource.CashShop_img_CashItem_label_10;
+                    cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                }
+                else if (Item.Props.TryGetValue(ItemPropType.BLACKPINKLabel, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_11;
                     cashOrigin = new Point(cashImg.Width, cashImg.Height);
                 }
                 if (cashImg == null) //default cashImg

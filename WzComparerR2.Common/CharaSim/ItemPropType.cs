@@ -52,6 +52,7 @@ namespace WzComparerR2.CharaSim
         level,
         sharableOnce,
         BTSLabel,
+        BLACKPINKLabel,
         addTooltip_tuc,
         addTooltip_tucCnt,
         pointCost,

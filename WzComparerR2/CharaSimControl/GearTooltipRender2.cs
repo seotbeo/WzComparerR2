@@ -231,6 +231,11 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "BTS 라벨", GearGraphics.EquipDetailFont, new Point(261, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
+            else if (Gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
+            {
+                TextRenderer.DrawText(g, "BLACKPINK 라벨", GearGraphics.EquipDetailFont, new Point(261, picH), Color.FromArgb(255, 136, 170), TextFormatFlags.HorizontalCenter);
+                picH += 15;
+            }
 
             //额外属性
             var attrList = GetGearAttributeString();
@@ -342,6 +347,11 @@ namespace WzComparerR2.CharaSimControl
                 else if (Gear.Props.TryGetValue(GearPropType.BTSLabel, out value) && value > 0)
                 {
                     cashImg = Resource.CashShop_img_CashItem_label_10;
+                    cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                }
+                else if (Gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_11;
                     cashOrigin = new Point(cashImg.Width, cashImg.Height);
                 }
                 if (cashImg == null) //default cashImg
@@ -787,6 +797,18 @@ namespace WzComparerR2.CharaSimControl
                         //picH += 15;
                     }
                 }
+            }
+
+            if (Gear.Props.TryGetValue(GearPropType.Etuc, out value) && value > 0)
+            {
+                //分割线5号
+                if (hasPart2)
+                {
+                    g.DrawImage(res["dotline"].Image, 0, picH);
+                    picH += 8;
+                }
+                TextRenderer.DrawText(g, "익셉셔널 강화가 가능합니다. (최대 : " + value + "회)", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                picH += 23;
             }
 
             //绘制desc

@@ -537,6 +537,11 @@ namespace WzComparerR2.CharaSimControl
                     cashImg = Resource.CashShop_img_CashItem_label_10;
                     cashOrigin = new Point(cashImg.Width, cashImg.Height);
                 }
+                else if (gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_11;
+                    cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                }
                 if (cashImg == null) //default cashImg
                 {
                     cashImg = Resource.CashItem_0;
@@ -573,6 +578,11 @@ namespace WzComparerR2.CharaSimControl
                 else if (item.Props.TryGetValue(ItemPropType.BTSLabel, out value) && value > 0)
                 {
                     cashImg = Resource.CashShop_img_CashItem_label_10;
+                    cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                }
+                else if (item.Props.TryGetValue(ItemPropType.BLACKPINKLabel, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_11;
                     cashOrigin = new Point(cashImg.Width, cashImg.Height);
                 }
                 if (cashImg == null) //default cashImg
