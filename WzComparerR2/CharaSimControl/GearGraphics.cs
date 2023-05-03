@@ -445,7 +445,7 @@ namespace WzComparerR2.CharaSimControl
                 return;
 
             //加载资源和文本颜色
-            var wce = new[] { "w", "c", "e" }.Select(n =>
+            var wce = new[] { "w", "c", "e", "ani\\0" }.Select(n =>
             {
                 var node = resNode.FindNodeByPath(n);
                 if (node == null)
@@ -490,6 +490,10 @@ namespace WzComparerR2.CharaSimControl
             if (wce[2].Bitmap != null)
             {
                 g.DrawImage(wce[2].Bitmap, right - wce[2].Origin.X, picH - wce[2].Origin.Y);
+            }
+            if (wce[3].Bitmap != null) //애니(ani)훈장
+            {
+                g.DrawImage(wce[3].Bitmap, left - wce[3].Origin.X - 1, picH - wce[3].Origin.Y - 1);
             }
 
             //绘制文字
