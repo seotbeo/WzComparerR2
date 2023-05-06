@@ -2133,6 +2133,29 @@ namespace WzComparerR2
             Regex re = null;
             if (isRegex)
             {
+                var gyeop = new Dictionary<string, string>() // 겹자음 풀기
+                {
+                    { "ㄳ", "ㄱㅅ" },
+                    { "ㄵ", "ㄴㅈ" },
+                    { "ㄶ", "ㄴㅎ" },
+                    { "ㄺ", "ㄹㄱ" },
+                    { "ㄻ", "ㄹㅁ" },
+                    { "ㄼ", "ㄹㅂ" },
+                    { "ㄽ", "ㄹㅅ" },
+                    { "ㄾ", "ㄹㅌ" },
+                    { "ㄿ", "ㄹㅍ" },
+                    { "ㅀ", "ㄹㅎ" },
+                    { "ㅄ", "ㅂㅅ" },
+                };
+                foreach(var gyeopKey in gyeop.Keys)
+                {
+                    key = key.Replace(gyeopKey, gyeop[gyeopKey]);
+                }
+                string[] choSeong = new string[] { "ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ" };
+                for (int i = 0; i < 19; i++) // 초성으로 검색 ( ㄱ => [ㄱ가-깋]\s? )
+                {
+                    key = key.Replace(choSeong[i], "[" + choSeong[i] + ((char)(i * 588 + 44032)).ToString() + "-" + ((char)(i * 588 + 44619)).ToString() + "]\\s?");
+                }
                 re = new Regex(key, RegexOptions.IgnoreCase);
             }
 
