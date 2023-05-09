@@ -278,7 +278,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 小太刀 135_80
         /// </summary>
-        katana2 = 135280,
+        kodachi = 135280,
         /// <summary>
         /// 哨子 135_81
         /// </summary>
@@ -287,6 +287,14 @@ namespace WzComparerR2.CharaSim
         /// 拳爪 135_82
         /// </summary>
         boxingClaw = 135282,
+        /// <summary>
+        /// 小太刀 135_83
+        /// </summary>
+        kodachi2 = 135283,
+        /// <summary>
+        /// 哨子 135_81
+        /// </summary>
+        whistle2 = 135284,
         /// <summary>
         /// 拳天 135_86
         /// </summary>

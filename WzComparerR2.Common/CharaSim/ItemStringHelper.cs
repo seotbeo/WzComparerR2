@@ -331,9 +331,11 @@ namespace WzComparerR2.CharaSim
                 case GearType.energySword: return "에너지소드";
                 case GearType.desperado: return "데스페라도";
                 case GearType.magicStick: return "驯兽魔法棒";
-                case GearType.whistle: return "哨子";
+                case GearType.whistle:
+                case GearType.whistle2: return "哨子";
                 case GearType.boxingClaw: return "拳爪";
-                case GearType.katana2: return "小太刀";
+                case GearType.kodachi:
+                case GearType.kodachi2:  return "小太刀";
                 case GearType.espLimiter: return "ESP 리미터";
 
                 case GearType.GauntletBuster: return "건틀렛 리볼버";
@@ -468,7 +470,8 @@ namespace WzComparerR2.CharaSim
 
                 //4xxx
                 case GearType.katana:
-                case GearType.katana2: return "剑豪可穿戴装备";
+                case GearType.kodachi:
+                case GearType.kodachi2: return "剑豪可穿戴装备";
                 case GearType.fan: return "阴阳师可穿戴装备";
 
                 //5xxx
@@ -488,6 +491,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.swordZL: return GetExtraJobReqString(101);
 
                 case GearType.whistle:
+                case GearType.whistle2:
                 case GearType.magicStick: return GetExtraJobReqString(112);
 
                 case GearType.espLimiter:
