@@ -292,7 +292,7 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         kodachi2 = 135283,
         /// <summary>
-        /// 哨子 135_81
+        /// 哨子 135_84
         /// </summary>
         whistle2 = 135284,
         /// <summary>
