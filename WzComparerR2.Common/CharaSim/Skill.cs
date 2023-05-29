@@ -62,6 +62,8 @@ namespace WzComparerR2.CharaSim
         public bool CombatOrders { get; set; }
         public bool NotRemoved { get; set; }
         public bool VSkill { get; set; }
+        public bool NotIncBuffDuration { get; set; }
+        public bool NotCooltimeReset { get; set; }
         public bool TimeLimited { get; set; }
         public Tuple<int, int> RelationSkill { get; set; }
         public bool IsPetAutoBuff { get; set; }
@@ -72,6 +74,9 @@ namespace WzComparerR2.CharaSim
         public int AddAttackToolTipDescSkill { get; set; }
         public int AssistSkillLink { get; set; }
         public int VehicleID { get; set; }
+
+        public Point LT { get; set; }
+        public Point RB { get; set; }
 
         public int MaxLevel
         {
@@ -113,6 +118,18 @@ namespace WzComparerR2.CharaSim
                             if (commonNode.Value != null && !(commonNode.Value is Wz_Vector))
                             {
                                 skill.common[commonNode.Text] = commonNode.Value.ToString();
+                            }
+                            else if (commonNode.Value != null && commonNode.Value is Wz_Vector)
+                            {
+                                Wz_Vector cNode = commonNode.Value as Wz_Vector;
+                                if (commonNode.Text == "lt")
+                                {
+                                    skill.LT = new Point(cNode.X, cNode.Y);
+                                }
+                                else if (commonNode.Text == "rb")
+                                {
+                                    skill.RB = new Point(cNode.X, cNode.Y);
+                                }
                             }
                         }
                         break;
@@ -161,6 +178,12 @@ namespace WzComparerR2.CharaSim
                         break;
                     case "vSkill":
                         skill.VSkill = childNode.GetValue<int>() != 0;
+                        break;
+                    case "notIncBuffDuration":
+                        skill.NotIncBuffDuration = childNode.GetValue<int>() != 0;
+                        break;
+                    case "notCooltimeReset":
+                        skill.NotCooltimeReset = childNode.GetValue<int>() != 0;
                         break;
                     case "timeLimited":
                         skill.TimeLimited = childNode.GetValue<int>() != 0;

@@ -104,7 +104,7 @@ namespace WzComparerR2.PluginBase
 
             if (ribbonCtrl == null)
             {
-                throw new Exception("无法找到RibbonContainer。");
+                throw new Exception("Unable to find RibbonContainer.");
             }
 
             RibbonPanel ribbonPanel = null;
@@ -121,7 +121,7 @@ namespace WzComparerR2.PluginBase
 
             if (ribbonPanel == null)
             {
-                throw new Exception("无法找到RibbonPanel。");
+                throw new Exception("Unable to find RibbonPanel.");
             }
 
             Control lastBar = ribbonPanel.Controls[0];
@@ -147,7 +147,7 @@ namespace WzComparerR2.PluginBase
             
             if (tabControl == null)
             {
-                throw new Exception("无法找到SuperTabControl。");
+                throw new Exception("Unable to find SuperTabControl.");
             }
 
             tabControl.SuspendLayout();

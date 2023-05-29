@@ -33,17 +33,17 @@ namespace WzComparerR2.CharaSimControl
             TBrushes["w"] = new TextureBrush(Resource.UIToolTip_img_Item_Frame2_w, WrapMode.Tile);
             TBrushes["nw"] = new TextureBrush(Resource.UIToolTip_img_Item_Frame2_nw, WrapMode.Clamp);
             TBrushes["c"] = new TextureBrush(Resource.UIToolTip_img_Item_Frame2_c, WrapMode.Tile);
-            SetFontFamily("돋움");
+            SetFontFamily("Arial");
         }
 
         public static readonly Dictionary<string, TextureBrush> TBrushes;
-        public static readonly Font ItemNameFont = new Font("돋움", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
-        public static readonly Font ItemDetailFont = new Font("돋움", 12f, GraphicsUnit.Pixel);
-        public static readonly Font EquipDetailFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
-        public static readonly Font EpicGearDetailFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
+        public static readonly Font ItemNameFont = new Font("Arial", 12f, FontStyle.Bold, GraphicsUnit.Pixel);
+        public static readonly Font ItemDetailFont = new Font("Arial", 12f, GraphicsUnit.Pixel);
+        public static readonly Font EquipDetailFont = new Font("Arial", 11f, GraphicsUnit.Pixel);
+        public static readonly Font EpicGearDetailFont = new Font("Arial", 11f, GraphicsUnit.Pixel);
         public static readonly Font TahomaFont = new Font("Tahoma", 12f, GraphicsUnit.Pixel);
-        public static readonly Font SetItemPropFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
-        public static readonly Font ItemReqLevelFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
+        public static readonly Font SetItemPropFont = new Font("Arial", 11f, GraphicsUnit.Pixel);
+        public static readonly Font ItemReqLevelFont = new Font("Arial", 11f, GraphicsUnit.Pixel);
 
         public static Font ItemNameFont2 { get; private set; }
         public static Font ItemDetailFont2 { get; private set; }
@@ -56,7 +56,7 @@ namespace WzComparerR2.CharaSimControl
                 ItemNameFont2.Dispose();
                 ItemNameFont2 = null;
             }
-            ItemNameFont2 = new Font(fontName, 14f, FontStyle.Bold, GraphicsUnit.Pixel);
+            ItemNameFont2 = new Font(fontName, 12f, FontStyle.Bold, GraphicsUnit.Pixel);
 
             if (ItemDetailFont2 != null)
             {
@@ -161,6 +161,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush BlueBrush = new SolidBrush(Color.FromArgb(0, 204, 255));
 
         public static readonly Color gearCyanColor = Color.FromArgb(102, 255, 255);
+
         /// <summary>
         /// 表示装备属性变化的青色画刷。
         /// </summary>
@@ -225,6 +226,7 @@ namespace WzComparerR2.CharaSimControl
                 case GearGrade.S: return GearNameBrushF;
                 case GearGrade.SS: return GreenBrush2;
             }
+            return null;
         }
 
         /// <summary>
@@ -243,7 +245,7 @@ namespace WzComparerR2.CharaSimControl
 
             using (var r = new FormattedTextRenderer())
             {
-                r.WordWrapEnabled = false;
+                r.WordWrapEnabled = true;
                 r.UseGDIRenderer = true;
                 r.DrawString(g, s, font, x, x1, ref y, height, orangeColor, textColor);
             }
@@ -256,7 +258,7 @@ namespace WzComparerR2.CharaSimControl
 
             using (var r = new FormattedTextRenderer())
             {
-                r.WordWrapEnabled = false;
+                r.WordWrapEnabled = true;
                 r.UseGDIRenderer = true;
                 r.DrawPlainText(g, s, font, color, x, x1, ref y, height);
             }
@@ -497,7 +499,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 var brush = new SolidBrush(color);
                 //g.DrawString(tagName, font, brush, left, picH, fmt);
-                TextRenderer.DrawText(g, tagName, font, new Rectangle(left, picH, right - left, int.MaxValue), color, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                //TextRenderer.DrawText(g, tagName, font, new Point(left, picH - 2), color, TextFormatFlags.NoPadding);2 juni
+                //TextRenderer.DrawText(g, tagName, font, new Rectangle(left, picH, right - left, int.MaxValue), color, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, tagName, font, new Rectangle(left, picH, right - left, int.MaxValue), color, TextFormatFlags.NoPadding);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
                 brush.Dispose();
             }
 
@@ -620,12 +626,6 @@ namespace WzComparerR2.CharaSimControl
             private void MeasureBatch(List<Run> runs)
             {
                 string text = sb.ToString();
-                Func<int, bool> isSingleKoreanChar = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '가' && text[runs[i].StartIndex] <= '힣';
-                var koreanSize = TR.MeasureText(g, "가", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                Func<int, bool> isSpace = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] == ' ';
-                var spaceSize = TR.MeasureText(g, " ", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                Func<int, bool> isNumber = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '0' && text[runs[i].StartIndex] <= '9';
-                var numberSize = TR.MeasureText(g, "0", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 if (runs.Count > 0 && !runs.All(run => run.IsBreakLine))
                 {
                     fmt.SetMeasurableCharacterRanges(runs.Select(r => new CharacterRange(r.StartIndex, r.Length)).ToArray());
@@ -634,29 +634,7 @@ namespace WzComparerR2.CharaSimControl
                     {
                         var layout = new RectangleF();
                         if (this.UseGDIRenderer)
-                        {
-                            var prefixLayout = new Point();
-                            if (isSingleKoreanChar(i - 1))
-                                prefixLayout = new Point(runs[i - 1].X + koreanSize.Width, 0);
-                            else if (isSpace(i - 1))
-                                prefixLayout = new Point(runs[i - 1].X + spaceSize.Width, 0);
-                            else if (isNumber(i - 1))
-                                prefixLayout = new Point(runs[i - 1].X + numberSize.Width, 0);
-                            else
-                                prefixLayout = new Point(TR.MeasureText(g, text.Substring(0, runs[i].StartIndex), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width, 0);
-
-                            var currentLayout = new Size();
-                            if (isSingleKoreanChar(i))
-                                currentLayout = koreanSize;
-                            else if (isSpace(i))
-                                currentLayout = spaceSize;
-                            else if (isNumber(i))
-                                currentLayout = numberSize;
-                            else
-                                currentLayout = TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-
-                            layout = new RectangleF(prefixLayout, currentLayout);
-                        }
+                            layout = new RectangleF(new Point(TR.MeasureText(g, text.Substring(0, runs[i].StartIndex), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width, 0), TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix));
                         else
                             layout = regions[i].GetBounds(g);
                         runs[i].X = (int)Math.Round(layout.Left);
@@ -725,6 +703,7 @@ namespace WzComparerR2.CharaSimControl
                     case "c": color = this.orangeColor; break;
                     case "g": color = GearGraphics.gearGreenColor; break;
                     case "$": color = GearGraphics.gearCyanColor; break;
+                    case "$$": color = GearGraphics.gearBlueColor; break;
                     default: color = this.defaultColor; break;
                 }
                 if (this.UseGDIRenderer)

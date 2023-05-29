@@ -19,7 +19,7 @@ namespace WzComparerR2.LuaConsole
         protected override void OnLoad()
         {
             var bar = this.Context.AddRibbonBar("Tools", "Console");
-            ButtonItem btnItem = new ButtonItem("", "Lua 콘솔");
+            ButtonItem btnItem = new ButtonItem("", "Lua Console");
 
             btnItem.Click += btnItem_Click;
             bar.Items.Add(btnItem);

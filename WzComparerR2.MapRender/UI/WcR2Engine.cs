@@ -81,7 +81,7 @@ namespace WzComparerR2.MapRender.UI
                     .FirstOrDefault(field => field.FieldType == typeof(InputManager));
                 inputManagerCurrentField.SetValue(null, (InputManager)null);
             }
-          
+
             VisualTreeHelper.Instance.ClearParentCache();
             typeof(MessageBox).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
                 .FirstOrDefault(field => field.FieldType == typeof(MessageBox))

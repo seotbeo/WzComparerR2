@@ -16,17 +16,34 @@ local function enumAllWzNodes(node)
   end)
 end
 
+local function isPng(value)
+  if value and type(value) == "userdata" and value:GetType().Name == 'Wz_Png' then
+    return true
+  else 
+    return false
+  end
+end
+
+local p = Path.GetInvalidFileNameChars()
+local ivStr = ""
+for i, v in each(p) do
+  if v >= 32 then
+    ivStr = ivStr .. string.char(v)
+  end
+end
+local ivPattern = "["..ivStr.."]"
 ------------------------------------------------------------
 
 -- all variables
-local topNode = PluginManager.FindWz('Etc')
+local topWzPath = 'Character'
+local topNode = PluginManager.FindWz(topWzPath)
 local outputDir = "D:\\wzDump"
 
 ------------------------------------------------------------
 -- main function
 
 if not topNode then
-  env:WriteLine('Base.wz not loaded.')
+  env:WriteLine('"{0}" not loaded.', topWzPath)
   return
 end
 
@@ -34,38 +51,41 @@ end
 
 -- enum all wz_images
 for n in enumAllWzNodes(topNode) do
-  local value = n.Value
-  if value and type(value) == "userdata" and value:GetType().Name == 'Wz_Image' then
-    local img = value
-
+  local img = Wz_NodeExtension.GetNodeWzImage(n)
+  
+  if img then
     --extract wz image
     env:WriteLine('(extract)'..(img.Name))
     if img:TryExtract() then
     
-      --dump as Xml
-      local xmlFileName = outputDir.."\\"..(n.FullPathToFile)..".xml"
-      local dir = Path.GetDirectoryName(xmlFileName)
-    
-      --ensure dir exists
-      if not Directory.Exists(dir) then
-        Directory.CreateDirectory(dir)
+      local dir = outputDir.."\\"..(n.FullPathToFile)
+      local dirCreated = false
+      
+      --find all png
+      for n2 in enumAllWzNodes(img.Node) do
+        local png = n2.Value
+        if isPng(png) and (png.Width>1 or png.Height>1) then
+          
+          local fn = n2.FullPath:sub(img.Name:len()+2):gsub("\\", "."):gsub(ivPattern, "")
+          fn = Path.Combine(dir, fn .. ".png")
+          
+          --ensure dir exists
+          if not dirCreated then
+            if not Directory.Exists(dir) then
+              Directory.CreateDirectory(dir)
+            end
+            dirCreated = true
+          end
+          
+          --save as png
+          local bmp = png:ExtractPng()
+          bmp:Save(fn)
+          bmp:Dispose()
+          
+        end
       end
       
-      --create file
-      env:WriteLine('(output)'..xmlFileName)
-      local fs = File.Create(xmlFileName)
-      local xw = XmlWriter.Create(fs)
-      
-      xw:WriteStartDocument(true);
-      Wz_NodeExtension.DumpAsXml(img.Node, xw)
-      xw:WriteEndDocument()
-      
-      xw:Flush()
-      fs:Close()
-      env:WriteLine('(close)'..xmlFileName)
-      
       img:Unextract()
-      
     else --error
       
       env:WriteLine((img.Name)..' extract failed.')

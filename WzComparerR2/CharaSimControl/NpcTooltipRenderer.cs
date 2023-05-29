@@ -49,7 +49,7 @@ namespace WzComparerR2.CharaSimControl
                 titleBlocks.Add(block);
             }
 
-            propBlocks.Add(PrepareText(g, "등장위치 :", GearGraphics.ItemDetailFont, GearGraphics.GearNameBrushG, 0, 0));
+            propBlocks.Add(PrepareText(g, "Location:", GearGraphics.ItemDetailFont, GearGraphics.GearNameBrushG, 0, 0));
             if (NpcInfo.ID != null)
             {
                 var locNode = PluginBase.PluginManager.FindWz("Etc\\NpcLocation.img\\" + NpcInfo.ID.ToString());
@@ -63,7 +63,7 @@ namespace WzComparerR2.CharaSimControl
                         {
                             mapName = GetMapName(mapID);
                         }
-                        string npcLoc = string.Format(" {0}({1})", mapName ?? "null", locMapNode.Text);
+                        string npcLoc = string.Format("{0}({1})", mapName ?? "null", locMapNode.Text);//{0}  ({1}) in the quotations for both location and mapID
 
                         propBlocks.Add(PrepareText(g, npcLoc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
                     }
@@ -72,7 +72,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (propBlocks.Count == 1) //获取地区失败
             {
-                propBlocks.Add(PrepareText(g, " 불명", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "Unknown", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
 
             //计算大小

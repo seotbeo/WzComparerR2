@@ -1,17 +1,5 @@
-*<s>使用前先大喊 niconiconi! poi! duang!以减少bug发生率</s>*  
-
-[![Build Status](https://dev.azure.com/kagamiastudio/WzComparerR2/_apis/build/status/Kagamia.WzComparerR2?branchName=master)](https://dev.azure.com/kagamiastudio/WzComparerR2/_build/latest?definitionId=4&branchName=master)
-
-# Maintenance Status
-
-⚠️ The WzComparerR2 project is now in deep maintenance status. This means that only critical bugs or wz file format breaking changes are being considered for inclusion by owner. Expect slow replies to issues.
-
 # WzComparerR2
-这是一个用C#7/.Net4.6.2组装的冒险岛提取器...  
-包含了一些奇怪的机能比如stringWZ搜索 客户端对比 装备模拟 地图模拟等等..  
-
-tips: WcR2将尽力维持每周更新，Releases里**不会**提供最稳定版下载，最新版会通过azure-pipeline自动发布。  
-links: [\[更新日志\]](https://github.com/Kagamia/WzComparerR2/tree/master/UpdateLogs)  [\[版本计划\]](https://github.com/Kagamia/WzComparerR2/wiki/Roadmap)  [\[最新版下载\]](https://github.com/Kagamia/WzComparerR2/releases/tag/ci-build)
+- A new repository which is based off Spadow's source code, and forked from KENNYSOFT's repository.
 
 # Modules
 - **WzComparerR2** 主程序
@@ -19,32 +7,27 @@ links: [\[更新日志\]](https://github.com/Kagamia/WzComparerR2/tree/master/Up
 - **WzComparerR2.PluginBase** 插件管理器
 - **WzComparerR2.WzLib** wz文件读取相关
 - **CharaSimResource** 用于装备模拟的资源文件
+- **WzComparerR2.Updater** 程序更新器(未完成)
 - **WzComparerR2.LuaConsole** (可选插件)Lua控制台
 - **WzComparerR2.MapRender** (可选插件)地图仿真器
 - **WzComparerR2.Avatar** (可选插件)纸娃娃
+- **WzComparerR2.MonsterCard** (可选插件)怪物卡(已废弃)
 
-# Prerequisite
-- **2.x**: Win7sp1+/.net4.6.2+/dx11.0
+# Usage
+- **2.x**: Win7+/.net4.0+/dx11.0
 - **1.x**: WinXp+/.net2.0+/dx9.0
 
-# Installation
-```sh
-git clone --recurse-submodules -j8 git://github.com/Kagamia/WzComparerR2.git
-```
-Clone repository with submodules.
-
 # Compile
-- vs2017 or higher
+- vs2015 or vs2012/13+Roslyn
+- put [CharaSimResource](https://github.com/PirateIzzy/CharaSimResource) together
 
-# Credits and Acknowledgement
+# Credits
 - **Fiel** ([Southperry](http://www.southperry.net))  wz文件读取代码改造自WzExtract 以及WzPatcher
 - **Index** ([Exrpg](http://bbs.exrpg.com/space-uid-137285.html)) MapRender的原始代码 以及libgif
-- [DotNetBar](http://www.devcomponents.com/)
-- [SharpDX](https://github.com/sharpdx/SharpDX) & [Monogame](https://github.com/MonoGame/MonoGame)
-- [BassLibrary](http://www.un4seen.com/)
-- [IMEHelper](https://github.com/JLChnToZ/IMEHelper)
-- [Spine-Runtime](https://github.com/EsotericSoftware/spine-runtimes)
-- [EmptyKeysUI](https://github.com/EmptyKeys)
+- **[DotNetBar](http://www.devcomponents.com/)**
+- **[IMEHelper](https://github.com/JLChnToZ/IMEHelper)**
+- **[Spine-Runtime](https://github.com/EsotericSoftware/spine-runtimes)**
+- **[EmptyKeysUI](https://github.com/EmptyKeys)**
 - **[@KENNYSOFT](https://github.com/KENNYSOFT)** and his WcR2-KMS version.
-- **[@Spadow](https://github.com/Sunaries)** and his WcR2-GMS version.
-- All testers from CMST tester group.
+- **[@Kagamia](https://github.com/Kagamia)** and his WcR2-CMS version.
+- **[@Spadow](https://github.com/Sunaries)** for providing his WcR2-GMS version.

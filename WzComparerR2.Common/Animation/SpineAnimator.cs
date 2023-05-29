@@ -47,7 +47,7 @@ namespace WzComparerR2.Animation
                     this._animationState.ClearTracks();
                     this._selectedAniIndex = -1;
                 }
-                
+
                 this.Skeleton.SetToSetupPose();
                 this._animationState.Apply(this.Skeleton);
                 this.Skeleton.UpdateWorldTransform();
@@ -58,7 +58,7 @@ namespace WzComparerR2.Animation
         {
             get
             {
-                if( this._selectedAniIndex > -1)
+                if (this._selectedAniIndex > -1)
                 {
                     return this.Animations[this._selectedAniIndex];
                 }
@@ -178,7 +178,7 @@ namespace WzComparerR2.Animation
                     {
                         if (frames.Count <= 0) //直接加入
                         {
-                            foreach(var frame in tlFrames)
+                            foreach (var frame in tlFrames)
                             {
                                 frames.AddLast(frame);
                             }

@@ -136,7 +136,7 @@ namespace WzComparerR2.MapRender.UI
             Button btnBack = new Button();
             btnBack.Width = 50;
             btnBack.Height = 20;
-            btnBack.Content = "위로";
+            btnBack.Content = "Return";
             btnBack.Click += BtnBack_Click;
             Canvas.SetLeft(btnBack, 180);
             Canvas.SetTop(btnBack, 23);
@@ -223,8 +223,8 @@ namespace WzComparerR2.MapRender.UI
             var uiNode = PluginBase.PluginManager.FindWz("UI/UIWindow2.img/WorldMap");
             foreach (var search in new[] { "worldSearch", "regionSearch1", "regionSearch2", "regionSearch3" })
             {
-                var searchNode = uiNode?.FindNodeByPath("combo:" + search + "\\contents\\" + search);
-                foreach (var unitNode in searchNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                var searchNode = uiNode.FindNodeByPath("combo:" + search + "\\contents\\" + search);
+                foreach (var unitNode in searchNode.Nodes)
                 {
                     string dataValue = unitNode.Nodes["data"].GetValueEx<string>(null);
                     string stringValue = unitNode.Nodes["string"].GetValueEx<string>(null);
@@ -298,9 +298,9 @@ namespace WzComparerR2.MapRender.UI
                     {
                         // KMST 1125: the spot indices are not always continuous.
                         var spotNodes = node.Nodes.Select(child => new {
-                                child,
-                                index = int.TryParse(child.Text, out var nodeInex) ? nodeInex : -1,
-                            }).Where(item => item.index > -1)
+                            child,
+                            index = int.TryParse(child.Text, out var nodeInex) ? nodeInex : -1,
+                        }).Where(item => item.index > -1)
                             .OrderBy(item => item.index)
                             .Select(item => item.child);
 
@@ -615,7 +615,7 @@ namespace WzComparerR2.MapRender.UI
             public object GetTooltipTarget(PointF mouseLocation)
             {
                 var hitItem = HitTest(mouseLocation);
-                switch(hitItem)
+                switch (hitItem)
                 {
                     case MapSpot spot:
                         return new UIWorldMap.MapSpotTooltip()
@@ -666,7 +666,7 @@ namespace WzComparerR2.MapRender.UI
 
                 if (curMap.QuestLimit != null && this.SelectedQuestIndex > -1 && this.SelectedQuestIndex < curMap.QuestLimit.Count)
                 {
-                    for(int i = 0; i <= this.SelectedQuestIndex; i++)
+                    for (int i = 0; i <= this.SelectedQuestIndex; i++)
                     {
                         var quest = curMap.QuestLimit[i];
                         //重写底图

@@ -109,7 +109,7 @@
             this.bar2.AutoSyncBarCaption = true;
             this.bar2.CloseSingleTab = true;
             this.bar2.Controls.Add(this.panelDockContainer1);
-            this.bar2.Font = new System.Drawing.Font("돋움", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.bar2.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.bar2.GrabHandleStyle = DevComponents.DotNetBar.eGrabHandleStyle.Caption;
             this.bar2.IsMaximized = false;
             this.bar2.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -122,7 +122,7 @@
             this.bar2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar2.TabIndex = 0;
             this.bar2.TabStop = false;
-            this.bar2.Text = "출력";
+            this.bar2.Text = "Output";
             // 
             // panelDockContainer1
             // 
@@ -153,13 +153,13 @@
             this.textBoxX2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxX2.Size = new System.Drawing.Size(482, 69);
             this.textBoxX2.TabIndex = 1;
-            this.textBoxX2.Text = "-- 도움말을 얻기 위해서는 env:Help() 함수를 사용하세요.\r\n";
+            this.textBoxX2.Text = "-- Use the 'env:Help()' function to get help .\r\n";
             // 
             // dockContainerItem1
             // 
             this.dockContainerItem1.Control = this.panelDockContainer1;
             this.dockContainerItem1.Name = "dockContainerItem1";
-            this.dockContainerItem1.Text = "출력";
+            this.dockContainerItem1.Text = "Output";
             // 
             // dockSite9
             // 
@@ -240,7 +240,7 @@
             this.bar1.AccessibleName = "DotNetBar Bar";
             this.bar1.AccessibleRole = System.Windows.Forms.AccessibleRole.MenuBar;
             this.bar1.DockSide = DevComponents.DotNetBar.eDockSide.Top;
-            this.bar1.Font = new System.Drawing.Font("돋움", 9F);
+            this.bar1.Font = new System.Drawing.Font("Arial", 9F);
             this.bar1.IsMaximized = false;
             this.bar1.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.menuFile,
@@ -263,20 +263,20 @@
             this.menuOpen,
             this.menuSave,
             this.menuExit});
-            this.menuFile.Text = "파일(&F)";
+            this.menuFile.Text = "File";
             // 
             // menuNew
             // 
             this.menuNew.Name = "menuNew";
             this.menuNew.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.CtrlN);
-            this.menuNew.Text = "새 파일";
+            this.menuNew.Text = "New File";
             this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
             // 
             // menuOpen
             // 
             this.menuOpen.Name = "menuOpen";
             this.menuOpen.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.CtrlO);
-            this.menuOpen.Text = "열기...";
+            this.menuOpen.Text = "Open...";
             this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
             // 
             // menuSave
@@ -284,7 +284,7 @@
             this.menuSave.BeginGroup = true;
             this.menuSave.Name = "menuSave";
             this.menuSave.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.CtrlS);
-            this.menuSave.Text = "저장";
+            this.menuSave.Text = "Save";
             this.menuSave.Click += new System.EventHandler(this.menuSave_Click);
             // 
             // menuExit
@@ -292,7 +292,7 @@
             this.menuExit.BeginGroup = true;
             this.menuExit.Name = "menuExit";
             this.menuExit.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.AltF4);
-            this.menuExit.Text = "끝내기";
+            this.menuExit.Text = "Exit";
             // 
             // menuDebug
             // 
@@ -301,12 +301,12 @@
             this.menuReset,
             this.menuRun,
             this.menuStopRun});
-            this.menuDebug.Text = "디버그(&D)";
+            this.menuDebug.Text = "Debug";
             // 
             // menuReset
             // 
             this.menuReset.Name = "menuReset";
-            this.menuReset.Text = "초기화";
+            this.menuReset.Text = "Reset";
             this.menuReset.Click += new System.EventHandler(this.menuReset_Click);
             // 
             // menuRun
@@ -314,7 +314,7 @@
             this.menuRun.BeginGroup = true;
             this.menuRun.Name = "menuRun";
             this.menuRun.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.F5);
-            this.menuRun.Text = "실행";
+            this.menuRun.Text = "Run";
             this.menuRun.Tooltip = "F5";
             this.menuRun.Click += new System.EventHandler(this.menuRun_Click);
             // 
@@ -322,7 +322,7 @@
             // 
             this.menuStopRun.Name = "menuStopRun";
             this.menuStopRun.Shortcuts.Add(DevComponents.DotNetBar.eShortcut.ShiftF5);
-            this.menuStopRun.Text = "중지";
+            this.menuStopRun.Text = "Stop";
             this.menuStopRun.Tooltip = "Shift+F5";
             // 
             // dockSite3
@@ -352,7 +352,7 @@
             this.tabStrip1.MdiTabbedDocuments = true;
             this.tabStrip1.Name = "tabStrip1";
             this.tabStrip1.SelectedTab = null;
-            this.tabStrip1.SelectedTabFont = new System.Drawing.Font("돋움", 9F, System.Drawing.FontStyle.Bold);
+            this.tabStrip1.SelectedTabFont = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
             this.tabStrip1.Size = new System.Drawing.Size(488, 23);
             this.tabStrip1.Style = DevComponents.DotNetBar.eTabStripStyle.Office2007Document;
             this.tabStrip1.TabAlignment = DevComponents.DotNetBar.eTabStripAlignment.Top;
@@ -378,7 +378,7 @@
             this.DoubleBuffered = true;
             this.IsMdiContainer = true;
             this.Name = "FrmConsole";
-            this.Text = "Lua 콘솔";
+            this.Text = "Lua Console";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmConsole_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmConsole_FormClosed);
             this.MdiChildActivate += new System.EventHandler(this.FrmConsole_MdiChildActivate);

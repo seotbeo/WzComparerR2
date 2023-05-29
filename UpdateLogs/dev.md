@@ -1,117 +1,82 @@
-﻿## 2018.7.5
+﻿##2016.10.18
 
-### 共通
-- 添加了一个api以利于插件输出error.log。
-- 更新了buildin gif encoder以修复某些场合导出错误的bug。
+###WzLib
+- img导出xml移至WzLib作为扩展函数出现
+- 修复了xml导出时对于SoundType.Binary无法正常导出的bug
 
-### WzLib
-- 修复了上次修复Uol链接推断的bug。
-- 修复了上次新增支持读取独立的img文件的bug。
+###LuaConsole
+- 实现lua文件载入和保存按钮功能
+添加了一个使用脚本批量导出的example
 
-### CharaSim
-- 修复某些动作下发型渲染错误的bug。
-- 支持了宠物套装的渲染，添加宠物过期时间。
-- 支持显示GMS按时间奖励的套装效果。
+##2016.10.08
 
-### MapRender
-- 调整了粒子系统渲染效果。
-- Worldmap支持了KMST1070的QuestLimit分阶段渲染机制。
+###共通
+- 添加了可以对img导出为xml的功能
 
 
-## 2018.6.20
+##2016.09.26
 
-### 共通
-- 支持了按照imgID进行排序。
-- 配置文件中默认开启wz自动排序和自动加载扩展wz。
-- File-Option里添加了一些新的配置项。
-
-### WzLib
-- 修复了wz类型推断的bug。
-- 修复Uol链接推断的bug。
-- 支持读取独立的img文件。
-- 支持跳过img校验和检测，以识别老旧版本的客户端。
-
-### CharaSim
-- 称号支持模拟包含任务数量宏字符串。
-- 添加Ark特殊装备类型的模拟。
-- 添加KMST1069的新属性nbdR识别。
-
-### MapRender
-- 修复了阿斯旺地图特有的wz怪物声明的识别。
+###CharaSim
+- 修复Item无法识别link没有图标的bug
 
 
-## 2018.4.25
+##2016.09.16
 
-### WzLib
-- 重新设计数据结构，以减少内存占用。
+###共通
+- wzlib读取结构变更 Wz_Image.Node.Value不再指向Wz_Image自身的引用
+- 修复因上一条导致的若干运行效果不正确的场合
 
-### CharaSim
-- 支持套装显示点装图标。
-- 支持徽章的tag显示。
-- 龙神的v5技能模拟可以超过等级上限了。
-- 重新设计StringLinker数据结构，以减少内存占用。
+###WzCompare
+- 支持了CMS/TMS等wz合并对比时同名节点冲突的场合，目前可以分别对比
 
-### MapRender
-- 修复了MapRender窗口反复开关引发的的内存泄露。
+###CharaSim
+- 修复恶魔盾牌MP/DF显示bug
 
-
-## 2018.4.13
-
-### 共通
-- 修复了BGR565格式纹理对于win8前系统的支持。
-
-### MapRender
-- 屏蔽了因输入框失去焦点导致的按键处理异常的错误。
-
-### Patcher
-- 添加了CMS的补丁地址。
+###LuaConsole
+- 添加了可以获取全局插件环境和事件的接口 因此在Lua中可以获取当前选中的Wz节点了
 
 
-## 2018.4.10
+##2016.08.11
 
-### MapRender
-- 修复下拉菜单点击无效的bug。
-- 支持更多交互命令。
+###共通
+- 整理Lua的提取方式 直接绑定在顶层节点上 可能会影响对比
 
-
-## 2018.4.9
-
-### MapRender
-- 支持隐藏NPC和怪物名字。
-- 更新了MessageBox样式。
-- 修复了UIChatBox渲染模糊和操作上的bug。
+###Avatar
+- 修复了纸娃娃无法识别Link的Bug
 
 
-## 2018.4.8
+##2016.08.07
 
-### WzLib
-- 修复了format517图片解码错误的bug。
-
-### MapRender
-- 添加UIMessageBox用于各种提示信息。
-- 添加UIChatBox，并支持了输入法，用于交互和显示提示。
-- 临时修复粒子系统的渲染错误。
-- UIWorldmap支持右键返回。
-- 修复了back图层的渲染错误，支持blend模式。
-- UI布局略微调整。
+###共通
+- 临时支持了CMST117新增的Lua节点特殊格式
 
 
-## 2018.3.23
+##2016.07.31
 
-### CharaSim
-- 支持了KMST1066版本拆分的03xx.img物品识别。
+###共通
+- 修复了JMSwz无法解析的bug
+- 加入了一个设置项 允许wz打开时自动排序 这个设置项可通过手动编辑setting文件配置
+- wz显示的部分代码整理
+- 动画部分代码整理 以兼容新的MapRender 
+
+###CharaSim
+- 支持显示KMST新增属性incARC
+
+###Patcher
+- 支持了新的64位长度标记的Patch.exe文件格式
 
 
-## 2018.3.22
+##2016.07.11
 
-### Wz提取
-- 修复了一个可能导致Gif/Apng导出有锯齿的bug。
+###共通
+- 修复了IndexGifEncoder编码纯色帧导致gif文件损坏的bug
+- 修复了MonoGame多Device共存可能出现的bug
 
-### WzLib
-- 修复了GetValue()导致搜索效率低下的bug。
-- 调整string.intern过滤条件，减少字符串池常驻内存占用。
+###CharaSim
+- Eval计算支持了KMST新的log公式，说不定未来会用到
+- 修复了属性Eval计算时因公式出现空白符解析失败的bug
 
-### MapRender
-- UIWorldMap支持更丰富的tooltip信息，并且支持点击传送了。
-- 修复UI绘图资源的潜在内存泄露。
+###MapRender
+- Xna引擎升级至MonoGame，功能部分恢复到之前的版本，并未支持KMST的压缩版客户端资源链接方式
+- 暂时移除没用的输入法和聊天模块
 

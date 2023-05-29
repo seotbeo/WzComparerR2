@@ -76,7 +76,7 @@ namespace WzComparerR2.MapRender.Patches
 
             double ms = gameTime.TotalGameTime.TotalSeconds;
 
-            if ((this.TileMode & TileMode.ScrollHorizontial) != 0)
+            if ((this.TileMode & TileMode.ScrollHorizontal) != 0)
             {
                 origin2.X = (float)((this.rx * 5 * ms) % cx);// +this.Camera.Center.X * (100 - Math.Abs(this.rx)) / 100;
             }
@@ -97,7 +97,6 @@ namespace WzComparerR2.MapRender.Patches
 
             origin2.Y += (env.Camera.Height - 600);
             this.origin2 = origin2;
-            
 
             //计算平铺绘制参数
             if (this.TileMode != TileMode.None)

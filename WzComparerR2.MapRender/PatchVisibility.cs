@@ -142,7 +142,7 @@ namespace WzComparerR2.MapRender
 
         public void ResetTagVisible(string[] tags)
         {
-            foreach(var tag in tags)
+            foreach (var tag in tags)
             {
                 this.tagsVisible.Remove(tag);
             }

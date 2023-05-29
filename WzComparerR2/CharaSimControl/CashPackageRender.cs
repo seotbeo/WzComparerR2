@@ -54,7 +54,7 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap RenderCashPackage(out int picH)
         {
-            Bitmap cashBitmap = new Bitmap(220, DefaultPicHeight);
+            Bitmap cashBitmap = new Bitmap(260, DefaultPicHeight);
             Graphics g = Graphics.FromImage(cashBitmap);
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Center;
@@ -148,10 +148,12 @@ namespace WzComparerR2.CharaSimControl
             picH += 14;
             if (commodityPackage.termStart > 0 || commodityPackage.termEnd != null)
             {
-                string term = "< 판매기간 :";
+                string term = "";
                 if (commodityPackage.termStart > 0)
-                    term += string.Format(" {0}년 {1}월 {2}일", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
-
+                    //term += string.Format("{1:D2}/{2:D2}/{0:D2} {3:D2}:00 ", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
+                    //term += string.Format("{1:D2}/{2}/{0} {3}:00:00", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
+                term += string.Format("{1:D2}/{2}/{0} {3}:00:00", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100, commodityPackage.termStart % 100);
+                //term += "-";
                 if (commodityPackage.termStart > 0 && commodityPackage.termEnd != null)
                     term += "\n~";
                 else
@@ -161,13 +163,15 @@ namespace WzComparerR2.CharaSimControl
                 {
                     int termEndDate = Convert.ToInt32(commodityPackage.termEnd.Split('/')[0]);
                     int termEndTime = Convert.ToInt32(commodityPackage.termEnd.Split('/')[1]);
-                    term += string.Format(" {0}년 {1}월 {2}일 {3}시 {4}분 {5}초", termEndDate / 10000, (termEndDate / 100) % 100, termEndDate % 100, termEndTime / 10000, (termEndTime / 100) % 100, termEndTime % 100);
+                    term += string.Format(" {1:D2}/{2}/{0} {3:D2}:{4:D2}:{5:D2} UTC", termEndDate / 10000, (termEndDate / 100) % 100, termEndDate % 100, termEndTime / 10000, (termEndTime / 100) % 100, termEndTime % 100);
                 }
-                term += " >";
+                //term += " >";
 
                 picH += 8;
+                //term += " >";
                 TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
-                picH += 12 * term.Split('\n').Length;
+                picH += 16 * term.Split('\n').Length;
+                //picH += 12; < --- commented because of line above, check!
             }
             if (commodityPackage.Limit > 0)
             {
@@ -175,13 +179,13 @@ namespace WzComparerR2.CharaSimControl
                 switch (commodityPackage.Limit)
                 {
                     case 2:
-                        //최초구매
+                        //Max Purchase
                         break;
                     case 3:
-                        limit = "넥슨 ID";
+                        limit = "Purchase Limit per Nexon ID";
                         break;
                     case 4:
-                        limit = "캐릭터";
+                        limit = "Character Limited Sale";
                         break;
                     default:
                         limit = commodityPackage.Limit.ToString();
@@ -189,7 +193,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (limit != null && limit.Length > 0)
                 {
-                    TextRenderer.DrawText(g, "< " + limit + " 한정판매 >", GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
+                    TextRenderer.DrawText(g, "<" + limit + ">", GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
                     picH += 12;
                 }
             }
@@ -197,14 +201,16 @@ namespace WzComparerR2.CharaSimControl
 
             int right = cashBitmap.Width - 18;
             if (CashPackage.desc != null && CashPackage.desc.Length > 0)
-                CashPackage.desc += "\n";
+                CashPackage.desc += "";
+            CashPackage.desc += "\n";
             if (CashPackage.onlyCash == 0)
-                GearGraphics.DrawString(g, CashPackage.desc + "\n#넥슨캐시로 구매하면 사용 전 1회에 한해 타인과 교환 할 수 있습니다. (보너스 아이템 제외)#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+                GearGraphics.DrawString(g, CashPackage.desc + "", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+            //GearGraphics.DrawString(g, CashPackage.desc + "\n#(Not applicable to free bonus items) Buy this with Nexon Cash and you can trade it with another user once if unused.", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
             else
-                GearGraphics.DrawString(g, CashPackage.desc + "\n#넥슨캐시로만 구매할 수 있습니다.#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+                GearGraphics.DrawString(g, CashPackage.desc + "\n#Can only be purchased with NX.#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
 
             bool hasLine = false;
-            picH -= 4;
+            picH -= 0;//default is 4
 
             int picStartH = picH, picEndH = 0, columnLeft = 0, columnRight = columnWidth[0];
 
@@ -299,7 +305,7 @@ namespace WzComparerR2.CharaSimControl
                 if (commodity.Bonus == 0)
                 {
                     if (commodity.Count > 1)
-                        info += commodity.Count + "개 ";
+                        info += "(" + commodity.Count + ") ";//count (개)
                     if (commodity.originalPrice == 0)
                     {
                         foreach (var commodity2 in CharaSimLoader.LoadedCommoditiesBySN.Values)
@@ -312,34 +318,34 @@ namespace WzComparerR2.CharaSimControl
                     }
                     if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                     {
-                        info += commodity.originalPrice + "캐시      ";
+                        info += commodity.originalPrice + " NX        "; // HERE is making space between original price and discounted price
                         totalOriginalPrice += commodity.originalPrice;
                     }
                     else
                     {
                         totalOriginalPrice += commodity.Price;
                     }
-                    info += commodity.Price + "캐시";
+                    info += commodity.Price + " NX";
                     totalPrice += commodity.Price;
                 }
                 else
                 {
-                    info += commodity.Count + "개 ";
+                    info += "(" + commodity.Count + ") ";//count (개)
                     if (commodity.originalPrice > 0)
                     {
-                        info += commodity.originalPrice + "캐시";
+                        info += commodity.originalPrice + " NX";
                         totalOriginalPrice += commodity.originalPrice;
                     }
                     else
                     {
-                        info += commodity.Price + "캐시";
+                        info += commodity.Price + " NX";
                         totalOriginalPrice += commodity.Price;
                     }
                 }
 
                 if (commodity.Period > 0)
                 {
-                    time = commodity.Period + "일동안 사용 가능";
+                    time = "AVAILABLE FOR " + commodity.Period + " DAYS.";
                 }
 
                 g.DrawImage(Resource.CSDiscount_backgrnd, columnLeft + 13, picH + 12);
@@ -352,7 +358,7 @@ namespace WzComparerR2.CharaSimControl
                     TextRenderer.DrawText(g, name.TrimEnd(Environment.NewLine.ToCharArray()), GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 17), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                     if (commodity.Bonus == 0)
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.White, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
                             int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
@@ -363,7 +369,7 @@ namespace WzComparerR2.CharaSimControl
                     }
                     else
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.Red, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.Red, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         g.DrawImage(Resource.CSDiscount_bonus, columnRight - 47, picH + 29);
                     }
                 }
@@ -372,7 +378,7 @@ namespace WzComparerR2.CharaSimControl
                     TextRenderer.DrawText(g, name.Replace(Environment.NewLine, ""), GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 8), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                     if (commodity.Bonus == 0)
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.White, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
                             int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
@@ -383,10 +389,10 @@ namespace WzComparerR2.CharaSimControl
                     }
                     else
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.Red, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.Red, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         g.DrawImage(Resource.CSDiscount_bonus, columnRight - 47, picH + 20);
                     }
-                    TextRenderer.DrawText(g, time, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 39), Color.White, TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, time, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 39), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 }
                 picH += 57;
 
@@ -402,13 +408,13 @@ namespace WzComparerR2.CharaSimControl
             g.DrawImage(Resource.CSDiscount_total, 9, picH + 1);
             if (totalOriginalPrice == totalPrice)
             {
-                TextRenderer.DrawText(g, totalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, totalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
             }
             else
             {
-                TextRenderer.DrawText(g, totalOriginalPrice + "캐시     " + totalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.White, TextFormatFlags.NoPadding);
-                TextRenderer.DrawText(g, totalOriginalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.Red, TextFormatFlags.NoPadding);
-                g.DrawImage(Resource.CSDiscount_arrow, 53 + TextRenderer.MeasureText(g, totalOriginalPrice + "캐시", GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
+                TextRenderer.DrawText(g, totalOriginalPrice + " NX      " + totalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, totalOriginalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.Red, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                g.DrawImage(Resource.CSDiscount_arrow, 35 + TextRenderer.MeasureText(g, totalOriginalPrice + " NX", GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
                 DrawDiscountNum(g, "-" + (int)((100 - 100.0 * totalPrice / totalOriginalPrice)) + "%", cashBitmap.Width - 40, picH - 1, StringAlignment.Near);
             }
             picH += 11;

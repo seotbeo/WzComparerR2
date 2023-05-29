@@ -35,7 +35,7 @@ namespace WzComparerR2.MapRender.UI
         private TextEditorProxy textEditor;
         private UndoManagerProxy undoManager;
         private Func<ScrollViewer> _ScrollViewerGet;
-        
+
         //IMEhandler
         private IMEHandler imeHandler;
         private DateTime lastCompositionTime;
@@ -207,7 +207,7 @@ namespace WzComparerR2.MapRender.UI
             if (imeWindow != null)
             {
                 bool hasComposition = !string.IsNullOrEmpty(imeWindow.CompositionString);
-                if (hasComposition!=this.prevHasComposition)
+                if (hasComposition != this.prevHasComposition)
                 {
                     lastCompositionTime = DateTime.Now;
                 }
@@ -311,7 +311,7 @@ namespace WzComparerR2.MapRender.UI
 
                 if (target == null)
                 {
-                    throw new Exception("Get TextEditor failed.");
+                    throw new Exception("Failed to retrieve TextEditor.");
                 }
 
                 this.InitMethodCache(target);
@@ -424,7 +424,7 @@ namespace WzComparerR2.MapRender.UI
 
                 if (target == null)
                 {
-                    throw new Exception("Get UndoManager failed.");
+                    throw new Exception("Failed to retrieve UndoManager.");
                 }
 
                 this.InitMethodCache(target);

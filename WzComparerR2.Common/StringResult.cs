@@ -39,7 +39,7 @@ namespace WzComparerR2.Common
             {
                 if (this.allValues != null && key != null)
                 {
-                    foreach(var kv in this.allValues)
+                    foreach (var kv in this.allValues)
                     {
                         if (kv.Key == key)
                         {
@@ -58,7 +58,7 @@ namespace WzComparerR2.Common
                         this.allValues = new List<KeyValuePair<string, string>>();
                     }
 
-                    for(int i = 0; i < this.allValues.Count; i++)
+                    for (int i = 0; i < this.allValues.Count; i++)
                     {
                         var kv = this.allValues[i];
                         if (kv.Key == key)

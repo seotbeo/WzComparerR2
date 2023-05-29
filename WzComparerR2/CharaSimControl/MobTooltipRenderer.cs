@@ -44,7 +44,7 @@ namespace WzComparerR2.CharaSimControl
                 string mobName = GetMobName(MobInfo.ID);
                 var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemNameFont2, Brushes.White, 0, 0);
                 titleBlocks.Add(block);
-                block = PrepareText(g, "" + MobInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 4, 4);
+                block = PrepareText(g, "ID:" + MobInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 4, 4);
                 titleBlocks.Add(block);
             }
 
@@ -52,37 +52,77 @@ namespace WzComparerR2.CharaSimControl
             int picY = 0;
 
             StringBuilder sbExt = new StringBuilder();
-            if (MobInfo.Boss)
+            if (MobInfo.Boss && MobInfo.PartyBonusMob)
             {
-                sbExt.Append("[보스] ");
+                sbExt.Append("[Mini-Boss] ");
+            }
+            if (MobInfo.Boss && !MobInfo.PartyBonusMob)
+            {
+                sbExt.Append("[Boss] ");
             }
             if (MobInfo.Undead)
             {
-                sbExt.Append("[언데드] ");
+                sbExt.Append("[Undead] ");
             }
             if (MobInfo.FirstAttack)
             {
-                sbExt.Append("[선제공격] ");
+                sbExt.Append("[Auto-Aggressive] ");
             }
             if (!MobInfo.BodyAttack)
             {
-                sbExt.Append("[바디어택] ");
+                sbExt.Append("[No Touch Damage] ");
             }
             if (MobInfo.DamagedByMob)
             {
-                sbExt.Append("[몬스터의 데미지를 받음] ");
+                sbExt.Append("[Vulnerable to Monsters] ");
+            }
+            if (MobInfo.ChangeableMob)
+            {
+                sbExt.Append("[Level Scaled] ");
+            }
+            if (MobInfo.AllyMob)
+            {
+                sbExt.Append("[Friendly] ");
             }
             if (MobInfo.Invincible)
             {
-                sbExt.Append("[무적] ");
+                sbExt.Append("[Invincible] ");
             }
             if (MobInfo.NotAttack)
             {
-                sbExt.Append("[공격하지 않음] ");
+                sbExt.Append("[Non-Aggressive] ");//Monster can not attack or damage you. But you can damage it.
             }
             if (MobInfo.FixedDamage > 0)
             {
-                sbExt.Append("[" + MobInfo.FixedDamage + "의 고정 데미지를 받음] ");
+                sbExt.Append("[Fixed Damage: " + MobInfo.FixedDamage.ToString("N0") + "] ");
+            }
+            if (MobInfo.FixedBodyAttackDamageR > 0)
+            {
+                sbExt.Append("[Fixed Touch Damage: " + MobInfo.FixedBodyAttackDamageR + "%] ");
+            }
+            if (MobInfo.IgnoreDamage)
+            {
+                sbExt.Append("[Ignores Damage] ");
+            }
+            if (MobInfo.IgnoreMoveImpact)
+            {
+                sbExt.Append("[Immune to Rush] ");
+            }
+            if (MobInfo.IgnoreMovable)
+            {
+                sbExt.Append("[Immune to Stun/Bind] ");
+            }
+            if (MobInfo.NoDebuff)
+            {
+                sbExt.Append("[Immune to Debuffs] ");
+            }
+            if (MobInfo.OnlyNormalAttack)
+            {
+                sbExt.Append("[Damaged by Basic Attacks only] ");
+            }
+            if (MobInfo.OnlyHittedByCommonAttack)
+            {
+                sbExt.Append("[Hit by Basic Attacks only] ");
             }
 
             if (sbExt.Length > 1)
@@ -94,24 +134,68 @@ namespace WzComparerR2.CharaSimControl
 
             if (MobInfo.RemoveAfter > 0)
             {
-                propBlocks.Add(PrepareText(g, "생성 " + MobInfo.RemoveAfter + "초 후 자동으로 사라짐", GearGraphics.ItemDetailFont, Brushes.GreenYellow, 0, picY));
+                propBlocks.Add(PrepareText(g, "[Disappears after " + MobInfo.RemoveAfter + " seconds]", GearGraphics.ItemDetailFont, Brushes.GreenYellow, 0, picY));
                 picY += 16;
             }
 
-            propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
-            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : MobInfo.MaxHP.ToString("N0");
+            propBlocks.Add(PrepareText(g, "Type: " + GetMobCategoryName(MobInfo.Category), GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
+            propBlocks.Add(PrepareText(g, "Level: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : MobInfo.MaxHP.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
             propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : MobInfo.MaxMP.ToString("N0");
+            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : MobInfo.MaxMP.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
             propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "물리공격력: " + MobInfo.PADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "마법공격력: " + MobInfo.MADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "명중치: " + MobInfo.Acc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "회피치: " + MobInfo.Eva, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "넉백: " + MobInfo.Pushed.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.HPRecovery > 0)
+            {
+                propBlocks.Add(PrepareText(g, "HP Recovery: " + MobInfo.HPRecovery.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.MPRecovery > 0)
+            {
+                propBlocks.Add(PrepareText(g, "MP Recovery: " + MobInfo.MPRecovery.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            propBlocks.Add(PrepareText(g, "Physical Damage: " + MobInfo.PADamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "Magic Damage: " + MobInfo.MADamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            //propBlocks.Add(PrepareText(g, "Physical Defense: " + MobInfo.PDDamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            //propBlocks.Add(PrepareText(g, "Magic Defense: " + MobInfo.MDDamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "Physical DEF Rate: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "Magic DEF Rate: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            //propBlocks.Add(PrepareText(g, "Accuracy: " + MobInfo.Acc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16)); //no longer used
+            //propBlocks.Add(PrepareText(g, "Avoidability: " + MobInfo.Eva, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16)); //no longer used
+            propBlocks.Add(PrepareText(g, "Knockback: " + MobInfo.Pushed.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "EXP: " + MobInfo.Exp.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.CharismaEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Ambition EXP: " + MobInfo.CharismaEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.SenseEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Empathy EXP: " + MobInfo.SenseEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.InsightEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Insight EXP: " + MobInfo.InsightEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.WillEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Willpower EXP: " + MobInfo.WillEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.CraftEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Diligence EXP: " + MobInfo.CraftEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.CharmEXP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Charm EXP: " + MobInfo.CharmEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            if (MobInfo.WP > 0)
+            {
+                propBlocks.Add(PrepareText(g, "Weapon Points (for Zero): " + MobInfo.WP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            //propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (GetElemAttrString(MobInfo.ElemAttr) != "")
+            {
+                propBlocks.Add(PrepareText(g, "Elements: " + GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+
             picY += 28;
 
             if (MobInfo.Revive.Count > 0)
@@ -125,7 +209,8 @@ namespace WzComparerR2.CharaSimControl
                 }
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append("죽을 시 소환: ");
+                //sb.Append("Summons after death: ");
+                sb.Append("Revives into: ");
                 int rowCount = 0;
                 foreach (var kv in reviveCounts)
                 {
@@ -134,7 +219,7 @@ namespace WzComparerR2.CharaSimControl
                         sb.AppendLine().Append("       ");
                     }
                     string mobName = GetMobName(kv.Key);
-                    sb.AppendFormat("{0}({1:D7})", mobName, kv.Key);
+                    sb.AppendFormat("\n\r{0} ({1:D7})", mobName, kv.Key);
                     if (kv.Value > 1)
                     {
                         sb.Append("*" + kv.Value);
@@ -225,19 +310,41 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetElemAttrString(MobElemAttr elemAttr)
         {
-            StringBuilder sb1 = new StringBuilder(),
-                sb2 = new StringBuilder();
+            StringBuilder sb1 = new StringBuilder();
+            var elems = new[]
+            {
+                new {name = "Physical", attr = elemAttr.P },
+                new {name = "Holy", attr = elemAttr.H },
+                new {name = "Fire", attr = elemAttr.F },
+                new {name = "Ice", attr = elemAttr.I },
+                new {name = "Poison", attr = elemAttr.S },
+                new {name = "Lightning", attr = elemAttr.L },
+                new {name = "Dark", attr = elemAttr.D },
+            };
+            foreach (var item in elems)
+            {
+                if (item.attr != ElemResistance.Normal)
+                {
+                    sb1.Append($"{item.name} {GetElemAttrResistString(item.attr)}, ");
+                }
+            }
+            return sb1.ToString().TrimEnd().TrimEnd(',');
+        }
 
-            sb1.Append("얼번불독성암물");
-            sb2.Append(GetElemAttrResistString(elemAttr.I));
-            sb2.Append(GetElemAttrResistString(elemAttr.L));
-            sb2.Append(GetElemAttrResistString(elemAttr.F));
-            sb2.Append(GetElemAttrResistString(elemAttr.S));
-            sb2.Append(GetElemAttrResistString(elemAttr.H));
-            sb2.Append(GetElemAttrResistString(elemAttr.D));
-            sb2.Append(GetElemAttrResistString(elemAttr.P));
-            sb1.AppendLine().Append(sb2.ToString());
-            return sb1.ToString();
+        public static string GetMobCategoryName(int category)
+        {
+            switch (category)
+            {
+                case 1: return "Mammal";
+                case 2: return "Plant";
+                case 3: return "Fish";
+                case 4: return "Reptile";
+                case 5: return "Spirit";
+                case 6: return "Devil";
+                case 7: return "Undead";
+                case 8: return "Enchanted";
+                default: return "None";
+            }
         }
 
         private string GetElemAttrResistString(ElemResistance resist)
@@ -245,10 +352,10 @@ namespace WzComparerR2.CharaSimControl
             string e = null;
             switch (resist)
             {
-                case ElemResistance.Immune: e = "×"; break;
-                case ElemResistance.Resist: e = "△"; break;
-                case ElemResistance.Normal: e = "○"; break;
-                case ElemResistance.Weak: e = "◎"; break;
+                case ElemResistance.Immune: e = "immune"; break;
+                case ElemResistance.Resist: e = "strong"; break;
+                case ElemResistance.Normal: e = "neutral"; break;
+                case ElemResistance.Weak: e = "weak"; break;
             }
             return e ?? "  ";
         }

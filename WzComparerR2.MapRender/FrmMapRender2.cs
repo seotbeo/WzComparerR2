@@ -46,7 +46,7 @@ namespace WzComparerR2.MapRender
             this.patchVisibility.LadderRopeVisible = false;
             this.patchVisibility.SkyWhaleVisible = false;
             this.patchVisibility.IlluminantClusterPathVisible = false;
-            
+
             var form = Form.FromHandle(this.Window.Handle) as Form;
             form.Load += Form_Load;
             form.GotFocus += Form_GotFocus;
@@ -507,10 +507,10 @@ namespace WzComparerR2.MapRender
 
             StringResult sr = null;
             this.StringLinker?.StringMap.TryGetValue(mapID, out sr);
-            string mapName = sr?["mapName"] ?? "(null)";
-            int last = (mapName.LastOrDefault(c => c >= '가' && c <= '힣') - '가') % 28;
-            //var message = string.Format("是否传送到地图\r\n{0} ({1})？", sr?.Name ?? "null", mapID);
-            var message = mapName + (last == 0 || last == 8 ? "" : "으") + "로 이동하시겠습니까?";
+            //string mapName = sr?["mapName"] ?? "(null)"; //Kenny ver.
+            //int last = (mapName.LastOrDefault(c => c >= '가' && c <= '힣') - '가') % 28; //Kenny ver.
+            var message = string.Format("Will you teleport to this map?\r\n{0} ({1})", sr?.Name ?? "null", mapID);
+            //var message = mapName + (last == 0 || last == 8 ? "" : "으") + "로 이동하시겠습니까?"; //Kenny ver.
             MessageBox.Show(message, "", MessageBoxButton.OKCancel, callback, false);
         }
 
@@ -541,16 +541,16 @@ namespace WzComparerR2.MapRender
             {
                 case "/help":
                 case "/?":
-                    this.ui.ChatBox.AppendTextHelp(@"/help 도움말 표시");
-                    this.ui.ChatBox.AppendTextHelp(@"/map (mapID) 해당 맵으로 이동");
-                    this.ui.ChatBox.AppendTextHelp(@"/back 이전 맵으로 이동");
-                    this.ui.ChatBox.AppendTextHelp(@"/home 마을로 귀환");
-                    this.ui.ChatBox.AppendTextHelp(@"/history [maxCount] 방문 기록 보기");
-                    this.ui.ChatBox.AppendTextHelp(@"/minimap 미니맵 설정");
-                    this.ui.ChatBox.AppendTextHelp(@"/scene 장면 설정");
-                    this.ui.ChatBox.AppendTextHelp(@"/quest 퀘스트 설정");
-                    this.ui.ChatBox.AppendTextHelp(@"/date 시각 설정");
-                    this.ui.ChatBox.AppendTextHelp(@"/multibgm Multi BGM 설정");
+                    this.ui.ChatBox.AppendTextHelp(@"/help Show available commands");
+                    this.ui.ChatBox.AppendTextHelp(@"/map (mapID) Teleport to a specified map");
+                    this.ui.ChatBox.AppendTextHelp(@"/back Return to the previous map");
+                    this.ui.ChatBox.AppendTextHelp(@"/home Teleport to the town of the region you are in");
+                    this.ui.ChatBox.AppendTextHelp(@"/history [maxCount] History of visited maps");
+                    this.ui.ChatBox.AppendTextHelp(@"/minimap Mini map settings");
+                    this.ui.ChatBox.AppendTextHelp(@"/scene Scene settings");
+                    this.ui.ChatBox.AppendTextHelp(@"/quest Quest settings");
+                    this.ui.ChatBox.AppendTextHelp(@"/date Date settings");
+                    this.ui.ChatBox.AppendTextHelp(@"/multibgm Multi BGM settings");
                     break;
 
                 case "/map":
@@ -561,18 +561,18 @@ namespace WzComparerR2.MapRender
                     }
                     else
                     {
-                        this.ui.ChatBox.AppendTextSystem($"정확한 맵 ID를 입력하세요.");
+                        this.ui.ChatBox.AppendTextSystem($"Please enter a correct map ID.");
                     }
                     break;
 
-                case "/back":
+                case "/return":
                     if (this.viewHistory.Count > 0)
                     {
                         this.MoveToLastMap();
                     }
                     else
                     {
-                        this.ui.ChatBox.AppendTextSystem($"이전 맵이 없습니다.");
+                        this.ui.ChatBox.AppendTextSystem($"There is no previous map to return to.");
                     }
                     break;
 
@@ -580,7 +580,7 @@ namespace WzComparerR2.MapRender
                     var retMapID = this.mapData?.ReturnMap;
                     if (retMapID == null || retMapID == 999999999)
                     {
-                        this.ui.ChatBox.AppendTextSystem($"마을로 귀환할 수 없습니다.");
+                        this.ui.ChatBox.AppendTextSystem($"You cannot return to town.");
                     }
                     else
                     {
@@ -596,7 +596,7 @@ namespace WzComparerR2.MapRender
                     {
                         historyCount = 5;
                     }
-                    this.ui.ChatBox.AppendTextHelp($"방문한 맵 개수: ({this.viewHistory.Count})");
+                    this.ui.ChatBox.AppendTextHelp($"Number of visited maps: ({this.viewHistory.Count})");
                     var node = this.viewHistory.Last;
                     while (node != null && historyCount > 0)
                     {
@@ -606,18 +606,18 @@ namespace WzComparerR2.MapRender
                             this.StringLinker.StringMap.TryGetValue(node.Value.MapID, out sr);
                         }
                         this.ui.ChatBox.AppendTextHelp($"  {sr?.Name ?? "(null)"}({node.Value.MapID})");
-                        
+
                         node = node.Previous;
                         historyCount--;
                     }
                     break;
-                    
+
                 case "/minimap":
                     var canvasList = this.mapData?.MiniMap?.ExtraCanvas;
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            this.ui.ChatBox.AppendTextHelp($"미니맵: {string.Join(", ", canvasList?.Keys)}");
+                            this.ui.ChatBox.AppendTextHelp($"Mini map: {string.Join(", ", canvasList?.Keys)}");
                             break;
 
                         case "set":
@@ -625,17 +625,17 @@ namespace WzComparerR2.MapRender
                             if (canvasList != null && canvasList.TryGetValue(canvasName, out Texture2D canvas))
                             {
                                 this.ui.Minimap.MinimapCanvas = engine.Renderer.CreateTexture(canvas);
-                                this.ui.ChatBox.AppendTextHelp($"미니맵 변경 완료: {canvasName}");
+                                this.ui.ChatBox.AppendTextHelp($"Mini map change completed: {canvasName}");
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextSystem($"미니맵을 찾을 수 없습니다: {canvasName}");
+                                this.ui.ChatBox.AppendTextSystem($"Mini map not found: {canvasName}");
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/minimap list 미니맵 목록 보기");
-                            this.ui.ChatBox.AppendTextHelp(@"/minimap set (canvasName) 해당 미니맵으로 변경");
+                            this.ui.ChatBox.AppendTextHelp(@"/minimap list View list of mini maps");
+                            this.ui.ChatBox.AppendTextHelp(@"/minimap set (canvasName) Change the corresponding mini map");
                             break;
                     }
                     break;
@@ -654,14 +654,14 @@ namespace WzComparerR2.MapRender
                                         .Distinct()
                                         .OrderBy(tag => tag)
                                         .ToList();
-                                    this.ui.ChatBox.AppendTextHelp($"태그 목록: {string.Join(", ", mapTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"Tag list: {string.Join(", ", mapTags)}");
                                     break;
                                 case "info":
                                     var visibleTags = this.patchVisibility.TagsVisible.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
                                     var hiddenTags = this.patchVisibility.TagsVisible.Where(kv => !kv.Value).Select(kv => kv.Key).ToList();
-                                    this.ui.ChatBox.AppendTextHelp($"태그 기본 표시 상태: {this.patchVisibility.DefaultTagVisible}");
-                                    this.ui.ChatBox.AppendTextHelp($"보인 태그: {string.Join(", ", visibleTags)}");
-                                    this.ui.ChatBox.AppendTextHelp($"숨긴 태그: {string.Join(", ", hiddenTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"Default tag display state: {this.patchVisibility.DefaultTagVisible}");
+                                    this.ui.ChatBox.AppendTextHelp($"Shown tag: {string.Join(", ", visibleTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"Hidden tag: {string.Join(", ", hiddenTags)}");
                                     break;
                                 case "show":
                                     string[] tags = arguments.Skip(3).ToArray();
@@ -671,11 +671,11 @@ namespace WzComparerR2.MapRender
                                         {
                                             this.patchVisibility.SetTagVisible(tag, true);
                                         }
-                                        this.ui.ChatBox.AppendTextHelp($"태그 보이기 완료: {string.Join(", ", tags)}");
+                                        this.ui.ChatBox.AppendTextHelp($"Completed tag: {string.Join(", ", tags)}");
                                     }
                                     else
                                     {
-                                        this.ui.ChatBox.AppendTextSystem("태그를 입력해주세요.");
+                                        this.ui.ChatBox.AppendTextSystem("Please enter a tag.");
                                     }
                                     break;
                                 case "hide":
@@ -686,11 +686,11 @@ namespace WzComparerR2.MapRender
                                         {
                                             this.patchVisibility.SetTagVisible(tag, false);
                                         }
-                                        this.ui.ChatBox.AppendTextHelp($"태그 숨기기 완료: {string.Join(", ", tags)}");
+                                        this.ui.ChatBox.AppendTextHelp($"Completed tag: {string.Join(", ", tags)}");
                                     }
                                     else
                                     {
-                                        this.ui.ChatBox.AppendTextSystem("태그를 입력해주세요.");
+                                        this.ui.ChatBox.AppendTextSystem("Please enter a tag.");
                                     }
                                     break;
                                 case "reset":
@@ -698,42 +698,42 @@ namespace WzComparerR2.MapRender
                                     if (tags.Length > 0)
                                     {
                                         this.patchVisibility.ResetTagVisible(tags);
-                                        this.ui.ChatBox.AppendTextHelp($"태그 표시 상태 재설정 완료: {string.Join(", ", tags)}");
+                                        this.ui.ChatBox.AppendTextHelp($"Completed tag display state reset: {string.Join(", ", tags)}");
                                     }
                                     else
                                     {
-                                        this.ui.ChatBox.AppendTextSystem("태그를 입력해주세요.");
+                                        this.ui.ChatBox.AppendTextSystem("Please enter a tag.");
                                     }
                                     break;
                                 case "reset-all":
                                     this.patchVisibility.ResetTagVisible();
-                                    this.ui.ChatBox.AppendTextHelp($"모든 태그 표시 상태 재설정 완료");
+                                    this.ui.ChatBox.AppendTextHelp($"Completed all tag display state reset");
                                     break;
                                 case "set-default":
                                     if (bool.TryParse(arguments.ElementAtOrDefault(3), out bool isVisible))
                                     {
                                         this.patchVisibility.DefaultTagVisible = isVisible;
-                                        this.ui.ChatBox.AppendTextHelp($"태그 기본 표시 상태 설정 완료: {isVisible}");
+                                        this.ui.ChatBox.AppendTextHelp($"Completed tag default display state: {isVisible}");
                                     }
                                     else
                                     {
-                                        this.ui.ChatBox.AppendTextSystem("정확한 기본값을 입력하세요.");
+                                        this.ui.ChatBox.AppendTextSystem("Please enter a correct value.");
                                     }
                                     break;
                                 default:
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag list 태그 목록 보기");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag info 현재 태그 표시 상태 확인");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag show (tagName)... 해당 태그 보이기");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag hide (tagName)... 해당 태그 숨기기");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag reset (tagName)... 해당 태그 표시 상태 재설정");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag reset-all 모든 태그 표시 상태 재설정");
-                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag set-default (true/false) 태그 기본 표시 상태 설정");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag list View a list of tags");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag info View current tag display status");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag show (tagName)... Show tag visibility");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag hide (tagName)... Hide tag visibility");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag reset (tagName)... Reset tag");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag reset-all Reset all tag visibility");
+                                    this.ui.ChatBox.AppendTextHelp(@"/scene tag set-default (true/false) Reset tag default display state");
                                     break;
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/scene tag 태그 표시 상태 설정");
+                            this.ui.ChatBox.AppendTextHelp(@"/scene tag Tag display state settings");
                             break;
                     }
                     break;
@@ -749,7 +749,7 @@ namespace WzComparerR2.MapRender
                                 .Concat(this?.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).Quest))
                                 .Concat(this?.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).SubItems).SelectMany(item => item.Quest))
                                 .Distinct().ToList();
-                            this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 개수: ({questList.Count()})");
+                            this.ui.ChatBox.AppendTextHelp($"Related quests: ({questList.Count()})");
                             foreach (Tuple<int, int> item in questList)
                             {
                                 Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{item.Item1}");
@@ -765,17 +765,17 @@ namespace WzComparerR2.MapRender
                                 this.mapData.PreloadResource(resLoader);
                                 Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{questID}");
                                 string questName = questInfoNode?.Nodes["name"].GetValueEx<string>(null) ?? "null";
-                                this.ui.ChatBox.AppendTextSystem($"{questName}({questID})의 상태를 {questState}(으)로 변경했습니다.");
+                                this.ui.ChatBox.AppendTextSystem($"Changed the state of {questName}({questID}) to {questState}.");
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextSystem($"정확한 퀘스트 상태를 입력하세요.");
+                                this.ui.ChatBox.AppendTextSystem($"Please enter a correct quest state.");
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/quest list 관련된 퀘스트 목록 보기");
-                            this.ui.ChatBox.AppendTextHelp(@"/quest set (questID) (questState) 해당 퀘스트의 상태 설정");
+                            this.ui.ChatBox.AppendTextHelp(@"/quest list View list of related quests");
+                            this.ui.ChatBox.AppendTextHelp(@"/quest set (questID) (questState) Set quest state");
                             break;
                     }
                     break;
@@ -785,7 +785,7 @@ namespace WzComparerR2.MapRender
                     {
                         case "list":
                             List<Tuple<long, long>> dateList = this?.mapData.Scene.Npcs.SelectMany(item => item.Date).ToList();
-                            this.ui.ChatBox.AppendTextHelp($"관련된 시각 개수: ({dateList.Count()})");
+                            this.ui.ChatBox.AppendTextHelp($"Related dates: ({dateList.Count()})");
                             foreach (Tuple<long, long> item in dateList)
                             {
                                 this.ui.ChatBox.AppendTextHelp($"  {item.Item1} - {item.Item2}");
@@ -797,17 +797,17 @@ namespace WzComparerR2.MapRender
                             {
                                 this.mapData.Date = datetime;
                                 this.mapData.PreloadResource(resLoader);
-                                this.ui.ChatBox.AppendTextSystem($"렌더링 기준 시각을 {datetime}(으)로 변경했습니다.");
+                                this.ui.ChatBox.AppendTextSystem($"Changed rendering base time to {datetime}.");
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextSystem($"정확한 시각을 입력하세요.");
+                                this.ui.ChatBox.AppendTextSystem($"Please enter a correct time and date.");
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/date list 관련된 시간 목록 보기");
-                            this.ui.ChatBox.AppendTextHelp(@"/date set (yyyyMMddHHmm) 렌더링 기준 시각 설정");
+                            this.ui.ChatBox.AppendTextHelp(@"/date list View a list of related dates");
+                            this.ui.ChatBox.AppendTextHelp(@"/date set (yyyyMMddHHmm) Time and date reference settings");
                             break;
                     }
                     break;
@@ -823,7 +823,7 @@ namespace WzComparerR2.MapRender
                                 path[1] += ".img";
                                 var bgmNode = PluginBase.PluginManager.FindWz(string.Join("\\", path));
                                 var subNodes = bgmNode?.Nodes ?? new Wz_Node.WzNodeCollection(null);
-                                this.ui.ChatBox.AppendTextHelp($"Multi BGM 개수: {subNodes.Count}");
+                                this.ui.ChatBox.AppendTextHelp($"Multi BGM: {subNodes.Count}");
                                 foreach (Wz_Node subNode in subNodes)
                                 {
                                     this.ui.ChatBox.AppendTextHelp($"  {subNode.Text}");
@@ -831,7 +831,7 @@ namespace WzComparerR2.MapRender
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextHelp($"Multi BGM 개수: 0");
+                                this.ui.ChatBox.AppendTextHelp($"Multi BGM: 0");
                             }
                             break;
 
@@ -839,7 +839,7 @@ namespace WzComparerR2.MapRender
                             Music multiBgm = LoadBgm(this.mapData, arguments.ElementAtOrDefault(2));
                             if (multiBgm != null)
                             {
-                                this.ui.ChatBox.AppendTextSystem($"Multi BGM을 {arguments.ElementAtOrDefault(2)}(으)로 변경했습니다.");
+                                this.ui.ChatBox.AppendTextSystem($"Changed the Multi BGM to {arguments.ElementAtOrDefault(2)}.");
 
                                 Task bgmTask = null;
                                 bool willSwitchBgm = this.bgm != multiBgm;
@@ -861,19 +861,19 @@ namespace WzComparerR2.MapRender
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextHelp($"정확한 Multi BGM을 입력하세요.");
+                                this.ui.ChatBox.AppendTextHelp($"Please enter a correct Multi BGM.");
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/multibgm list Multi BGM 목록 보기");
-                            this.ui.ChatBox.AppendTextHelp(@"/multibgm set (multiBgm) 해당 Multi BGM 재생");
+                            this.ui.ChatBox.AppendTextHelp(@"/multibgm list View list of Multi BGM(s)");
+                            this.ui.ChatBox.AppendTextHelp(@"/multibgm set (multiBgm) Plays the corresponding Multi BGM");
                             break;
                     }
                     break;
 
                 default:
-                    this.ui.ChatBox.AppendTextSystem($"알 수 없는 명령어: {arguments[0]}");
+                    this.ui.ChatBox.AppendTextSystem($"Unknown command: {arguments[0]}");
                     break;
             }
         }

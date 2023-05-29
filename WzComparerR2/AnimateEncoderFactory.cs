@@ -84,7 +84,7 @@ namespace WzComparerR2
         public Type EncoderType { get; set; }
         public string FileExtension { get; set; }
         public string FileDescription { get; set; }
-        
+
         public bool SupportAlphaChannel { get; set; }
     }
 }

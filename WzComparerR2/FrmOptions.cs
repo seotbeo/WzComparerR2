@@ -20,19 +20,19 @@ namespace WzComparerR2
 
             cmbWzEncoding.Items.AddRange(new[]
             {
-                new ComboItem("기본"){ Value = 0 },
+                new ComboItem("Default"){ Value = 0 },
                 new ComboItem("Shift-JIS (JMS)"){ Value = 932 },
-                new ComboItem("GB2312 (CMS)"){ Value = 936 },
+                new ComboItem("GB 2312 (CMS)"){ Value = 936 },
                 new ComboItem("EUC-KR (KMS)"){ Value = 949 },
                 new ComboItem("Big5 (TMS)"){ Value = 950 },
-                new ComboItem("ISO-8859-1 (GMS)"){ Value = 1252 },
+                new ComboItem("ISO 8859-1 (GMS)"){ Value = 1252 },
                 new ComboItem("ASCII"){ Value = -1 },
             });
 
             cmbWzVersionVerifyMode.Items.AddRange(new[]
             {
-                new ComboItem("기본"){ Value = WzLib.WzVersionVerifyMode.Default },
-                new ComboItem("빠름"){ Value = WzLib.WzVersionVerifyMode.Fast },
+                new ComboItem("Default"){ Value = WzLib.WzVersionVerifyMode.Default },
+                new ComboItem("Fast"){ Value = WzLib.WzVersionVerifyMode.Fast },
             });
         }
 

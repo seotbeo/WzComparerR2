@@ -59,7 +59,7 @@ namespace WzComparerR2.MapRender.Patches2
                 }
                 subItems.Add(subitem);
             }
-            
+
             if (subItems.Count <= 0)
             {
                 subItems.Add(new SubParticleItem()

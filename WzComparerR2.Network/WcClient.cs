@@ -85,19 +85,19 @@ namespace WzComparerR2.Network
                 ReceiveTimeout = 60000,
                 SendTimeout = 10000,
             };
-            
-            Log.Debug("Begin connect.");
+
+            Log.Debug("Connecting...");
             while (true)
             {
                 try
                 {
                     await this.client.ConnectAsync(this.Host, this.Port);
-                    Log.Info("Connect success.");
+                    Log.Info("Connected.");
                     break;
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Connect failed: {0}", ex.Message);
+                    Log.Error("Failed to connect: {0}", ex.Message);
                     var e = new ErrorEventArgs(ex);
                     this.ConnectFailed?.Invoke(this, e);
                     if (AutoReconnect)
@@ -121,7 +121,7 @@ namespace WzComparerR2.Network
 
         private async Task BeginRead(Stream ns)
         {
-            Log.Debug("Begin read loop.");
+            Log.Debug("Reading loop...");
             var readBuffer = new RingBufferStream();
             ICryptoTransform transform = null;
 
@@ -137,7 +137,7 @@ namespace WzComparerR2.Network
                     if (count <= 0)
                         break;
                     readBuffer.Append(buffer, 0, count);
-                    
+
                     while (true)
                     {
                         //切换加密
@@ -199,7 +199,7 @@ namespace WzComparerR2.Network
             }
             finally
             {
-                Log.Debug("End read.");
+                Log.Debug("Stopped reading.");
                 try
                 {
                     this.writeQueue.CompleteAdding();
@@ -215,7 +215,7 @@ namespace WzComparerR2.Network
         {
             await Task.Run(async () =>
             {
-                Log.Debug("Begin write loop.");
+                Log.Debug("Writing loop...");
                 try
                 {
                     object pack = null;
@@ -239,7 +239,7 @@ namespace WzComparerR2.Network
                     this.writeQueue.Dispose();
                     ns.Close();
                 }
-                Log.Debug("End write.");
+                Log.Debug("Stopped writing.");
             });
         }
 
@@ -268,7 +268,7 @@ namespace WzComparerR2.Network
                 {
                     pack = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(json);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.Warn("Decode pack failed: {0}", ex.Message);
                 }

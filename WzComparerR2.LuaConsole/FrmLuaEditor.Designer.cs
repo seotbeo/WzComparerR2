@@ -1,4 +1,4 @@
-namespace WzComparerR2.LuaConsole
+﻿namespace WzComparerR2.LuaConsole
 {
     partial class FrmLuaEditor
     {
@@ -46,7 +46,7 @@ namespace WzComparerR2.LuaConsole
             this.Controls.Add(this.textEditorControl1);
             this.DoubleBuffered = true;
             this.Name = "FrmLuaEditor";
-            this.Text = "제목 없음";
+            this.Text = "Untitled";
             this.ResumeLayout(false);
 
         }

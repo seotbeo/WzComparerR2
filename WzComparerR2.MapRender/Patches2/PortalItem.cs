@@ -39,11 +39,12 @@ namespace WzComparerR2.MapRender.Patches2
                 Image = node.Nodes["image"].GetValueEx<int>(0),
                 EnchantPortal = node.Nodes["enchantPortal"].GetValueEx<int>(0) != 0,
                 ShownAtMinimap = node.Nodes["shownAtMinimap"].GetValueEx<int>(0) != 0
+
             };
             return item;
         }
 
-        public static readonly IReadOnlyList<string> PortalTypes = new[] { "sp", "pi", "pv", "pc", "pg", "tp", "ps", "pgi", "psi", "pcs", "ph", "psh", "pcj", "pci", "pci2", "pcig", "pshg", "pcc" };
+        public static readonly string[] PortalTypes = new[] { "sp", "pi", "pv", "pc", "pg", "tp", "ps", "pgi", "psi", "pcs", "ph", "psh", "pcj", "pci", "pci2", "pcig", "pshg", "pcc" };
 
         public class ItemView
         {

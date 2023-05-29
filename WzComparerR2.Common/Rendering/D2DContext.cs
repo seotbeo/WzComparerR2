@@ -12,7 +12,7 @@ namespace WzComparerR2.Rendering
     {
         public Surface DxgiSurface { get; internal set; }
         public RenderTarget D2DRenderTarget { get; internal set; }
-        
+
         internal bool IsBeginEndPair { get; private set; }
         private SolidColorBrush cachedBrush;
 

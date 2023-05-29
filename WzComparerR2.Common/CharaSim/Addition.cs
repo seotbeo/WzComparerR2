@@ -25,12 +25,12 @@ namespace WzComparerR2.CharaSim
             {
                 case AdditionType.boss:
                     sb = new StringBuilder();
-                    sb.Append("보스 공격 시, ");
+                    //sb.Append("When attacking Bosses, "); NECESSARY FOR GMS VERSION
                     {
                         string v1;
                         if (this.Props.TryGetValue("prob", out v1))
-                            sb.Append(v1 + "%의 확률로 ");
-                        sb.Append(Props["damage"] + "%의 데미지 추가");
+                            sb.Append("Has a " + v1 + "% chance ");
+                        sb.Append("to deal " + Props["damage"] + "% extra damage on boss monsters.");
                     }
                     return sb.ToString();
                 case AdditionType.critical:
@@ -39,11 +39,11 @@ namespace WzComparerR2.CharaSim
                         string val;
                         if (this.Props.TryGetValue("prob", out val))
                         {
-                            sb.AppendFormat("크리티컬 확률 {0}%\r\n", val);
+                            sb.AppendFormat("Critical Rate: +{0}%\r\n", val);
                         }
                         if (this.Props.TryGetValue("damage", out val))
                         {
-                            sb.AppendFormat("크리티컬 데미지 {0}%증가\r\n", val);
+                            sb.AppendFormat("Critical Damage: +{0}%\r\n", val);
                         }
                         if (sb.Length > 2)
                         {
@@ -58,65 +58,65 @@ namespace WzComparerR2.CharaSim
                         {
                             switch (v1[0])
                             {
-                                case 'I': elem = "얼음"; break;
-                                case 'F': elem = "불"; break;
-                                case 'L': elem = "전기"; break;
+                                case 'I': elem = "Ice"; break;
+                                case 'F': elem = "Fire"; break;
+                                case 'L': elem = "Lightning"; break;
                                 default: elem = v1[0].ToString(); break;
                             }
-                            return elem + "속성 효과 " + v1.Substring(1) + "% 강화";
+                            return elem + " Attribute: +" + v1.Substring(1) + "%";
                         }
                     }
                     break;
                 case AdditionType.hpmpchange:
                     sb = new StringBuilder();
-                    sb.Append("每10秒恢复");
+                    sb.Append("Recover");
                     {
                         string v1;
                         if (this.Props.TryGetValue("hpChangePerTime", out v1))
                         {
-                            sb.Append("HP " + v1);
+                            sb.Append("HP per 10 seconds " + v1);
                         }
                     }
                     return sb.ToString();
                 case AdditionType.mobcategory:
-                    return ItemStringHelper.GetMobCategoryName(Convert.ToInt32(this.Props["category"])) + " 몬스터 공격 시, " + this.Props["damage"] + "% 추가 데미지";
+                    return "When attacking " + ItemStringHelper.GetMobCategoryName(Convert.ToInt32(this.Props["category"])) + " enemies, deals " + this.Props["damage"] + "% extra damage.";
                 case AdditionType.mobdie:
                     sb = new StringBuilder();
                     {
                         string v1;
                         if (this.Props.TryGetValue("hpIncOnMobDie", out v1))
                         {
-                            sb.AppendLine("몬스터 사망 시 HP " + v1 + " 회복");
+                            sb.AppendLine("When you kill a monster, to recover " + v1 + " HP");
                         }
                         if (this.Props.TryGetValue("hpIncRatioOnMobDie", out v1))
                         {
-                            sb.AppendLine("몬스터 사망 시 " + Props["hpRatioProp"] + "%의 확률로 데미지의 " + v1 + "%의 HP 회복 ( 단 최대 HP의 10%를 넘을 수 없다. )");
+                            sb.AppendLine("When you kill a monster, has a " + Props["hpRatioProp"] + "% chance to recover " + v1 + "% of damage to as HP (Cannot recover more than 10% of Max HP.)");
                         }
                         if (this.Props.TryGetValue("mpIncOnMobDie", out v1))
                         {
-                            sb.AppendLine("몬스터 사망 시 MP " + v1 + " 회복");
+                            sb.AppendLine("When you kill a monster, to recover " + v1 + " MP");
                         }
                         if (this.Props.TryGetValue("mpIncRatioOnMobDie", out v1))
                         {
-                            sb.AppendLine("몬스터 사망 시 " + Props["hpRatioProp"] + "%의 확률로 데미지의 " + v1 + "%의 MP 회복 ( 단 최대 MP의 10%를 넘을 수 없다. )");
+                            sb.AppendLine("When you kill a monster, has a " + Props["hpRatioProp"] + "% chance to recover " + v1 + "% of damage to as MP (Cannot recover more than 10% of Max MP.)");
                         }
                     }
                     if (sb.Length > 0)
                     {
-                        sb.Append("일부 지역에서는 기능이 제한될 수 있다.");
+                        sb.Append("Function may be limited in some locations.");
                         return sb.ToString();
                     }
                     break;
                 case AdditionType.skill:
                     switch (Convert.ToInt32(this.Props["id"]))
                     {
-                        //case 90000000: return "확률적으로 즉사 효과 추가";
-                        case 90001001: return "확률적으로 기절 효과 추가";
-                        case 90001002: return "확률적으로 슬로우 효과 추가";
-                        case 90001003: return "확률적으로 독 효과 추가";
-                        case 90001004: return "확률적으로 암흑 효과 추가";
-                        case 90001005: return "확률적으로 봉인 효과 추가";
-                        case 90001006: return "확률적으로 결빙 효과 추가";
+                        case 90000000: return "Has a chance to add: Instant Death effect";
+                        case 90001001: return "Has a chance to add: Knock Down effect";
+                        case 90001002: return "Has a chance to add: Slow effect";
+                        case 90001003: return "Has a chance to add: Poison effect";
+                        case 90001004: return "Has a chance to add: Darkness effect";
+                        case 90001005: return "Has a chance to add: Seal effect";
+                        case 90001006: return "Has a chance to add: Freeze effect";
                     }
                     break;
                 case AdditionType.statinc:
@@ -160,19 +160,19 @@ namespace WzComparerR2.CharaSim
                     {
                         reqJobs[i] = ItemStringHelper.GetJobName(this.ConValue[i]) ?? this.ConValue[i].ToString();
                     }
-                    return "직업이 " + string.Join(" 또는 ", reqJobs) + "일 때";
+                    return "When your job is " + string.Join(" or ", reqJobs) + ",";
                 case GearPropType.reqLevel:
-                    return "레벨 " + this.ConValue[0] + " 이상일 때";
+                    return "When your level is " + this.ConValue[0] + " or higher,";
                 case GearPropType.reqCraft:
                     int lastExp;
-                    return "손재주 경험치가 " + this.ConValue[0] + "(" + getPersonalityLevel(this.ConValue[0], out lastExp) + "레벨 " + lastExp + "점) 이상일 때";
+					return "When Diligence EXP is " + this.ConValue[0] + " (Lv. " + getPersonalityLevel(this.ConValue[0], out lastExp) + " " + lastExp + " Points) or higher";
                 case GearPropType.reqWeekDay:
                     string[] weekdays = new string[this.ConValue.Count];
                     for (int i = 0; i < this.ConValue.Count; i++)
                     {
                         weekdays[i] = GetWeekDayString(this.ConValue[i]);
                     }
-                    return string.Join(", ", weekdays) + "일 때";
+                    return string.Join(", ", weekdays);
                 default:
                     return null;
             }
@@ -228,14 +228,14 @@ namespace WzComparerR2.CharaSim
         {
             switch (weekDay)
             {
-                case 0: return "일요일";
-                case 1: return "월요일";
-                case 2: return "화요일";
-                case 3: return "수요일";
-                case 4: return "목요일";
-                case 5: return "금요일";
-                case 6: return "토요일";
-                default: return "周" + weekDay; //这怎么可能...
+                case 0: return "Sunday";
+                case 1: return "Monday";
+                case 2: return "Tuesday";
+                case 3: return "Wednesday";
+                case 4: return "Thursday";
+                case 5: return "Friday";
+                case 6: return "Saturday";
+                default: return "Week" + weekDay; //这怎么可能...
             }
         }
 

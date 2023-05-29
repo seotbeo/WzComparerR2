@@ -76,7 +76,7 @@ namespace WzComparerR2.Avatar
             var faceFrames = canvas.GetFaceFrames(canvas.EmotionName);
 
             //foreach (var action in canvas.Actions)
-            foreach (var action in new[] { "walk1", "jump", "stand1"})
+            foreach (var action in new[] { "walk1", "jump", "stand1" })
             {
                 Gif gif = new Gif();
                 var actionFrames = canvas.GetActionFrames(action);
@@ -93,7 +93,7 @@ namespace WzComparerR2.Avatar
                         gif.Frames.Add(f);
                     }
                 }
-                
+
 
                 var gifFile = gif.EncodeGif(Color.Transparent);
                 string fileName = "D:\\ms\\new_" + action.Replace('\\', '.');
@@ -110,7 +110,7 @@ namespace WzComparerR2.Avatar
 
                 gifFile.Dispose();
             }
-            
+
             if (true)
             {
 
@@ -156,7 +156,7 @@ namespace WzComparerR2.Avatar
             //foreach (string act in new[] { "PBwalk1", "PBstand4", "PBstand5" })
 
             foreach (var act in new object[] {
-                
+
                 PluginManager.FindWz("Skill\\2312.img\\skill\\23121004"),
                 "stand1",
                 PluginManager.FindWz("Skill\\2312.img\\skill\\23121052"),
@@ -290,9 +290,9 @@ namespace WzComparerR2.Avatar
 
             int keydownCount = 2;
 
-            foreach (var part in new [] {"prepare", "keydown", "keydownend"})
+            foreach (var part in new[] { "prepare", "keydown", "keydownend" })
             {
-                var effects = new List<Tuple<Gif,int>>();
+                var effects = new List<Tuple<Gif, int>>();
 
                 for (int i = -1; ; i++)
                 {
@@ -318,11 +318,11 @@ namespace WzComparerR2.Avatar
 
                         int fDelay = 0;
 
-                        for(int i = 0, i0 = part == "keydown" ? keydownCount : 1; i < i0; i++)
+                        for (int i = 0, i0 = part == "keydown" ? keydownCount : 1; i < i0; i++)
                         {
                             effGif.Item1.Frames.ForEach(af => layer.AddFrame((GifFrame)af));
-                            layers.Add(new Tuple<GifLayer, int>(layer,effGif.Item2));
-                            fDelay+= effGif.Item1.Frames.Select(f => f.Delay).Sum();
+                            layers.Add(new Tuple<GifLayer, int>(layer, effGif.Item2));
+                            fDelay += effGif.Item1.Frames.Select(f => f.Delay).Sum();
                         }
 
                         effDelay = Math.Max(fDelay, effDelay);
@@ -376,7 +376,7 @@ namespace WzComparerR2.Avatar
             var ChairNode = PluginManager.FindWz(@"Item\Install\0301.img\03015660");
             var actionName = "sit";
             var pos = ChairNode.FindNodeByPath(@"info\bodyRelMove").GetValueEx<Wz_Vector>(null);
-            
+
             Point browPos = new Point(-5, -48);
 
             //添加特效帧
@@ -385,7 +385,7 @@ namespace WzComparerR2.Avatar
 
                 for (int i = 1; ; i++)
                 {
-                    Wz_Node effNode = ChairNode.FindNodeByPath("effect"+( i > 1 ? i.ToString() : ""));
+                    Wz_Node effNode = ChairNode.FindNodeByPath("effect" + (i > 1 ? i.ToString() : ""));
                     if (effNode == null)
                         break;
                     var gif = Gif.CreateFromNode(effNode, PluginManager.FindWz);
@@ -409,7 +409,7 @@ namespace WzComparerR2.Avatar
                     {
                         layer.Frames.AddRange(gif.Frames.Select(f => (GifFrame)f));
                     }
-                   
+
                     layers.Add(new Tuple<GifLayer, int>(layer, z));
                 }
             }
@@ -430,7 +430,7 @@ namespace WzComparerR2.Avatar
                         var bone = canvas.CreateFrame(frame, faceFrames[0], null);
                         bone.Position = bodyMove;
                         var bmp = canvas.DrawFrame(bone);
-                        
+
                         GifFrame f = new GifFrame(bmp.Bitmap, bmp.Origin, Math.Abs(frame.Delay));
                         actLayer.Frames.Add(f);
                         adelay += f.Delay;

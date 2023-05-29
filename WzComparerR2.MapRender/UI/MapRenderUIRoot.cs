@@ -223,7 +223,7 @@ namespace WzComparerR2.MapRender.UI
             {
                 base.UpdateInput(elapsedGameTime);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
             }
             this.OnInputUpdated(EventArgs.Empty);

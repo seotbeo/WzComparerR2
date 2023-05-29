@@ -11,7 +11,7 @@ namespace WzComparerR2.Rendering
     public class AnimationGraphics
     {
         public AnimationGraphics(GraphicsDevice graphicsDevice)
-            : this (graphicsDevice, new SpriteBatch(graphicsDevice))
+            : this(graphicsDevice, new SpriteBatch(graphicsDevice))
         {
         }
 

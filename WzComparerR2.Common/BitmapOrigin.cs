@@ -25,7 +25,7 @@ namespace WzComparerR2
             this.origin = origin;
         }
 
-        private Bitmap bitmap;
+        public Bitmap bitmap;
         private Point origin;
 
         /// <summary>
@@ -67,7 +67,6 @@ namespace WzComparerR2
                     return new Rectangle(this.OpOrigin, this.bitmap.Size);
             }
         }
-
         public static BitmapOrigin CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
         {
             BitmapOrigin bp = new BitmapOrigin();

@@ -168,7 +168,7 @@ namespace WzComparerR2.MapRender.UI
                         var aniName = (item.View?.Animator as StateMachineAnimator)?.GetCurrent();
                         if (aniName != null)
                         {
-                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "동작: " + aniName, ref current, Color.White, ref size.X));
+                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Action: " + aniName, ref current, Color.White, ref size.X));
                         }
 
                         size.Y = current.Y;
@@ -187,35 +187,35 @@ namespace WzComparerR2.MapRender.UI
             Vector2 current = Vector2.Zero;
 
             var sb = new StringBuilder();
-            sb.Append("이름: ").AppendLine(item.PName);
+            sb.Append("Name: ").AppendLine(item.PName);
 
             string pTypeName = GetPortalTypeString(item.Type);
-            sb.Append("유형: ").Append(item.Type);
+            sb.Append("Type: ").Append(item.Type);
             if (pTypeName != null)
             {
-                sb.Append("(").Append(pTypeName).Append(")");
+                sb.Append(" (").Append(pTypeName).Append(")");
             }
             sb.AppendLine();
 
-            sb.Append("이동 맵: ").Append(item.ToMap);
+            sb.Append("To Map: ").Append(item.ToMap);
             if (item.ToMap != null)
             {
                 this.StringLinker?.StringMap.TryGetValue(item.ToMap.Value, out sr);
                 string toMapName = sr?.Name;
-                sb.Append("(").Append(sr?.Name ?? "null").Append(")");
+                sb.Append(" (").Append(sr?.Name ?? "null").Append(")");
             }
             sb.AppendLine();
 
-            sb.Append("이동 포탈: ").AppendLine(item.ToName);
+            sb.Append("To Portal: ").AppendLine(item.ToName);
 
             if (!string.IsNullOrEmpty(item.Script))
             {
-                sb.Append("스크립트: ").AppendLine(item.Script);
+                sb.Append("Script: ").AppendLine(item.Script);
 
                 //Graph.img에 따른 이동경로 출력
                 if (item.GraphTargetMap.Count > 0)
                 {
-                    sb.Append("스크립트 연결 맵: ");
+                    sb.Append("Script Link Map: ");
                     foreach (var targetMapID in item.GraphTargetMap)
                     {
                         sb.Append(targetMapID);
@@ -241,9 +241,9 @@ namespace WzComparerR2.MapRender.UI
             Vector2 current = Vector2.Zero;
 
             var sb = new StringBuilder();
-            sb.Append("이름: ").AppendLine(item.Name);
+            sb.Append("Name: ").AppendLine(item.Name);
 
-            sb.AppendLine("유형: 발광체 군집");
+            sb.AppendLine("Type: Illuminant Cluster");
 
             sb.Length -= 2;
 
@@ -260,10 +260,10 @@ namespace WzComparerR2.MapRender.UI
 
             var sb = new StringBuilder();
             sb.Append("ID: ").Append(item.ID).AppendLine();
-            sb.Append("이름: ").AppendLine(item.ReactorName);
-            sb.Append("시간: ").Append(item.ReactorTime).AppendLine();
+            sb.Append("Name: ").AppendLine(item.ReactorName);
+            sb.Append("Time: ").Append(item.ReactorTime).AppendLine();
 
-            sb.Append("상태: ").Append(item.View.Stage);
+            sb.Append("State: ").Append(item.View.Stage);
             var ani = item.View.Animator as StateMachineAnimator;
             if (ani != null)
             {

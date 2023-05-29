@@ -220,6 +220,7 @@ namespace WzComparerR2.Patcher.Builder
                 this.PatchingStateChanged = PatchingStateChanged;
                 this.part = new PatchPartContext("", 0, 0);
                 this.part.NewFileLength = (int)length;
+
             }
 
             FileStream fs;

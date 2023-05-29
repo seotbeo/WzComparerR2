@@ -222,6 +222,7 @@ namespace WzComparerR2.Rendering
             gdiBufferX = 0;
             g = Graphics.FromImage(gdiBuffer);
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             g.SmoothingMode = SmoothingMode.HighQuality;
             // g.CompositingMode = CompositingMode.SourceCopy; 乱用这句出事故...
         }

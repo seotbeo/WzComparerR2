@@ -61,7 +61,7 @@ namespace WzComparerR2.MapRender
             {
                 this.txtChat.AppendLine();
             }
-            this.txtChat.Append("已经连接服务器");
+            this.txtChat.Append("Connected to Server");
         }
 
         protected override void OnActivated(object sender, EventArgs args)
@@ -81,7 +81,7 @@ namespace WzComparerR2.MapRender
             {
                 this.txtChat.AppendLine();
             }
-            this.txtChat.Append("错误：" + e.Error);
+            this.txtChat.Append("错误: " + e.Error);
         }
 
         void chat_MessageReceived(object sender, ChatMessageEventArgs e)
@@ -169,7 +169,6 @@ namespace WzComparerR2.MapRender
             //ThreadPool.QueueUserWorkItem((o) => this.chat.Connect());
         }
 
-
         /*
         void ime_onResultReceived(object sender, IMEResultEventArgs e)
         {
@@ -200,7 +199,7 @@ namespace WzComparerR2.MapRender
                         }
                         break;
                     case '\r': //回车
-                        
+
                         if (this.chat.IsConnected)
                         {
                             string content = this.txtInput.ToString();
@@ -877,10 +876,10 @@ namespace WzComparerR2.MapRender
                     profile.Append("] ");
                     //显示当前渲染状态机
                     profile.AppendFormat("[{0:p2} {1}] ", alpha, this.loadState);
-                    profile.AppendFormat("[fps u:{0:f2} d:{1:f2}] ", fpsCounter.UpdatePerSec, fpsCounter.DrawPerSec);
+                    profile.AppendFormat("[FPS u:{0:f2} d:{1:f2}] ", fpsCounter.UpdatePerSec, fpsCounter.DrawPerSec);
 
-                    //可见性：
-                    profile.Append(" ctrl+");
+                    //可见性:
+                    profile.Append(" CTRL+");
 
                     int[] array = new[] { 1, 2, 3, 4, 5, 6, 7, 9, 10 };
                     for (int i = 0; i < array.Length; i++)
@@ -979,6 +978,7 @@ namespace WzComparerR2.MapRender
                         {
                             for (int y = blockRect.Top, y0 = blockRect.Bottom; y < y0; y++)
                             {
+                                
                                 int startIndex = (y * mapWidth + blockRect.X) * 4;
                                 Marshal.Copy(pData, mapData, startIndex, length);
                                 pData = new IntPtr(pData.ToInt32() + blockWidth * 4);
@@ -2103,7 +2103,6 @@ namespace WzComparerR2.MapRender
                 {
                     frameNode = uol.HandleUol(frameNode);
                 }
-                frameNode = frameNode.GetLinkedSourceNode(PluginManager.FindWz);
                 RenderFrame frame;
                 if (!loadedRes.TryGetValue(frameNode.FullPath, out frame))
                 {
@@ -2124,9 +2123,9 @@ namespace WzComparerR2.MapRender
                 case 1: return TileMode.Horizontal;
                 case 2: return TileMode.Vertical;
                 case 3: return TileMode.BothTile;
-                case 4: return TileMode.Horizontal | TileMode.ScrollHorizontial;
+                case 4: return TileMode.Horizontal | TileMode.ScrollHorizontal;
                 case 5: return TileMode.Vertical | TileMode.ScrollVertical;
-                case 6: return TileMode.BothTile | TileMode.ScrollHorizontial;
+                case 6: return TileMode.BothTile | TileMode.ScrollHorizontal;
                 case 7: return TileMode.BothTile | TileMode.ScrollVertical;
                 default: return TileMode.None;
             }

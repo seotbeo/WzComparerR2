@@ -13,7 +13,7 @@ namespace WzComparerR2.Config
     {
         public WcR2Config()
         {
-            this.MainStyle = DevComponents.DotNetBar.eStyle.Office2007VistaGlass;
+            this.MainStyle = DevComponents.DotNetBar.eStyle.Metro;
             this.MainStyleColor = Color.DimGray;
             this.SortWzOnOpened = true;
             this.AutoDetectExtFiles = true;

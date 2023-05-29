@@ -22,9 +22,9 @@ namespace WzComparerR2.MapRender
         public int MADamage;
         public int MDDamage;
         public int MDRate;
-        public int acc;
-        public int eva;
-        public int pushed;
+        //public int acc;
+        //public int eva;
+        public long pushed;
         public int exp;
         public ElemAttr elemAttr;
         public bool undead;
@@ -75,9 +75,9 @@ namespace WzComparerR2.MapRender
                         case "MADamage": lifeInfo.MADamage = node.GetValueEx<int>(0); break;
                         case "MDDamage": lifeInfo.MDDamage = node.GetValueEx<int>(0); break;
                         case "MDRate": lifeInfo.MDRate = node.GetValueEx<int>(0); break;
-                        case "acc": lifeInfo.acc = node.GetValueEx<int>(0); break;
-                        case "eva": lifeInfo.eva = node.GetValueEx<int>(0); break;
-                        case "pushed": lifeInfo.pushed = node.GetValueEx<int>(0); break;
+                        //case "acc": lifeInfo.acc = node.GetValueEx<int>(0); break; //no longer used
+                        //case "eva": lifeInfo.eva = node.GetValueEx<int>(0); break; //no longer used
+                        case "pushed": lifeInfo.pushed = node.GetValueEx<long>(0); break;
                         case "exp": lifeInfo.exp = node.GetValueEx<int>(0); break;
                         case "undead": lifeInfo.undead = node.GetValueEx<int>(0) != 0; break;
                         case "boss": lifeInfo.boss = node.GetValueEx<int>(0) != 0; break;

@@ -82,7 +82,7 @@ namespace WzComparerR2.PluginBase
 
         public static void LogError(string logger, Exception ex, string format, params object[] args)
         {
-            string logText = string.Format("[{0:yyyy-MM-dd HH:mm:ss}][Error][{1}] {2}{3}",
+            string logText = string.Format("[{0:M-d-yyyy HH:mm:ss}][Error][{1}] {2}{3}",
                 DateTime.Now,
                 logger,
                 args == null ? format : string.Format(format, args),
@@ -170,7 +170,7 @@ namespace WzComparerR2.PluginBase
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show("插件初始化失败。\r\n" + ex.Message, plugin.Instance.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxEx.Show("Plugin initialization failed.\r\n" + ex.Message, plugin.Instance.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

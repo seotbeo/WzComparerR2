@@ -117,6 +117,10 @@ namespace WzComparerR2.MapRender
                     graphics.PreferredBackBufferHeight = 768;
                     break;
                 case 3:
+                    graphics.PreferredBackBufferWidth = 1920;
+                    graphics.PreferredBackBufferHeight = 1080;
+                    break;
+                case 4:
                     graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
                     graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
                     break;

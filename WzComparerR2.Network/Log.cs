@@ -32,7 +32,7 @@ namespace WzComparerR2.Network
 
         public static void Write(LogLevel logLevel, string format, params object[] args)
         {
-            foreach(var logger in Loggers)
+            foreach (var logger in Loggers)
             {
                 try
                 {

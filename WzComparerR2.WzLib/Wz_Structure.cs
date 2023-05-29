@@ -30,7 +30,7 @@ namespace WzComparerR2.WzLib
         public Encoding TextEncoding { get; set; }
         public bool AutoDetectExtFiles { get; set; }
         public bool ImgCheckDisabled { get; set; }
-        public WzVersionVerifyMode WzVersionVerifyMode {get;set;}
+        public WzVersionVerifyMode WzVersionVerifyMode { get; set; }
 
         public void Clear()
         {

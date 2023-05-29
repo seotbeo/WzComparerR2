@@ -15,7 +15,7 @@ namespace WzComparerR2.Rendering
         public D2DFont(string familyName, float size)
             : this(familyName, size, false, false)
         {
-            
+
         }
 
         public D2DFont(string familyName, float size, bool bold, bool italic)
@@ -121,7 +121,7 @@ namespace WzComparerR2.Rendering
 
         internal void DrawText(D2DContext context, string text, Vector2 position, Color color)
         {
-             this.DrawText(context, text, position, Vector2.Zero, color);
+            this.DrawText(context, text, position, Vector2.Zero, color);
         }
 
         internal void DrawText(D2DContext context, string text, Vector2 position, Vector2 size, Color color)

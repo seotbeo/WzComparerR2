@@ -386,7 +386,7 @@ namespace WzComparerR2.Patcher
         {
             if (this.OldFileHash != null && this.OldFileHash.Count > 0)
             {
-                foreach(var kv in this.OldFileHash)
+                foreach (var kv in this.OldFileHash)
                 {
                     var part = new PatchPartContext(kv.Key, -1, -1)
                     {
@@ -545,7 +545,7 @@ namespace WzComparerR2.Patcher
 
             void closeAllFiles()
             {
-                foreach(var fs in oldWzFiles.Values)
+                foreach (var fs in oldWzFiles.Values)
                 {
                     fs.Close();
                 }
@@ -639,7 +639,7 @@ namespace WzComparerR2.Patcher
                         //排序预读原文件
                         readFileOperList.Sort((left, right) => {
                             int cmp;
-                            if ((cmp = string.Compare(left.FromFileName, right.FromFileName, StringComparison.OrdinalIgnoreCase)) != 0) 
+                            if ((cmp = string.Compare(left.FromFileName, right.FromFileName, StringComparison.OrdinalIgnoreCase)) != 0)
                                 return cmp;
                             return left.StartPosition.CompareTo(right.StartPosition);
                         });

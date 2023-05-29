@@ -25,7 +25,7 @@ namespace WzComparerR2.MapRender
         private List<Coroutine> preAdd;
         private List<Coroutine> preRemove;
         private bool isUpdating;
-   
+
 
         public override void Update(GameTime gameTime)
         {
@@ -137,7 +137,7 @@ namespace WzComparerR2.MapRender
 
     class Coroutine
     {
-        public IE Enumerator { get; set; } 
+        public IE Enumerator { get; set; }
         public Coroutine Prev { get; set; }
     }
 

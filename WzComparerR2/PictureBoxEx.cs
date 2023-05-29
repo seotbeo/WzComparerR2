@@ -457,7 +457,7 @@ namespace WzComparerR2
                 }
                 catch (Exception ex)
                 {
-                    context.Message = $"오류: {ex.Message}";
+                    context.Message = $"Error: {ex.Message}";
                     throw;
                 }
                 finally
@@ -468,7 +468,7 @@ namespace WzComparerR2
                 }
             }
 
-            var dialogResult = ProgressDialog.Show(this.FindForm(), "내보내는 중...", "애니메이션 저장하는 중...", true, false, RenderJob);
+            var dialogResult = ProgressDialog.Show(this.FindForm(), "Exporting...", "Saving animation...", true, false, RenderJob);
             return dialogResult == DialogResult.OK;
         }
 
@@ -519,7 +519,7 @@ namespace WzComparerR2
                 // this is too lag so we don't support dragging gifs!
                 return;
             }
-            
+
             var imgObj = new ImageDataObject(null, fileName);
             this.DoDragDrop(imgObj, System.Windows.Forms.DragDropEffects.Copy);
             e.Handled = true;
@@ -544,7 +544,7 @@ namespace WzComparerR2
                 {
                     time = ((MultiFrameAnimator)aniItem).CurrentTime;
                 }
-                this.sbInfo.AppendFormat("pos: {0}, scale: {1:p0}, play: {2} / {3}",
+                this.sbInfo.AppendFormat("POS: {0}, Scale: {1:p0}, Play: {2} / {3}",
                     aniItem.Position,
                     base.GlobalScale,
                     aniItem.Length <= 0 ? 0 : (time % aniItem.Length),

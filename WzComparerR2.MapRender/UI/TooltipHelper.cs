@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.Common;
 using WzComparerR2.Rendering;
 
@@ -67,17 +68,20 @@ namespace WzComparerR2.MapRender.UI
             var current = Vector2.Zero;
             size = Vector2.Zero;
 
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "레벨: " + info.level + (info.boss ? " (보스)" : null), ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "HP/MP: " + info.maxHP + " / " + info.maxMP, ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법공격력: " + info.PADamage + " / " + info.MADamage, ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법방어율: " + info.PDRate + "% / " + info.MDRate + "%", ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "회피/명중치: " + info.acc + " / " + info.eva, ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "넉백: " + info.pushed, ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "경험치: " + info.exp, ref current, Color.White, ref size.X));
-            if (info.undead) blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "언데드: 1", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Lv: " + info.level + (info.boss ? " (Boss)" : null), ref current, Color.White, ref size.X));
+
+
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "HP: " + info.maxHP.ToString("N0"), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "MP: " + info.maxMP.ToString("N0"), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Physical Damage: " + info.PADamage.ToString("N0"), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Magic Damage: " + info.MADamage.ToString("N0"), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "PDRate: " + info.PDRate + "%", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "MDRate: " + info.MDRate + "%", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "EXP: " + info.exp.ToString("N0"), ref current, Color.White, ref size.X));
+            if (info.undead) blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Undead: Yes", ref current, Color.White, ref size.X));
             StringBuilder sb;
             if ((sb = GetLifeElemAttrString(ref info.elemAttr)).Length > 0)
-                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "속성: " + sb.ToString(), ref current, Color.White, ref size.X));
+                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Element: " + sb.ToString().TrimEnd().TrimEnd(','), ref current, Color.White, ref size.X));
             size.Y = current.Y;
 
             return blocks.ToArray();
@@ -85,14 +89,14 @@ namespace WzComparerR2.MapRender.UI
 
         public static StringBuilder GetLifeElemAttrString(ref LifeInfo.ElemAttr elemAttr)
         {
-            StringBuilder sb = new StringBuilder(25);
-            sb.Append(GetElemResistanceString("얼음", elemAttr.I));
-            sb.Append(GetElemResistanceString("번개", elemAttr.L));
-            sb.Append(GetElemResistanceString("불", elemAttr.F));
-            sb.Append(GetElemResistanceString("독", elemAttr.S));
-            sb.Append(GetElemResistanceString("성", elemAttr.H));
-            sb.Append(GetElemResistanceString("암흑", elemAttr.D));
-            sb.Append(GetElemResistanceString("물리", elemAttr.P));
+            StringBuilder sb = new StringBuilder();//original value: 14
+            sb.Append(GetElemResistanceString("Physical", elemAttr.P));
+            sb.Append(GetElemResistanceString("Holy", elemAttr.H));
+            sb.Append(GetElemResistanceString("Fire", elemAttr.F));
+            sb.Append(GetElemResistanceString("Ice", elemAttr.I));
+            sb.Append(GetElemResistanceString("Poison", elemAttr.S));
+            sb.Append(GetElemResistanceString("Lightning", elemAttr.L));
+            sb.Append(GetElemResistanceString("Dark", elemAttr.D));
             return sb;
         }
 
@@ -101,10 +105,10 @@ namespace WzComparerR2.MapRender.UI
             string e = null;
             switch (resist)
             {
-                case LifeInfo.ElemResistance.Immune: e = "× "; break;
-                case LifeInfo.ElemResistance.Resist: e = "△ "; break;
+                case LifeInfo.ElemResistance.Immune: e = " immune, "; break;
+                case LifeInfo.ElemResistance.Resist: e = " strong, "; break;
                 case LifeInfo.ElemResistance.Normal: e = null; break;
-                case LifeInfo.ElemResistance.Weak: e = "◎ "; break;
+                case LifeInfo.ElemResistance.Weak: e = " weak, "; break;
             }
             return e != null ? (elemName + e) : null;
         }
@@ -113,16 +117,16 @@ namespace WzComparerR2.MapRender.UI
         {
             switch (pType)
             {
-                case 0: return "캐릭터시작지점";
-                case 1: return "일반(숨겨짐)";
-                case 2: return "일반";
-                case 3: return "일반(접촉시활성)";
-                case 6: return "워프게이트";
-                case 7: return "스크립트";
-                case 8: return "스크립트(숨겨짐)";
-                case 9: return "스크립트(접촉시활성)";
-                case 10: return "블링크";
-                case 12: return "弹力装置";
+                case 0: return "Starting Point";
+                case 1: return "Normal (Hidden)";
+                case 2: return "Normal";
+                case 3: return "Normal (Collision)";
+                case 6: return "Mystic Door (Warp)";
+                case 7: return "Script";
+                case 8: return "Script Hidden";
+                case 9: return "Script (Collision)";
+                case 10: return "Invisible Portal";
+                case 12: return "Collision Vertical Jump Portal";
                 default: return null;
             }
         }

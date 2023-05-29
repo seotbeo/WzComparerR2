@@ -322,6 +322,5 @@ namespace WzComparerR2.Common
         {
             get { return stringSetItem; }
         }
-
     }
 }

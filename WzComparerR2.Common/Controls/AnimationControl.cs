@@ -142,12 +142,12 @@ namespace WzComparerR2.Controls
 
         public virtual AnimationItem GetItemAt(int x, int y)
         {
-            for(int i = this.Items.Count - 1; i >= 0; i--)
+            for (int i = this.Items.Count - 1; i >= 0; i--)
             {
                 var item = this.Items[i];
                 var bound = item.Measure();
                 var rect = new Rectangle(
-                    (int)Math.Round(item.Position.X + bound.X* this.GlobalScale),
+                    (int)Math.Round(item.Position.X + bound.X * this.GlobalScale),
                     (int)Math.Round(item.Position.Y + bound.Y * this.GlobalScale),
                     (int)Math.Round(bound.Width * this.GlobalScale),
                     (int)Math.Round(bound.Height * this.GlobalScale));

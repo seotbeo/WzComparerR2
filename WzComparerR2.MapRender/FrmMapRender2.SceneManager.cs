@@ -40,7 +40,7 @@ namespace WzComparerR2.MapRender
             else
             {
                 //添加提示语
-                this.ui.ChatBox.AppendTextSystem("MapRender가 맵을 로드하지 못했습니다. 올바른 맵이 아닙니다.");
+                this.ui.ChatBox.AppendTextSystem("MapRender could not load this map. This is not a valid map.");
                 this.opacity = 1;
                 yield return cm.Yield(OnSceneRunning());
             }
@@ -401,7 +401,7 @@ namespace WzComparerR2.MapRender
             //记录历史
             if (this.viewData.MapID != this.viewData.ToMapID && this.viewData.ToMapID != null)
             {
-                if (this.viewData.IsMoveBack 
+                if (this.viewData.IsMoveBack
                     && this.viewData.ToMapID == this.viewHistory.Last?.Value?.MapID)
                 {
                     var last = this.viewHistory.Last.Value;
@@ -517,7 +517,7 @@ namespace WzComparerR2.MapRender
                 }
                 else
                 {
-                    this.ui.ChatBox.AppendTextSystem($"{toMap.Value} 맵으로 이동할 수 없습니다.");
+                    this.ui.ChatBox.AppendTextSystem($"You cannot move to map {toMap.Value}.");
                 }
             }
             else //当前地图

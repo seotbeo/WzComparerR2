@@ -24,8 +24,8 @@ namespace WzComparerR2.MapRender.Patches2
         public bool Flip { get; set; }
         public bool IsFront { get; set; }
         public List<Tuple<int, int>> Quest { get; set; }
-
         
+
         public ItemView View { get; set; }
 
         public static BackItem LoadFromNode(Wz_Node node)
@@ -36,7 +36,7 @@ namespace WzComparerR2.MapRender.Patches2
                 Ani = node.Nodes["ani"].GetValueEx<int>(0),
                 No = node.Nodes["no"].GetValueEx<string>(null),
                 SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
-               
+
                 X = node.Nodes["x"].GetValueEx(0),
                 Y = node.Nodes["y"].GetValueEx(0),
                 Cx = node.Nodes["cx"].GetValueEx(0),

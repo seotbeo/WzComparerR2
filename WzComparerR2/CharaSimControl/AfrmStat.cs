@@ -194,7 +194,7 @@ namespace WzComparerR2.CharaSimControl
             this.btnDetailOpen.Pressed = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_pressed_0);
             this.btnDetailOpen.MouseOver = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_mouseOver_0);
             this.btnDetailOpen.Disabled = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_disabled_0);
-            this.btnDetailOpen.Location = new Point(132,288);
+            this.btnDetailOpen.Location = new Point(132, 288);
             this.btnDetailOpen.Size = new Size(68, 16);
             this.btnDetailOpen.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnDetailOpen.MouseClick += new MouseEventHandler(btnDetailOpen_MouseClick);
@@ -589,7 +589,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 CharacterStatus charStat = this.character.Status;
                 //绘制自动分配
-               // g.DrawImage(charStat.Ap > 0 ? Resource.Stat_main_BtAuto_normal_3 : Resource.Stat_main_BtAuto_disabled_0, 94, 180);
+                // g.DrawImage(charStat.Ap > 0 ? Resource.Stat_main_BtAuto_normal_3 : Resource.Stat_main_BtAuto_disabled_0, 94, 180);
                 /*switch (charStat.Job / 100 % 10)//绘制角色属性灰色背景
                 {
                     case 0:

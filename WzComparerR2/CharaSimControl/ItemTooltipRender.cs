@@ -72,7 +72,7 @@ namespace WzComparerR2.CharaSimControl
             string attr = GetItemAttributeString();
             if (!string.IsNullOrEmpty(attr))
             {
-                g.DrawString(attr, GearGraphics.ItemDetailFont, GearGraphics.GearNameBrushC, 145, picHeight, format);
+                g.DrawString(attr, GearGraphics.ItemDetailFont, GearGraphics.OrangeBrush4, 145, picHeight, format);
                 iconY += 19;
             }
 
@@ -95,7 +95,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.DrawString("要求等级 : " + value, GearGraphics.ItemReqLevelFont, Brushes.White, 92, picHeight);
+                g.DrawString("Required Level : " + value, GearGraphics.ItemReqLevelFont, Brushes.White, 92, picHeight);
                 picHeight += 15;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
             }

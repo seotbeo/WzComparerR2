@@ -104,11 +104,11 @@
             this.superTabControl1.Location = new System.Drawing.Point(0, 0);
             this.superTabControl1.Name = "superTabControl1";
             this.superTabControl1.ReorderTabsEnabled = true;
-            this.superTabControl1.SelectedTabFont = new System.Drawing.Font("돋움", 9f, System.Drawing.FontStyle.Bold);
+            this.superTabControl1.SelectedTabFont = new System.Drawing.Font("Arial", 9f, System.Drawing.FontStyle.Bold);
             this.superTabControl1.SelectedTabIndex = 0;
             this.superTabControl1.Size = new System.Drawing.Size(304, 231);
             this.superTabControl1.TabAlignment = DevComponents.DotNetBar.eTabStripAlignment.Left;
-            this.superTabControl1.TabFont = new System.Drawing.Font("돋움", 9f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.superTabControl1.TabFont = new System.Drawing.Font("Arial", 9f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.superTabControl1.TabIndex = 0;
             this.superTabControl1.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.superTabItem1,
@@ -149,7 +149,7 @@
             this.checkBoxX10.Size = new System.Drawing.Size(125, 18);
             this.checkBoxX10.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX10.TabIndex = 7;
-            this.checkBoxX10.Text = "스킬 세부 속성 표시";
+            this.checkBoxX10.Text = "Show Detailed Info";
             // 
             // labelX3
             // 
@@ -164,7 +164,7 @@
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(142, 30);
             this.labelX3.TabIndex = 6;
-            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b>";
+            this.labelX3.Text = "Use the <b>- +</b> keys to adjust default levels <br/> Use <b>[ ]</b> keys to adjust interval levels";
             // 
             // comboBoxEx2
             // 
@@ -222,7 +222,7 @@
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(81, 18);
             this.labelX2.TabIndex = 4;
-            this.labelX2.Text = "레벨 간격 설정";
+            this.labelX2.Text = "Interval Level";
             // 
             // labelX1
             // 
@@ -236,7 +236,7 @@
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(81, 18);
             this.labelX1.TabIndex = 3;
-            this.labelX1.Text = "기본 스킬 레벨";
+            this.labelX1.Text = "Default Level";
             // 
             // comboBoxEx1
             // 
@@ -258,19 +258,19 @@
             // 
             // comboItem1
             // 
-            this.comboItem1.Text = "Lv.0";
+            this.comboItem1.Text = "Lv. 0";
             // 
             // comboItem2
             // 
-            this.comboItem2.Text = "Lv.1";
+            this.comboItem2.Text = "Lv. 1";
             // 
             // comboItem3
             // 
-            this.comboItem3.Text = "Lv.Max";
+            this.comboItem3.Text = "Lv. Max";
             // 
             // comboItem4
             // 
-            this.comboItem4.Text = "Lv.Max+2";
+            this.comboItem4.Text = "Lv. Max+2";
             // 
             // checkBoxX2
             // 
@@ -285,7 +285,7 @@
             this.checkBoxX2.Size = new System.Drawing.Size(125, 18);
             this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX2.TabIndex = 1;
-            this.checkBoxX2.Text = "스킬 딜레이 표시";
+            this.checkBoxX2.Text = "Show Skill Delay";
             // 
             // checkBoxX1
             // 
@@ -300,22 +300,22 @@
             this.checkBoxX1.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX1.TabIndex = 0;
-            this.checkBoxX1.Text = "스킬 코드 표시";
+            this.checkBoxX1.Text = "Show Skill Code";
             // 
             // superTabItem1
             // 
             this.superTabItem1.AttachedControl = this.superTabControlPanel1;
             this.superTabItem1.GlobalItem = false;
             this.superTabItem1.Name = "superTabItem1";
-            this.superTabItem1.Text = "스킬";
+            this.superTabItem1.Text = "Skill";
             // 
             // superTabControlPanel4
             // 
             this.superTabControlPanel4.Controls.Add(this.checkBoxX7);
             this.superTabControlPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel4.Location = new System.Drawing.Point(63, 0);
+            this.superTabControlPanel4.Location = new System.Drawing.Point(62, 0);
             this.superTabControlPanel4.Name = "superTabControlPanel4";
-            this.superTabControlPanel4.Size = new System.Drawing.Size(241, 211);
+            this.superTabControlPanel4.Size = new System.Drawing.Size(242, 211);
             this.superTabControlPanel4.TabIndex = 0;
             this.superTabControlPanel4.TabItem = this.superTabItem4;
             // 
@@ -332,14 +332,14 @@
             this.checkBoxX7.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX7.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX7.TabIndex = 3;
-            this.checkBoxX7.Text = "레시피 코드 표시";
+            this.checkBoxX7.Text = "Show Recipe Code";
             // 
             // superTabItem4
             // 
             this.superTabItem4.AttachedControl = this.superTabControlPanel4;
             this.superTabItem4.GlobalItem = false;
             this.superTabItem4.Name = "superTabItem4";
-            this.superTabItem4.Text = "레시피";
+            this.superTabItem4.Text = "Recipe";
             // 
             // superTabControlPanel3
             // 
@@ -367,7 +367,7 @@
             this.checkBoxX12.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX12.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX12.TabIndex = 5;
-            this.checkBoxX12.Text = "칭호 미리보기";
+            this.checkBoxX12.Text = "Show Title Preview";
             // 
             // checkBoxX9
             // 
@@ -382,7 +382,7 @@
             this.checkBoxX9.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX9.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX9.TabIndex = 4;
-            this.checkBoxX9.Text = "레시피 결과물 표시";
+            this.checkBoxX9.Text = "Show Recipe Result";
             // 
             // checkBoxX8
             // 
@@ -397,7 +397,7 @@
             this.checkBoxX8.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX8.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX8.TabIndex = 3;
-            this.checkBoxX8.Text = "레시피 재료 표시";
+            this.checkBoxX8.Text = "Show Recipe Material";
             // 
             // checkBoxX5
             // 
@@ -412,14 +412,14 @@
             this.checkBoxX5.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX5.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX5.TabIndex = 2;
-            this.checkBoxX5.Text = "아이템 코드 표시";
+            this.checkBoxX5.Text = "Show Item Code";
             // 
             // superTabItem3
             // 
             this.superTabItem3.AttachedControl = this.superTabControlPanel3;
             this.superTabItem3.GlobalItem = false;
             this.superTabItem3.Name = "superTabItem3";
-            this.superTabItem3.Text = "아이템";
+            this.superTabItem3.Text = "Item";
             // 
             // superTabControlPanel2
             // 
@@ -447,7 +447,7 @@
             this.checkBoxX6.Size = new System.Drawing.Size(125, 18);
             this.checkBoxX6.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX6.TabIndex = 3;
-            this.checkBoxX6.Text = "성장하는 장비정보 표시";
+            this.checkBoxX6.Text = "Show Item Growth Info";
             // 
             // checkBoxX4
             // 
@@ -462,7 +462,7 @@
             this.checkBoxX4.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX4.TabIndex = 2;
-            this.checkBoxX4.Text = "무기 공격속도 표시";
+            this.checkBoxX4.Text = "Show Weapon Attack Speed";
             // 
             // checkBoxX3
             // 
@@ -477,14 +477,14 @@
             this.checkBoxX3.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX3.TabIndex = 1;
-            this.checkBoxX3.Text = "장비 코드 표시";
+            this.checkBoxX3.Text = "Show Equip Code";
             // 
             // superTabItem2
             // 
             this.superTabItem2.AttachedControl = this.superTabControlPanel2;
             this.superTabItem2.GlobalItem = false;
             this.superTabItem2.Name = "superTabItem2";
-            this.superTabItem2.Text = "장비";
+            this.superTabItem2.Text = "Equip";
             // 
             // panelEx1
             // 
@@ -516,7 +516,7 @@
             this.buttonX2.Size = new System.Drawing.Size(60, 23);
             this.buttonX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX2.TabIndex = 1;
-            this.buttonX2.Text = "취소";
+            this.buttonX2.Text = "Cancel";
             // 
             // buttonX1
             // 
@@ -528,7 +528,7 @@
             this.buttonX1.Size = new System.Drawing.Size(60, 23);
             this.buttonX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX1.TabIndex = 0;
-            this.buttonX1.Text = "확인";
+            this.buttonX1.Text = "Confirm";
             // 
             // checkBoxX11
             // 
@@ -543,7 +543,7 @@
             this.checkBoxX11.Size = new System.Drawing.Size(101, 18);
             this.checkBoxX11.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX11.TabIndex = 4;
-            this.checkBoxX11.Text = "훈장 미리보기";
+            this.checkBoxX11.Text = "Show Medal Preview";
             //
             // checkBoxX13
             // 
@@ -558,7 +558,7 @@
             this.checkBoxX13.Size = new System.Drawing.Size(138, 18);
             this.checkBoxX13.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX13.TabIndex = 8;
-            this.checkBoxX13.Text = "cooltimeMS 초 단위로 변환";
+            this.checkBoxX13.Text = "Convert cooltimeMS to seconds";
             // 
             // checkBoxX14
             // 
@@ -573,7 +573,7 @@
             this.checkBoxX14.Size = new System.Drawing.Size(150, 18);
             this.checkBoxX14.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX14.TabIndex = 9;
-            this.checkBoxX14.Text = "PerM 퍼센트로 변환";
+            this.checkBoxX14.Text = "Convert PerM to percent";
             // 
             // FrmQuickViewSetting
             // 
@@ -587,7 +587,7 @@
             this.MaximizeBox = false;
             this.Name = "FrmQuickViewSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "미리보기 설정";
+            this.Text = "Preview Settings";
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).EndInit();
             this.superTabControl1.ResumeLayout(false);
             this.superTabControlPanel1.ResumeLayout(false);

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace WzComparerR2.Animation
 {
-    public class MultiFrameAnimationData 
+    public class MultiFrameAnimationData
     {
         public MultiFrameAnimationData()
         {

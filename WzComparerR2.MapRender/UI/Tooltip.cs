@@ -61,14 +61,21 @@ namespace WzComparerR2.MapRender.UI
                         current = new Vector2(0, current.Y + 16);
 
                         LifeInfo info = p.LifeInfo;
+
                         Vector2 size2;
                         var blocks2 = TooltipHelper.Prepare(info, env.Fonts, out size2);
+
                         for (int i = 0; i < blocks2.Length; i++)
+
                         {
                             blocks2[i].Position.Y += current.Y;
+
                             blocks.Add(blocks2[i]);
+
                         }
+
                         size.X = Math.Max(size.X, size2.X);
+
                         size.Y = current.Y + size2.Y;
                     }
                     break;
@@ -88,7 +95,7 @@ namespace WzComparerR2.MapRender.UI
                         {
                             if (kv.Value == p.Frames)
                             {
-                                blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "동작: " + kv.Key, ref current, Color.White, ref size.X));
+                                blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Action: " + kv.Key, ref current, Color.White, ref size.X));
                             }
                         }
                         size.Y = current.Y;
@@ -99,14 +106,14 @@ namespace WzComparerR2.MapRender.UI
                     {
                         PortalPatch p = tooltipTarget as PortalPatch;
                         Vector2 current = Vector2.Zero;
-                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "이름: " + p.PortalName, ref current, Color.White, ref size.X));
+                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Name: " + p.PortalName, ref current, Color.White, ref size.X));
                         string pTypeName = GetPortalTypeString(p.PortalType);
-                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "유형: " + p.PortalType + (pTypeName == null ? null : (" (" + pTypeName + ")")), ref current, Color.White, ref size.X));
+                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Type: " + p.PortalType + (pTypeName == null ? null : (" (" + pTypeName + ")")), ref current, Color.White, ref size.X));
                         stringLinker.StringMap.TryGetValue(p.ToMap, out sr);
-                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "이동 맵: " + (sr == null ? "(null)" : sr.Name) + "(" + p.ToMap + ")", ref current, Color.White, ref size.X));
-                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "이동 포탈: " + p.ToName, ref current, Color.White, ref size.X));
+                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "To Map: " + (sr == null ? "(null)" : sr.Name) + "(" + p.ToMap + ")", ref current, Color.White, ref size.X));
+                        blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "To Name: " + p.ToName, ref current, Color.White, ref size.X));
                         if (!string.IsNullOrEmpty(p.Script))
-                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "스크립트: " + p.Script, ref current, Color.White, ref size.X));
+                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Script: " + p.Script, ref current, Color.White, ref size.X));
                         size.Y = current.Y;
                     }
                     break;

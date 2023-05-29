@@ -110,7 +110,7 @@ namespace WzComparerR2.Rendering
                 case 2:
                 case 3: return SurfaceFormat.Bgra32;
                 case 257: return SurfaceFormat.Bgra5551;
-                case 513: 
+                case 513:
                 case 517: return SurfaceFormat.Bgr565;
                 case 1026: return SurfaceFormat.Dxt3;
                 case 2050: return SurfaceFormat.Dxt5;

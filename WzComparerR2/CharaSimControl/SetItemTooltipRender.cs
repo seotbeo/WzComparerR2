@@ -57,9 +57,9 @@ namespace WzComparerR2.CharaSimControl
             //绘制左侧
             GearGraphics.DrawNewTooltipBack(g, 0, 0, originBmp.Width, picHeight1);
             g.DrawImage(originBmp, 0, 0, new Rectangle(0, 0, originBmp.Width, picHeight1), GraphicsUnit.Pixel);
-            
+
             //绘制右侧
-            if(effectBmp != null)
+            if (effectBmp != null)
             {
                 GearGraphics.DrawNewTooltipBack(g, originBmp.Width, 0, effectBmp.Width, picHeight2);
                 g.DrawImage(effectBmp, originBmp.Width, 0, new Rectangle(0, 0, effectBmp.Width, picHeight2), GraphicsUnit.Pixel);
@@ -89,13 +89,21 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap RenderSetItem(bool specialPetSetEffectName, out int picHeight)
         {
-            Bitmap setBitmap = new Bitmap(261, DefaultPicHeight);
+            var MAX_WIDTH = 261;//default value was 261
+            Bitmap setBitmap = new Bitmap(MAX_WIDTH, DefaultPicHeight);
             Graphics g = Graphics.FromImage(setBitmap);
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Center;
 
+            var fmtItemName = new StringFormat()
+            {
+                Trimming = StringTrimming.EllipsisCharacter,
+                FormatFlags = StringFormatFlags.NoWrap
+            };
+            var fmtItemType = new StringFormat() { Alignment = StringAlignment.Far };
+
             picHeight = 10;
-            TextRenderer.DrawText(g, this.SetItem.SetItemName, GearGraphics.EquipDetailFont2, new Point(261, 10), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
+            TextRenderer.DrawText(g, this.SetItem.SetItemName, GearGraphics.EquipDetailFont2, new Point(261, 10), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);//default value is '261' - Used for set name centered in set effect tooltip window
             picHeight += 25;
 
             format.Alignment = StringAlignment.Far;
@@ -112,7 +120,7 @@ namespace WzComparerR2.CharaSimControl
 
                     if (string.IsNullOrEmpty(typeName) && SetItem.Parts)
                     {
-                        typeName = "장비";
+                        typeName = "Equip";
                     }
 
                     ItemBase itemBase = null;
@@ -173,8 +181,8 @@ namespace WzComparerR2.CharaSimControl
                                     }
                                     switch (Gear.GetGender(itemID))
                                     {
-                                        case 0: itemName += " (남)"; break;
-                                        case 1: itemName += " (여)"; break;
+                                        case 0: itemName += " (Male)"; break;
+                                        case 1: itemName += " (Female)"; break;
                                     }
                                 }
                                 else if (this.StringLinker.StringItem.TryGetValue(itemID, out sr)) //兼容宠物
@@ -184,7 +192,7 @@ namespace WzComparerR2.CharaSimControl
                                     {
                                         if (itemID / 10000 == 500)
                                         {
-                                            typeName = "펫";
+                                            typeName = "Pet";
                                         }
                                         else
                                         {
@@ -201,7 +209,7 @@ namespace WzComparerR2.CharaSimControl
                     }
 
                     itemName = itemName ?? string.Empty;
-                    typeName = typeName ?? "장비";
+                    typeName = typeName ?? "Equip";
 
                     if (!Regex.IsMatch(typeName, @"^(\(.*\)|（.*）|\[.*\])$"))
                     {
@@ -217,11 +225,16 @@ namespace WzComparerR2.CharaSimControl
                     {
                         partNames.Add(itemName + typeName);
                         Brush brush = setItemPart.Value.Enabled ? Brushes.White : GearGraphics.GrayBrush2;
+                        //measure itemType's text width
+                        var layoutSize = g.MeasureString(typeName, GearGraphics.EquipDetailFont2, MAX_WIDTH, fmtItemType);//remove: + "..." after typeName to fix ellipsis issue
                         if (!cash)
                         {
+                            //TextRenderer.DrawText(g, itemName, GearGraphics.EquipDetailFont2, new Rectangle(10, picHeight, MAX_WIDTH - (int)layoutSize.Width, 18), ((SolidBrush)brush).Color, TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                            //TextRenderer.DrawText(g, typeName, GearGraphics.EquipDetailFont2, new Point(250 - TextRenderer.MeasureText(g, typeName, GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                            //picHeight += 18;
                             int typeWidth = TextRenderer.MeasureText(g, typeName, GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             TextRenderer.DrawText(g, typeName, GearGraphics.EquipDetailFont2, new Point(261 - 10 - typeWidth, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
-                            TextRenderer.DrawText(g, Compact(g, itemName, 261 - 10 - typeWidth - 10), GearGraphics.EquipDetailFont2, new Point(10, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
+                            TextRenderer.DrawText(g, Compact(g, itemName, 261 - 12 - typeWidth - 10), GearGraphics.EquipDetailFont2, new Point(10, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
                             picHeight += 18;
                         }
                         else
@@ -234,6 +247,8 @@ namespace WzComparerR2.CharaSimControl
                                 g.DrawImage(icon.Bitmap, 10 + 2 - icon.Origin.X, picHeight + 2 + 32 - icon.Origin.Y);
                             }
                             g.DrawImage(Resource.CashItem_0, 10 + 2 + 20, picHeight + 2 + 32 - 12);
+                            //TextRenderer.DrawText(g, itemName, GearGraphics.EquipDetailFont2, new Point(52, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
+                            //TextRenderer.DrawText(g, typeName, GearGraphics.EquipDetailFont2, new Point(261 - 10 - TextRenderer.MeasureText(g, typeName, GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
                             int typeWidth = TextRenderer.MeasureText(g, typeName, GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             TextRenderer.DrawText(g, typeName, GearGraphics.EquipDetailFont2, new Point(261 - 10 - typeWidth, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
                             TextRenderer.DrawText(g, Compact(g, itemName, 261 - 10 - typeWidth - 52), GearGraphics.EquipDetailFont2, new Point(52, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
@@ -250,8 +265,8 @@ namespace WzComparerR2.CharaSimControl
                                             itemName = sr.Name;
                                             switch (Gear.GetGender(itemID))
                                             {
-                                                case 0: itemName += " (남)"; break;
-                                                case 1: itemName += " (여)"; break;
+                                                case 0: itemName += " (Male)"; break;
+                                                case 1: itemName += " (Female)"; break;
                                             }
                                         }
                                         else if (this.StringLinker.StringItem.TryGetValue(itemID, out sr)) //兼容宠物
@@ -279,8 +294,8 @@ namespace WzComparerR2.CharaSimControl
             {
                 for (int i = 0; i < this.SetItem.CompleteCount; ++i)
                 {
-                    TextRenderer.DrawText(g, "(없음)", GearGraphics.EquipDetailFont2, new Point(10, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding);
-                    TextRenderer.DrawText(g, "미착용", GearGraphics.EquipDetailFont2, new Point(252 - TextRenderer.MeasureText(g, "미착용", GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, "(None)", GearGraphics.EquipDetailFont2, new Point(10, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    TextRenderer.DrawText(g, "Not Equipped", GearGraphics.EquipDetailFont2, new Point(252 - TextRenderer.MeasureText(g, "Not Equipped", GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding);
                     picHeight += 18;
                 }
             }
@@ -335,7 +350,7 @@ namespace WzComparerR2.CharaSimControl
                     len += seg;
                     fit = tst;
                 }
-            }   
+            }
 
             return fit;
         }
@@ -361,15 +376,15 @@ namespace WzComparerR2.CharaSimControl
                 string effTitle;
                 if (this.SetItem.SetItemID < 0)
                 {
-                    effTitle = $"월드 내 중복 착용 효과({effect.Key} / {this.SetItem.CompleteCount})";
+                    effTitle = $"Active Within World({effect.Key} / {this.SetItem.CompleteCount})";
                 }
-                else if (specialPetSetEffectName && this.SetItem.SetItemName.EndsWith(" 세트"))
+                else if (specialPetSetEffectName && this.SetItem.SetItemName.EndsWith(" Set"))
                 {
-                    effTitle = $"{Regex.Replace(this.SetItem.SetItemName, " 세트$", "")} {effect.Key}세트 효과";
+                    effTitle = $"{Regex.Replace(this.SetItem.SetItemName, " Set$", "")} {effect.Key} set effect";
                 }
                 else
                 {
-                    effTitle = effect.Key + "세트효과";
+                    effTitle = effect.Key + " Set Items Equipped";
                 }
                 TextRenderer.DrawText(g, effTitle, GearGraphics.EquipDetailFont, new Point(10, picHeight), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
                 picHeight += 15;
@@ -407,7 +422,8 @@ namespace WzComparerR2.CharaSimControl
                                 sr = new StringResult();
                                 sr.Name = p.SkillID.ToString();
                             }
-                            string summary = $"<{sr.Name.Replace(Environment.NewLine, "")}> 스킬 사용 가능";
+                            //string summary = "<" + sr.Name.Replace(Environment.NewLine, "") + "> Skill Available";
+                            string summary = $"<{sr.Name.Replace(Environment.NewLine, "")}> Skill Available";
                             GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipDetailFont2, color, 10, 244, ref picHeight, 15);
                         }
                     }
@@ -416,7 +432,7 @@ namespace WzComparerR2.CharaSimControl
                         var ops = (List<SetItemBonusByTime>)prop.Value;
                         foreach (SetItemBonusByTime p in ops)
                         {
-                            GearGraphics.DrawPlainText(g, $"{p.TermStart}小时后", GearGraphics.EquipDetailFont2, color, 10, 244, ref picHeight, 15);
+                            GearGraphics.DrawPlainText(g, $"{p.TermStart} Hr Effect", GearGraphics.EquipDetailFont2, color, 10, 244, ref picHeight, 15);
                             foreach (var bonusProp in p.Props)
                             {
                                 var summary = ItemStringHelper.GetGearPropString(bonusProp.Key, Convert.ToInt32(bonusProp.Value));

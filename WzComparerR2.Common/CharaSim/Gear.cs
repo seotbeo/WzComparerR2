@@ -129,10 +129,13 @@ namespace WzComparerR2.CharaSim
         private static readonly int[][] starData = new int[][] {
             new[]{ 0, 5, 3 }, 
             new[]{ 95, 8, 5 }, 
-            new[]{ 110, 10, 8 }, 
-            new[]{ 120, 15, 10 }, 
-            new[]{ 130, 20, 12 }, 
-            new[]{ 140, 25, 15 }, 
+            new[]{ 108, 10, 8 },
+            //new[]{ 120, 12, 10 }, before GMS 25 Stars update
+            new[]{ 118, 15, 10 },
+            //new[]{ 130, 13, 12 }, before GMS 25 Stars update
+            new[]{ 128, 20, 12 },
+            //new[]{ 140, 15, 15 }, before GMS 25 Stars update
+            new[]{ 138, 25, 15 },
         };
 
         public override object Clone()
@@ -152,7 +155,7 @@ namespace WzComparerR2.CharaSim
         {
             if (AbilityTimeLimited.Count > 0)
             {
-                foreach(var kv in AbilityTimeLimited)
+                foreach (var kv in AbilityTimeLimited)
                 {
                     this.Props[kv.Key] = this.Props[kv.Key] + kv.Value;
                 }
@@ -511,7 +514,6 @@ namespace WzComparerR2.CharaSim
                             break;
                         }
                         goto case GearPropType.incMMP;
-
                     case GearPropType.incMMP:
                         if (combinedProps.ContainsKey(GearPropType.incMHP_incMMP) || combinedProps.ContainsKey(GearPropType.incAllStat_incMHP50_incMMP50))
                         {
@@ -866,6 +868,10 @@ namespace WzComparerR2.CharaSim
                 gear.CanPotential = true;
             }
             if (Gear.IsMechanicGear(gear.type) || Gear.IsDragonGear(gear.type))
+            {
+                gear.CanPotential = false;
+            }
+            else if (gear.Props.TryGetValue(GearPropType.noPotential, out value) && value > 0)
             {
                 gear.CanPotential = false;
             }

@@ -547,6 +547,7 @@ namespace WzComparerR2.CharaSimControl
                     cashImg = Resource.CashItem_0;
                 }
 
+                //g.DrawImage(cashImg, origin.X + 20, origin.Y - 12);
                 g.DrawImage(cashImg, origin.X + 32 - cashOrigin.X, origin.Y - cashOrigin.Y);
             }
             if (gear.TimeLimited)
@@ -680,7 +681,7 @@ namespace WzComparerR2.CharaSimControl
                 this.Refresh();
                 waitForRefresh = false;
             }
-            
+
             base.OnMouseDown(e);
 
             ItemBase item = GetItemByPoint(e.Location);

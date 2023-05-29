@@ -298,7 +298,7 @@ namespace WzComparerR2.CharaSim
         {
             get { return critDam; }
         }
-        
+
         /// <summary>
         /// 获取角色的攻击熟练度，这是一个隐藏的百分比属性。
         /// </summary>

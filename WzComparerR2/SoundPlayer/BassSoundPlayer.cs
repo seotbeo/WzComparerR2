@@ -21,7 +21,7 @@ namespace WzComparerR2
         private bool autoPlay;
         private int volume;
         private bool loop;
-        
+
         private int hStream;
         private bool isDisposed;
 
@@ -124,7 +124,7 @@ namespace WzComparerR2
 
             try
             {
-                IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(data,0);
+                IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(data, 0);
                 hStream = Bass.CreateStream(pData, 0, data.Length, BassFlags.Default);
             }
             catch

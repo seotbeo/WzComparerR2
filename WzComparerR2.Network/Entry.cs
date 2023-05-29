@@ -132,12 +132,12 @@ namespace WzComparerR2.Network
                         var sb = new StringBuilder();
                         lock (this.session.Users)
                         {
-                            sb.AppendFormat("Online user count: {0}", this.session.Users.Count);
+                            sb.AppendFormat("Users Online: {0}", this.session.Users.Count);
                             var time = DateTime.UtcNow;
                             foreach (var user in this.session.Users)
                             {
                                 var loginTime = time - this.session.LocalTimeOffset - user.LoginTimeUTC;
-                                sb.AppendLine().AppendFormat("  {0}, online {1} minutes.", user.NickName, (int)loginTime.TotalMinutes);
+                                sb.AppendLine().AppendFormat("  {0}, online for {1} minutes.", user.NickName, (int)loginTime.TotalMinutes);
                             }
                         }
                         Log.Info(sb.ToString());
@@ -175,7 +175,7 @@ namespace WzComparerR2.Network
                 }
                 else
                 {
-                    Log.Warn("Command failed, Server not connected.");
+                    Log.Warn("Command failed: Not connected to the server.");
                 }
             }
         }
@@ -278,7 +278,7 @@ namespace WzComparerR2.Network
         {
             this.session.LocalTimeOffset = DateTime.UtcNow - pack.CurrentTimeUTC;
 
-            Log.Info("Server version: {0}, Time: {1:yyyy-MM-dd HH:mm:ss}, {2:%d\\d\\ h\\h\\ m\\m\\ s\\s} elapsed, {3} users online.",
+            Log.Info("Server version: {0} - Time: {1:yyyy-MM-dd HH:mm:ss}, {2:%d\\d\\ h\\h\\ m\\m\\ s\\s} elapsed - {3} user(s) online.",
                 pack.Version,
                 pack.CurrentTimeUTC.ToLocalTime(),
                 pack.CurrentTimeUTC - pack.StartTimeUTC,
@@ -287,7 +287,7 @@ namespace WzComparerR2.Network
 
         private void OnPackReceived(PackLoginResp pack)
         {
-            Log.Info("Login Success.");
+            Log.Info("You have successfully logged in.");
             this.session.SID = pack.SessionID;
 
             //获取在线列表
@@ -311,7 +311,7 @@ namespace WzComparerR2.Network
 
         private void OnPackReceived(PackGetAllUsersResp pack)
         {
-            Log.Info("Get {0} online users.", pack.Users.Count);
+            Log.Info("{0} user(s) online.", pack.Users.Count);
             lock (this.session.Users)
             {
                 this.session.Users.Clear();
@@ -367,18 +367,18 @@ namespace WzComparerR2.Network
                         {
                             var oldUser = this.session.Users[idx];
                             this.session.Users[idx] = pack.UserInfo;
-                            Log.Info("[{0}] changed name to [{1}].", oldUser.NickName, pack.UserInfo.NickName);
+                            Log.Info("[{0}] changed its name to [{1}].", oldUser.NickName, pack.UserInfo.NickName);
                         }
                         else
                         {
                             this.session.Users.Add(pack.UserInfo);
                             Log.Info("[{0}] is online.", pack.UserInfo.NickName);
                         }
-                       
+
                         break;
                 }
             }
-            
+
         }
         #endregion
 

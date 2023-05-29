@@ -19,8 +19,8 @@ namespace WzComparerR2.MapRender
         {
             IntPtr hWnd = game.Window.Handle;
             Device.RegisterDevice(UsagePage.Generic, UsageId.GenericKeyboard, DeviceFlags.None, hWnd, RegisterDeviceOptions.Default);
-            
-            if(!filterCache.ContainsKey(hWnd))
+
+            if (!filterCache.ContainsKey(hWnd))
             {
                 var filter = new RawInputMessageFilter();
                 filterCache[hWnd] = filter;

@@ -230,7 +230,7 @@ namespace WzComparerR2.WzLib
                     break;
 
                 default:
-                    throw new Exception("문자열을 읽는 중 오류: " + this.FileStream.Name + " " + this.FileStream.Position);
+                    throw new Exception("An error occurred while reading: " + this.FileStream.Name + " " + this.FileStream.Position);
             }
             return string.Empty;
         }

@@ -20,11 +20,11 @@ namespace WzComparerR2.MapRender
 
         }
 
-        #if MapRenderV1
+#if MapRenderV1
         private RibbonBar bar;
         private ButtonItem btnItemMapRender;
         private FrmMapRender mapRenderGame1;
-        #endif
+#endif
 
         private RibbonBar bar2;
         private ButtonItem btnItemMapRenderV2;
@@ -34,16 +34,18 @@ namespace WzComparerR2.MapRender
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization)]
         protected override void OnLoad()
         {
-            #if MapRenderV1
+#if MapRenderV1
             this.bar = Context.AddRibbonBar("Modules", "MapRender");
-            btnItemMapRender = new ButtonItem("", "맵 미리보기");
+            btnItemMapRender = new ButtonItem("", "Map Render");
             btnItemMapRender.Click += btnItem_Click;
             bar.Items.Add(btnItemMapRender);
-            #endif
+#endif
+
             this.bar2 = Context.AddRibbonBar("Modules", "MapRender2");
-            btnItemMapRenderV2 = new ButtonItem("", "맵 미리보기 V2");
+            btnItemMapRenderV2 = new ButtonItem("", "MapRenderV2");
             btnItemMapRenderV2.Click += btnItem_Click;
             bar2.Items.Add(btnItemMapRenderV2);
+
             ConfigManager.RegisterAllSection();
         }
 
@@ -59,7 +61,7 @@ namespace WzComparerR2.MapRender
                 {
                     if (wzFile == null || wzFile.Type != Wz_Type.Map)
                     {
-                        if (MessageBoxEx.Show("Map.wz의 맵 img를 선택하지 않으셨습니다. 계속 진행하시겠습니까?", "경고", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                        if (MessageBoxEx.Show("You did not select an IMG file from Map.wz.\r\nDo you want to continue?", "Warning", MessageBoxButtons.OKCancel) != DialogResult.OK)
                         {
                             goto exit;
                         }
@@ -124,7 +126,7 @@ namespace WzComparerR2.MapRender
                         }
                         catch (Exception ex)
                         {
-                            PluginManager.LogError("MapRender", ex, "MapRender error:");
+                            PluginManager.LogError("MapRender", ex, "MapRender Error:");
                             MessageBoxEx.Show(ex.ToString(), "MapRender");
                         }
 #endif
@@ -136,10 +138,10 @@ namespace WzComparerR2.MapRender
                 }
             }
 
-            MessageBoxEx.Show("Map.wz에서 맵 img를 선택하세요.", "오류");
+            MessageBoxEx.Show("Select an IMG from Map.wz.", "Map Render");
 
-            exit:
-            return;
+        exit:
+        return;
         }
 
     }

@@ -234,7 +234,7 @@ namespace WzComparerR2.WzLib
                     break;
 
                 default:
-                    throw new Exception("unknown wz tag: " + tag);
+                    throw new Exception("Unknown WZ tag: " + tag);
             }
         }
 
@@ -304,7 +304,7 @@ namespace WzComparerR2.WzLib
 
                 case 0x03:
                 case 0x13:
-               // case 0x14:
+                    // case 0x14
                     parent.Value = this.WzFile.ReadInt32();
                     break;
 
@@ -329,13 +329,13 @@ namespace WzComparerR2.WzLib
                     break;
 
                 default:
-                    throw new Exception("读取值错误." + flag + " at Offset: " + this.WzFile.FileStream.Position);
+                    throw new Exception("ExtractValue error " + flag + " at Offset " + this.WzFile.FileStream.Position);
             }
         }
 
         private void ExtractLua()
         {
-            while(this.WzFile.FileStream.Position < this.Offset + this.Size)
+            while (this.WzFile.FileStream.Position < this.Offset + this.Size)
             {
                 var flag = this.WzFile.BReader.ReadByte();
 
@@ -346,7 +346,7 @@ namespace WzComparerR2.WzLib
                         break;
 
                     default:
-                        throw new Exception("读取Lua错误." + flag + " at Offset: " + this.WzFile.FileStream.Position);
+                        throw new Exception("ExtractLua error " + flag + " at Offset " + this.WzFile.FileStream.Position);
                 }
             }
         }

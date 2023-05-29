@@ -99,7 +99,7 @@ namespace WzComparerR2
 
         private void txtTime_ValueObjectChanged(object sender, EventArgs e)
         {
-            LockEvent(()=>this.onUpdateDuration(false));
+            LockEvent(() => this.onUpdateDuration(false));
         }
 
         private void txtTimeNew_ValueObjectChanged(object sender, EventArgs e)

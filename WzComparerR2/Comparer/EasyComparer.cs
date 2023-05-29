@@ -24,6 +24,7 @@ namespace WzComparerR2.Comparer
         public bool OutputAddedImg { get; set; }
         public bool OutputRemovedImg { get; set; }
         public bool EnableDarkMode { get; set; }
+
         public string StateInfo
         {
             get { return stateInfo; }
@@ -68,8 +69,8 @@ namespace WzComparerR2.Comparer
 
         public void EasyCompareWzFiles(Wz_File fileNew, Wz_File fileOld, string outputDir, StreamWriter index = null)
         {
-            StateInfo = "Wz 비교중...";
-           
+            StateInfo = "Comparing...";
+
             if ((fileNew.Type == Wz_Type.Base || fileOld.Type == Wz_Type.Base) && index == null) //至少有一个base 拆分对比
             {
                 var virtualNodeNew = RebuildWzFile(fileNew);
@@ -90,8 +91,8 @@ namespace WzComparerR2.Comparer
 
                 FileStream htmlFile = null;
                 StreamWriter sw = null;
-                StateInfo = "Index 문서 작성중...";
-                StateDetail = "문서 구조 생성중";
+                StateInfo = "Creating Index file...";
+                StateDetail = "Creating the file";
                 try
                 {
                     htmlFile = new FileStream(htmlFilePath, FileMode.Create, FileAccess.Write);
@@ -100,14 +101,14 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("<html>");
                     sw.WriteLine("<head>");
                     sw.WriteLine("<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
-                    sw.WriteLine("<title>Index {0}←{1}</title>", fileNew.Header.WzVersion, fileOld.Header.WzVersion);
+                    sw.WriteLine("<title>Index {1} → {0}</title>", fileNew.Header.WzVersion, fileOld.Header.WzVersion);
                     sw.WriteLine("<link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />");
                     sw.WriteLine("</head>");
                     sw.WriteLine("<body>");
                     //输出概况
                     sw.WriteLine("<p class=\"wzf\">");
                     sw.WriteLine("<table>");
-                    sw.WriteLine("<tr><th>파일명</th><th>신버전 용량</th><th>구버전 용량</th><th>변경</th><th>추가</th><th>제거</th></tr>");
+                    sw.WriteLine("<tr><th>Filename</th><th>Size New Version</th><th>Size Old Version</th><th>Modified</th><th>Added</th><th>Removed</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
                         var vNodeNew = dictNew[wzType];
@@ -327,8 +328,8 @@ namespace WzComparerR2.Comparer
 
             FileStream htmlFile = null;
             StreamWriter sw = null;
-            StateInfo = type + " 문서 작성중...";
-            StateDetail = "문서 구조 생성중";
+            StateInfo = "Creating" + type;
+            StateDetail = "Creating output files";
             try
             {
                 htmlFile = new FileStream(htmlFilePath, FileMode.Create, FileAccess.Write);
@@ -337,32 +338,32 @@ namespace WzComparerR2.Comparer
                 sw.WriteLine("<html>");
                 sw.WriteLine("<head>");
                 sw.WriteLine("<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
-                sw.WriteLine("<title>{0} {1}←{2}</title>", type, fileNew[0].GetMergedVersion(), fileOld[0].GetMergedVersion());
+                sw.WriteLine("<title>{0}.wz version {2} → {1}</title>", type, fileNew[0].GetMergedVersion(), fileOld[0].GetMergedVersion());
                 sw.WriteLine("<link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />");
                 sw.WriteLine("</head>");
                 sw.WriteLine("<body>");
                 //输出概况
                 sw.WriteLine("<p class=\"wzf\">");
                 sw.WriteLine("<table>");
-                sw.WriteLine("<tr><th>&nbsp;</th><th>파일명</th><th>용량</th><th>버전</th></tr>");
-                sw.WriteLine("<tr><td>신버전</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
+                sw.WriteLine("<tr><th>&nbsp;</th><th>Filename</th><th>Size</th><th>Version</th></tr>");
+                sw.WriteLine("<tr><td>New Version</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
                     string.Join("<br/>", fileNew.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileName))),
                     string.Join("<br/>", fileNew.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileSize.ToString("N0")))),
                     string.Join("<br/>", fileNew.Select(wzf => wzf.GetMergedVersion()))
                     );
-                sw.WriteLine("<tr><td>구버전</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
+                sw.WriteLine("<tr><td>Old Version</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
                     string.Join("<br/>", fileOld.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileName))),
                     string.Join("<br/>", fileOld.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileSize.ToString("N0")))),
                     string.Join("<br/>", fileOld.Select(wzf => wzf.GetMergedVersion()))
                     );
-                sw.WriteLine("<tr><td>현재시각</td><td colspan='3'>{0:yyyy-MM-dd HH:mm:ss.fff}</td></tr>", DateTime.Now);
-                sw.WriteLine("<tr><td>옵션</td><td colspan='3'>{0}</td></tr>", string.Join("<br/>", new[] {
-                    this.OutputPng ? "-OutputPng" : null,
-                    this.OutputAddedImg ? "-OutputAddedImg" : null,
-                    this.OutputRemovedImg ? "-OutputRemovedImg" : null,
-                    this.EnableDarkMode ? "-EnableDarkMode" : null,
-                    "-PngComparison " + this.Comparer.PngComparison,
-                    this.Comparer.ResolvePngLink ? "-ResolvePngLink" : null,
+                sw.WriteLine("<tr><td>Current Time</td><td colspan='3'>{0:M-d-yyyy HH:mm:ss.fff}</td></tr>", DateTime.Now);
+                sw.WriteLine("<tr><td>Options</td><td colspan='3'>{0}</td></tr>", string.Join("<br/>", new[] {
+                    this.OutputPng ? "- Include PNG" : null,
+                    this.OutputAddedImg ? "- Added Files" : null,
+                    this.OutputRemovedImg ? "- Removed Files" : null,
+                    this.EnableDarkMode ? "- Enable Dark Mode" : null,
+                    "- Compare " + this.Comparer.PngComparison,
+                    this.Comparer.ResolvePngLink ? "- Resolve PNG Link" : null,
                 }.Where(p => p != null)));
                 sw.WriteLine("</table>");
                 sw.WriteLine("</p>");
@@ -370,7 +371,7 @@ namespace WzComparerR2.Comparer
                 //输出目录
                 StringBuilder[] sb = { new StringBuilder(), new StringBuilder(), new StringBuilder() };
                 int[] count = new int[6];
-                string[] diffStr = { "변경", "추가", "제거" };
+                string[] diffStr = { "Modified", "Added", "Removed" };
                 foreach (CompareDifference diff in diffLst)
                 {
                     int idx = -1;
@@ -411,7 +412,7 @@ namespace WzComparerR2.Comparer
                     sb[idx].AppendLine("</td></tr>");
                     count[idx]++;
                 }
-                StateDetail = "목차 출력중";
+                StateDetail = "Creating a table of contents";
                 Array.Copy(count, 0, count, 3, 3);
                 for (int i = 0; i < sb.Length; i++)
                 {
@@ -435,7 +436,7 @@ namespace WzComparerR2.Comparer
                     {
                         case DifferenceType.Changed:
                             {
-                                StateInfo = string.Format("{0}/{1} 변경: {2}", count[0], count[3], diff.NodeNew.FullPath);
+                                StateInfo = string.Format("{0}/{1} Modified: {2}", count[0], count[3], diff.NodeNew.FullPath);
                                 Wz_Image imgNew, imgOld;
                                 if ((imgNew = diff.ValueNew as Wz_Image) != null
                                     && ((imgOld = diff.ValueOld as Wz_Image) != null))
@@ -451,7 +452,7 @@ namespace WzComparerR2.Comparer
                         case DifferenceType.Append:
                             if (this.OutputAddedImg)
                             {
-                                StateInfo = string.Format("{0}/{1} 추가: {2}", count[1], count[4], diff.NodeNew.FullPath);
+                                StateInfo = string.Format("{0}/{1} Added: {2}", count[1], count[4], diff.NodeNew.FullPath);
                                 Wz_Image imgNew = diff.ValueNew as Wz_Image;
                                 if (imgNew != null)
                                 {
@@ -466,7 +467,7 @@ namespace WzComparerR2.Comparer
                         case DifferenceType.Remove:
                             if (this.OutputRemovedImg)
                             {
-                                StateInfo = string.Format("{0}/{1} 제거: {2}", count[2], count[5], diff.NodeOld.FullPath);
+                                StateInfo = string.Format("{0}/{1} Removed: {2}", count[2], count[5], diff.NodeOld.FullPath);
                                 Wz_Image imgOld = diff.ValueOld as Wz_Image;
                                 if (imgOld != null)
                                 {
@@ -519,14 +520,14 @@ namespace WzComparerR2.Comparer
 
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
-            StateDetail = "img 구조 분석중";
+            StateDetail = "Extracting IMG";
             if (!imgNew.TryExtract() || !imgOld.TryExtract())
                 return;
-            StateDetail = "img 비교중";
+            StateDetail = "Comparing IMG";
             List<CompareDifference> diffList = new List<CompareDifference>(Comparer.Compare(imgNew.Node, imgOld.Node));
             StringBuilder sb = new StringBuilder();
             int[] count = new int[3];
-            StateDetail = "총 " + diffList.Count + "개의 변경사항 발견, 합산중";
+            StateDetail = "Total of " + diffList.Count + " changes";
             foreach (var diff in diffList)
             {
                 int idx = -1;
@@ -548,18 +549,18 @@ namespace WzComparerR2.Comparer
                 }
                 sb.AppendFormat("<tr class=\"r{0}\">", idx);
                 sb.AppendFormat("<td>{0}</td>", col0 ?? " ");
-                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(col0, diff.NodeNew, 0, outputDir) ?? " ");
                 sb.AppendFormat("<td>{0}</td>", OutputNodeValue(col0, diff.NodeOld, 1, outputDir) ?? " ");
+                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(col0, diff.NodeNew, 0, outputDir) ?? " ");
                 sb.AppendLine("</tr>");
                 count[idx]++;
             }
-            StateDetail = "문서 출력중";
+            StateDetail = "Creating file";
             bool noChange = diffList.Count <= 0;
             sw.WriteLine("<table class=\"img{0}\">", noChange ? " noChange" : "");
-            sw.WriteLine("<tr><th colspan=\"3\"><a name=\"{1}\">{0}</a> 변경:{2} 추가:{3} 제거:{4}</th></tr>",
+            sw.WriteLine("<tr><th colspan=\"3\"><a name=\"{1}\">{0}</a>: Modified: {2}; Added: {3}; Removed: {4}</th></tr>",
                 imgName, anchorName, count[0], count[1], count[2]);
             sw.WriteLine(sb.ToString());
-            sw.WriteLine("<tr><td colspan=\"3\"><a href=\"#{1}\">{0}</a></td></tr>", "돌아가기", menuAnchorName);
+            sw.WriteLine("<tr><td colspan=\"3\"><a href=\"#{1}\">{0}</a></td></tr>", "Go Back", menuAnchorName);
             sw.WriteLine("</table>");
             imgNew.Unextract();
             imgOld.Unextract();
@@ -568,7 +569,7 @@ namespace WzComparerR2.Comparer
 
         private void OutputImg(Wz_Image img, DifferenceType diffType, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
-            StateDetail = "img 구조 분석중";
+            StateDetail = "Extracting IMG";
             if (!img.TryExtract())
                 return;
 
@@ -606,11 +607,11 @@ namespace WzComparerR2.Comparer
                 }
             };
 
-            StateDetail = "img 구조 출력중";
+            StateDetail = "Creating IMG structure";
             sw.WriteLine("<table class=\"img\">");
             sw.WriteLine("<tr><th colspan=\"2\"><a name=\"{1}\">{0}</a></th></tr>", imgName, anchorName);
             fnOutput(img.Node);
-            sw.WriteLine("<tr><td colspan=\"2\"><a href=\"#{1}\">{0}</a></td></tr>", "돌아가기", menuAnchorName);
+            sw.WriteLine("<tr><td colspan=\"2\"><a href=\"#{1}\">{0}</a></td></tr>", "Go Back", menuAnchorName);
             sw.WriteLine("</table>");
             img.Unextract();
         }
@@ -626,7 +627,7 @@ namespace WzComparerR2.Comparer
             Wz_Uol uol;
             Wz_Sound sound;
             Wz_Vector vector;
-            
+
             if ((linkNode = value.GetLinkedSourceNode(path => PluginBase.PluginManager.FindWz(path, value.GetNodeWzFile()))) != value)
             {
                 return "(link) " + OutputNodeValue(fullPath, linkNode, col, outputDir);
@@ -686,21 +687,20 @@ namespace WzComparerR2.Comparer
                         fileStream.Write(mp3, 0, mp3.Length);
                         fileStream.Close();
                     }
-                    return string.Format("<audio controls src=\"{0}\" type=\"audio/mpeg\">오디오 {1}ms\n</audio>", Path.Combine(new DirectoryInfo(outputDir).Name, filePath), sound.Ms);
+                    return string.Format("<audio controls src=\"{0}\" type=\"audio/mpeg\">audio {1} ms\n</audio>", Path.Combine(new DirectoryInfo(outputDir).Name, filePath), sound.Ms);
                 }
                 else
                 {
-                    return string.Format("오디오 {0}ms", sound.Ms);
+                    return string.Format("audio {0} ms", sound.Ms);
                 }
             }
             else if (value.Value is Wz_Image)
             {
                 return "(img)";
             }
-            return WebUtility.HtmlEncode(Convert.ToString(value.Value));
+            return Convert.ToString(value.Value);
 
         }
-
         public virtual void CreateStyleSheet(string outputDir)
         {
 
@@ -729,18 +729,21 @@ namespace WzComparerR2.Comparer
             }
             else
             {
-                sw.WriteLine("body { font-size:12px; }");
+                sw.WriteLine("body { font-size:12px; background-color:#101010; color:#ffffff }");
                 sw.WriteLine("p.wzf { }");
-                sw.WriteLine("table, tr, th, td { border:1px solid #ff8000; border-collapse:collapse; }");
+                sw.WriteLine("table, tr, th, td { border:2px solid #000000; border-collapse:collapse; }");
                 sw.WriteLine("table { margin-bottom:16px; }");
                 sw.WriteLine("th { text-align:left; }");
-                sw.WriteLine("table.lst0 { }");
-                sw.WriteLine("table.lst1 { }");
-                sw.WriteLine("table.lst2 { }");
-                sw.WriteLine("table.img { }");
-                sw.WriteLine("table.img tr.r0 { background-color:#fff4c4; }");
-                sw.WriteLine("table.img tr.r1 { background-color:#ebf2f8; }");
-                sw.WriteLine("table.img tr.r2 { background-color:#ffffff; }");
+                sw.WriteLine("table.lst0 { background-color:#101010; }");
+                sw.WriteLine("table.lst0 a:link { color:#ffffff }");
+                sw.WriteLine("table.lst0 a:visited { color:#ffffff }");
+                sw.WriteLine("table.lst0 a:hover { color:#ffffff }");
+                sw.WriteLine("table.lst0 a:activated { color:#ffffff }");
+                sw.WriteLine("table.lst1 { background-color:#101010; color: #ffffff; }");
+                sw.WriteLine("table.lst2 { background-color:#101010; color: #ffffff; }");
+                sw.WriteLine("table.img tr.r0 { background-color:#CCCC00; color:#000000; }");
+                sw.WriteLine("table.img tr.r1 { background-color:#154211; }");
+                sw.WriteLine("table.img tr.r2 { background-color:#961e1e; }");
                 sw.WriteLine("table.img.noChange { display:none; }");
             }
             sw.Flush();

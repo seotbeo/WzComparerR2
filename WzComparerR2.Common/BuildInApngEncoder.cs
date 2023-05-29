@@ -15,7 +15,7 @@ namespace WzComparerR2.Common
             var err = apng_init(fileName, width, height, out this.handle);
             if (err != ApngError.Success)
             {
-                throw new Exception($"Apng error: {err}.");
+                throw new Exception($"APNG Error: {err}.");
             }
         }
 
@@ -28,7 +28,7 @@ namespace WzComparerR2.Common
             var err = apng_append_frame(this.handle, pBuffer, 0, 0, this.Width, this.Height, this.Width * 4, delay, this.OptimizeEnabled);
             if (err != ApngError.Success)
             {
-                throw new Exception($"Apng error: {err}.");
+                throw new Exception($"APNG Error: {err}.");
             }
         }
 

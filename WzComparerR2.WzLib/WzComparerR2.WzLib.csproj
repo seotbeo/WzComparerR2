@@ -23,8 +23,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+	<Prefer32Bit>false</Prefer32Bit>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +35,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
+	<Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,7 +49,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Wz_Capabilities.cs" />
+	<Compile Include="Wz_Capabilities.cs" />
     <Compile Include="Wz_Directory.cs" />
     <Compile Include="Wz_SoundType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
