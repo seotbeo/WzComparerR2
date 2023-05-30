@@ -42,9 +42,9 @@ namespace WzComparerR2.CharaSimControl
             if (MobInfo.ID > -1)
             {
                 string mobName = GetMobName(MobInfo.ID);
-                var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemNameFont2, Brushes.White, 0, 5);
+                var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemNameFont2, Brushes.White, 0, 0);
                 titleBlocks.Add(block);
-                block = PrepareText(g, "ID:" + MobInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 6, 5);
+                block = PrepareText(g, "ID:" + MobInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 6, 0);
                 titleBlocks.Add(block);
             }
 
