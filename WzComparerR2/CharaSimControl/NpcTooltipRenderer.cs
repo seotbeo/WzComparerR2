@@ -43,9 +43,9 @@ namespace WzComparerR2.CharaSimControl
             if (NpcInfo.ID > -1)
             {
                 string mobName = GetNpcName(NpcInfo.ID);
-                var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemNameFont2, Brushes.White, 0, 0);
+                var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemNameFont2, Brushes.White, 0, 5);
                 titleBlocks.Add(block);
-                block = PrepareText(g, "ID:" + NpcInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 4, 4);
+                block = PrepareText(g, "ID:" + NpcInfo.ID, GearGraphics.ItemDetailFont, Brushes.White, block.Size.Width + 6, 5);
                 titleBlocks.Add(block);
             }
 
