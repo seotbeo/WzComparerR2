@@ -103,7 +103,7 @@ namespace WzComparerR2
                 item.GetFileLength();
                 if (item.FileLength > 0)
                 {
-                    MessageBoxEx.Show(string.Format("Size: {0:N0} bytes. Last updated: {1:1:M-d-yyyy HH:mm:ss}", item.FileLength, item.LastModified));
+                    MessageBoxEx.Show(string.Format("Size: {0:N0} bytes. Last updated: {1:M-d-yyyy HH:mm:ss}", item.FileLength, item.LastModified));
                 }
                 else
                 {
