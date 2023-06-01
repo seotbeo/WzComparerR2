@@ -338,7 +338,7 @@ namespace WzComparerR2.Comparer
                 sw.WriteLine("<html>");
                 sw.WriteLine("<head>");
                 sw.WriteLine("<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
-                sw.WriteLine("<title>{0}.wz version {2} → {1}</title>", type, fileNew[0].GetMergedVersion(), fileOld[0].GetMergedVersion());
+                sw.WriteLine("<title>{0} v{2} → v{1}</title>", type, fileNew[0].GetMergedVersion(), fileOld[0].GetMergedVersion());
                 sw.WriteLine("<link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />");
                 sw.WriteLine("</head>");
                 sw.WriteLine("<body>");
