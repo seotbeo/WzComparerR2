@@ -698,7 +698,7 @@ namespace WzComparerR2.Comparer
             {
                 return "(img)";
             }
-            return Convert.ToString(value.Value);
+            return WebUtility.HtmlEncode(Convert.ToString(value));
 
         }
         public virtual void CreateStyleSheet(string outputDir)
