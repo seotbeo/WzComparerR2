@@ -219,10 +219,10 @@ namespace WzComparerR2.CharaSimControl
                         sb.AppendLine().Append("       ");
                     }
                     string mobName = GetMobName(kv.Key);
-                    sb.AppendFormat("\n\r{0} ({1:D7})", mobName, kv.Key);
+                    sb.AppendFormat("{0} ({1:D7})", mobName, kv.Key);
                     if (kv.Value > 1)
                     {
-                        sb.Append("*" + kv.Value);
+                        sb.Append(" * " + kv.Value);
                     }
                 }
 
