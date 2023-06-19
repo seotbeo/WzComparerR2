@@ -226,7 +226,6 @@ namespace WzComparerR2.CharaSimControl
                 case GearGrade.S: return GearNameBrushF;
                 case GearGrade.SS: return GreenBrush2;
             }
-            return null;
         }
 
         /// <summary>
@@ -245,7 +244,14 @@ namespace WzComparerR2.CharaSimControl
 
             using (var r = new FormattedTextRenderer())
             {
-                r.WordWrapEnabled = true;
+                if (HasNonASCIIChars(s))
+                {
+                    r.WordWrapEnabled = false;
+                }
+                else
+                {
+                    r.WordWrapEnabled = true;
+                }
                 r.UseGDIRenderer = true;
                 r.DrawString(g, s, font, x, x1, ref y, height, orangeColor, textColor);
             }
@@ -258,7 +264,14 @@ namespace WzComparerR2.CharaSimControl
 
             using (var r = new FormattedTextRenderer())
             {
-                r.WordWrapEnabled = true;
+                if (HasNonASCIIChars(s))
+                {
+                    r.WordWrapEnabled = false;
+                }
+                else
+                {
+                    r.WordWrapEnabled = true;
+                }
                 r.UseGDIRenderer = true;
                 r.DrawPlainText(g, s, font, color, x, x1, ref y, height);
             }
@@ -724,6 +737,11 @@ namespace WzComparerR2.CharaSimControl
                 if (fmt != null)
                     fmt.Dispose();
             }
+        }
+
+        public static bool HasNonASCIIChars(string str)
+        {
+            return System.Text.Encoding.UTF8.GetByteCount(str) != str.Length;
         }
     }
 }

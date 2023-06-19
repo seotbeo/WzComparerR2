@@ -103,7 +103,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.bdR: return "Boss Damage: +" + value + "%";
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "Ignored Enemy DEF: +" + value + "%";
-                //case GearPropType.limitBreak: return "Damage Cap: +" + value;
+                case GearPropType.limitBreak: return "Damage Cap: " + value;
                 case GearPropType.reduceReq: return "Required Level: -" + value;
                 case GearPropType.nbdR: return "Damage Against Normal Monsters: +" + value + "%"; //KMST 1069
 
@@ -365,7 +365,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.chakram: return "Chakram";
                 case GearType.hexSeeker: return "Hex Seeker";
 
-                case GearType.boxingCannon: return "拳炮";//Mo Xuan weapon
+                case GearType.boxingCannon: return "拳封";//Mo Xuan weapon
                 case GearType.boxingSky: return "拳天";//Mo Xuan weapon
                 default: return null;
             }
