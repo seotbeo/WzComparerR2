@@ -430,7 +430,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.nightLordPoutch: return "Night Lord only";
                 case GearType.katara: return "Dual Blade only";
                 case GearType.viperWristband: return "Buccaneer only";
-                case GearType.captainSight: return "Cannoneer only";
+                case GearType.captainSight: return "Corsair only";
                 case GearType.cannonGunPowder:
                 case GearType.cannonGunPowder2: return "Cannoneer only";
                 case GearType.box:
