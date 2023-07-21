@@ -827,8 +827,8 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(res["dotline"].Image, 0, picH);
                     picH += 8;
                 }
-                TextRenderer.DrawText(g, "익셉셔널 강화가 가능합니다. (최대 : " + value + "회)", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
-                picH += 23;
+                TextRenderer.DrawText(g, "Exceptional Enhancement is possible.  (Max" + "\ntime(s):  " + value + ")", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                picH += 39;
             }
 
             //绘制desc
