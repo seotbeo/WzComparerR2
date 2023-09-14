@@ -562,7 +562,7 @@ namespace WzComparerR2.CharaSim
                 case ItemPropType.tradeBlock:
                     return GetGearPropString(GearPropType.tradeBlock, value);
                 case ItemPropType.useTradeBlock:
-                    return value == 0 ? null : "Untradable";
+                    return value == 0 ? null : "Cannot be traded after use";
                 case ItemPropType.tradeAvailable:
                     return GetGearPropString(GearPropType.tradeAvailable, value);
                 case ItemPropType.only:
