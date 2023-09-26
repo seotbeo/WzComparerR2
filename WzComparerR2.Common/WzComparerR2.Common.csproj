@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <AssemblyName>WzComparerR2.Common</AssemblyName>
-    <RootNamespace>WzComparerR2</RootNamespace>
+    <RootNamespace>WzComparerR2.Common</RootNamespace>
     <IsPublishable>false</IsPublishable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
