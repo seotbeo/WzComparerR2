@@ -243,7 +243,7 @@ namespace WzComparerR2.MapRender.UI
             var sb = new StringBuilder();
             sb.Append("Name: ").AppendLine(item.Name);
 
-            sb.AppendLine("Type: Illuminant Cluster");
+            sb.AppendLine("Type: Luminous Body");
 
             sb.Length -= 2;
 
