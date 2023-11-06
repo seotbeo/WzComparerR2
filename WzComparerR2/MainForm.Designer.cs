@@ -2406,7 +2406,7 @@
             // 
             // 
             this.chkSaveSkillTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkSaveSkillTooltip.Location = new System.Drawing.Point(420, 61);
+            this.chkSaveSkillTooltip.Location = new System.Drawing.Point(430, 34);
             this.chkSaveSkillTooltip.Name = "chkSaveSkillTooltip";
             this.chkSaveSkillTooltip.Size = new System.Drawing.Size(135, 23);
             this.chkSaveSkillTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;

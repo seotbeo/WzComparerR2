@@ -577,6 +577,8 @@ namespace WzComparerR2.Comparer
             skillRenderOld.wzNode = wzOld;
             skillRenderNew.diffSkillTags = this.diffSkillTags;
             skillRenderOld.diffSkillTags = this.diffSkillTags;
+            skillRenderNew.IgnoreEvalError = true;
+            skillRenderOld.IgnoreEvalError = true;
 
             foreach (var skillID in TooltipInfo)
             {
