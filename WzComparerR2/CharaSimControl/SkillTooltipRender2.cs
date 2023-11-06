@@ -32,6 +32,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowReqSkill { get; set; } = true;
         public bool DisplayCooltimeMSAsSec { get; set; } = true;
         public bool DisplayPermyriadAsPercent { get; set; } = true;
+        public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool DoSetDiffColor { get; set; } = false;
         public Dictionary<string, List<string>> diffSkillTags = new Dictionary<string, List<string>>();
@@ -49,7 +50,8 @@ namespace WzComparerR2.CharaSimControl
             CanvasRegion region = this.IsWideMode ? CanvasRegion.Wide : CanvasRegion.Original;
 
             int picHeight;
-            Bitmap originBmp = RenderSkill(region, out picHeight);
+            List<int> splitterH;
+            Bitmap originBmp = RenderSkill(region, out picHeight, out splitterH);
             Bitmap ridingGearBmp = null;
 
             int vehicleID = Skill.VehicleID;
@@ -85,12 +87,21 @@ namespace WzComparerR2.CharaSimControl
 
             //绘制背景区域
             GearGraphics.DrawNewTooltipBack(g, 0, 0, originBmp.Width, picHeight);
+            if (splitterH != null && splitterH.Count > 0)
+            {
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                foreach (var y in splitterH)
+                {
+                    DrawV6SkillDotline(g, region.SplitterX1, region.SplitterX2, y);
+                }
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            }
 
             //复制图像
             g.DrawImage(originBmp, 0, 0, new Rectangle(0, 0, originBmp.Width, picHeight), GraphicsUnit.Pixel);
 
             //左上角
-            g.DrawImage(Resource.UIToolTip_img_Item_Frame2_cover, 3, 3);
+            g.DrawImage(Resource.UIToolTip_img_Skill_Frame_cover, 3, 3);
 
             if (this.ShowObjectID)
             {
@@ -112,12 +123,18 @@ namespace WzComparerR2.CharaSimControl
             return tooltip;
         }
 
-        private Bitmap RenderSkill(CanvasRegion region, out int picH)
+        private Bitmap RenderSkill(CanvasRegion region, out int picH, out List<int> splitterH)
         {
             Bitmap bitmap = new Bitmap(region.Width, DefaultPicHeight);
             Graphics g = Graphics.FromImage(bitmap);
             StringFormat format = (StringFormat)StringFormat.GenericDefault.Clone();
+            var v6SkillSummaryFontColorTable = new Dictionary<string, Color>()
+            {
+                { "c", GearGraphics.SkillSummaryOrangeTextColor },
+            };
+
             picH = 0;
+            splitterH = new List<int>();
 
             //获取文字
             StringResult sr;
@@ -135,10 +152,16 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.Icon.Bitmap != null)
             {
                 picH = 33;
-                g.FillRectangle(GearGraphics.GearIconBackBrush2, 14, picH, 68, 68);
+                g.DrawImage(Resource.UIToolTip_img_Skill_Frame_iconBackgrnd, 13, picH - 2);
                 g.DrawImage(GearGraphics.EnlargeBitmap(Skill.Icon.Bitmap),
-                14 + (1 - Skill.Icon.Origin.X) * 2,
+                15 + (1 - Skill.Icon.Origin.X) * 2,
                 picH + (33 - Skill.Icon.Bitmap.Height) * 2);
+            }
+
+            // for 6th job skills
+            if (Skill.Origin)
+            {
+                g.DrawImage(Resource.UIWindow2_img_Skill_skillTypeIcon_origin, 16, 11);
             }
 
             //绘制desc
@@ -152,7 +175,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, SummaryParams.Default);
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
-                GearGraphics.DrawString(g, hdesc, GearGraphics.ItemDetailFont2, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, hdesc, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.TimeLimited)
             {
@@ -184,11 +207,12 @@ namespace WzComparerR2.CharaSimControl
             {
                 GearGraphics.DrawString(g, "#c" + ItemStringHelper.GetSkillReqAmount(Skill.SkillID, Skill.ReqAmount) + "#", GearGraphics.ItemDetailFont2, region.SkillDescLeft, region.TextRight, ref picH, 16);
             }*/
+            picH += 13;
 
-            //分割线
+            //delay rendering v6 splitter
             picH = Math.Max(picH, 114);
-            g.DrawLine(Pens.White, region.SplitterX1, picH, region.SplitterX2, picH);
-            picH += 9;
+            splitterH.Add(picH);
+            picH += 15;
 
             if (Skill.Level > 0)
             {
@@ -232,7 +256,8 @@ namespace WzComparerR2.CharaSimControl
                     hStr = SummaryParser.GetSkillSummary(h, Skill.Level, Skill.Common, SummaryParams.Default, new SkillSummaryOptions
                     {
                         ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                        ConvertPerM = this.DisplayPermyriadAsPercent
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
                     });
                 }
                 else
@@ -240,7 +265,8 @@ namespace WzComparerR2.CharaSimControl
                     hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
                     {
                         ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                        ConvertPerM = this.DisplayPermyriadAsPercent
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
                     });
                 }
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
@@ -250,7 +276,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (hStr != null)
                 {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
             }
 
@@ -259,7 +285,8 @@ namespace WzComparerR2.CharaSimControl
                 string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, new SkillSummaryOptions
                 {
                     ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                    ConvertPerM = this.DisplayPermyriadAsPercent
+                    ConvertPerM = this.DisplayPermyriadAsPercent,
+                    IgnoreEvalError = this.IgnoreEvalError,
                 });
                 GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
@@ -268,16 +295,18 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (hStr != null)
                 {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
             }
             picH += 3;
 
             if (Skill.AddAttackToolTipDescSkill != 0)
             {
-                g.DrawLine(Pens.White, region.SplitterX1, picH, region.SplitterX2, picH);
-                picH += 9;
+                //delay rendering v6 splitter
+                splitterH.Add(picH);
+                picH += 15;
                 GearGraphics.DrawPlainText(g, "[콤비네이션 스킬]", GearGraphics.ItemDetailFont, Color.FromArgb(119, 204, 255), region.LevelDescLeft, region.TextRight, ref picH, 16);
+                picH += 4;
                 BitmapOrigin icon = new BitmapOrigin();
                 Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AddAttackToolTipDescSkill / 10000, Skill.AddAttackToolTipDescSkill));
                 if (skillNode != null)
@@ -287,7 +316,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (icon.Bitmap != null)
                 {
-                    g.DrawImage(icon.Bitmap, 10 - icon.Origin.X, picH + 32 - icon.Origin.Y);
+                    g.DrawImage(icon.Bitmap, 13 - icon.Origin.X, picH + 32 - icon.Origin.Y);
                 }
                 string skillName;
                 if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AddAttackToolTipDescSkill, out sr))
@@ -301,14 +330,16 @@ namespace WzComparerR2.CharaSimControl
                 picH += 10;
                 GearGraphics.DrawString(g, skillName, GearGraphics.ItemDetailFont, region.LinkedSkillNameLeft, region.TextRight, ref picH, 16);
                 picH += 6;
-                picH += 8;
+                picH += 13;
             }
 
             if (Skill.AssistSkillLink != 0)
             {
-                g.DrawLine(Pens.White, region.SplitterX1, picH, region.SplitterX2, picH);
-                picH += 9;
-                GearGraphics.DrawPlainText(g, "[어시스트 스킬]", GearGraphics.ItemDetailFont, ((SolidBrush)GearGraphics.OrangeBrush).Color, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                //delay rendering v6 splitter
+                splitterH.Add(picH);
+                picH += 15;
+                GearGraphics.DrawPlainText(g, "[어시스트 스킬]", GearGraphics.ItemDetailFont, GearGraphics.SkillSummaryOrangeTextColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                picH += 4;
                 BitmapOrigin icon = new BitmapOrigin();
                 Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AssistSkillLink / 10000, Skill.AssistSkillLink));
                 if (skillNode != null)
@@ -318,7 +349,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (icon.Bitmap != null)
                 {
-                    g.DrawImage(icon.Bitmap, 10 - icon.Origin.X, picH + 32 - icon.Origin.Y);
+                    g.DrawImage(icon.Bitmap, 13 - icon.Origin.X, picH + 32 - icon.Origin.Y);
                 }
                 string skillName;
                 if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AssistSkillLink, out sr))
@@ -332,7 +363,7 @@ namespace WzComparerR2.CharaSimControl
                 picH += 10;
                 GearGraphics.DrawString(g, skillName, GearGraphics.ItemDetailFont, region.LinkedSkillNameLeft, region.TextRight, ref picH, 16);
                 picH += 6;
-                picH += 8;
+                picH += 13;
             }
 
             List<string> skillDescEx = new List<string>();
@@ -397,7 +428,8 @@ namespace WzComparerR2.CharaSimControl
 
             if (skillDescEx.Count > 0)
             {
-                g.DrawLine(Pens.White, region.SplitterX1, picH, region.SplitterX2, picH);
+                //delay rendering v6 splitter
+                splitterH.Add(picH);
                 picH += 9;
                 foreach (var descEx in skillDescEx)
                 {
@@ -411,6 +443,17 @@ namespace WzComparerR2.CharaSimControl
             format.Dispose();
             g.Dispose();
             return bitmap;
+        }
+
+        private void DrawV6SkillDotline(Graphics g, int x1, int x2, int y)
+        {
+            // here's a trick that we won't draw left and right part because it looks the same as background border.
+            var picCenter = Resource.UIToolTip_img_Skill_Frame_dotline_c;
+            using (var brush = new TextureBrush(picCenter))
+            {
+                brush.TranslateTransform(x1, y);
+                g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
+            }
         }
 
         private Bitmap RenderLinkRidingGear(Gear gear)
@@ -443,8 +486,8 @@ namespace WzComparerR2.CharaSimControl
             {
                 Width = 290,
                 TitleCenterX = 144,
-                SplitterX1 = 6,
-                SplitterX2 = 283,
+                SplitterX1 = 4,
+                SplitterX2 = 284,
                 SkillDescLeft = 90,
                 LinkedSkillNameLeft = 46,
                 LevelDescLeft = 8,
@@ -455,11 +498,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 Width = 430,
                 TitleCenterX = 215,
-                SplitterX1 = 6,
-                SplitterX2 = 423,
+                SplitterX1 = 4,
+                SplitterX2 = 424,
                 SkillDescLeft = 92,
-                LinkedSkillNameLeft = 46,
-                LevelDescLeft = 10,
+                LinkedSkillNameLeft = 49,
+                LevelDescLeft = 13,
                 TextRight = 411,
             };
         }

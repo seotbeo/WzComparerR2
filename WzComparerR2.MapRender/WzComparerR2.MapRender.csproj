@@ -172,6 +172,7 @@
     <Compile Include="UI\UIMirrorFrame.cs" />
     <Compile Include="UI\UIOptions.cs" />
     <Compile Include="UI\UITopBar.cs" />
+    <Compile Include="UI\UITeleport.cs" />
     <Compile Include="UI\UIWorldMap.cs" />
     <Compile Include="UI\WcR2Engine.cs" />
     <Compile Include="UI\WcR2Renderer.cs" />
@@ -218,6 +219,7 @@
     <None Include="Resources\UIWindow2.img.WorldMap.Border.0.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\UIWindow2_img_Teleport_customBG.png" />
     <Content Include="Resources\UIWindow3.img.mirrorFrame.1024.png" />
     <Content Include="Resources\UIWindow3.img.mirrorFrame.1366.png" />
     <Content Include="Resources\UIWindow3.img.mirrorFrame.800.png" />

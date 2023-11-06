@@ -467,6 +467,7 @@ namespace WzComparerR2.MapRender
             }), KeyCode.Enter, ModifierKeys.None));
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => this.ui.ChatBox.Toggle()), KeyCode.Oem3, ModifierKeys.None));
             this.ui.WorldMap.MapSpotClick += WorldMap_MapSpotClick;
+            this.ui.Teleport.SelectedMapGo += Teleport_SelectedMapGo;
             this.ui.ChatBox.TextBoxChat.TextSubmit += ChatBox_TextSubmit;
         }
 
@@ -512,6 +513,12 @@ namespace WzComparerR2.MapRender
             //var message = string.Format("是否传送到地图\r\n{0} ({1})？", sr?.Name ?? "null", mapID);
             var message = mapName + (last == 0 || last == 8 ? "" : "으") + "로 이동하시겠습니까?";
             MessageBox.Show(message, "", MessageBoxButton.OKCancel, callback, false);
+        }
+
+        private void Teleport_SelectedMapGo(object sender, UITeleport.SelectedMapGoEventArgs e)
+        {
+            int mapID = e.MapID;
+            this.MoveToPortal(mapID, "sp");
         }
 
         private void ChatBox_TextSubmit(object sender, TextEventArgs e)

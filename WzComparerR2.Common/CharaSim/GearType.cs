@@ -278,7 +278,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 小太刀 135_80
         /// </summary>
-        katana2 = 135280,
+        kodachi = 135280,
         /// <summary>
         /// 哨子 135_81
         /// </summary>
@@ -287,6 +287,14 @@ namespace WzComparerR2.CharaSim
         /// 拳爪 135_82
         /// </summary>
         boxingClaw = 135282,
+        /// <summary>
+        /// 小太刀 135_83
+        /// </summary>
+        kodachi2 = 135283,
+        /// <summary>
+        /// 哨子 135_84
+        /// </summary>
+        whistle2 = 135284,
         /// <summary>
         /// 拳天 135_86
         /// </summary>
@@ -376,7 +384,7 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         ornament = 135402,
         /// <summary>
-        /// 헥스시커 135403x
+        /// 索魂器 135403x
         /// </summary>
         hexSeeker = 135403,
         /// <summary>
@@ -404,7 +412,7 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         boxingCannon = 1403,
         /// <summary>
-        /// 차크람 140_4xxx
+        /// 环刃 140_4xxx
         /// </summary>
         chakram = 1404,
         /// <summary>

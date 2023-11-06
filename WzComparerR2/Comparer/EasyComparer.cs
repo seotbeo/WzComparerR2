@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using WzComparerR2.WzLib;
 using WzComparerR2.Common;
 using WzComparerR2.PluginBase;
@@ -38,6 +39,8 @@ namespace WzComparerR2.Comparer
         public bool OutputRemovedImg { get; set; }
         public bool EnableDarkMode { get; set; }
         public bool saveSkillTooltip { get; set; }
+        public bool HashPngFileName { get; set; }
+
         public string StateInfo
         {
             get { return stateInfo; }
@@ -818,93 +821,90 @@ namespace WzComparerR2.Comparer
 
         protected virtual string OutputNodeValue(string fullPath, Wz_Node value, int col, string outputDir)
         {
-
             if (value == null)
                 return null;
 
             Wz_Node linkNode;
-            Wz_Png png;
-            Wz_Uol uol;
-            Wz_Sound sound;
-            Wz_Vector vector;
-            
             if ((linkNode = value.GetLinkedSourceNode(path => PluginBase.PluginManager.FindWz(path, value.GetNodeWzFile()))) != value)
             {
                 return "(link) " + OutputNodeValue(fullPath, linkNode, col, outputDir);
             }
-            else if ((png = value.Value as Wz_Png) != null)
-            {
-                if (OutputPng)
-                {
-                    char[] invalidChars = Path.GetInvalidFileNameChars();
-                    string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
-                    string filePath = fullPath.Replace('\\', '.') + "_" + colName + ".png";
 
-                    for (int i = 0; i < invalidChars.Length; i++)
+            switch (value.Value)
+            {
+                case Wz_Png png:
+                    if (OutputPng)
                     {
-                        filePath = filePath.Replace(invalidChars[i].ToString(), null);
+                        char[] invalidChars = Path.GetInvalidFileNameChars();
+                        string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
+                        string fileName = fullPath.Replace('\\', '.');
+
+                        if (this.HashPngFileName)
+                        {
+                            fileName = ToHexString(MD5Hash(fileName));
+                            // TODO: save file name mapping to another file? 
+                        }
+                        else
+                        {
+                            for (int i = 0; i < invalidChars.Length; i++)
+                            {
+                                fileName = fileName.Replace(invalidChars[i], '_');
+                            }
+                        }
+
+                        fileName = fileName + "_" + colName + ".png";
+                        using (Bitmap bmp = png.ExtractPng())
+                        {
+                            bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                        return string.Format("<img src=\"{0}/{1}\" />", new DirectoryInfo(outputDir).Name, WebUtility.UrlEncode(fileName));
+                    }
+                    else
+                    {
+                        return string.Format("PNG {0}*{1} ({2}B)", png.Width, png.Height, png.DataLength);
                     }
 
-                    Bitmap bmp = png.ExtractPng();
-                    if (bmp != null)
+                case Wz_Uol uol:
+                    return "(uol) " + uol.Uol;
+
+                case Wz_Vector vector:
+                    return string.Format("({0}, {1})", vector.X, vector.Y);
+
+                case Wz_Sound sound:
+                    if (OutputPng)
                     {
-                        bmp.Save(Path.Combine(outputDir, filePath), System.Drawing.Imaging.ImageFormat.Png);
-                        bmp.Dispose();
+                        char[] invalidChars = Path.GetInvalidFileNameChars();
+                        string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
+                        string filePath = fullPath.Replace('\\', '.') + "_" + colName + ".mp3";
+
+                        for (int i = 0; i < invalidChars.Length; i++)
+                        {
+                            filePath = filePath.Replace(invalidChars[i].ToString(), null);
+                        }
+
+                        byte[] mp3 = sound.ExtractSound();
+                        if (mp3 != null)
+                        {
+                            FileStream fileStream = new FileStream(Path.Combine(outputDir, filePath), FileMode.Create, FileAccess.Write);
+                            fileStream.Write(mp3, 0, mp3.Length);
+                            fileStream.Close();
+                        }
+                        return string.Format("<audio controls src=\"{0}\" type=\"audio/mpeg\">오디오 {1}ms\n</audio>", Path.Combine(new DirectoryInfo(outputDir).Name, filePath), sound.Ms);
                     }
-                    return string.Format("<img src=\"{0}/{1}\" />", new DirectoryInfo(outputDir).Name, WebUtility.UrlEncode(filePath));
-                }
-                else
-                {
-                    return string.Format("PNG {0}*{1} ({2}B)", png.Width, png.Height, png.DataLength);
-                }
-
-            }
-            else if ((uol = value.Value as Wz_Uol) != null)
-            {
-                return "(uol) " + uol.Uol;
-            }
-            else if ((vector = value.Value as Wz_Vector) != null)
-            {
-                return string.Format("({0}, {1})", vector.X, vector.Y);
-            }
-            else if ((sound = value.Value as Wz_Sound) != null)
-            {
-                if (OutputPng)
-                {
-                    char[] invalidChars = Path.GetInvalidFileNameChars();
-                    string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
-                    string filePath = fullPath.Replace('\\', '.') + "_" + colName + ".mp3";
-
-                    for (int i = 0; i < invalidChars.Length; i++)
+                    else
                     {
-                        filePath = filePath.Replace(invalidChars[i].ToString(), null);
+                        return string.Format("오디오 {0}ms", sound.Ms);
                     }
 
-                    byte[] mp3 = sound.ExtractSound();
-                    if (mp3 != null)
-                    {
-                        FileStream fileStream = new FileStream(Path.Combine(outputDir, filePath), FileMode.Create, FileAccess.Write);
-                        fileStream.Write(mp3, 0, mp3.Length);
-                        fileStream.Close();
-                    }
-                    return string.Format("<audio controls src=\"{0}\" type=\"audio/mpeg\">오디오 {1}ms\n</audio>", Path.Combine(new DirectoryInfo(outputDir).Name, filePath), sound.Ms);
-                }
-                else
-                {
-                    return string.Format("오디오 {0}ms", sound.Ms);
-                }
+                case Wz_Image _:
+                    return "(img)";
             }
-            else if (value.Value is Wz_Image)
-            {
-                return "(img)";
-            }
+
             return WebUtility.HtmlEncode(Convert.ToString(value.Value));
-
         }
 
         public virtual void CreateStyleSheet(string outputDir)
         {
-
             string path = Path.Combine(outputDir, "style.css");
             if (File.Exists(path))
                 return;
@@ -946,6 +946,24 @@ namespace WzComparerR2.Comparer
             }
             sw.Flush();
             sw.Close();
+        }
+
+        private static byte[] MD5Hash(string text)
+        {
+            using (var md5 = MD5.Create())
+            {
+                return md5.ComputeHash(Encoding.UTF8.GetBytes(text));
+            }
+        }
+
+        private static string ToHexString(byte[] inArray)
+        {
+            StringBuilder hex = new StringBuilder(inArray.Length * 2);
+            foreach (byte b in inArray)
+            {
+                hex.AppendFormat("{0:x2}", b);
+            }
+            return hex.ToString();
         }
     }
 }

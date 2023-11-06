@@ -149,6 +149,8 @@ namespace WzComparerR2.CharaSim
 
                 case GearPropType.incARC: return "ARC : " + sign + value;
                 case GearPropType.incAUT: return "AUT : " + sign + value;
+
+                case GearPropType.Etuc: return "익셉셔널 강화가 가능합니다. (최대 : " + value + "회)";
                 default: return null;
             }
         }
@@ -331,9 +333,11 @@ namespace WzComparerR2.CharaSim
                 case GearType.energySword: return "에너지소드";
                 case GearType.desperado: return "데스페라도";
                 case GearType.magicStick: return "驯兽魔法棒";
-                case GearType.whistle: return "哨子";
+                case GearType.whistle:
+                case GearType.whistle2: return "哨子";
                 case GearType.boxingClaw: return "拳爪";
-                case GearType.katana2: return "小太刀";
+                case GearType.kodachi:
+                case GearType.kodachi2:  return "小太刀";
                 case GearType.espLimiter: return "ESP 리미터";
 
                 case GearType.GauntletBuster: return "건틀렛 리볼버";
@@ -364,6 +368,7 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.chakram: return "차크람";
                 case GearType.hexSeeker: return "헥스시커";
+
                 default: return null;
             }
         }
@@ -375,23 +380,19 @@ namespace WzComparerR2.CharaSim
         /// <returns></returns>
         public static string GetAttackSpeedString(int attackSpeed)
         {
-            string str;
             switch (attackSpeed)
             {
                 case 2:
-                case 3: str = "매우빠름"; break;
+                case 3: return "매우빠름";
                 case 4:
-                case 5: str = "빠름"; break;
-                case 6: str = "보통"; break;
+                case 5: return "빠름";
+                case 6: return "보통";
                 case 7:
-                case 8: str = "느림"; break;
-                case 9: str = "매우느림"; break;
+                case 8: return "느림";
+                case 9: return "매우느림";
                 default:
-                    if (attackSpeed < 2) return "吃屎一样快";
-                    else if (attackSpeed > 9) return "吃屎一样慢";
-                    else return attackSpeed.ToString();
+                    return attackSpeed.ToString();
             }
-            return str + " (" + (10 - attackSpeed) + "단계)";
         }
 
         /// <summary>
@@ -468,7 +469,8 @@ namespace WzComparerR2.CharaSim
 
                 //4xxx
                 case GearType.katana:
-                case GearType.katana2: return "하야토 착용 가능";
+                case GearType.kodachi:
+                case GearType.kodachi2: return "하야토 착용 가능";
                 case GearType.fan: return "칸나 착용 가능";
 
                 //5xxx
@@ -488,6 +490,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.swordZL: return GetExtraJobReqString(101);
 
                 case GearType.whistle:
+                case GearType.whistle2:
                 case GearType.magicStick: return GetExtraJobReqString(112);
 
                 case GearType.espLimiter:

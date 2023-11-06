@@ -110,10 +110,11 @@ namespace WzComparerR2.CharaSimControl
                     string itemName = setItemPart.Value.RepresentName;
                     string typeName = setItemPart.Value.TypeName;
 
-                    if (string.IsNullOrEmpty(typeName) && SetItem.Parts)
-                    {
-                        typeName = "장비";
-                    }
+                    // for 'parts' setitem, detect typeName by the first itemID per part
+                    //if (string.IsNullOrEmpty(typeName) && SetItem.Parts)
+                    //{
+                    //    typeName = "장비";
+                    //}
 
                     ItemBase itemBase = null;
                     bool cash = false;
@@ -385,7 +386,7 @@ namespace WzComparerR2.CharaSimControl
                         List<Potential> ops = (List<Potential>)prop.Value;
                         foreach (Potential p in ops)
                         {
-                            GearGraphics.DrawString(g, p.ConvertSummary(), GearGraphics.EquipDetailFont2, 10, 244, ref picHeight, 15, textColor: color);
+                            GearGraphics.DrawString(g, p.ConvertSummary(), GearGraphics.EquipDetailFont2, new Dictionary<string, Color>() { { string.Empty, color } }, 10, 244, ref picHeight, 15);
                         }
                     }
                     else if (prop.Key == GearPropType.OptionToMob)

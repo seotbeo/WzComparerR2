@@ -326,9 +326,10 @@ namespace WzComparerR2.MapRender
                     });
                 }
             }
-            if (mapData.MapMark == "MonsterPark" || string.Compare(mapData.FieldScript, "morassDQ", StringComparison.OrdinalIgnoreCase) == 0)
+            foreach (var mob in mapData.Scene.Mobs)
             {
-                foreach (var mob in mapData.Scene.Mobs)
+                var mobNode = PluginManager.FindWz(string.Format("Mob/{0:D7}.img/info", mob.ID));
+                if ((mobNode?.Nodes["minimap"].GetValueEx(0) ?? 0) != 0)
                 {
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {
