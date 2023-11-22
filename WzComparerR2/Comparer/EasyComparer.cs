@@ -659,7 +659,7 @@ namespace WzComparerR2.Comparer
         private void getIDFromSkill(Wz_Node node)
         {
             var tag = node.Text;
-            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|BGM).*");
             if (match.Success)
             {
                 string skillID = match.Groups[1].ToString();
