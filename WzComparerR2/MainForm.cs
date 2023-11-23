@@ -2494,7 +2494,7 @@ namespace WzComparerR2
             {
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = advTree3.SelectedNode.Text;
-                dlg.Filter = "모든 파일 (*.*)|*.*";
+                dlg.Filter = "All Files (*.*)|*.*"
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     try
