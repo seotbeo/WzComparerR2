@@ -189,7 +189,7 @@
             this.chkDeadPatch.Name = "chkDeadPatch";
             this.chkDeadPatch.Size = new System.Drawing.Size(82, 16);
             this.chkDeadPatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("Dead Patch", "", "After launching, and after updating each file, the temporary files will be overwritten with the original files. By doing this it will reduce the file required space, but may cause problems.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 100)));
+            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("Dead Patch", "", "After launching, and after updating each file, the temporary files will be overwritten with the original files. By doing this it will reduce the file required space, but may cause problems.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(200, 140)));
             this.chkDeadPatch.TabIndex = 7;
             this.chkDeadPatch.Text = "Dead Patch";
             // 
@@ -205,7 +205,7 @@
             this.chkPrePatch.Name = "chkPrePatch";
             this.chkPrePatch.Size = new System.Drawing.Size(76, 16);
             this.chkPrePatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkPrePatch, new DevComponents.DotNetBar.SuperTooltipInfo("Prepatch", "", "Preload will start before opening the launcher and before patching. Once the preload is finished, you may freely choose your necessary files to renew or change the order of the files that require patching. Once finished choosing, please click on the Patch button to start the renewal process.", null, null, DevComponents.DotNetBar.eTooltipColor.Default, true, false, new System.Drawing.Size(180, 120)));
+            this.superTooltip1.SetSuperTooltip(this.chkPrePatch, new DevComponents.DotNetBar.SuperTooltipInfo("Prepatch", "", "Preload will start before opening the launcher and before patching. Once the preload is finished, you may freely choose your necessary files to renew or change the order of the files that require patching. Once finished choosing, please click on the Patch button to start the renewal process.", null, null, DevComponents.DotNetBar.eTooltipColor.Default, true, false, new System.Drawing.Size(200, 200)));
             this.chkPrePatch.TabIndex = 6;
             this.chkPrePatch.Text = "Prepatch";
             // 
@@ -392,7 +392,7 @@
             this.chkEnableDarkMode.Name = "chkEnableDarkMode";
             this.chkEnableDarkMode.Size = new System.Drawing.Size(125, 16);
             this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("Enable Dark Mode", "", "Outputs the comparison with dark mode HTML.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
+            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("Enable Dark Mode", "", "Outputs the comparison with dark mode HTML.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 70)));
             this.chkEnableDarkMode.TabIndex = 14;
             this.chkEnableDarkMode.Text = "Enable Dark Mode";
             // 
@@ -440,7 +440,7 @@
             this.cmbComparePng.Size = new System.Drawing.Size(120, 21);
             this.cmbComparePng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG Compare", "", "Info regarding the comparison of images.\r\nSizeOnly - Compare files sizes to verify if there are any holes or skipped files.\r\nSizeAndDataLength - Compare the size and the time needed when compressing images simultaneously." +
-            "\r\nPixel - Carefully checks the comparison process, although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 130)));
+            "\r\nPixel - Carefully checks the comparison process, although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 170)));
             this.cmbComparePng.TabIndex = 12;
             // 
             // chkOutputPng
@@ -458,7 +458,7 @@
             this.chkOutputPng.Name = "chkOutputPng";
             this.chkOutputPng.Size = new System.Drawing.Size(82, 16);
             this.chkOutputPng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG && Audio", "", "Shows PNG and audio files", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
+            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG && Audio", "", "Shows PNG and audio files.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
             this.chkOutputPng.TabIndex = 11;
             this.chkOutputPng.Text = "PNG && Audio";
             // 
@@ -474,7 +474,7 @@
             this.chkCompare.Name = "chkCompare";
             this.chkCompare.Size = new System.Drawing.Size(70, 16);
             this.chkCompare.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkCompare, new DevComponents.DotNetBar.SuperTooltipInfo("WZ Compare", "", "Compare two different patch versions.\r\nThis feature does not affect the patch file.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(238, 100)));
+            this.superTooltip1.SetSuperTooltip(this.chkCompare, new DevComponents.DotNetBar.SuperTooltipInfo("WZ Compare", "", "Compare two different patch versions.\r\nThis feature does not affect the patch file.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 100)));
             this.chkCompare.TabIndex = 10;
             this.chkCompare.Text = "Compare";
             // 
@@ -898,7 +898,7 @@
             this.chkResolvePngLink.Name = "chkResolvePngLink";
             this.chkResolvePngLink.Size = new System.Drawing.Size(95, 16);
             this.chkResolvePngLink.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("ResolveLink", "", "Filters content of unnecessary changes.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 72)));
+            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("ResolveLink", "", "Comparison report will analyze and compare linked pictures.\r\nThis will filter out redundant changes.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(190, 100)));
             this.chkResolvePngLink.TabIndex = 18;
             this.chkResolvePngLink.Text = "ResolveLink";
             //

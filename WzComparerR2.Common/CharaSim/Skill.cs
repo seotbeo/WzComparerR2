@@ -64,6 +64,8 @@ namespace WzComparerR2.CharaSim
         public bool VSkill { get; set; }
         public bool NotIncBuffDuration { get; set; }
         public bool NotCooltimeReset { get; set; }
+        public bool NotCooltimeReduce { get; set; }
+        public bool Origin { get; set; }
         public bool TimeLimited { get; set; }
         public Tuple<int, int> RelationSkill { get; set; }
         public bool IsPetAutoBuff { get; set; }
@@ -184,6 +186,12 @@ namespace WzComparerR2.CharaSim
                         break;
                     case "notCooltimeReset":
                         skill.NotCooltimeReset = childNode.GetValue<int>() != 0;
+                        break;
+                    case "notCooltimeReduce":
+                        skill.NotCooltimeReduce = childNode.GetValue<int>() != 0;
+                        break;
+                    case "origin":
+                        skill.Origin = childNode.GetValue<int>() != 0;
                         break;
                     case "timeLimited":
                         skill.TimeLimited = childNode.GetValue<int>() != 0;

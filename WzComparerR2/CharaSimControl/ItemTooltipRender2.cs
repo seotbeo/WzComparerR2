@@ -752,7 +752,7 @@ namespace WzComparerR2.CharaSimControl
                     GearGraphics.DrawString(g, "Lv. " + l0 + "+: " + string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s)), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 }
                 GearGraphics.DrawString(g, "Tip: You can control what your\n\r pet says once it reaches Lv. 15.", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
-                GearGraphics.DrawString(g, "#cEx) /Pet [what to say]#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16, ((SolidBrush)GearGraphics.OrangeBrush4).Color);
+                GearGraphics.DrawString(g, "#cEx) /Pet [what to say]#", GearGraphics.ItemDetailFont, new Dictionary<string, Color>() { { "c", ((SolidBrush)GearGraphics.OrangeBrush4).Color } }, 100, right, ref picH, 16);
             }
 
             string incline = null;

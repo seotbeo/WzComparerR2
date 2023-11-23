@@ -158,8 +158,16 @@ namespace WzComparerR2.CharaSimControl
         {
             Bitmap bitmap = new Bitmap(261, DefaultPicHeight);
             Graphics g = Graphics.FromImage(bitmap);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
             StringFormat format = (StringFormat)StringFormat.GenericTypographic.Clone();
+            var orange2FontColorTable = new Dictionary<string, Color>()
+            {
+                { "c", ((SolidBrush)GearGraphics.OrangeBrush2).Color },
+            };
+            var orange3FontColorTable = new Dictionary<string, Color>()
+            {
+                { "c", ((SolidBrush)GearGraphics.OrangeBrush3).Color },
+            };
             int value, value2;
 
             picH = 13;
@@ -428,7 +436,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (randomParts.Count > 0)
                 {
-                    GearGraphics.DrawString(g, $"#c{string.Join(", ", randomParts)} The image is an example. The android's appearance is determined upon equipping it for the first time.#", GearGraphics.EquipDetailFont, 13, 244, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
+                    GearGraphics.DrawString(g, $"#c{string.Join(", ", randomParts)} The image is an example. The android's appearance is determined upon equipping it for the first time.#", GearGraphics.EquipDetailFont, orange2FontColorTable, 13, 244, ref picH, 15);
                 }
             }
 
@@ -527,8 +535,16 @@ namespace WzComparerR2.CharaSimControl
             //  if (gear.Props.TryGetValue(GearPropType.attackSpeed, out value) && value > 0)
             if (!Gear.Cash && value > 0)
             {
-                TextRenderer.DrawText(g, "Attack Speed: " + ItemStringHelper.GetAttackSpeedString(value),
+                TextRenderer.DrawText(g, ": " + ItemStringHelper.GetAttackSpeedString(value),
                     GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                bool isValidSpeed = (2 <= value && value <= 9);
+                string speedStr = string.Format("Attack Speed: {0}{1}{2}",
+                    ItemStringHelper.GetAttackSpeedString(value),
+                    isValidSpeed ? $" (Stage {10 - value})" : null,
+                    ShowSpeed ? $" ({value})" : null
+                );
+
+                TextRenderer.DrawText(g, speedStr, GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 15;
                 hasPart2 = true;
             }
@@ -601,8 +617,7 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (hasTuc)
             {
-                GearGraphics.DrawString(g, "Remaining Enhancements: " + value + "\n#c(Available Recoveries: 0)#", GearGraphics.EquipDetailFont, 12, 244, ref picH, 15, orangeColor: ((SolidBrush)GearGraphics.OrangeBrush3).Color);
-                //GearGraphics.DrawString(g, "Remaining Enhancements: " + value + (Gear.Cash ? "" : "\n#c(Available Recoveries: 0)#"), GearGraphics.EquipDetailFont, 13, 244, ref picH, 15, orangeColor: ((SolidBrush)GearGraphics.OrangeBrush3).Color); <-- Enable this line when GMS removes the Available Recoveries line for cash items.
+                GearGraphics.DrawString(g, "Remaining Enhancements: " + value + (Gear.Cash ? "" : "\n#c(Available Recoveries: 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 244, ref picH, 15);
                 hasPart2 = true;
             }
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0) //突破上限
@@ -827,7 +842,7 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(res["dotline"].Image, 0, picH);
                     picH += 8;
                 }
-                TextRenderer.DrawText(g, "Exceptional Enhancement is possible.  (Max" + "\ntime(s):  " + value + ")", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, ItemStringHelper.GetGearPropString(GearPropType.Etuc, value), GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 39;
             }
 
@@ -982,17 +997,15 @@ namespace WzComparerR2.CharaSimControl
                 if (!string.IsNullOrEmpty(sr.Desc))
                 {
                     //GearGraphics.DrawString(g, sr.Desc, GearGraphics.EquipDetailFont2, 13, 223, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
-                    GearGraphics.DrawString(g, sr.Desc, GearGraphics.EquipDetailFont2, 10, 225, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
+                    GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
                 }
                 if (!string.IsNullOrEmpty(levelDesc))
                 {
-                    //GearGraphics.DrawString(g, " " + levelDesc, GearGraphics.EquipDetailFont2, 11, 245, ref picH, 16, orangeColor: ((SolidBrush)GearGraphics.OrangeBrush2).Color);
-                    GearGraphics.DrawString(g, " " + levelDesc, GearGraphics.EquipDetailFont2, 10, 225, ref picH, 16, orangeColor: ((SolidBrush)GearGraphics.OrangeBrush2).Color);
+                    GearGraphics.DrawString(g, " " + levelDesc, GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
                 }
                 foreach (string str in desc)
                 {
-                    //GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont, 13, 222, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
-                    GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont, 10, 225, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
+                    GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont, orange2FontColorTable, 10, 243, ref picH, 15);
                 }
                 picH += 5;
             }
@@ -1047,7 +1060,7 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(res["dotline"].Image, 0, picH);
                         picH += 8;
                     }
-                    GearGraphics.DrawString(g, exclusiveEquip, GearGraphics.EquipDetailFont2, 12, 244, ref picH, 15, orangeColor: ((SolidBrush)GearGraphics.OrangeBrush2).Color);
+                    GearGraphics.DrawString(g, exclusiveEquip, GearGraphics.EquipDetailFont2, orange2FontColorTable, 13, 244, ref picH, 15);
                     picH += 5;
                     break;
                 }

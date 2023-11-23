@@ -170,6 +170,9 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Color itemPinkColor = Color.FromArgb(255, 102, 204);
         public static readonly Color itemPurpleColor = Color.FromArgb(187, 119, 255);
 
+        public static readonly Color SkillSummaryOrangeTextColor = Color.FromArgb(255, 204, 0);
+        public static readonly Brush SkillSummaryOrangeTextBrush = new SolidBrush(SkillSummaryOrangeTextColor);
+
         public static Brush GetGearNameBrush(int diff, bool up, bool cash = false, bool petEquip = false)
         {
             if (cash && !petEquip)
@@ -237,7 +240,12 @@ namespace WzComparerR2.CharaSimControl
         /// <param Name="x">起始的x坐标。</param>
         /// <param Name="X1">每行终止的x坐标。</param>
         /// <param Name="y">起始行的y坐标。</param>
-        public static void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height, Color? orangeColor = null, Color? textColor = null)
+        public static void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height)
+        {
+            DrawString(g, s, font, null, x, x1, ref y, height);
+        }
+
+        public static void DrawString(Graphics g, string s, Font font, IDictionary<string, Color> fontColorTable, int x, int x1, ref int y, int height)
         {
             if (s == null)
                 return;
@@ -253,7 +261,8 @@ namespace WzComparerR2.CharaSimControl
                     r.WordWrapEnabled = true;
                 }
                 r.UseGDIRenderer = true;
-                r.DrawString(g, s, font, x, x1, ref y, height, orangeColor, textColor);
+                r.FontColorTable = fontColorTable;
+                r.DrawString(g, s, font, x, x1, ref y, height);
             }
         }
 
@@ -543,6 +552,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             public bool UseGDIRenderer { get; set; }
+            public IDictionary<string, Color> FontColorTable { get; set; }
 
             const int MAX_RANGES = 32;
             StringFormat fmt;
@@ -551,22 +561,13 @@ namespace WzComparerR2.CharaSimControl
             RectangleF infinityRect;
             int drawX;
             Color defaultColor;
-            Color orangeColor;
 
-            public void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height, Color? orangeColor = null, Color? textColor = null)
+            public void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height)
             {
                 //初始化环境
                 this.g = g;
                 this.drawX = x;
-                this.defaultColor = textColor ?? Color.White;
-                if (orangeColor != null)
-                {
-                    this.orangeColor = (Color)orangeColor;
-                }
-                else
-                {
-                    this.orangeColor = GearGraphics.OrangeBrushColor;
-                }
+                this.defaultColor = Color.White;
                 float fontLineHeight = GetFontLineHeight(font);
                 this.infinityRect = new RectangleF(0, 0, ushort.MaxValue, fontLineHeight);
 
@@ -710,14 +711,17 @@ namespace WzComparerR2.CharaSimControl
             protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID)
             {
                 string content = sb.ToString(startIndex, length);
-                Color color;
-                switch (colorID)
+                colorID = colorID ?? string.Empty;
+                Color color = Color.Transparent; // VS2019 fix
+                if (!(this.FontColorTable?.TryGetValue(colorID, out color) ?? false))
                 {
-                    case "c": color = this.orangeColor; break;
-                    case "g": color = GearGraphics.gearGreenColor; break;
-                    case "$": color = GearGraphics.gearCyanColor; break;
-                    case "$$": color = GearGraphics.gearBlueColor; break;
-                    default: color = this.defaultColor; break;
+                    switch (colorID)
+                    {
+                        case "c": color = GearGraphics.OrangeBrushColor; break;
+                        case "g": color = GearGraphics.gearGreenColor; break;
+                        case "$": color = GearGraphics.gearCyanColor; break;
+                        default: color = this.defaultColor; break;
+                    }
                 }
                 if (this.UseGDIRenderer)
                 {

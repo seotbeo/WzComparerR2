@@ -255,6 +255,7 @@
             this.dockSite3 = new DevComponents.DotNetBar.DockSite();
             this.dockContainerItem2 = new DevComponents.DotNetBar.DockContainerItem();
             this.panelDockContainer2 = new DevComponents.DotNetBar.PanelDockContainer();
+            this.chkHashPngFileName = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btnItemOpenImg = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemSaveWithOptions = new DevComponents.DotNetBar.ButtonItem();
             this.ribbonControl1.SuspendLayout();
@@ -2356,6 +2357,7 @@
             // 
             // superTabControlPanel2
             // 
+            this.superTabControlPanel2.Controls.Add(this.chkHashPngFileName);
             this.superTabControlPanel2.Controls.Add(this.chkEnableDarkMode);
             this.superTabControlPanel2.Controls.Add(this.chkResolvePngLink);
             this.superTabControlPanel2.Controls.Add(this.chkOutputRemovedImg);
@@ -2379,11 +2381,11 @@
             // 
             // 
             this.chkResolvePngLink.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkResolvePngLink.Location = new System.Drawing.Point(300, 34);
+            this.chkResolvePngLink.Location = new System.Drawing.Point(328, 34);
             this.chkResolvePngLink.Name = "chkResolvePngLink";
             this.chkResolvePngLink.Size = new System.Drawing.Size(107, 23);
             this.chkResolvePngLink.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("Resolve PNG Link", "", "Filters content of unnecessary changes.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 72)));
+            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("Resolve PNG Link", "", "Comparison report will analyze and compare linked pictures.\r\nThis will filter out redundant changes.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(190, 100)));
             this.chkResolvePngLink.TabIndex = 9;
             this.chkResolvePngLink.Text = "Resolve PNG Link";
             // 
@@ -2393,11 +2395,11 @@
             // 
             // 
             this.chkEnableDarkMode.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkEnableDarkMode.Location = new System.Drawing.Point(300, 61);
+            this.chkEnableDarkMode.Location = new System.Drawing.Point(215, 61);
             this.chkEnableDarkMode.Name = "chkEnableDarkMode";
-            this.chkEnableDarkMode.Size = new System.Drawing.Size(135, 23);
+            this.chkEnableDarkMode.Size = new System.Drawing.Size(115, 23);
             this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("Enable Dark Mode", "", "Outputs the comparison with dark mode HTML.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
+            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("Enable Dark Mode", "", "Outputs the comparison with dark mode HTML.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 70)));
             this.chkEnableDarkMode.TabIndex = 9;
             this.chkEnableDarkMode.Text = "Enable Dark Mode";
             // 
@@ -2407,7 +2409,7 @@
             // 
             // 
             this.chkOutputRemovedImg.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputRemovedImg.Location = new System.Drawing.Point(162, 61);
+            this.chkOutputRemovedImg.Location = new System.Drawing.Point(116, 61);
             this.chkOutputRemovedImg.Name = "chkOutputRemovedImg";
             this.chkOutputRemovedImg.Size = new System.Drawing.Size(135, 23);
             this.chkOutputRemovedImg.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -2451,11 +2453,11 @@
             this.chkOutputPng.Checked = true;
             this.chkOutputPng.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOutputPng.CheckValue = "Y";
-            this.chkOutputPng.Location = new System.Drawing.Point(205, 34);
+            this.chkOutputPng.Location = new System.Drawing.Point(215, 34);
             this.chkOutputPng.Name = "chkOutputPng";
             this.chkOutputPng.Size = new System.Drawing.Size(107, 23);
             this.chkOutputPng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG && Audio", "", "Shows PNG and audio files", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
+            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG && Audio", "", "Shows PNG and audio files.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 60)));
             this.chkOutputPng.TabIndex = 5;
             this.chkOutputPng.Text = "PNG && Audio";
             // 
@@ -2471,7 +2473,7 @@
             this.cmbComparePng.Size = new System.Drawing.Size(120, 21);
             this.cmbComparePng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG Compare", "", "Info regarding the comparison of images.\r\nSizeOnly - Compare files sizes to verify if there are any holes or skipped files.\r\nSizeAndDataLength - Compare the size and the time needed when compressing images simultaneously." +
-            "\r\nPixel - Carefully checks the comparison process, although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 130)));
+            "\r\nPixel - Carefully checks the comparison process; although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 170)));
             this.cmbComparePng.TabIndex = 4;
             // 
             // labelXComp2
@@ -2980,6 +2982,20 @@
             this.panelDockContainer2.Style.GradientAngle = 90;
             this.panelDockContainer2.TabIndex = 2;
             // 
+            // chkHashPngFileName
+            //
+            //
+            //
+            //
+            this.chkHashPngFileName.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkHashPngFileName.Location = new System.Drawing.Point(328, 61);
+            this.chkHashPngFileName.Name = "chkHashPngFileName";
+            this.chkHashPngFileName.Size = new System.Drawing.Size(107, 23);
+            this.chkHashPngFileName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkHashPngFileName, new DevComponents.DotNetBar.SuperTooltipInfo("Hash PNG Names", "", "Outputs PNG file names as MD5 hashes.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 70)));
+            this.chkHashPngFileName.TabIndex = 9;
+            this.chkHashPngFileName.Text = "Hash PNG Names";
+            //
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(750, 512);
@@ -3253,8 +3269,9 @@
         private DevComponents.DotNetBar.ButtonItem buttonItemSaveWithOptions;
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex1;
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex2;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableDarkMode;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;
-        private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableDarkMode;
     }
 }

@@ -150,6 +150,8 @@ namespace WzComparerR2.CharaSim
 
                 case GearPropType.incARC: return "ARC : " + sign + value;
                 case GearPropType.incAUT: return "SAC : " + sign + value;
+
+                case GearPropType.Etuc: return "Exceptional Enhancement is possible.  (Max" + "\ntime(s):  " + value + ")";
                 default: return null;
             }
         }
@@ -378,23 +380,19 @@ namespace WzComparerR2.CharaSim
         /// <returns></returns>
         public static string GetAttackSpeedString(int attackSpeed)
         {
-            string str;
             switch (attackSpeed)
             {
                 case 2:
-                case 3: str = "Very Fast"; break;
+                case 3: return "Very Fast";
                 case 4:
-                case 5: str = "Fast"; break;
-                case 6: str = "Normal"; break;
+                case 5: return "Fast";
+                case 6: return "Normal";
                 case 7:
-                case 8: str = "Slow"; break;
-                case 9: str = "Very Slow"; break;
+                case 8: return "Slow";
+                case 9: return "Very Slow";
                 default:
-                    if (attackSpeed < 2) return "吃屎一样快";
-                    else if (attackSpeed > 9) return "吃屎一样慢";
-                    else return attackSpeed.ToString();
+                    return attackSpeed.ToString();
             }
-            return str + " (Stage " + (10 - attackSpeed) + ")";
         }
 
         /// <summary>

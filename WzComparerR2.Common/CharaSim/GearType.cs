@@ -384,7 +384,7 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         ornament = 135402,
         /// <summary>
-        /// 헥스시커 135403x
+        /// 索魂器 135403x
         /// </summary>
         hexSeeker = 135403,
         /// <summary>
@@ -412,7 +412,7 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         boxingCannon = 1403,
         /// <summary>
-        /// 차크람 140_4xxx
+        /// 环刃 140_4xxx
         /// </summary>
         chakram = 1404,
         /// <summary>
