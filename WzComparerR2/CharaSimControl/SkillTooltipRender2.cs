@@ -149,10 +149,10 @@ namespace WzComparerR2.CharaSimControl
             // for 6th job skills
             if (Skill.Origin)
             {
-                g.DrawImage(Resource.UIWindow2_img_Skill_skillTypeIcon_origin, 16, 11);
-                g.DrawImage(Resource.ToolTip_Equip_Dot_0, 89, picH + 15);//GMS Version blue dot in SKILLS
+                g.DrawImage(Resource.UIWindow2_img_Skill_skillTypeIcon_origin, 20, 11);
+                g.DrawImage(Resource.ToolTip_Equip_Dot_0, 92, picH + 15);//GMS Version blue dot in SKILLS
                 format.Alignment = StringAlignment.Near;
-                TextRenderer.DrawText(g, sr.Name, GearGraphics.ItemNameFont2, new Point(93, 10), Color.White, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, sr.Name, GearGraphics.ItemNameFont2, new Point(96, 10), Color.White, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
             }
 
             //UPDATE THIS NEXT
@@ -174,11 +174,11 @@ namespace WzComparerR2.CharaSimControl
             //绘制desc
             picH = 35;
             if (Skill.HyperStat)
-                //GearGraphics.DrawString(g, "[Master Level : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, 10, 485, ref picH, 16);
-                GearGraphics.DrawString(g, "[Master Level : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                //GearGraphics.DrawString(g, "[Master Level: " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, 10, 485, ref picH, 16);
+                GearGraphics.DrawString(g, "[Master Level: " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, region.LevelDescLeft, region.TextRight, ref picH, 16);
             else if (!Skill.PreBBSkill)
-                //GearGraphics.DrawString(g, "[Master Level : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, 86, 485, ref picH, 16);//original values: 90, 272
-                GearGraphics.DrawString(g, "[Master Level : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, region.SkillDescLeft, region.TextRight, ref picH, 16);
+                //GearGraphics.DrawString(g, "[Master Level: " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, 86, 485, ref picH, 16);//original values: 90, 272
+                GearGraphics.DrawString(g, "[Master Level: " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont2, region.SkillDescLeft, region.TextRight, ref picH, 16);
 
             if (sr.Desc != null)
             {
