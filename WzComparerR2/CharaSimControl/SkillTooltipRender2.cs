@@ -213,11 +213,11 @@ namespace WzComparerR2.CharaSimControl
             }
             if (Skill.SkillID / 10000 / 1000 == 10 && Skill.ReqLevel > 0)
             {
-                GearGraphics.DrawString(g, "#c[Level Required: " + Skill.ReqLevel.ToString() + " or above]#", GearGraphics.ItemDetailFont2, 86, 272, ref picH, 40);
+                GearGraphics.DrawString(g, "#c[Level Required: " + Skill.ReqLevel.ToString() + " or above]#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 40);
             }
             if (Skill.ReqAmount > 0)
             {
-                GearGraphics.DrawString(g, "#c" + ItemStringHelper.GetSkillReqAmount(Skill.SkillID, Skill.ReqAmount) + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, 92, 300, ref picH, 16);
+                GearGraphics.DrawString(g, "#c" + ItemStringHelper.GetSkillReqAmount(Skill.SkillID, Skill.ReqAmount) + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             picH += 13;
 
