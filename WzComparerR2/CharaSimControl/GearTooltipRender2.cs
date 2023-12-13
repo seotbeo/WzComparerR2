@@ -535,8 +535,6 @@ namespace WzComparerR2.CharaSimControl
             //  if (gear.Props.TryGetValue(GearPropType.attackSpeed, out value) && value > 0)
             if (!Gear.Cash && value > 0)
             {
-                TextRenderer.DrawText(g, ": " + ItemStringHelper.GetAttackSpeedString(value),
-                    GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
                 bool isValidSpeed = (2 <= value && value <= 9);
                 string speedStr = string.Format("Attack Speed: {0}{1}{2}",
                     ItemStringHelper.GetAttackSpeedString(value),

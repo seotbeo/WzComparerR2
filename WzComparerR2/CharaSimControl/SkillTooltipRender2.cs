@@ -211,9 +211,9 @@ namespace WzComparerR2.CharaSimControl
             {
                 GearGraphics.DrawString(g, "#cCan add Auto Buff Skill#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
-            if (Skill.SkillID / 10000 / 1000 == 10 && Skill.ReqLevel > 0)
+            if ((Skill.SkillID / 10000 / 1000 == 10 || Skill.SkillID / 10000 / 1000 == 11) && Skill.ReqLevel > 0)
             {
-                GearGraphics.DrawString(g, "#c[Level Required: " + Skill.ReqLevel.ToString() + " or above]#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 40);
+                GearGraphics.DrawString(g, "#c(Level Required: " + Skill.ReqLevel.ToString() + " or above)#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.ReqAmount > 0)
             {

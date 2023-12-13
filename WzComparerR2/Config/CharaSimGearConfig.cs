@@ -15,7 +15,7 @@ namespace WzComparerR2.Config
             set { this["showID"] = value; }
         }
 
-        [ConfigurationProperty("showWeaponSpeed", DefaultValue = true)]
+        [ConfigurationProperty("showWeaponSpeed", DefaultValue = false)]
         public bool ShowWeaponSpeed
         {
             get { return (bool)this["showWeaponSpeed"]; }
