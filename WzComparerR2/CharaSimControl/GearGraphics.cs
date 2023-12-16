@@ -469,6 +469,7 @@ namespace WzComparerR2.CharaSimControl
             //测试y轴大小
             int offsetY = wce.Min(bmp => bmp.OpOrigin.Y);
             int height = wce.Max(bmp => bmp.Rectangle.Bottom);
+            int maxY = wce.Take(wce.Length - 1).ToArray().Max(bmp => bmp.Origin.Y);
 
             //测试宽度
             var font = GearGraphics.ItemDetailFont2;
@@ -502,7 +503,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if (wce[3].Bitmap != null) //애니(ani)훈장
             {
-                g.DrawImage(wce[3].Bitmap, left - wce[3].Origin.X - 1, picH - wce[3].Origin.Y - 1);
+                g.DrawImage(wce[3].Bitmap, left - wce[3].Origin.X, picH - wce[3].Origin.Y - maxY);
             }
 
             //绘制文字
