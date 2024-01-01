@@ -147,10 +147,19 @@ namespace WzComparerR2.Avatar.UI
                             bool isSitActionExists = itemNode.FindNodeByPath("info\\sitAction").GetValueEx<string>(null) != null;
                             if (itemID / 10000 == 301 || itemID / 1000 == 5204 || brm != null || isSitActionExists)
                             {
-                                if (brm == null) brm = new Wz_Vector(0, 0);
+                                bool fb = false;
+                                if (brm == null)
+                                {
+                                    fb = false;
+                                    brm = new Wz_Vector(0, 0);
+                                }
+                                else if (isSitActionExists)
+                                {
+                                    fb = true;
+                                }
 
                                 this.SuspendUpdateDisplay();
-                                LoadChairPart(itemNode, BitmapOrigin.CreateFromNode(itemNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), itemID, brm, false);
+                                LoadChairPart(itemNode, BitmapOrigin.CreateFromNode(itemNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), itemID, brm, fb);
                                 this.ResumeUpdateDisplay();
                             }
                         }

@@ -790,11 +790,11 @@ namespace WzComparerR2.Avatar
 
                             bool applyb = false;
                             string pos = gpNode?.Nodes[action]?.FindNodeByPath("pos")?.GetValueEx<string>(null);
-                            if (pos == "1")
+                            if (pos == "1" && !this.Taming.forceAction)
                             {
                                 skin.Offset += (Size)new Point(-5, -48);
                             }
-                            else if (pos == "3")
+                            else if (pos == "3" || this.Taming.forceAction)
                             {
                                 applyb = true;
                             }
