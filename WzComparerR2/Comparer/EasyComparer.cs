@@ -555,6 +555,7 @@ namespace WzComparerR2.Comparer
             SkillTooltipRender2 skillRenderOld = new SkillTooltipRender2();
             int count = 0;
             int allCount = TooltipInfo.Count;
+            var skillTypeFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
 
             this.stringWzNew = wzNew?.FindNodeByPath("String").GetNodeWzFile();
             this.itemWzNew = wzNew?.FindNodeByPath("Item").GetNodeWzFile();
@@ -588,7 +589,7 @@ namespace WzComparerR2.Comparer
 
                 Bitmap skillImageNew = null;
                 Bitmap skillImageOld = null;
-                string skillType = "_삭제";
+                string skillType = "삭제";
                 string skillNodePath = int.Parse(skillID) / 10000000 == 8 ? String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 100, skillID) : String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 10000, skillID);
                 if (int.Parse(skillID) / 10000 == 0) skillNodePath = String.Format(@"\000.img\skill\{0:D7}", skillID);
                 int heightNew = 0, heightOld = 0;
@@ -631,7 +632,7 @@ namespace WzComparerR2.Comparer
                     {
                         g.DrawImage(skillImageNew, skillImageOld.Width, 0);
                         skillImageNew.Dispose();
-                        skillType = "_변경";
+                        skillType = "변경";
                     }
                     g.DrawImage(skillImageOld, 0, 0);
                     skillImageOld.Dispose();
@@ -640,14 +641,14 @@ namespace WzComparerR2.Comparer
                 {
                     g.DrawImage(skillImageNew, 0, 0);
                     skillImageNew.Dispose();
-                    skillType = "_추가";
+                    skillType = "추가";
                 }
 
-                var skillTypeTextInfo = g.MeasureString(skillType.Split('_')[1], GearGraphics.ItemDetailFont2);
-                int picH = 4;
-                GearGraphics.DrawPlainText(g, skillType.Split('_')[1], GearGraphics.ItemDetailFont2, GearGraphics.gearCyanColor, resultImage.Width - (int)Math.Ceiling(skillTypeTextInfo.Width), resultImage.Width, ref picH, 10);
+                var skillTypeTextInfo = g.MeasureString(skillType, GearGraphics.ItemDetailFont2);
+                int picH = 13;
+                GearGraphics.DrawPlainText(g, skillType, skillTypeFont, Color.FromArgb(255, 255, 255), 2, (int)Math.Ceiling(skillTypeTextInfo.Width) + 2, ref picH, 10);
 
-                string imageName = Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + ']' + skillType + ".png");
+                string imageName = Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + "]_" + skillType + ".png");
                 if (!File.Exists(imageName))
                 {
                     resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
