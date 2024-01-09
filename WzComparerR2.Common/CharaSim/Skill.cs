@@ -88,7 +88,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             Skill skill = new Skill();
             int skillID;
@@ -101,13 +101,13 @@ namespace WzComparerR2.CharaSim
                 switch (childNode.Text)
                 {
                     case "icon":
-                        skill.Icon = BitmapOrigin.CreateFromNode(childNode, findNode);
+                        skill.Icon = BitmapOrigin.CreateFromNode(childNode, findNode, wzf);
                         break;
                     case "iconMouseOver":
-                        skill.IconMouseOver = BitmapOrigin.CreateFromNode(childNode, findNode);
+                        skill.IconMouseOver = BitmapOrigin.CreateFromNode(childNode, findNode, wzf);
                         break;
                     case "iconDisabled":
-                        skill.IconDisabled = BitmapOrigin.CreateFromNode(childNode, findNode);
+                        skill.IconDisabled = BitmapOrigin.CreateFromNode(childNode, findNode, wzf);
                         break;
                     case "common":
                         foreach (Wz_Node commonNode in childNode.Nodes)
@@ -245,7 +245,7 @@ namespace WzComparerR2.CharaSim
                 }
                 if (forceNode != null)
                 {
-                    BitmapOrigin force = BitmapOrigin.CreateFromNode(forceNode, findNode);
+                    BitmapOrigin force = BitmapOrigin.CreateFromNode(forceNode, findNode, wzf);
                     using (Graphics graphics = Graphics.FromImage(skill.Icon.Bitmap))
                     {
                         graphics.DrawImage(force.Bitmap, new Point(0, 0));
