@@ -643,6 +643,10 @@ namespace WzComparerR2.Comparer
                     skillType = "_추가";
                 }
 
+                var skillTypeTextInfo = g.MeasureString(skillType.Split('_')[1], GearGraphics.ItemDetailFont2);
+                int picH = 4;
+                GearGraphics.DrawPlainText(g, skillType.Split('_')[1], GearGraphics.ItemDetailFont2, GearGraphics.gearCyanColor, resultImage.Width - (int)Math.Ceiling(skillTypeTextInfo.Width), resultImage.Width, ref picH, 10);
+
                 string imageName = Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + ']' + skillType + ".png");
                 if (!File.Exists(imageName))
                 {
