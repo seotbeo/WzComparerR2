@@ -21,16 +21,16 @@ namespace WzComparerR2.Comparer
         {
             this.Comparer = new WzFileComparer();
         }
-        private Wz_Node wzNew { get; set; }
-        private Wz_Node wzOld { get; set; }
-        private Wz_File stringWzNew { get; set; }
-        private Wz_File itemWzNew { get; set; }
-        private Wz_File etcWzNew { get; set; }
-        private Wz_File stringWzOld { get; set; }
-        private Wz_File itemWzOld { get; set; }
-        private Wz_File etcWzOld { get; set; }
-        private List<string> TooltipInfo = new List<string>();
-        private Dictionary<string, List<string>> diffSkillTags = new Dictionary<string, List<string>>();
+        private Wz_Node WzNew { get; set; }
+        private Wz_Node WzOld { get; set; }
+        private Wz_File StringWzNew { get; set; }
+        private Wz_File ItemWzNew { get; set; }
+        private Wz_File EtcWzNew { get; set; }
+        private Wz_File StringWzOld { get; set; }
+        private Wz_File ItemWzOld { get; set; }
+        private Wz_File EtcWzOld { get; set; }
+        private List<string> TooltipInfo { get; set; } = new List<string>();
+        private Dictionary<string, List<string>> DiffSkillTags { get; set; } = new Dictionary<string, List<string>>();
         public WzFileComparer Comparer { get; protected set; }
         private string stateInfo;
         private string stateDetail;
@@ -94,8 +94,8 @@ namespace WzComparerR2.Comparer
                 WzFileComparer comparer = new WzFileComparer();
                 comparer.IgnoreWzFile = true;
 
-                this.wzNew = fileNew.Node;
-                this.wzOld = fileOld.Node;
+                this.WzNew = fileNew.Node;
+                this.WzOld = fileOld.Node;
                 
                 var dictNew = SplitVirtualNode(virtualNodeNew);
                 var dictOld = SplitVirtualNode(virtualNodeOld);
@@ -542,12 +542,12 @@ namespace WzComparerR2.Comparer
                 {
                     Directory.CreateDirectory(skillTooltipPath);
                 }
-                saveTooltip(skillTooltipPath);
+                SaveTooltip(skillTooltipPath);
             }
         }
 
         // 변경된 스킬 툴팁 출력
-        private void saveTooltip(string skillTooltipPath)
+        private void SaveTooltip(string skillTooltipPath)
         {
             StringLinker slNew = new StringLinker();
             StringLinker slOld = new StringLinker();
@@ -557,15 +557,15 @@ namespace WzComparerR2.Comparer
             int allCount = TooltipInfo.Count;
             var skillTypeFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
 
-            this.stringWzNew = wzNew?.FindNodeByPath("String").GetNodeWzFile();
-            this.itemWzNew = wzNew?.FindNodeByPath("Item").GetNodeWzFile();
-            this.etcWzNew = wzNew?.FindNodeByPath("Etc").GetNodeWzFile();
-            this.stringWzOld = wzOld?.FindNodeByPath("String").GetNodeWzFile();
-            this.itemWzOld = wzOld?.FindNodeByPath("Item").GetNodeWzFile();
-            this.etcWzOld = wzOld?.FindNodeByPath("Etc").GetNodeWzFile();
+            this.StringWzNew = WzNew?.FindNodeByPath("String").GetNodeWzFile();
+            this.ItemWzNew = WzNew?.FindNodeByPath("Item").GetNodeWzFile();
+            this.EtcWzNew = WzNew?.FindNodeByPath("Etc").GetNodeWzFile();
+            this.StringWzOld = WzOld?.FindNodeByPath("String").GetNodeWzFile();
+            this.ItemWzOld = WzOld?.FindNodeByPath("Item").GetNodeWzFile();
+            this.EtcWzOld = WzOld?.FindNodeByPath("Etc").GetNodeWzFile();
 
-            slNew.Load(stringWzNew, itemWzNew, etcWzNew);
-            slOld.Load(stringWzOld, itemWzOld, etcWzOld);
+            slNew.Load(StringWzNew, ItemWzNew, EtcWzNew);
+            slOld.Load(StringWzOld, ItemWzOld, EtcWzOld);
             skillRenderNew.StringLinker = slNew;
             skillRenderOld.StringLinker = slOld;
             skillRenderNew.ShowObjectID = true;
@@ -574,10 +574,10 @@ namespace WzComparerR2.Comparer
             skillRenderOld.ShowDelay = true;
             skillRenderNew.DoSetDiffColor = true;
             skillRenderOld.DoSetDiffColor = true;
-            skillRenderNew.wzNode = wzNew;
-            skillRenderOld.wzNode = wzOld;
-            skillRenderNew.diffSkillTags = this.diffSkillTags;
-            skillRenderOld.diffSkillTags = this.diffSkillTags;
+            skillRenderNew.wzNode = WzNew;
+            skillRenderOld.wzNode = WzOld;
+            skillRenderNew.DiffSkillTags = this.DiffSkillTags;
+            skillRenderOld.DiffSkillTags = this.DiffSkillTags;
             skillRenderNew.IgnoreEvalError = true;
             skillRenderOld.IgnoreEvalError = true;
 
@@ -596,10 +596,10 @@ namespace WzComparerR2.Comparer
                 int width = 0;
 
                 // 변경 후 툴팁 이미지 생성
-                Skill skillNew = Skill.CreateFromNode(PluginManager.FindWz("Skill" + skillNodePath, wzNew.GetNodeWzFile()), PluginManager.FindWz, wzNew?.GetNodeWzFile()) ??
-                    (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + skillNodePath, wzNew.GetNodeWzFile()), PluginManager.FindWz, wzNew?.GetNodeWzFile()) ??
-                    (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + skillNodePath, wzNew.GetNodeWzFile()), PluginManager.FindWz, wzNew?.GetNodeWzFile()) ??
-                    Skill.CreateFromNode(PluginManager.FindWz("Skill003" + skillNodePath, wzNew.GetNodeWzFile()), PluginManager.FindWz, wzNew?.GetNodeWzFile())));
+                Skill skillNew = Skill.CreateFromNode(PluginManager.FindWz("Skill" + skillNodePath, WzNew.GetNodeWzFile()), PluginManager.FindWz, WzNew?.GetNodeWzFile()) ??
+                    (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + skillNodePath, WzNew.GetNodeWzFile()), PluginManager.FindWz, WzNew?.GetNodeWzFile()) ??
+                    (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + skillNodePath, WzNew.GetNodeWzFile()), PluginManager.FindWz, WzNew?.GetNodeWzFile()) ??
+                    Skill.CreateFromNode(PluginManager.FindWz("Skill003" + skillNodePath, WzNew.GetNodeWzFile()), PluginManager.FindWz, WzNew?.GetNodeWzFile())));
                 if (skillNew != null)
                 {
                     skillNew.Level = skillNew.MaxLevel;
@@ -609,10 +609,10 @@ namespace WzComparerR2.Comparer
                     heightNew = skillImageNew.Height;
                 }
                 // 변경 전 툴팁 이미지 생성
-                Skill skillOld = Skill.CreateFromNode(PluginManager.FindWz("Skill" + skillNodePath, wzOld.GetNodeWzFile()), PluginManager.FindWz, wzOld?.GetNodeWzFile()) ??
-                    (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + skillNodePath, wzOld.GetNodeWzFile()), PluginManager.FindWz, wzOld?.GetNodeWzFile()) ??
-                    (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + skillNodePath, wzOld.GetNodeWzFile()), PluginManager.FindWz, wzOld?.GetNodeWzFile()) ??
-                    Skill.CreateFromNode(PluginManager.FindWz("Skill003" + skillNodePath, wzOld.GetNodeWzFile()), PluginManager.FindWz, wzOld?.GetNodeWzFile())));
+                Skill skillOld = Skill.CreateFromNode(PluginManager.FindWz("Skill" + skillNodePath, WzOld.GetNodeWzFile()), PluginManager.FindWz, WzOld?.GetNodeWzFile()) ??
+                    (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + skillNodePath, WzOld.GetNodeWzFile()), PluginManager.FindWz, WzOld?.GetNodeWzFile()) ??
+                    (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + skillNodePath, WzOld.GetNodeWzFile()), PluginManager.FindWz, WzOld?.GetNodeWzFile()) ??
+                    Skill.CreateFromNode(PluginManager.FindWz("Skill003" + skillNodePath, WzOld.GetNodeWzFile()), PluginManager.FindWz, WzOld?.GetNodeWzFile())));
                 if (skillOld != null)
                 {
                     skillOld.Level = skillOld.MaxLevel;
@@ -657,36 +657,44 @@ namespace WzComparerR2.Comparer
                 g.Dispose();
             }
             TooltipInfo.Clear();
-            diffSkillTags.Clear();
+            DiffSkillTags.Clear();
         }
 
-        // Skill diff 노드에서 스킬 ID 얻기
-        private void getIDFromSkill(Wz_Node node)
+        // 노드에서 스킬 ID 얻기
+        private void GetSkillID(Wz_Node node)
         {
-            var tag = node.Text;
-            Match match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|BGM).*");
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*");
+            string tag = null;
+
+            if (!match.Success)
+            {
+                tag = node.Text;
+                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|BGM).*");
+            }
+
             if (match.Success)
             {
                 string skillID = match.Groups[1].ToString();
                 if (!TooltipInfo.Contains(skillID) && skillID != null)
                 {
                     TooltipInfo.Add(skillID);
-                    diffSkillTags[skillID] = new List<string>();
-                    diffSkillTags[skillID].Add(tag);
+                    DiffSkillTags[skillID] = new List<string>();
                 }
-                else if (TooltipInfo.Contains(skillID) && skillID != null)
+
+                if (tag != null && !DiffSkillTags[skillID].Contains(tag))
                 {
-                    if (!diffSkillTags[skillID].Contains(tag))
-                    {
-                        diffSkillTags[skillID].Add(tag);
-                    }
+                    DiffSkillTags[skillID].Add(tag);
                 }
             }
         }
 
         // String diff 노드에서 스킬 ID 얻기
-        private void getIDFromString(Wz_Node node)
+        private void GetIDFromString(Wz_Node node)
         {
+            if (node == null) return;
+
             Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*");
             if (match.Success)
             {
@@ -735,27 +743,10 @@ namespace WzComparerR2.Comparer
                 count[idx]++;
 
                 // 변경된 스킬 툴팁 출력
-                if (saveSkillTooltip && outputDir.Contains("Skill"))
+                if (saveSkillTooltip && (outputDir.Contains("Skill") || outputDir.Contains("String")))
                 {
-                    if (diff.NodeNew != null)
-                    {
-                        getIDFromSkill(diff.NodeNew);
-                    }
-                    if (diff.NodeOld != null)
-                    {
-                        getIDFromSkill(diff.NodeOld);
-                    }
-                }
-                if (saveSkillTooltip && outputDir.Contains("String"))
-                {
-                    if (diff.NodeNew != null)
-                    {
-                        getIDFromString(diff.NodeNew);
-                    }
-                    if (diff.NodeOld != null)
-                    {
-                        getIDFromString(diff.NodeOld);
-                    }
+                    GetSkillID(diff.NodeNew);
+                    GetSkillID(diff.NodeOld);
                 }
             }
 
@@ -802,12 +793,12 @@ namespace WzComparerR2.Comparer
                     sw.Write("<td>{0}</td>", OutputNodeValue(fullPath, node, 0, outputDir) ?? " ");
                     sw.WriteLine("</tr>");
 
-                    if (saveSkillTooltip && outputDir.Contains("Skill")) // 변경된 스킬 툴팁 출력
+                    if (saveSkillTooltip && (outputDir.Contains("Skill") || outputDir.Contains("String"))) // 변경된 스킬 툴팁 출력
                     {
-                        getIDFromSkill(node);
+                        GetSkillID(node);
                     }
 
-                        if (node.Nodes.Count > 0)
+                    if (node.Nodes.Count > 0)
                     {
                         foreach (Wz_Node child in node.Nodes)
                         {

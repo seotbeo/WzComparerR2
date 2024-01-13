@@ -35,7 +35,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool DoSetDiffColor { get; set; } = false;
-        public Dictionary<string, List<string>> diffSkillTags = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> DiffSkillTags { get; set; } = new Dictionary<string, List<string>>();
         public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
@@ -197,7 +197,14 @@ namespace WzComparerR2.CharaSimControl
             }
             if (Skill.IsPetAutoBuff)
             {
-                GearGraphics.DrawString(g, "#c펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                if (DoSetDiffColor && DiffSkillTags[Skill.SkillID.ToString()].Contains("IsPetAutoBuff"))
+                {
+                    GearGraphics.DrawString(g, "#g펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
+                else
+                {
+                    GearGraphics.DrawString(g, "#c펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
             }
             /*if (Skill.ReqLevel > 0)
             {
@@ -241,13 +248,12 @@ namespace WzComparerR2.CharaSimControl
                             h = sr.SkillH[0];
                         }
                     }
-                    if (diffSkillTags.ContainsKey(Skill.SkillID.ToString()))
+
+                    foreach (var tags in DiffSkillTags[Skill.SkillID.ToString()])
                     {
-                        foreach (var tags in diffSkillTags[Skill.SkillID.ToString()])
-                        {
-                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
-                        }
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
                     }
+
                     if (Skill.SkillID / 100000 == 4000)
                     {
                         if (Skill.VSkillValue == 2) Skill.Level = 60;
@@ -384,7 +390,14 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (Skill.CombatOrders)
                 {
-                    attr.Add("컴뱃오더스 적용 가능");
+                    if (DoSetDiffColor && DiffSkillTags[Skill.SkillID.ToString()].Contains("combatOrders"))
+                    {
+                        attr.Add("#g컴뱃오더스 적용 가능#");
+                    }
+                    else
+                    {
+                        attr.Add("컴뱃오더스 적용 가능");
+                    }
                 }
                 if (Skill.NotRemoved)
                 {
