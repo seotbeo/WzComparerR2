@@ -661,7 +661,7 @@ namespace WzComparerR2.Comparer
         }
 
         // 노드에서 스킬 ID 얻기
-        private void GetSkillID(Wz_Node node)
+        private void GetSkillID(Wz_Node node, bool change)
         {
             if (node == null) return;
 
@@ -671,7 +671,12 @@ namespace WzComparerR2.Comparer
             if (!match.Success)
             {
                 tag = node.Text;
-                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|BGM).*");
+                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|BGM).*"); // 변경점 중 스킬 툴팁 출력할 것들
+
+                if (change && !match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Skill\\_Canvas\\\d+.img\\skill\\(\d+)\\icon$"); // 스킬 아이콘 변경 체크
+                }
             }
 
             if (match.Success)
@@ -729,8 +734,8 @@ namespace WzComparerR2.Comparer
                 // 변경된 스킬 툴팁 출력
                 if (saveSkillTooltip && (outputDir.Contains("Skill") || outputDir.Contains("String")))
                 {
-                    GetSkillID(diff.NodeNew);
-                    GetSkillID(diff.NodeOld);
+                    GetSkillID(diff.NodeNew, idx == 0 ? true : false);
+                    GetSkillID(diff.NodeOld, idx == 0 ? true : false);
                 }
             }
 
@@ -779,7 +784,7 @@ namespace WzComparerR2.Comparer
 
                     if (saveSkillTooltip && (outputDir.Contains("Skill") || outputDir.Contains("String"))) // 변경된 스킬 툴팁 출력
                     {
-                        GetSkillID(node);
+                        GetSkillID(node, idx == 0 ? true : false);
                     }
 
                     if (node.Nodes.Count > 0)
