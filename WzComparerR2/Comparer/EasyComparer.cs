@@ -690,22 +690,6 @@ namespace WzComparerR2.Comparer
             }
         }
 
-        // String diff 노드에서 스킬 ID 얻기
-        private void GetIDFromString(Wz_Node node)
-        {
-            if (node == null) return;
-
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*");
-            if (match.Success)
-            {
-                string skillID = match.Groups[1].ToString();
-                if (!TooltipInfo.Contains(skillID) && skillID != null)
-                {
-                    TooltipInfo.Add(skillID);
-                }
-            }
-        }
-
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
             StateDetail = "img 구조 분석중";

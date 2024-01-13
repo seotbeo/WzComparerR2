@@ -975,6 +975,10 @@ namespace WzComparerR2.CharaSim
                 case 40003: return "5차(궁수)";
                 case 40004: return "5차(도적)";
                 case 40005: return "5차(해적)";
+
+                case 50000: return "6차";
+                case 50006: return "6차(강화코어)";
+                case 50007: return "6차(헥사스탯)";
             }
             return null;
         }
