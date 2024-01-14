@@ -7,6 +7,7 @@ using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -31,6 +32,9 @@ namespace WzComparerR2.CharaSimControl
         public bool DisplayPermyriadAsPercent { get; set; } = true;
         public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
+        public bool DoSetDiffColor { get; set; } = false;
+        public Dictionary<string, List<string>> DiffSkillTags { get; set; } = new Dictionary<string, List<string>>();
+        public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
 
@@ -175,7 +179,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 DateTime time = DateTime.Now.AddDays(7d);
                 string expireStr = time.ToString("유효기간 : yyyy년 M월 d일 HH시 mm분");
-                GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont2, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.RelationSkill != null)
             {
@@ -187,11 +191,18 @@ namespace WzComparerR2.CharaSimControl
                 }
                 DateTime time = DateTime.Now.AddMinutes(Skill.RelationSkill.Item2);
                 string expireStr = time.ToString("유효기간 : yyyy년 M월 d일 H시 m분");
-                GearGraphics.DrawString(g, "#c" + sr2.Name + "의 " + expireStr + "#", GearGraphics.ItemDetailFont2, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "#c" + sr2.Name + "의 " + expireStr + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.IsPetAutoBuff)
             {
-                GearGraphics.DrawString(g, "#c펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                if (DoSetDiffColor && DiffSkillTags[Skill.SkillID.ToString()].Contains("IsPetAutoBuff"))
+                {
+                    GearGraphics.DrawString(g, "#g펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
+                else
+                {
+                    GearGraphics.DrawString(g, "#c펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
             }
             /*if (Skill.ReqLevel > 0)
             {
@@ -219,6 +230,59 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.Level > 0)
             {
                 string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
+                string hStr = null;
+
+                // 스킬 변경점에 초록색 칠하기
+                if (DoSetDiffColor)
+                {
+                    //code from SummaryParser
+                    string h = null;
+                    if (Skill.PreBBSkill) //用level声明的技能
+                    {
+                        string hs;
+                        if (Skill.Common.TryGetValue("hs", out hs))
+                        {
+                            h = sr[hs];
+                        }
+                        else if (sr.SkillH.Count >= Skill.Level)
+                        {
+                            h = sr.SkillH[Skill.Level - 1];
+                        }
+                    }
+                    else
+                    {
+                        if (sr.SkillH.Count > 0)
+                        {
+                            h = sr.SkillH[0];
+                        }
+                    }
+
+                    foreach (var tags in DiffSkillTags[Skill.SkillID.ToString()])
+                    {
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
+                    }
+
+                    if (Skill.SkillID / 100000 == 4000)
+                    {
+                        if (Skill.VSkillValue == 2) Skill.Level = 60;
+                        if (Skill.VSkillValue == 1) Skill.Level = 30;
+                    }
+                    hStr = SummaryParser.GetSkillSummary(h, Skill.Level, Skill.Common, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
+                    });
+                }
+                else
+                {
+                    hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
+                    });
+                }
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
@@ -350,7 +414,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 foreach (string action in Skill.Action)
                 {
-                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action) + " ms#");
+                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action, this.wzNode) + " ms#");
                 }
             }
 
