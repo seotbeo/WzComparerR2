@@ -664,15 +664,19 @@ namespace WzComparerR2.Comparer
             if (match.Success)
             {
                 string skillID = match.Groups[1].ToString();
-                if (!OutputSkillTooltipIDs.Contains(skillID) && skillID != null)
-                {
-                    OutputSkillTooltipIDs.Add(skillID);
-                    DiffSkillTags[skillID] = new List<string>();
-                }
 
-                if (tag != null && !DiffSkillTags[skillID].Contains(tag))
+                if (skillID != null)
                 {
-                    DiffSkillTags[skillID].Add(tag);
+                    if (!OutputSkillTooltipIDs.Contains(skillID))
+                    {
+                        OutputSkillTooltipIDs.Add(skillID);
+                        DiffSkillTags[skillID] = new List<string>();
+                    }
+
+                    if (tag != null && !DiffSkillTags[skillID].Contains(tag))
+                    {
+                        DiffSkillTags[skillID].Add(tag);
+                    }
                 }
             }
         }
