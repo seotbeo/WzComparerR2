@@ -133,6 +133,7 @@ namespace WzComparerR2.CharaSimControl
 
             picH = 0;
             splitterH = new List<int>();
+            string skillIDstr = Skill.SkillID.ToString().PadLeft(7, '0');
 
             //获取文字
             StringResult sr;
@@ -195,7 +196,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if (Skill.IsPetAutoBuff)
             {
-                if (DoSetDiffColor && DiffSkillTags[Skill.SkillID.ToString()].Contains("IsPetAutoBuff"))
+                if (DoSetDiffColor && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("IsPetAutoBuff"))
                 {
                     GearGraphics.DrawString(g, "#g펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
                 }
@@ -248,9 +249,12 @@ namespace WzComparerR2.CharaSimControl
                         }
                     }
 
-                    foreach (var tags in DiffSkillTags[Skill.SkillID.ToString()])
+                    if (DiffSkillTags.ContainsKey(skillIDstr))
                     {
-                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
+                        foreach (var tags in DiffSkillTags[skillIDstr])
+                        {
+                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
+                        }
                     }
 
                     if (Skill.SkillID / 100000 == 4000)
@@ -389,7 +393,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (Skill.CombatOrders)
                 {
-                    if (DoSetDiffColor && DiffSkillTags[Skill.SkillID.ToString()].Contains("combatOrders"))
+                    if (DoSetDiffColor && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("combatOrders"))
                     {
                         attr.Add("#g컴뱃오더스 적용 가능#");
                     }
