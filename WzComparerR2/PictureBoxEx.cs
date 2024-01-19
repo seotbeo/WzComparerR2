@@ -153,7 +153,7 @@ namespace WzComparerR2
 
                 var config = ImageHandlerConfig.Default;
                 var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data, 
-                    this.GraphicsDevice, System.Drawing.Color.FromArgb(255, config.BackgroundColor.Value).ToXnaColor()));
+                    this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor()));
 
                 this.Items.Add(newAniItem);
             }

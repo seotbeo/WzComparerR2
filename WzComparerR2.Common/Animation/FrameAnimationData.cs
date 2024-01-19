@@ -160,14 +160,12 @@ namespace WzComparerR2.Animation
 
             //1
             
-            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.None, 2, RenderTargetUsage.DiscardContents);
-            SpriteBatch spriteBatch = new SpriteBatchEx(graphicsDevice);
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
 
             graphicsDevice.SetRenderTarget(renderTarget);
             graphicsDevice.Clear(bgColor);
-            //graphicsDevice.Clear(new Microsoft.Xna.Framework.Color(255, 255, 255, 255));
 
-            //spriteBatch.Begin(SpriteSortMode.Deferred, StateEx.NonPremultipled_Hidef());
             spriteBatch.Begin(SpriteSortMode.Deferred, new BlendState()
                 {
                     AlphaSourceBlend = Blend.One,
@@ -179,19 +177,12 @@ namespace WzComparerR2.Animation
                 }
             );
 
-            //spriteBatch.Draw(texture1, new Vector2(dl, dt), Microsoft.Xna.Framework.Color.White);
-            //spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), Microsoft.Xna.Framework.Color.White);
             spriteBatch.Draw(texture1, new Vector2(dl, dt), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);
-
-            //Texture2D renderTexture = new Texture2D(graphicsDevice, renderTarget.Width, renderTarget.Height);
-            //Microsoft.Xna.Framework.Color[] data = new Microsoft.Xna.Framework.Color[renderTarget.Width * renderTarget.Height];
-            //renderTarget.GetData(data);
-            //renderTexture.SetData(data);
 
             return renderTarget;
             
