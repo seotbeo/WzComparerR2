@@ -92,16 +92,24 @@ namespace WzComparerR2
         public void ShowAnimation(FrameAnimationData data)
         {
             this.ShowAnimation(new FrameAnimator(data));
+            this.ShowAnimationDuplicated = false;
         }
 
         public void ShowAnimation(SpineAnimationData data)
         {
             this.ShowAnimation(new SpineAnimator(data));
+            this.ShowAnimationDuplicated = false;
         }
 
         public void ShowAnimation(MultiFrameAnimationData data)
         {
             this.ShowAnimation(new MultiFrameAnimator(data));
+            this.ShowAnimationDuplicated = false;
+        }
+
+        public void ShowDupAnimation(FrameAnimationData data)
+        {
+            this.ShowDupAnimation(new FrameAnimator(data));
         }
 
         public void ShowAnimation(AnimationItem animator)
@@ -112,6 +120,47 @@ namespace WzComparerR2
             }
 
             this.Items.Add(animator);
+
+            if (this.AutoAdjustPosition)
+            {
+                this.AdjustPosition();
+            }
+
+            this.Invalidate();
+        }
+
+        public void ShowDupAnimation(AnimationItem animator)
+        {
+            if (!ShowAnimationDuplicated)
+            {
+                ShowAnimationDuplicated = !ShowAnimationDuplicated;
+                this.Items.Clear();
+            }
+            /*
+            if (!(this.Items.Count < 0))
+            {
+                var aniItem = (FrameAnimator)animator;
+                var rect = aniItem.Data.GetBound();
+                //aniItem.Position = new Point(-rect.Left, -rect.Top);
+                aniItem.Position = new Point(-rect.Left - aniItem.Data.Origin.X, -rect.Top - aniItem.Data.Origin.Y);
+            }*/
+
+            if (!(this.Items.Count == 0))
+            {
+                var baseAniItem = (FrameAnimator)this.Items[0];
+                var aniItem = (FrameAnimator)animator;
+                this.Items.Clear();
+
+                var config = ImageHandlerConfig.Default;
+                var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data, 
+                    this.GraphicsDevice, System.Drawing.Color.FromArgb(255, config.BackgroundColor.Value).ToXnaColor()));
+
+                this.Items.Add(newAniItem);
+            }
+            else
+            {
+                this.Items.Add(animator);
+            }
 
             if (this.AutoAdjustPosition)
             {

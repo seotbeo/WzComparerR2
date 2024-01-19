@@ -171,6 +171,7 @@
             this.buttonItemAutoSaveFolder = new DevComponents.DotNetBar.ButtonItem();
             this.labelItemAutoSaveFolder = new DevComponents.DotNetBar.LabelItem();
             this.buttonItemGif = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemGif2 = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer36 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemGifSetting = new DevComponents.DotNetBar.ButtonItem();
             this.textBoxX1 = new DevComponents.DotNetBar.Controls.TextBoxX();
@@ -1935,7 +1936,8 @@
             this.cmbItemAniNames,
             this.cmbItemSkins,
             this.buttonItemSaveImage,
-            this.buttonItemGif});
+            this.buttonItemGif,
+            this.buttonItemGif2});
             this.ribbonBar5.Location = new System.Drawing.Point(0, 202);
             this.ribbonBar5.Name = "ribbonBar5";
             this.ribbonBar5.Size = new System.Drawing.Size(292, 26);
@@ -2040,6 +2042,13 @@
             this.buttonItemGif.SubItemsExpandWidth = 14;
             this.buttonItemGif.Text = "애니메이션 활성화";
             this.buttonItemGif.Click += new System.EventHandler(this.buttonItemGif_Click);
+            // 
+            // buttonItemGif2
+            // 
+            this.buttonItemGif2.Name = "buttonItemGif2";
+            this.buttonItemGif2.SubItemsExpandWidth = 14;
+            this.buttonItemGif2.Text = "애니메이션 중첩";
+            this.buttonItemGif2.Click += new System.EventHandler(this.buttonItemGif2_Click);
             // 
             // itemContainer36
             // 
@@ -3176,6 +3185,7 @@
         private DevComponents.DotNetBar.ItemContainer itemContainer34;
         private DevComponents.DotNetBar.ItemContainer itemContainer35;
         private DevComponents.DotNetBar.ButtonItem buttonItemGif;
+        private DevComponents.DotNetBar.ButtonItem buttonItemGif2;
         private DevComponents.DotNetBar.ItemContainer itemContainer36;
         private DevComponents.DotNetBar.ButtonItem buttonItemGifSetting;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
