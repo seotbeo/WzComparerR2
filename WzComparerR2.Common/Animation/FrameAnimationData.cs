@@ -71,7 +71,7 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Color bgColor)
+        public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Color bgColor, int delayOffset, int moveX, int moveY)
         {
             var anime = new FrameAnimationData();
             int baseCount = 0;
@@ -89,6 +89,7 @@ namespace WzComparerR2.Animation
             foreach (var frame in addData.Frames)
             {
                 addDelayAll += frame.Delay;
+                frame.Origin = new Microsoft.Xna.Framework.Point(frame.Origin.X - moveX, frame.Origin.Y - moveY);
             }
 
             int maxDelay = Math.Min(baseDelayAll, addDelayAll);
@@ -160,7 +161,7 @@ namespace WzComparerR2.Animation
 
             //1
             
-            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, texture1.Format, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
 
             graphicsDevice.SetRenderTarget(renderTarget);
@@ -177,7 +178,7 @@ namespace WzComparerR2.Animation
                 }
             );
 
-            spriteBatch.Draw(texture1, new Vector2(dl, dt), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture1, new Vector2(dl, dt), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
             spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             spriteBatch.End();
@@ -259,7 +260,7 @@ namespace WzComparerR2.Animation
                 }
             }
 
-            Texture2D mergedTexture = new Texture2D(graphicsDevice, width, height, SurfaceFormat.Color);
+            Texture2D mergedTexture = new Texture2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32);
             mergedTexture.SetData(mergedData);
 
             return mergedTexture;*/

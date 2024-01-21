@@ -147,13 +147,25 @@ namespace WzComparerR2
 
             if (!(this.Items.Count == 0))
             {
+                var frmMultiAniOptions = new FrmMultiAniOptions();
+                int delayOffset = 0;
+                int moveX = 0;
+                int moveY = 0;
+
+                if (frmMultiAniOptions.ShowDialog() == DialogResult.OK)
+                {
+                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY);
+                }
+                else return;
+
                 var baseAniItem = (FrameAnimator)this.Items[0];
                 var aniItem = (FrameAnimator)animator;
                 this.Items.Clear();
 
                 var config = ImageHandlerConfig.Default;
-                var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data, 
-                    this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor()));
+                var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
+                     this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor(),
+                     delayOffset, moveX, moveY));
 
                 this.Items.Add(newAniItem);
             }
