@@ -99,12 +99,15 @@ namespace WzComparerR2.Animation
                     anime.Frames.Add(baseData.Frames[i]);
                 }
 
-                Frame f = new Frame(); // 더미 프레임
-                f.Origin = new Microsoft.Xna.Framework.Point(0, 0);
-                f.Z = baseData.Frames[baseMax - 1].Z;
-                f.Delay = delayOffset - baseDelayAll;
-                f.Blend = baseData.Frames[baseMax - 1].Blend;
-                anime.Frames.Add(f);
+                if (baseDelayAll != delayOffset)
+                {
+                    Frame f = new Frame(); // 더미 프레임
+                    f.Origin = new Microsoft.Xna.Framework.Point(0, 0);
+                    f.Z = baseData.Frames[baseMax - 1].Z;
+                    f.Delay = delayOffset - baseDelayAll;
+                    f.Blend = baseData.Frames[baseMax - 1].Blend;
+                    anime.Frames.Add(f);
+                }
 
                 for (int i = addCount; i < addMax; i++)
                 {
