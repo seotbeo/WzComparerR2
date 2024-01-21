@@ -133,7 +133,7 @@ namespace WzComparerR2
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(132, 23);
             this.labelX3.TabIndex = 8;
-            this.labelX3.Text = "딜레이 오프셋 (ms)";
+            this.labelX3.Text = "시작 딜레이 (ms)";
             // 
             // labelX4
             // 

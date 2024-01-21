@@ -92,50 +92,96 @@ namespace WzComparerR2.Animation
                 frame.Origin = new Microsoft.Xna.Framework.Point(frame.Origin.X - moveX, frame.Origin.Y - moveY);
             }
 
-            int maxDelay = Math.Min(baseDelayAll, addDelayAll);
-
-            while (true)
-            {
-                int thisDelay = Math.Min(baseData.Frames[baseCount].Delay, addData.Frames[addCount].Delay);
-                Microsoft.Xna.Framework.Point newOrigin;
-                globalDelay += thisDelay;
-
-                Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor));
-                thisFrame.Origin = newOrigin;
-                thisFrame.Z = baseData.Frames[baseCount].Z;
-                thisFrame.Delay = thisDelay;
-                thisFrame.A0 = 255;
-                thisFrame.A1 = 255;
-                thisFrame.Blend = baseData.Frames[baseCount].Blend;
-
-                anime.Frames.Add(thisFrame);
-
-                baseData.Frames[baseCount].Delay -= thisDelay;
-                addData.Frames[addCount].Delay -= thisDelay;
-
-                if (baseData.Frames[baseCount].Delay <= 0)
-                {
-                    baseCount++;
-                }
-                if (addData.Frames[addCount].Delay <= 0)
-                {
-                    addCount++;
-                }
-                if (globalDelay >= maxDelay || baseCount >= baseMax || addCount >= addMax) break;
-            }
-
-            if (baseCount < baseMax)
+            if (baseDelayAll <= delayOffset) // base 애니메이션 후에 add 애니메이션 재생
             {
                 for (int i = baseCount; i < baseMax; i++)
                 {
                     anime.Frames.Add(baseData.Frames[i]);
                 }
-            }
-            else if (addCount < addMax)
-            {
+
+                Frame f = new Frame(); // 더미 프레임
+                f.Origin = new Microsoft.Xna.Framework.Point(0, 0);
+                f.Z = baseData.Frames[baseMax - 1].Z;
+                f.Delay = delayOffset - baseDelayAll;
+                f.A0 = 255;
+                f.A1 = 255;
+                f.Blend = baseData.Frames[baseMax - 1].Blend;
+                anime.Frames.Add(f);
+
                 for (int i = addCount; i < addMax; i++)
                 {
                     anime.Frames.Add(addData.Frames[i]);
+                }
+            }
+            else // base 애니메이션 중에 add 애니메이션 재생
+            {
+                // delayOffset 처리
+                int frontDelay = delayOffset;
+                while (frontDelay > 0)
+                {
+                    if (baseData.Frames[baseCount].Delay > frontDelay)
+                    {
+                        Frame f = baseData.Frames[baseCount];
+                        f.Delay = frontDelay;
+                        anime.Frames.Add(f);
+
+                        baseData.Frames[baseCount].Delay -= frontDelay;
+                        frontDelay = 0;
+                    }
+                    else
+                    {
+                        anime.Frames.Add(baseData.Frames[baseCount]);
+                        frontDelay -= baseData.Frames[baseCount].Delay;
+                        baseCount++;
+                    }
+                }
+
+                // 프레임 합성
+                int maxDelay = Math.Min(baseDelayAll, addDelayAll);
+                while (baseCount < baseMax && addCount < addMax)
+                {
+                    int thisDelay = Math.Min(baseData.Frames[baseCount].Delay, addData.Frames[addCount].Delay);
+                    Microsoft.Xna.Framework.Point newOrigin;
+                    globalDelay += thisDelay;
+
+                    Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor));
+                    thisFrame.Origin = newOrigin;
+                    thisFrame.Z = baseData.Frames[baseCount].Z;
+                    thisFrame.Delay = thisDelay;
+                    thisFrame.A0 = 255;
+                    thisFrame.A1 = 255;
+                    thisFrame.Blend = baseData.Frames[baseCount].Blend;
+
+                    anime.Frames.Add(thisFrame);
+
+                    baseData.Frames[baseCount].Delay -= thisDelay;
+                    addData.Frames[addCount].Delay -= thisDelay;
+
+                    if (baseData.Frames[baseCount].Delay <= 0)
+                    {
+                        baseCount++;
+                    }
+                    if (addData.Frames[addCount].Delay <= 0)
+                    {
+                        addCount++;
+                    }
+                    if (globalDelay >= maxDelay) break;
+                }
+
+                // 남은 프레임 붙여넣기
+                if (baseCount < baseMax)
+                {
+                    for (int i = baseCount; i < baseMax; i++)
+                    {
+                        anime.Frames.Add(baseData.Frames[i]);
+                    }
+                }
+                else if (addCount < addMax)
+                {
+                    for (int i = addCount; i < addMax; i++)
+                    {
+                        anime.Frames.Add(addData.Frames[i]);
+                    }
                 }
             }
 
