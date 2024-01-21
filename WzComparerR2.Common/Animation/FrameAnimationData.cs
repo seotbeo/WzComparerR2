@@ -192,6 +192,12 @@ namespace WzComparerR2.Animation
             Texture2D texture1 = frame1.Texture;
             Texture2D texture2 = frame2.Texture;
 
+            if (texture1 == null)
+            {
+                newOrigin = new Microsoft.Xna.Framework.Point(frame2.Origin.X, frame2.Origin.Y);
+                return texture2;
+            }
+
             int dl = Math.Max(frame2.Origin.X - frame1.Origin.X, 0);
             int dt = Math.Max(frame2.Origin.Y - frame1.Origin.Y, 0);
             int dr = Math.Max((-frame2.Origin.X + texture2.Width) - (-frame1.Origin.X + texture1.Width), 0);
