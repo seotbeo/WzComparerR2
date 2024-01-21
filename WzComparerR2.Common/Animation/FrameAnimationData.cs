@@ -209,7 +209,7 @@ namespace WzComparerR2.Animation
 
             //1
             
-            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, texture1.Format, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
 
             graphicsDevice.SetRenderTarget(renderTarget);
