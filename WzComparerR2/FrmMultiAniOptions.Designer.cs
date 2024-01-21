@@ -293,6 +293,7 @@ namespace WzComparerR2
             ((System.ComponentModel.ISupportInitialize)(this.txtClipBottomNew)).EndInit();
             this.ResumeLayout(false);
 
+            this.AcceptButton = buttonOK;
         }
 
         #endregion

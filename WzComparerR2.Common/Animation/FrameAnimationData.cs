@@ -103,8 +103,6 @@ namespace WzComparerR2.Animation
                 f.Origin = new Microsoft.Xna.Framework.Point(0, 0);
                 f.Z = baseData.Frames[baseMax - 1].Z;
                 f.Delay = delayOffset - baseDelayAll;
-                f.A0 = 255;
-                f.A1 = 255;
                 f.Blend = baseData.Frames[baseMax - 1].Blend;
                 anime.Frames.Add(f);
 
@@ -148,8 +146,6 @@ namespace WzComparerR2.Animation
                     thisFrame.Origin = newOrigin;
                     thisFrame.Z = baseData.Frames[baseCount].Z;
                     thisFrame.Delay = thisDelay;
-                    thisFrame.A0 = 255;
-                    thisFrame.A1 = 255;
                     thisFrame.Blend = baseData.Frames[baseCount].Blend;
 
                     anime.Frames.Add(thisFrame);
