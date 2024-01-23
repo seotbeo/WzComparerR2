@@ -610,6 +610,10 @@ namespace WzComparerR2
                     base.GlobalScale,
                     aniItem.Length <= 0 ? 0 : (time % aniItem.Length),
                     aniItem.Length);
+                if (ShowAnimationDuplicated)
+                {
+                    this.sbInfo.Append(", 애니메이션 중첩 중");
+                }
             }
         }
 
