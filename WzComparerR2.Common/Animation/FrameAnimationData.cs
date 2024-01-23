@@ -122,8 +122,11 @@ namespace WzComparerR2.Animation
                 {
                     if (baseData.Frames[baseCount].Delay > frontDelay)
                     {
-                        Frame f = baseData.Frames[baseCount];
+                        Frame f = new Frame(baseData.Frames[baseCount].Texture);
+                        f.Origin = baseData.Frames[baseCount].Origin;
+                        f.Z = baseData.Frames[baseCount].Z;
                         f.Delay = frontDelay;
+                        f.Blend = baseData.Frames[baseCount].Blend;
                         anime.Frames.Add(f);
 
                         baseData.Frames[baseCount].Delay -= frontDelay;
