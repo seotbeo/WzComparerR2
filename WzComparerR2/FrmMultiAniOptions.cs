@@ -27,6 +27,8 @@ namespace WzComparerR2
             moveX = this.txtMoveX.ValueObject as int? ?? 0;
             moveY = this.txtMoveY.ValueObject as int? ?? 0;
 
+            delayOffset = delayOffset / 10 * 10;
+
             return;
         }
     }
