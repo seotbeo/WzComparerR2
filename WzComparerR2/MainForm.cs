@@ -592,6 +592,7 @@ namespace WzComparerR2
 
                 if (spineData != null)
                 {
+                    /*
                     this.pictureBoxEx1.ShowAnimation(spineData);
                     var aniItem = this.pictureBoxEx1.Items[0] as Animation.SpineAnimator;
 
@@ -604,6 +605,9 @@ namespace WzComparerR2
                     this.cmbItemSkins.Items.Clear();
                     this.cmbItemSkins.Items.AddRange(aniItem.Skins.ToArray());
                     this.cmbItemSkins.SelectedIndex = aniItem.Skins.IndexOf(aniItem.SelectedSkin);
+                    */
+                    MessageBoxEx.Show("Spine 애니메이션은 중첩시킬 수 없습니다.", "미지원");
+                    return;
                 }
             }
             else
@@ -622,12 +626,16 @@ namespace WzComparerR2
 
                     if (multiData != null)
                     {
+                        /*
                         this.pictureBoxEx1.ShowAnimation(multiData);
                         var aniItem = this.pictureBoxEx1.Items[0] as Animation.MultiFrameAnimator;
 
                         this.cmbItemAniNames.Items.Clear();
                         this.cmbItemAniNames.Items.AddRange(aniItem.Animations.ToArray());
                         this.cmbItemAniNames.SelectedIndex = 0;
+                        */
+                        MessageBoxEx.Show("Multi 프레임 애니메이션은 중첩시킬 수 없습니다.", "미지원");
+                        return;
                     }
                 }
             }
