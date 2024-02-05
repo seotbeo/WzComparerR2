@@ -693,6 +693,15 @@ namespace WzComparerR2
             }
         }
 
+        private void buttonDisableMultiAni_Click(object sender, EventArgs e)
+        {
+            if (this.pictureBoxEx1.ShowAnimationDuplicated)
+            {
+                this.pictureBoxEx1.ShowAnimationDuplicated = false;
+                this.pictureBoxEx1.Items.Clear();
+            }
+        }
+
         private void buttonItemAutoSave_Click(object sender, EventArgs e)
         {
             ConfigManager.Reload();
