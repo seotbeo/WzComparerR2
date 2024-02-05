@@ -123,11 +123,7 @@ namespace WzComparerR2.Animation
 
                 if (baseDelayAll != delayOffset)
                 {
-                    Frame f = new Frame(); // 더미 프레임
-                    f.Origin = new Point(0, 0);
-                    f.Z = baseData.Frames[baseMax - 1].Z;
-                    f.Delay = delayOffset - baseDelayAll;
-                    f.Blend = baseData.Frames[baseMax - 1].Blend;
+                    Frame f = new Frame(null, Point.Zero, baseData.Frames[baseMax - 1].Z, delayOffset - baseDelayAll, baseData.Frames[baseMax - 1].Blend); // 더미 프레임
                     anime.Frames.Add(f);
                 }
 
@@ -144,11 +140,7 @@ namespace WzComparerR2.Animation
                 {
                     if (baseData.Frames[baseCount].Delay > frontDelay)
                     {
-                        Frame f = new Frame(baseData.Frames[baseCount].Texture);
-                        f.Origin = baseData.Frames[baseCount].Origin;
-                        f.Z = baseData.Frames[baseCount].Z;
-                        f.Delay = frontDelay;
-                        f.Blend = baseData.Frames[baseCount].Blend;
+                        Frame f = new Frame(baseData.Frames[baseCount].Texture, baseData.Frames[baseCount].Origin, baseData.Frames[baseCount].Z, frontDelay, baseData.Frames[baseCount].Blend);
                         anime.Frames.Add(f);
 
                         baseData.Frames[baseCount].Delay -= frontDelay;
@@ -172,11 +164,8 @@ namespace WzComparerR2.Animation
                         Point newOrigin;
                         globalDelay += thisDelay;
 
-                        Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor));
-                        thisFrame.Origin = newOrigin;
-                        thisFrame.Z = baseData.Frames[baseCount].Z;
-                        thisFrame.Delay = thisDelay;
-                        thisFrame.Blend = baseData.Frames[baseCount].Blend;
+                        Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor),
+                            newOrigin, baseData.Frames[baseCount].Z, thisDelay, baseData.Frames[baseCount].Blend);
 
                         anime.Frames.Add(thisFrame);
 

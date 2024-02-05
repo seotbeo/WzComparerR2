@@ -360,11 +360,11 @@ namespace WzComparerR2
             this.txtPngDelay.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtPngDelay.MaxValue = 65530;
             this.txtPngDelay.MinValue = 0;
-            this.txtPngDelay.Value = 100;
             this.txtPngDelay.Name = "txtPngDelay";
             this.txtPngDelay.ShowUpDown = true;
             this.txtPngDelay.Size = new System.Drawing.Size(172, 21);
             this.txtPngDelay.TabIndex = 5;
+            this.txtPngDelay.Value = 100;
             // 
             // tableLayoutPanel2
             // 

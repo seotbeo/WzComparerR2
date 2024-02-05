@@ -145,59 +145,53 @@ namespace WzComparerR2
                 ShowAnimationDuplicated = !ShowAnimationDuplicated;
                 this.Items.Clear();
             }
-            /*
-            if (!(this.Items.Count < 0))
+
+            FrameAnimator baseAniItem;
+            if (this.Items.Count == 0)
             {
-                var aniItem = (FrameAnimator)animator;
-                var rect = aniItem.Data.GetBound();
-                //aniItem.Position = new Point(-rect.Left, -rect.Top);
-                aniItem.Position = new Point(-rect.Left - aniItem.Data.Origin.X, -rect.Top - aniItem.Data.Origin.Y);
-            }*/
-
-            if (!(this.Items.Count == 0))
-            {
-                var baseAniItem = (FrameAnimator)this.Items[0];
-                var aniItem = (FrameAnimator)animator;
-
-                var frmMultiAniOptions = new FrmMultiAniOptions(0, aniItem.Data.Frames.Count - 1, isPngFrameAni);
-                int delayOffset = 0;
-                int moveX = 0;
-                int moveY = 0;
-                int frameStart = 0;
-                int frameEnd = 0;
-                int pngDelay = 100;
-
-                // 정보 받아오기
-                if (frmMultiAniOptions.ShowDialog() == DialogResult.OK)
-                {
-                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out pngDelay);
-                    frameStart = frameStart == -1 ? 0 : frameStart;
-                    frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
-
-                    if (frameStart > frameEnd) return;
-                }
-                else return;
-
-                this.Items.Clear();
-
-                // png 하나의 딜레이 설정
-                if (isPngFrameAni)
-                {
-                    if (pngDelay == 0) return;
-                    aniItem.Data.Frames[0].Delay = pngDelay;
-                }
-
-                var config = ImageHandlerConfig.Default;
-                var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                     this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor(),
-                     delayOffset, moveX, moveY, frameStart, frameEnd));
-
-                this.Items.Add(newAniItem);
+                var tmpFrame = new Frame(null, Point.Zero, 0, 0, true);
+                var tmpFrameAnimationData = new FrameAnimationData();
+                tmpFrameAnimationData.Frames.Add(tmpFrame);
+                baseAniItem = new FrameAnimator(tmpFrameAnimationData);
             }
-            else
+            else baseAniItem = (FrameAnimator)this.Items[0];
+
+            FrameAnimator aniItem = (FrameAnimator)animator;
+
+            var frmMultiAniOptions = new FrmMultiAniOptions(0, aniItem.Data.Frames.Count - 1, isPngFrameAni);
+            int delayOffset = 0;
+            int moveX = 0;
+            int moveY = 0;
+            int frameStart = 0;
+            int frameEnd = 0;
+            int pngDelay = 100;
+
+            // 정보 받아오기
+            if (frmMultiAniOptions.ShowDialog() == DialogResult.OK)
             {
-                this.Items.Add(animator);
+                frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out pngDelay);
+                frameStart = frameStart == -1 ? 0 : frameStart;
+                frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
+
+                if (frameStart > frameEnd) return;
             }
+            else return;
+
+            // png 하나의 딜레이 설정
+            if (isPngFrameAni)
+            {
+                if (pngDelay == 0) return;
+                aniItem.Data.Frames[0].Delay = pngDelay;
+            }
+
+            this.Items.Clear();
+
+            var config = ImageHandlerConfig.Default;
+            var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
+                    this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor(),
+                    delayOffset, moveX, moveY, frameStart, frameEnd));
+
+            this.Items.Add(newAniItem);
 
             if (this.AutoAdjustPosition)
             {
