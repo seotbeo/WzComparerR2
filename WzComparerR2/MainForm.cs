@@ -585,14 +585,28 @@ namespace WzComparerR2
             Wz_Node node = advTree3.SelectedNode.AsWzNode();
             string aniName = GetSelectedNodeImageName();
 
+            if (node.Value is Wz_Png)
+            {
+                var pngFrameData = this.pictureBoxEx1.LoadPngFrameAnimation(node);
+
+                if (pngFrameData != null)
+                {
+                    this.pictureBoxEx1.ShowDupAnimation(pngFrameData, true);
+                    this.cmbItemAniNames.Items.Clear();
+                    this.cmbItemSkins.Visible = false;
+                }
+
+                return;
+            }
+
             //添加到动画控件
             if (node.Text.EndsWith(".atlas", StringComparison.OrdinalIgnoreCase))
             {
+                /*
                 var spineData = this.pictureBoxEx1.LoadSpineAnimation(node);
 
                 if (spineData != null)
                 {
-                    /*
                     this.pictureBoxEx1.ShowAnimation(spineData);
                     var aniItem = this.pictureBoxEx1.Items[0] as Animation.SpineAnimator;
 
@@ -605,10 +619,10 @@ namespace WzComparerR2
                     this.cmbItemSkins.Items.Clear();
                     this.cmbItemSkins.Items.AddRange(aniItem.Skins.ToArray());
                     this.cmbItemSkins.SelectedIndex = aniItem.Skins.IndexOf(aniItem.SelectedSkin);
-                    */
-                    MessageBoxEx.Show("Spine 애니메이션은 중첩시킬 수 없습니다.", "미지원");
-                    return;
                 }
+                */
+                MessageBoxEx.Show("Spine 애니메이션은 중첩시킬 수 없습니다.", "미지원");
+                return;
             }
             else
             {

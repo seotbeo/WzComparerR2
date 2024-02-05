@@ -68,6 +68,22 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
+        public static FrameAnimationData CreateFromPngNode(Wz_Node node, GraphicsDevice graphicsDevice, GlobalFindNodeFunction findNode)
+        {
+            if (node == null || node.Value == null)
+                return null;
+            var anime = new FrameAnimationData();
+
+            Frame frame = Frame.CreateFromNode(node, graphicsDevice, findNode);
+
+            if (frame != null) anime.Frames.Add(frame);
+
+            if (anime.Frames.Count > 0)
+                return anime;
+            else
+                return null;
+        }
+
         public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Color bgColor, int delayOffset, int moveX, int moveY, int frameStart, int frameEnd)
         {
             var anime = new FrameAnimationData();

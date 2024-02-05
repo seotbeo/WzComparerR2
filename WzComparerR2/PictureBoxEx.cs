@@ -91,6 +91,11 @@ namespace WzComparerR2
             return MultiFrameAnimationData.CreateFromNode(node, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
         }
 
+        public FrameAnimationData LoadPngFrameAnimation(Wz_Node node)
+        {
+            return FrameAnimationData.CreateFromPngNode(node, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
+        }
+
         public void ShowAnimation(FrameAnimationData data)
         {
             this.ShowAnimation(new FrameAnimator(data));
@@ -109,9 +114,10 @@ namespace WzComparerR2
             this.ShowAnimationDuplicated = false;
         }
 
-        public void ShowDupAnimation(FrameAnimationData data)
+        // 애니메이션 중첩
+        public void ShowDupAnimation(FrameAnimationData data, bool isPngFrameAni = false)
         {
-            this.ShowDupAnimation(new FrameAnimator(data));
+            this.ShowDupAnimation(new FrameAnimator(data), isPngFrameAni);
         }
 
         public void ShowAnimation(AnimationItem animator)
@@ -131,7 +137,8 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
-        public void ShowDupAnimation(AnimationItem animator)
+        // 애니메이션 중첩
+        public void ShowDupAnimation(AnimationItem animator, bool isPngFrameAni)
         {
             if (!ShowAnimationDuplicated)
             {
@@ -152,16 +159,18 @@ namespace WzComparerR2
                 var baseAniItem = (FrameAnimator)this.Items[0];
                 var aniItem = (FrameAnimator)animator;
 
-                var frmMultiAniOptions = new FrmMultiAniOptions(0, aniItem.Data.Frames.Count - 1);
+                var frmMultiAniOptions = new FrmMultiAniOptions(0, aniItem.Data.Frames.Count - 1, isPngFrameAni);
                 int delayOffset = 0;
                 int moveX = 0;
                 int moveY = 0;
                 int frameStart = 0;
                 int frameEnd = 0;
+                int pngDelay = 100;
 
+                // 정보 받아오기
                 if (frmMultiAniOptions.ShowDialog() == DialogResult.OK)
                 {
-                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd);
+                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out pngDelay);
                     frameStart = frameStart == -1 ? 0 : frameStart;
                     frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
 
@@ -170,6 +179,13 @@ namespace WzComparerR2
                 else return;
 
                 this.Items.Clear();
+
+                // png 하나의 딜레이 설정
+                if (isPngFrameAni)
+                {
+                    if (pngDelay == 0) return;
+                    aniItem.Data.Frames[0].Delay = pngDelay;
+                }
 
                 var config = ImageHandlerConfig.Default;
                 var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,

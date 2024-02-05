@@ -18,7 +18,12 @@ namespace WzComparerR2
 
         }
 
-        public FrmMultiAniOptions(int startIdx, int endIdx)
+        public FrmMultiAniOptions(int startIdx, int endIdx) : this(startIdx, endIdx, false)
+        {
+
+        }
+
+        public FrmMultiAniOptions(int startIdx, int endIdx, bool isPngFrameAni)
         {
             InitializeComponent();
             this.txtDelayOffset.Value = 0;
@@ -28,17 +33,24 @@ namespace WzComparerR2
             this.txtFrameEnd.Value = endIdx;
             this.txtFrameStart.MaxValue = endIdx;
             this.txtFrameEnd.MaxValue = endIdx;
+
+            if (isPngFrameAni)
+            {
+                this.txtPngDelay.Enabled = true;
+            }
         }
 
-        public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd)
+        public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd, out int pngDelay)
         {
             delayOffset = this.txtDelayOffset.ValueObject as int? ?? 0;
             moveX = this.txtMoveX.ValueObject as int? ?? 0;
             moveY = this.txtMoveY.ValueObject as int? ?? 0;
             frameStart = this.txtFrameStart.ValueObject as int? ?? -1;
             frameEnd = this.txtFrameEnd.ValueObject as int? ?? -1;
+            pngDelay = this.txtPngDelay.ValueObject as int? ?? 0;
 
             delayOffset = delayOffset / 10 * 10;
+            pngDelay = pngDelay / 10 * 10;
 
             return;
         }
