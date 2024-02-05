@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using WzComparerR2.WzLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Drawing;
-using WzComparerR2.Rendering;
 
 namespace WzComparerR2.Animation
 {
@@ -16,22 +13,22 @@ namespace WzComparerR2.Animation
         public FrameAnimationData()
         {
             this.Frames = new List<Frame>();
-            this.Origin = new Microsoft.Xna.Framework.Point();
+            this.Origin = new Point();
         }
 
         public FrameAnimationData(IEnumerable<Frame> frames)
         {
             this.Frames = new List<Frame>(frames);
-            this.Origin = new Microsoft.Xna.Framework.Point();
+            this.Origin = new Point();
         }
 
         public List<Frame> Frames { get; private set; }
 
-        public Microsoft.Xna.Framework.Point Origin { get; private set; }
+        public Point Origin { get; private set; }
 
-        public Microsoft.Xna.Framework.Rectangle GetBound()
+        public Rectangle GetBound()
         {
-            Microsoft.Xna.Framework.Rectangle? bound = null;
+            Rectangle? bound = null;
             foreach (var frame in this.Frames)
             {
                 //bound = bound == null ? frame.Rectangle : Rectangle.Union(frame.Rectangle, bound.Value);
@@ -42,10 +39,10 @@ namespace WzComparerR2.Animation
                 }
                 else
                 {
-                    bound = Microsoft.Xna.Framework.Rectangle.Union(frame.Rectangle, bound.Value);
+                    bound = Rectangle.Union(frame.Rectangle, bound.Value);
                 }
             }
-            return bound ?? Microsoft.Xna.Framework.Rectangle.Empty;
+            return bound ?? Rectangle.Empty;
         }
 
         public static FrameAnimationData CreateFromNode(Wz_Node node, GraphicsDevice graphicsDevice, GlobalFindNodeFunction findNode)
@@ -71,13 +68,15 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Color bgColor, int delayOffset, int moveX, int moveY)
+        public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Color bgColor, int delayOffset, int moveX, int moveY, int frameStart, int frameEnd)
         {
             var anime = new FrameAnimationData();
             int baseCount = 0;
-            int addCount = 0;
+            //int addCount = 0;
+            int addCount = frameStart;
             int baseMax = baseData.Frames.Count;
-            int addMax = addData.Frames.Count;
+            //int addMax = addData.Frames.Count;
+            int addMax = frameEnd + 1;
             int baseDelayAll = 0;
             int addDelayAll = 0;
             int globalDelay = 0;
@@ -86,11 +85,18 @@ namespace WzComparerR2.Animation
             {
                 baseDelayAll += frame.Delay;
             }
+            for (int i = addCount; i < addMax; i++)
+            {
+                addDelayAll += addData.Frames[i].Delay;
+                addData.Frames[i].Origin = new Point(addData.Frames[i].Origin.X - moveX, addData.Frames[i].Origin.Y - moveY);
+            }
+            /*
             foreach (var frame in addData.Frames)
             {
                 addDelayAll += frame.Delay;
-                frame.Origin = new Microsoft.Xna.Framework.Point(frame.Origin.X - moveX, frame.Origin.Y - moveY);
+                frame.Origin = new Point(frame.Origin.X - moveX, frame.Origin.Y - moveY);
             }
+            */
 
             if (baseDelayAll <= delayOffset) // base 애니메이션 후에 add 애니메이션 재생
             {
@@ -102,7 +108,7 @@ namespace WzComparerR2.Animation
                 if (baseDelayAll != delayOffset)
                 {
                     Frame f = new Frame(); // 더미 프레임
-                    f.Origin = new Microsoft.Xna.Framework.Point(0, 0);
+                    f.Origin = new Point(0, 0);
                     f.Z = baseData.Frames[baseMax - 1].Z;
                     f.Delay = delayOffset - baseDelayAll;
                     f.Blend = baseData.Frames[baseMax - 1].Blend;
@@ -142,32 +148,35 @@ namespace WzComparerR2.Animation
 
                 // 프레임 합성
                 int maxDelay = Math.Min(baseDelayAll, addDelayAll);
-                while (baseCount < baseMax && addCount < addMax)
+                if (maxDelay > 0)
                 {
-                    int thisDelay = Math.Min(baseData.Frames[baseCount].Delay, addData.Frames[addCount].Delay);
-                    Microsoft.Xna.Framework.Point newOrigin;
-                    globalDelay += thisDelay;
-
-                    Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor));
-                    thisFrame.Origin = newOrigin;
-                    thisFrame.Z = baseData.Frames[baseCount].Z;
-                    thisFrame.Delay = thisDelay;
-                    thisFrame.Blend = baseData.Frames[baseCount].Blend;
-
-                    anime.Frames.Add(thisFrame);
-
-                    baseData.Frames[baseCount].Delay -= thisDelay;
-                    addData.Frames[addCount].Delay -= thisDelay;
-
-                    if (baseData.Frames[baseCount].Delay <= 0)
+                    while (baseCount < baseMax && addCount < addMax)
                     {
-                        baseCount++;
+                        int thisDelay = Math.Min(baseData.Frames[baseCount].Delay, addData.Frames[addCount].Delay);
+                        Point newOrigin;
+                        globalDelay += thisDelay;
+
+                        Frame thisFrame = new Frame(MergeFrameTextures(baseData.Frames[baseCount], addData.Frames[addCount], graphicsDevice, out newOrigin, bgColor));
+                        thisFrame.Origin = newOrigin;
+                        thisFrame.Z = baseData.Frames[baseCount].Z;
+                        thisFrame.Delay = thisDelay;
+                        thisFrame.Blend = baseData.Frames[baseCount].Blend;
+
+                        anime.Frames.Add(thisFrame);
+
+                        baseData.Frames[baseCount].Delay -= thisDelay;
+                        addData.Frames[addCount].Delay -= thisDelay;
+
+                        if (baseData.Frames[baseCount].Delay <= 0)
+                        {
+                            baseCount++;
+                        }
+                        if (addData.Frames[addCount].Delay <= 0)
+                        {
+                            addCount++;
+                        }
+                        if (globalDelay >= maxDelay) break;
                     }
-                    if (addData.Frames[addCount].Delay <= 0)
-                    {
-                        addCount++;
-                    }
-                    if (globalDelay >= maxDelay) break;
                 }
 
                 // 남은 프레임 붙여넣기
@@ -193,14 +202,14 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        private static Texture2D MergeFrameTextures(Frame frame1, Frame frame2, GraphicsDevice graphicsDevice, out Microsoft.Xna.Framework.Point newOrigin, Microsoft.Xna.Framework.Color bgColor)
+        private static Texture2D MergeFrameTextures(Frame frame1, Frame frame2, GraphicsDevice graphicsDevice, out Point newOrigin, Color bgColor)
         {
             Texture2D texture1 = frame1.Texture;
             Texture2D texture2 = frame2.Texture;
 
             if (texture1 == null)
             {
-                newOrigin = new Microsoft.Xna.Framework.Point(frame2.Origin.X, frame2.Origin.Y);
+                newOrigin = new Point(frame2.Origin.X, frame2.Origin.Y);
                 return texture2;
             }
 
@@ -211,7 +220,7 @@ namespace WzComparerR2.Animation
 
             int width = texture1.Width + dl + dr;
             int height = texture1.Height + dt + db;
-            newOrigin = new Microsoft.Xna.Framework.Point(frame1.Origin.X + dl, frame1.Origin.Y + dt);
+            newOrigin = new Point(frame1.Origin.X + dl, frame1.Origin.Y + dt);
 
             //1
             
@@ -232,8 +241,8 @@ namespace WzComparerR2.Animation
                 }
             );
 
-            spriteBatch.Draw(texture1, new Vector2(dl, dt), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-            spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), null, Microsoft.Xna.Framework.Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture1, new Vector2(dl, dt), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+            spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             spriteBatch.End();
 
@@ -320,16 +329,16 @@ namespace WzComparerR2.Animation
             return mergedTexture;*/
         }
 
-        private static Microsoft.Xna.Framework.Color MixColors(Microsoft.Xna.Framework.Color baseColor, Microsoft.Xna.Framework.Color addColor)
+        private static Color MixColors(Color baseColor, Color addColor)
         {
             var newA = baseColor.A + addColor.A * (255 - baseColor.A) / 255;
-            if (newA == 0) return new Microsoft.Xna.Framework.Color(255, 255, 255, 0);
+            if (newA == 0) return new Color(255, 255, 255, 0);
 
             var newR = (baseColor.R * baseColor.A / 255 * (255 - addColor.A) / 255 + addColor.R * addColor.A / 255) * 255 / newA;
             var newG = (baseColor.G * baseColor.A / 255 * (255 - addColor.A) / 255 + addColor.G * addColor.A / 255) * 255 / newA;
             var newB = (baseColor.B * baseColor.A / 255 * (255 - addColor.A) / 255 + addColor.B * addColor.A / 255) * 255 / newA;
 
-            return new Microsoft.Xna.Framework.Color(newR, newG, newB, newA);
+            return new Color(newR, newG, newB, newA);
         }
     }
 }

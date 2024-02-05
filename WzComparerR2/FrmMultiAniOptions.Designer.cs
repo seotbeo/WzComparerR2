@@ -33,20 +33,24 @@ namespace WzComparerR2
             this.buttonCancel = new DevComponents.DotNetBar.ButtonX();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
+            this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.labelX3 = new DevComponents.DotNetBar.LabelX();
             this.labelX4 = new DevComponents.DotNetBar.LabelX();
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
+            this.labelX6 = new DevComponents.DotNetBar.LabelX();
             this.txtDelayOffset = new DevComponents.Editors.IntegerInput();
             this.txtMoveX = new DevComponents.Editors.IntegerInput();
             this.txtMoveY = new DevComponents.Editors.IntegerInput();
+            this.txtFrameStart = new DevComponents.Editors.IntegerInput();
+            this.txtFrameEnd = new DevComponents.Editors.IntegerInput();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.txtClipBottomNew = new DevComponents.Editors.IntegerInput();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtDelayOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtMoveX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtMoveY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFrameStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFrameEnd)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtClipBottomNew)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonOK
@@ -81,26 +85,33 @@ namespace WzComparerR2
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 93F));
+            this.tableLayoutPanel1.ColumnCount = 5;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 63F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43F));
             this.tableLayoutPanel1.Controls.Add(this.labelX1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelX2, 3, 3);
             this.tableLayoutPanel1.Controls.Add(this.labelX3, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelX4, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelX5, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.labelX6, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.txtDelayOffset, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtMoveX, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtMoveY, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.txtFrameStart, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.txtFrameEnd, 4, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 8);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.090908F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.090908F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.090908F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(383, 87);
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(383, 109);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // labelX1
@@ -115,9 +126,26 @@ namespace WzComparerR2
             this.labelX1.Location = new System.Drawing.Point(4, 3);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(85, 23);
+            this.tableLayoutPanel1.SetRowSpan(this.labelX1, 4);
+            this.labelX1.Size = new System.Drawing.Size(55, 103);
             this.labelX1.TabIndex = 0;
             this.labelX1.Text = "설정";
+            // 
+            // labelX2
+            // 
+            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX2.Location = new System.Drawing.Point(284, 84);
+            this.labelX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX2.Name = "labelX2";
+            this.labelX2.Size = new System.Drawing.Size(17, 22);
+            this.labelX2.TabIndex = 12;
+            this.labelX2.Text = "-";
             // 
             // labelX3
             // 
@@ -128,10 +156,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(97, 3);
+            this.labelX3.Location = new System.Drawing.Point(67, 3);
             this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(132, 23);
+            this.labelX3.Size = new System.Drawing.Size(132, 21);
             this.labelX3.TabIndex = 8;
             this.labelX3.Text = "시작 딜레이 (ms)";
             // 
@@ -144,10 +172,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(97, 32);
+            this.labelX4.Location = new System.Drawing.Point(67, 30);
             this.labelX4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(132, 23);
+            this.labelX4.Size = new System.Drawing.Size(132, 21);
             this.labelX4.TabIndex = 9;
             this.labelX4.Text = "X 이동 (px)";
             // 
@@ -160,12 +188,28 @@ namespace WzComparerR2
             // 
             // 
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX5.Location = new System.Drawing.Point(97, 61);
+            this.labelX5.Location = new System.Drawing.Point(67, 57);
             this.labelX5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX5.Name = "labelX5";
-            this.labelX5.Size = new System.Drawing.Size(132, 23);
+            this.labelX5.Size = new System.Drawing.Size(132, 21);
             this.labelX5.TabIndex = 10;
             this.labelX5.Text = "Y 이동 (px)";
+            // 
+            // labelX6
+            // 
+            this.labelX6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX6.Location = new System.Drawing.Point(67, 84);
+            this.labelX6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX6.Name = "labelX6";
+            this.labelX6.Size = new System.Drawing.Size(132, 22);
+            this.labelX6.TabIndex = 11;
+            this.labelX6.Text = "프레임 선택";
             // 
             // txtDelayOffset
             // 
@@ -178,15 +222,16 @@ namespace WzComparerR2
             this.txtDelayOffset.BackgroundStyle.Class = "DateTimeInputBackground";
             this.txtDelayOffset.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtDelayOffset.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.tableLayoutPanel1.SetColumnSpan(this.txtDelayOffset, 3);
             this.txtDelayOffset.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtDelayOffset.Increment = 30;
-            this.txtDelayOffset.Location = new System.Drawing.Point(237, 3);
+            this.txtDelayOffset.Location = new System.Drawing.Point(207, 3);
             this.txtDelayOffset.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtDelayOffset.MaxValue = 65530;
             this.txtDelayOffset.MinValue = 0;
             this.txtDelayOffset.Name = "txtDelayOffset";
             this.txtDelayOffset.ShowUpDown = true;
-            this.txtDelayOffset.Size = new System.Drawing.Size(142, 21);
+            this.txtDelayOffset.Size = new System.Drawing.Size(172, 21);
             this.txtDelayOffset.TabIndex = 0;
             // 
             // txtMoveX
@@ -200,14 +245,15 @@ namespace WzComparerR2
             this.txtMoveX.BackgroundStyle.Class = "DateTimeInputBackground";
             this.txtMoveX.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtMoveX.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.tableLayoutPanel1.SetColumnSpan(this.txtMoveX, 3);
             this.txtMoveX.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtMoveX.Location = new System.Drawing.Point(237, 32);
+            this.txtMoveX.Location = new System.Drawing.Point(207, 30);
             this.txtMoveX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtMoveX.MaxValue = 8192;
             this.txtMoveX.MinValue = -8192;
             this.txtMoveX.Name = "txtMoveX";
             this.txtMoveX.ShowUpDown = true;
-            this.txtMoveX.Size = new System.Drawing.Size(142, 21);
+            this.txtMoveX.Size = new System.Drawing.Size(172, 21);
             this.txtMoveX.TabIndex = 1;
             // 
             // txtMoveY
@@ -221,15 +267,58 @@ namespace WzComparerR2
             this.txtMoveY.BackgroundStyle.Class = "DateTimeInputBackground";
             this.txtMoveY.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtMoveY.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.tableLayoutPanel1.SetColumnSpan(this.txtMoveY, 3);
             this.txtMoveY.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtMoveY.Location = new System.Drawing.Point(237, 61);
+            this.txtMoveY.Location = new System.Drawing.Point(207, 57);
             this.txtMoveY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtMoveY.MaxValue = 8192;
             this.txtMoveY.MinValue = -8192;
             this.txtMoveY.Name = "txtMoveY";
             this.txtMoveY.ShowUpDown = true;
-            this.txtMoveY.Size = new System.Drawing.Size(142, 21);
+            this.txtMoveY.Size = new System.Drawing.Size(172, 21);
             this.txtMoveY.TabIndex = 2;
+            // 
+            // txtFrameStart
+            // 
+            this.txtFrameStart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.txtFrameStart.BackgroundStyle.Class = "DateTimeInputBackground";
+            this.txtFrameStart.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txtFrameStart.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.txtFrameStart.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.txtFrameStart.Location = new System.Drawing.Point(207, 84);
+            this.txtFrameStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtFrameStart.MaxValue = 8192;
+            this.txtFrameStart.MinValue = 0;
+            this.txtFrameStart.Name = "txtFrameStart";
+            this.txtFrameStart.ShowUpDown = true;
+            this.txtFrameStart.Size = new System.Drawing.Size(69, 21);
+            this.txtFrameStart.TabIndex = 3;
+            // 
+            // txtFrameEnd
+            // 
+            this.txtFrameEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.txtFrameEnd.BackgroundStyle.Class = "DateTimeInputBackground";
+            this.txtFrameEnd.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txtFrameEnd.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.txtFrameEnd.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.txtFrameEnd.Location = new System.Drawing.Point(309, 84);
+            this.txtFrameEnd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtFrameEnd.MaxValue = 8192;
+            this.txtFrameEnd.MinValue = 0;
+            this.txtFrameEnd.Name = "txtFrameEnd";
+            this.txtFrameEnd.ShowUpDown = true;
+            this.txtFrameEnd.Size = new System.Drawing.Size(70, 21);
+            this.txtFrameEnd.TabIndex = 4;
             // 
             // tableLayoutPanel2
             // 
@@ -239,41 +328,23 @@ namespace WzComparerR2
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonOK, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 95);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 117);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(383, 30);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
-            // txtClipBottomNew
-            // 
-            this.txtClipBottomNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            // 
-            // 
-            // 
-            this.txtClipBottomNew.BackgroundStyle.Class = "DateTimeInputBackground";
-            this.txtClipBottomNew.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtClipBottomNew.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this.txtClipBottomNew.Location = new System.Drawing.Point(300, 165);
-            this.txtClipBottomNew.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtClipBottomNew.MaxValue = 16384;
-            this.txtClipBottomNew.MinValue = -16384;
-            this.txtClipBottomNew.Name = "txtClipBottomNew";
-            this.txtClipBottomNew.ShowUpDown = true;
-            this.txtClipBottomNew.Size = new System.Drawing.Size(79, 21);
-            this.txtClipBottomNew.TabIndex = 13;
-            // 
             // FrmMultiAniOptions
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(401, 133);
+            this.ClientSize = new System.Drawing.Size(401, 155);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.DoubleBuffered = true;
@@ -289,11 +360,11 @@ namespace WzComparerR2
             ((System.ComponentModel.ISupportInitialize)(this.txtDelayOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtMoveX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtMoveY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFrameStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFrameEnd)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.txtClipBottomNew)).EndInit();
             this.ResumeLayout(false);
 
-            this.AcceptButton = buttonOK;
         }
 
         #endregion
@@ -306,9 +377,12 @@ namespace WzComparerR2
         private DevComponents.Editors.IntegerInput txtDelayOffset;
         private DevComponents.Editors.IntegerInput txtMoveX;
         private DevComponents.Editors.IntegerInput txtMoveY;
+        private DevComponents.Editors.IntegerInput txtFrameStart;
+        private DevComponents.Editors.IntegerInput txtFrameEnd;
         private DevComponents.DotNetBar.LabelX labelX1;
         private DevComponents.DotNetBar.LabelX labelX3;
         private DevComponents.DotNetBar.LabelX labelX5;
-        private DevComponents.Editors.IntegerInput txtClipBottomNew;
+        private DevComponents.DotNetBar.LabelX labelX6;
+        private DevComponents.DotNetBar.LabelX labelX2;
     }
 }

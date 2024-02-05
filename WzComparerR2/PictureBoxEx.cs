@@ -147,25 +147,32 @@ namespace WzComparerR2
 
             if (!(this.Items.Count == 0))
             {
-                var frmMultiAniOptions = new FrmMultiAniOptions();
+                var baseAniItem = (FrameAnimator)this.Items[0];
+                var aniItem = (FrameAnimator)animator;
+
+                var frmMultiAniOptions = new FrmMultiAniOptions(0, aniItem.Data.Frames.Count - 1);
                 int delayOffset = 0;
                 int moveX = 0;
                 int moveY = 0;
+                int frameStart = 0;
+                int frameEnd = 0;
 
                 if (frmMultiAniOptions.ShowDialog() == DialogResult.OK)
                 {
-                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY);
+                    frmMultiAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd);
+                    frameStart = frameStart == -1 ? 0 : frameStart;
+                    frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
+
+                    if (frameStart > frameEnd) return;
                 }
                 else return;
 
-                var baseAniItem = (FrameAnimator)this.Items[0];
-                var aniItem = (FrameAnimator)animator;
                 this.Items.Clear();
 
                 var config = ImageHandlerConfig.Default;
                 var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
                      this.GraphicsDevice, System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor(),
-                     delayOffset, moveX, moveY));
+                     delayOffset, moveX, moveY, frameStart, frameEnd));
 
                 this.Items.Add(newAniItem);
             }
