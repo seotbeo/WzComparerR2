@@ -59,6 +59,8 @@ namespace WzComparerR2
 
         public void ShowImage(Wz_Png png)
         {
+            if (this.ShowAnimationDuplicated) return; // 애니메이션 중첩 중일때는 자동 png 미리보기 없음
+
             //添加到动画控件
             var frame = new Animation.Frame()
             {
