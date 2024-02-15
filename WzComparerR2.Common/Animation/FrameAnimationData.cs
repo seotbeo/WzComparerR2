@@ -118,7 +118,10 @@ namespace WzComparerR2.Animation
             {
                 for (int i = baseCount; i < baseMax; i++)
                 {
-                    anime.Frames.Add(baseData.Frames[i]);
+                    if (baseData.Frames[i].Delay != 0)
+                    {
+                        anime.Frames.Add(baseData.Frames[i]);
+                    }
                 }
 
                 if (baseDelayAll != delayOffset)
@@ -129,7 +132,10 @@ namespace WzComparerR2.Animation
 
                 for (int i = addCount; i < addMax; i++)
                 {
-                    anime.Frames.Add(addData.Frames[i]);
+                    if (addData.Frames[i].Delay != 0)
+                    {
+                        anime.Frames.Add(addData.Frames[i]);
+                    }
                 }
             }
             else // base 애니메이션 중에 add 애니메이션 재생

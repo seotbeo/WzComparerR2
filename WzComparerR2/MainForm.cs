@@ -776,6 +776,43 @@ namespace WzComparerR2
                 }
                 labelItemStatus.Text = "그림 저장 완료: " + pngFileName;
             }
+            else if (pictureBoxEx1.ShowAnimationDuplicated && frame.Texture != null)
+            {
+                var config = ImageHandlerConfig.Default;
+                string pngFileName = pictureBoxEx1.PictureName + ".png";
+
+                if (config.AutoSaveEnabled)
+                {
+                    pngFileName = Path.Combine(config.AutoSavePictureFolder, string.Join("_", pngFileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.None)));
+                }
+                else
+                {
+                    var dlg = new SaveFileDialog();
+                    dlg.Filter = "PNG (*.png)|*.png|모든 파일 (*.*)|*.*";
+                    dlg.FileName = pngFileName;
+                    if (dlg.ShowDialog() != DialogResult.OK)
+                    {
+                        return;
+                    }
+
+                    pngFileName = dlg.FileName;
+                }
+
+                byte[] frameData = new byte[frame.Texture.Width * frame.Texture.Height * 4];
+                frame.Texture.GetData(frameData);
+                var targetSize = new Point(frame.Texture.Width, frame.Texture.Height);
+                unsafe
+                {
+                    fixed (byte* pFrameBuffer = frameData)
+                    {
+                        using (var bmp = new System.Drawing.Bitmap(targetSize.X, targetSize.Y, targetSize.X * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, new IntPtr(pFrameBuffer)))
+                        {
+                            bmp.Save(pngFileName, System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+                }
+                labelItemStatus.Text = "그림 저장 완료: " + pngFileName;
+            }
             else
             {
                 labelItemStatus.Text = "그림 저장 실패";
