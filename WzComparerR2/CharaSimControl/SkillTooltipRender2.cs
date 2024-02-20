@@ -257,6 +257,7 @@ namespace WzComparerR2.CharaSimControl
                     IgnoreEvalError = this.IgnoreEvalError,
                 });
                 //GearGraphics.DrawString(g, "[Next Level " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, 9, 485, ref picH, 16);//original values: 10, 274
+                picH += 4;
                 GearGraphics.DrawString(g, "[Next Level " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
                 {
@@ -487,14 +488,14 @@ namespace WzComparerR2.CharaSimControl
 
             public static CanvasRegion Wide { get; } = new CanvasRegion()
             {
-                Width = 505,
+                Width = 430,
                 TitleCenterX = 253,
                 SplitterX1 = 4,
                 SplitterX2 = 501,
                 SkillDescLeft = 88,
                 LinkedSkillNameLeft = 46,
                 LevelDescLeft = 11,
-                TextRight = 485,
+                TextRight = 411,
             };
         }
     }

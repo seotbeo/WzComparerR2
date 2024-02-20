@@ -103,7 +103,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.bdR: return "Boss Damage: +" + value + "%";
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "Ignored Enemy DEF: +" + value + "%";
-                case GearPropType.limitBreak: return "Damage Cap: " + value;
+                case GearPropType.limitBreak: return "Damage Cap: " + value.ToString("N0");
                 case GearPropType.reduceReq: return "Required Level: -" + value;
                 case GearPropType.nbdR: return "Damage Against Normal Monsters: +" + value + "%"; //KMST 1069
 
@@ -130,7 +130,7 @@ namespace WzComparerR2.CharaSim
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
                 case GearPropType.fixedPotential: return value == 0 ? null : "Potential Reset Not Allowed";
                 case GearPropType.superiorEqp: return value == 0 ? null : "Allows you to gain even higher stats with successful item enhancement.";
-                case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item#";
+                case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item.#";
                 case GearPropType.jokerToSetItem: return value == 0 ? null : "\n#cThis lucky item counts towards any set,\n\rso long as you have at least 3 set pieces equipped!#";//\n\r#cThis lucky...
                 case GearPropType.plusToSetItem: return value == 0 ? null : "#cWhen equipped, the item set will count as having equipped two.#";
                 case GearPropType.abilityTimeLimited: return value == 0 ? null : "Limited Time Stats";
@@ -386,7 +386,7 @@ namespace WzComparerR2.CharaSim
                 case 3: return "Very Fast";
                 case 4:
                 case 5: return "Fast";
-                case 6: return "Normal";
+                case 6: return "Average";
                 case 7:
                 case 8: return "Slow";
                 case 9: return "Very Slow";
@@ -490,6 +490,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.swordZL: return GetExtraJobReqString(101);
 
                 case GearType.whistle:
+                case GearType.whistle2:
                 case GearType.magicStick: return GetExtraJobReqString(112);
 
                 case GearType.espLimiter:
