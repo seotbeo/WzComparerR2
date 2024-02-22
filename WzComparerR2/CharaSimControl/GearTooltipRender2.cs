@@ -183,8 +183,8 @@ namespace WzComparerR2.CharaSimControl
             string gearName = sr.Name;
             switch (Gear.GetGender(Gear.ItemID))
             {
-                case 0: gearName += " (Male)"; break;
-                case 1: gearName += " (Female)"; break;
+                case 0: gearName += " (♂)"; break;
+                case 1: gearName += " (♀)"; break;
             }
             string nameAdd = Gear.ScrollUp > 0 ? ("+" + Gear.ScrollUp) : null;
             if (!string.IsNullOrEmpty(nameAdd))
@@ -192,12 +192,9 @@ namespace WzComparerR2.CharaSimControl
                 gearName += " (" + nameAdd + ")";
             }
 
-            // g.DrawImage(Resource.ToolTip_Equip_Dot_0, 9, picH + 5);//GMS Version blue dot in EQUIPMENT
-            // format.Alignment = StringAlignment.Near;//GMS Version
-            TextRenderer.DrawText(g, gearName, GearGraphics.ItemNameFont2,
-                //GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.ItemID / 10000 == 180), 15, picH, format);//GMS Version
-                //new Point(14, picH), Gear.Cash ? ((SolidBrush)GearGraphics.GearNameBrushB).Color : ((SolidBrush)GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.ItemID / 10000 == 180)).Color, TextFormatFlags.Left | TextFormatFlags.NoPrefix); // Use this line and not above
-                new Point(14, picH), ((SolidBrush)GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.Cash, Gear.ItemID / 10000 == 180)).Color, TextFormatFlags.NoPrefix);
+            format.Alignment = StringAlignment.Center;
+            g.DrawString(gearName, GearGraphics.ItemNameFont2,
+                GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0), 130, picH, format);
             picH += 23;
 
             //装备rank
@@ -615,7 +612,7 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (hasTuc)
             {
-                GearGraphics.DrawString(g, "アップグレード可能回数: " + value + (Gear.Cash ? "" : "#c(復旧可能: 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 244, ref picH, 15);
+                GearGraphics.DrawString(g, "アップグレード可能回数: " + value + (Gear.Cash ? "" : " #c(復旧可能: 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 248, ref picH, 15);
                 hasPart2 = true;
             }
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0) //突破上限
@@ -953,6 +950,12 @@ namespace WzComparerR2.CharaSimControl
                 {
                     desc.RemoveAt(desc.Count - 1);
                 }
+            }
+
+            // JMS exclusive pricing display
+            if (!Gear.Props.TryGetValue(GearPropType.notSale, out value) && (Gear.Props.TryGetValue(GearPropType.price, out value) && value > 0))
+            {
+                desc.Add("\r\n · 販売価額：" + value + "メル");
             }
 
             //判断是否绘制徽章

@@ -185,7 +185,7 @@
             // 
             // 
             this.chkDeadPatch.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkDeadPatch.Location = new System.Drawing.Point(90, 87);
+            this.chkDeadPatch.Location = new System.Drawing.Point(95, 87);
             this.chkDeadPatch.Name = "chkDeadPatch";
             this.chkDeadPatch.Size = new System.Drawing.Size(82, 16);
             this.chkDeadPatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -231,9 +231,9 @@
             // 
             this.txtMSFolder.Border.Class = "TextBoxBorder";
             this.txtMSFolder.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtMSFolder.Location = new System.Drawing.Point(68, 59);
+            this.txtMSFolder.Location = new System.Drawing.Point(82, 59);
             this.txtMSFolder.Name = "txtMSFolder";
-            this.txtMSFolder.Size = new System.Drawing.Size(259, 21);
+            this.txtMSFolder.Size = new System.Drawing.Size(245, 21);
             this.txtMSFolder.TabIndex = 3;
             // 
             // labelX2
@@ -272,9 +272,9 @@
             // 
             this.txtPatchFile.Border.Class = "TextBoxBorder";
             this.txtPatchFile.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtPatchFile.Location = new System.Drawing.Point(68, 34);
+            this.txtPatchFile.Location = new System.Drawing.Point(82, 34);
             this.txtPatchFile.Name = "txtPatchFile";
-            this.txtPatchFile.Size = new System.Drawing.Size(259, 21);
+            this.txtPatchFile.Size = new System.Drawing.Size(245, 21);
             this.txtPatchFile.TabIndex = 0;
             // 
             // labelX1
@@ -795,9 +795,9 @@
             // 
             this.txtPatchFile2.Border.Class = "TextBoxBorder";
             this.txtPatchFile2.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtPatchFile2.Location = new System.Drawing.Point(68, 34);
+            this.txtPatchFile2.Location = new System.Drawing.Point(82, 34);
             this.txtPatchFile2.Name = "txtPatchFile2";
-            this.txtPatchFile2.Size = new System.Drawing.Size(259, 21);
+            this.txtPatchFile2.Size = new System.Drawing.Size(245, 21);
             this.txtPatchFile2.TabIndex = 6;
             // 
             // buttonXOpen4
@@ -835,9 +835,9 @@
             // 
             this.txtMSFolder2.Border.Class = "TextBoxBorder";
             this.txtMSFolder2.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtMSFolder2.Location = new System.Drawing.Point(68, 59);
+            this.txtMSFolder2.Location = new System.Drawing.Point(82, 59);
             this.txtMSFolder2.Name = "txtMSFolder2";
-            this.txtMSFolder2.Size = new System.Drawing.Size(259, 21);
+            this.txtMSFolder2.Size = new System.Drawing.Size(245, 21);
             this.txtMSFolder2.TabIndex = 9;
             // 
             // labelX4

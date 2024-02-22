@@ -449,7 +449,7 @@ namespace WzComparerR2.CharaSimControl
                     GearPropType.charmEXP };
 
                 string[] inclineString = new string[]{
-                    " Ambition"," Empathy"," Insight"," Willpower"," Diligence"," Charm"};
+                    " Ambition"," Empathy"," Insight"," Willpower"," Diligence"," 魅力"};
 
                 for (int i = 0; i < inclineTypes.Length; i++)
                 {

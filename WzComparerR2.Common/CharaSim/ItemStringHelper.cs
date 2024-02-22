@@ -117,8 +117,8 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.tradeAvailable:
                     switch (value)
                     {
-                        case 1: return "#c カルマのハサミを使用すると1回交換可能\n\rになります。#";
-                        case 2: return "#c カルマのハサミを使用すると1回交換可能\n\rになります。#";
+                        case 1: return "#c カルマのはさみを使用すると1回交換可能\n\rになります。#";
+                        case 2: return "#c カルマのはさみを使用すると1回交換可能\n\rになります。#";
                         default: return null;
                     }
                 case GearPropType.accountShareTag:
@@ -149,7 +149,7 @@ namespace WzComparerR2.CharaSim
                 //case GearPropType.incACC_incEVA: return "ACC/AVO :" + sign + value;
 
                 case GearPropType.incARC: return "ARC : " + sign + value;
-                case GearPropType.incAUT: return "SAC : " + sign + value;
+                case GearPropType.incAUT: return "AUT : " + sign + value;
 
                 case GearPropType.Etuc: return "Exceptional Enhancement is possible.  (Max" + "\ntime(s):  " + value + ")";
                 default: return null;
@@ -246,7 +246,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.dragonWings: return "Dragon Wing Accessory";
                 case GearType.dragonTail: return "Dragon Tail Accessory";
                 case GearType.glove: return "GLOVES";
-                case GearType.longcoat: return "Outfit";
+                case GearType.longcoat: return "服 (全身) ";
                 case GearType.machineEngine: return "Mechanic Engine";
                 case GearType.machineArms: return "Mechanic Arm";
                 case GearType.machineLegs: return "Mechanic Leg";
