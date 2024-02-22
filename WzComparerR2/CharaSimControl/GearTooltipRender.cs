@@ -290,7 +290,7 @@ namespace WzComparerR2.CharaSimControl
             if (gear.Props.TryGetValue(GearPropType.attackSpeed, out value))
             {
                 g.DrawString("·", GearGraphics.EquipDetailFont, Brushes.White, 8, picHeight);
-                g.DrawString("Attack Speed: " + ItemStringHelper.GetAttackSpeedString(value),
+                g.DrawString("攻撃速度: " + ItemStringHelper.GetAttackSpeedString(value),
                     GearGraphics.EquipDetailFont, Brushes.White, 20, picHeight);
                 picHeight += 16;
                 hasPart2 = true;
@@ -312,7 +312,7 @@ namespace WzComparerR2.CharaSimControl
             bool hasTuc = gear.HasTuc && gear.Props.TryGetValue(GearPropType.tuc, out value);
             if (hasTuc)
             {
-                g.DrawString("Remaining Enhancements: " + value , GearGraphics.EquipDetailFont, Brushes.White, 8, picHeight);
+                g.DrawString("アップグレード可能回数: " + value , GearGraphics.EquipDetailFont, Brushes.White, 8, picHeight);
                 picHeight += 16;
                 hasPart2 = true;
             }
@@ -343,9 +343,9 @@ namespace WzComparerR2.CharaSimControl
                 }
                 picHeight += 2;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                g.DrawString("Hammers Applied", GearGraphics.EquipDetailFont, GearGraphics.GoldHammerBrush, 8, picHeight);
+                g.DrawString("ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, GearGraphics.GoldHammerBrush, 8, picHeight);
                 //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.DrawString(": " + gear.Hammer.ToString() + (gear.Hammer == 2 ? "(MAX)" : null), GearGraphics.TahomaFont, GearGraphics.GoldHammerBrush, 140, picHeight - 2);
+                g.DrawString(": " + gear.Hammer.ToString() + (gear.Hammer == 2 ? "MAX" : null), GearGraphics.EquipDetailFont, GearGraphics.GoldHammerBrush, 140, picHeight - 2);
                 //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
                 picHeight += 14;
                 hasPart2 = true;

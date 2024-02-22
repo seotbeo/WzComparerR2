@@ -192,12 +192,12 @@ namespace WzComparerR2.CharaSimControl
                 gearName += " (" + nameAdd + ")";
             }
 
-            g.DrawImage(Resource.ToolTip_Equip_Dot_0, 9, picH + 5);//GMS Version blue dot in EQUIPMENT
-            format.Alignment = StringAlignment.Near;//GMS Version
+            // g.DrawImage(Resource.ToolTip_Equip_Dot_0, 9, picH + 5);//GMS Version blue dot in EQUIPMENT
+            // format.Alignment = StringAlignment.Near;//GMS Version
             TextRenderer.DrawText(g, gearName, GearGraphics.ItemNameFont2,
                 //GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.ItemID / 10000 == 180), 15, picH, format);//GMS Version
                 //new Point(14, picH), Gear.Cash ? ((SolidBrush)GearGraphics.GearNameBrushB).Color : ((SolidBrush)GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.ItemID / 10000 == 180)).Color, TextFormatFlags.Left | TextFormatFlags.NoPrefix); // Use this line and not above
-                new Point(14, picH), ((SolidBrush)GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.Cash, Gear.ItemID / 10000 == 180)).Color, TextFormatFlags.Left | TextFormatFlags.NoPrefix);
+                new Point(14, picH), ((SolidBrush)GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0, Gear.Cash, Gear.ItemID / 10000 == 180)).Color, TextFormatFlags.NoPrefix);
             picH += 23;
 
             //装备rank
@@ -392,7 +392,7 @@ namespace WzComparerR2.CharaSimControl
 
             //绘制攻击力变化
             format.Alignment = StringAlignment.Far;
-            TextRenderer.DrawText(g, "ATT INCREASE", GearGraphics.EquipDetailFont, new Point(248 - TextRenderer.MeasureText(g, "ATT INCREASE", GearGraphics.EquipDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picH + 10), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+            TextRenderer.DrawText(g, "攻撃力增加量", GearGraphics.EquipDetailFont, new Point(248 - TextRenderer.MeasureText(g, "攻撃力增加量", GearGraphics.EquipDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picH + 10), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
             g.DrawImage(Resource.UIToolTip_img_Item_Equip_Summary_incline_0, 249 - 19, picH + 27); //暂时画个0
 
             //绘制属性需求
@@ -455,7 +455,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Damage Cap", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "ダメージ突破武器", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
                 picH += 16;
             }
 
@@ -507,11 +507,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 if (isWeapon)
                 {
-                    typeStr = "Type: " + typeStr;
+                    typeStr = "武器分類: " + typeStr;
                 }
                 else
                 {
-                    typeStr = "Type: " + typeStr;
+                    typeStr = "アイテム分類: " + typeStr;
                 }
 
                 if (!Gear.Cash && (Gear.IsLeftWeapon(Gear.type) || Gear.type == GearType.katara))
@@ -536,9 +536,9 @@ namespace WzComparerR2.CharaSimControl
             if (!Gear.Cash && value > 0)
             {
                 bool isValidSpeed = (2 <= value && value <= 9);
-                string speedStr = string.Format("Attack Speed: {0}{1}{2}",
+                string speedStr = string.Format("攻撃速度: {0}{1}{2}",
                     ItemStringHelper.GetAttackSpeedString(value),
-                    isValidSpeed ? $" (Stage {10 - value})" : null,
+                    isValidSpeed ? $" ({10 - value}段階)" : null,
                     ShowSpeed ? $" ({value})" : null
                 );
 
@@ -615,7 +615,7 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (hasTuc)
             {
-                GearGraphics.DrawString(g, "Remaining Enhancements: " + value + (Gear.Cash ? "" : "\n#c(Available Recoveries: 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 244, ref picH, 15);
+                GearGraphics.DrawString(g, "アップグレード可能回数: " + value + (Gear.Cash ? "" : "#c(復旧可能: 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 244, ref picH, 15);
                 hasPart2 = true;
             }
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0) //突破上限
@@ -642,7 +642,7 @@ namespace WzComparerR2.CharaSimControl
                 if (Gear.Hammer == 2)
                 {
                     TextRenderer.DrawText(g, "", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                    picH += 15;
+                    picH += 28;
                 }
                 if (Gear.Props.TryGetValue(GearPropType.superiorEqp, out value) && value > 0) //极真
                 {
@@ -666,7 +666,7 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
                 picH += 0;
-                TextRenderer.DrawText(g, "Hammers Applied", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, new Point(11, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 g.DrawString(": " + Gear.Hammer.ToString() + (Gear.Hammer == 2 ? "(MAX)" : null), GearGraphics.EquipDetailFont, Brushes.White, 93, picH + 1);
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
@@ -1500,8 +1500,8 @@ namespace WzComparerR2.CharaSimControl
 
             int reqJob;
             Gear.Props.TryGetValue(GearPropType.reqJob, out reqJob);
-            int[] origin = new int[] { 14, 7, 56, 7, 95, 7, 135, 7, 166, 10, 198, 10 };//翻译改动
-            int[] origin2 = new int[] { 10, 6, 44, 6, 79, 6, 126, 6, 166, 6, 201, 6 };
+            int[] origin = new int[] { 7, 5, 48, 4, 79, 5, 132, 4, 175, 4, 204, 4 };//changed to adapt JMS
+            int[] origin2 = new int[] { 8, 6, 50, 6, 80, 6, 134, 6, 176, 6, 206, 6 };
             for (int i = 0; i <= 5; i++)
             {
                 bool enable;

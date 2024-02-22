@@ -1188,7 +1188,7 @@ namespace WzComparerR2.MapRender
 
         private void SwitchResolution()
         {
-            var r = (Resolution)(((int)this.resolution + 1) % 4);
+            var r = (Resolution)(((int)this.resolution + 1) % 7);
             SwitchResolution(r);
         }
 
@@ -1199,7 +1199,12 @@ namespace WzComparerR2.MapRender
             {
                 case Resolution.Window_800_600:
                 case Resolution.Window_1024_768:
+                case Resolution.Window_1280_720:
                 case Resolution.Window_1366_768:
+                case Resolution.Window_1920_1080:
+                case Resolution.Window_2560_1080:
+                case Resolution.Window_2560_1440:
+                case Resolution.Window_3440_1440:
                     gameWindow.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
                     break;
                 case Resolution.WindowFullScreen:
@@ -1227,8 +1232,13 @@ namespace WzComparerR2.MapRender
         {
             Window_800_600 = 0,
             Window_1024_768 = 1,
-            Window_1366_768 = 2,
-            WindowFullScreen = 3,
+            Window_1280_720 = 2,
+            Window_1366_768 = 3,
+            Window_1920_1080 = 4,
+            Window_2560_1080 = 5,
+            Window_2560_1440 = 6,
+            Window_3440_1440 = 7,
+            WindowFullScreen = 8,
         }
 
         struct ItemRect
