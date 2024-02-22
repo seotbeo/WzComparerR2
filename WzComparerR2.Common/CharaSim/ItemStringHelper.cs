@@ -103,7 +103,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.bdR: return "ボスモンスター攻撃時のダメージ: +" + value + "%";
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "モンスター防御率無視: +" + value + "%";
-                case GearPropType.limitBreak: return "ダメージ上限: " + value.ToString("N0");
+                case GearPropType.limitBreak: return "ダメージ上限: " + (value / 10000).ToString() + "万 " + value.ToString().Substring(value.ToString().Length-4, 4);
                 case GearPropType.reduceReq: return "Required Level: -" + value;
                 case GearPropType.nbdR: return "Damage Against Normal Monsters: +" + value + "%"; //KMST 1069
 

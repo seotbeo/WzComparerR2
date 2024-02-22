@@ -663,10 +663,16 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
                 picH += 0;
-                TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, new Point(11, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.DrawString(": " + Gear.Hammer.ToString() + (Gear.Hammer == 2 ? "(MAX)" : null), GearGraphics.EquipDetailFont, Brushes.White, 93, picH + 1);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+                if (Gear.Hammer < 2)
+                {
+                    TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : " + Gear.Hammer + "/2", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                }
+                else
+                {
+                    TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : MAX", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                }
+                //TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, new Point(11, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                //g.DrawString(": " + Gear.Hammer.ToString() + (Gear.Hammer == 2 ? "(MAX)" : null) + "/2", GearGraphics.EquipDetailFont, Brushes.White, 168, picH);
                 picH += 15;
                 hasPart2 = true;
             }
