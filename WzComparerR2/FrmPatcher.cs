@@ -25,20 +25,21 @@ namespace WzComparerR2
             InitializeComponent();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
+            this.Font = new Font(new FontFamily("Yu Gothic UI"), 9f);
 #endif
             panelEx1.AutoScroll = true;
 
             var settings = WcR2Config.Default.PatcherSettings;
             if (settings.Count <= 0)
             {
-                settings.Add(new PatcherSetting("KMST", "http://maplestory.dn.nexoncdn.co.kr/PatchT/{1:d5}/{0:d5}to{1:d5}.patch"));
                 settings.Add(new PatcherSetting("KMS", "http://maplestory.dn.nexoncdn.co.kr/Patch/{1:d5}/{0:d5}to{1:d5}.patch"));
+                settings.Add(new PatcherSetting("KMST", "http://maplestory.dn.nexoncdn.co.kr/PatchT/{1:d5}/{0:d5}to{1:d5}.patch"));
                 settings.Add(new PatcherSetting("JMS", "http://webdown2.nexon.co.jp/maple/patch/patchdir/{1:d5}/{0:d5}to{1:d5}.patch"));
+                settings.Add(new PatcherSetting("CMS", "http://mxd.clientdown.sdo.com/maplestory/patch/patchdir/{1:d5}/{0:d5}to{1:d5}.patch"));
+                settings.Add(new PatcherSetting("CMS_backup", "http://mxd.clientdown.sdo.com/{1}/MaplePatch{0}to{1}.exe"));
                 settings.Add(new PatcherSetting("GMS", "http://download2.nexon.net/Game/MapleStory/patch/patchdir/{1:d5}/CustomPatch{0}to{1}.exe"));
                 settings.Add(new PatcherSetting("TMS", "http://tw.cdnpatch.maplestory.beanfun.com/maplestory/patch/patchdir/{1:d5}/{0:d5}to{1:d5}.patch"));
                 settings.Add(new PatcherSetting("MSEA", "http://patch.maplesea.com/sea/patch/patchdir/{1:d5}/{0:d5}to{1:d5}.patch"));
-                settings.Add(new PatcherSetting("CMS", "http://mxd.clientdown.sdo.com/maplestory/patch/patchdir/{1:d5}/{0:d5}to{1:d5}.patch"));
             }
 
             foreach (PatcherSetting p in settings)
@@ -146,8 +147,8 @@ namespace WzComparerR2
         private void buttonXOpen1_Click(object sender, EventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Title = "Select Patch File";
-            dlg.Filter = "Patch File (*.patch;*.exe)|*.patch;*.exe";
+            dlg.Title = "パッチファイルの選択";
+            dlg.Filter = "パッチファイル (*.patch;*.exe)|*.patch;*.exe";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 txtPatchFile.Text = dlg.FileName;
@@ -157,7 +158,7 @@ namespace WzComparerR2
         private void buttonXOpen2_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Please select your MapleStory folder.";
+            dlg.Description = "メイプルストーリーのインストール ディレクトリを選択してください。";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 txtMSFolder.Text = dlg.SelectedPath;
@@ -176,7 +177,7 @@ namespace WzComparerR2
                 }
                 else
                 {
-                    MessageBoxEx.Show("The patch is already in progress.");
+                    MessageBoxEx.Show("パッチはすでに進行中です。");
                     return;
                 }
             }
@@ -184,7 +185,7 @@ namespace WzComparerR2
             if (chkCompare.Checked)
             {
                 FolderBrowserDialog dlg = new FolderBrowserDialog();
-                dlg.Description = "Please select the destination folder for the comparison results.";
+                dlg.Description = "比較結果の保存先フォルダーを選択してください。";
                 if (dlg.ShowDialog() != DialogResult.OK)
                 {
                     return;
@@ -227,24 +228,24 @@ namespace WzComparerR2
             {
                 patcher = new WzPatcher(patchFile);
                 patcher.PatchingStateChanged += new EventHandler<PatchingEventArgs>(patcher_PatchingStateChanged);
-                AppendStateText($"Patch file name: {patchFile}\r\n");
-                AppendStateText("Analyzing the patch...");
+                AppendStateText($"パッチファイル名: {patchFile}\r\n");
+                AppendStateText("パッチを分析中...");
                 patcher.OpenDecompress();
-                AppendStateText("Completed\r\n");
+                AppendStateText("完了\r\n");
                 //if (prePatch)
                 {
-                    AppendStateText("Preparing the patch... \r\n");
+                    AppendStateText("パッチを準備中... \r\n");
                     long decompressedSize = patcher.PrePatch();
                     if (patcher.IsKMST1125Format.Value)
                     {
-                        AppendStateText("Patch size: KMST1125\r\n");
+                        AppendStateText("パッチのサイズ: KMST1125\r\n");
                         if (patcher.OldFileHash != null)
                         {
-                            AppendStateText($"Number of files to check checksum pre-patch: {patcher.OldFileHash.Count}\r\n");
+                            AppendStateText($"パッチ前のチェックサムをチェックするファイルの数: {patcher.OldFileHash.Count}\r\n");
                         }
                     }
-                    AppendStateText(string.Format("Patch size: {0:N0} bytes...\r\n", decompressedSize));
-                    AppendStateText(string.Format("Number of files to patch: {0}...\r\n",
+                    AppendStateText(string.Format("パッチサイズ: {0:N0} バイト...\r\n", decompressedSize));
+                    AppendStateText(string.Format("パッチを適用するファイルの数: {0}...\r\n",
                         patcher.PatchParts == null ? -1 : patcher.PatchParts.Count));
                     txtNotice.Text = patcher.NoticeText;
                     foreach (PatchPartContext part in patcher.PatchParts)
@@ -299,13 +300,13 @@ namespace WzComparerR2
                     {
                     }
                 }
-                AppendStateText("Completed\r\n");
+                AppendStateText("完了\r\n");
                 TimeSpan interval = DateTime.Now - time;
-                MessageBoxEx.Show(this, "Patch Completed " + interval.ToString(), "Patcher");
+                MessageBoxEx.Show(this, "パッチ完了 " + interval.ToString(), "Patcher");
             }
             catch (ThreadAbortException)
             {
-                MessageBoxEx.Show("The patch has been canceled.", "Patcher");
+                MessageBoxEx.Show("パッチは中止されました。", "Patcher");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -366,23 +367,23 @@ namespace WzComparerR2
             switch (e.State)
             {
                 case PatchingState.PatchStart:
-                    AppendStateText("[" + e.Part.FileName + "] Patching\r\n");
+                    AppendStateText("[" + e.Part.FileName + "] パッチ適用中\r\n");
                     break;
                 case PatchingState.VerifyOldChecksumBegin:
-                    AppendStateText("  Checking pre-patch checksum...");
+                    AppendStateText("  パッチ前のチェックサムを確認中...");
                     progressBarX1.Maximum = (int)e.Part.OldFileLength;
                     break;
                 case PatchingState.VerifyOldChecksumEnd:
-                    AppendStateText("  Completed\r\n");
+                    AppendStateText("  完了\r\n");
                     break;
                 case PatchingState.VerifyNewChecksumBegin:
-                    AppendStateText("  Checking post-patch checksum...");
+                    AppendStateText("  パッチ後のチェックサムを確認中...");
                     break;
                 case PatchingState.VerifyNewChecksumEnd:
-                    AppendStateText("  Completed\r\n");
+                    AppendStateText("  完了\r\n");
                     break;
                 case PatchingState.TempFileCreated:
-                    AppendStateText("  Creating temporary files...\r\n");
+                    AppendStateText("  一時ファイルの作成中...\r\n");
                     progressBarX1.Maximum = e.Part.NewFileLength;
                     break;
                 case PatchingState.TempFileBuildProcessChanged:
@@ -390,7 +391,7 @@ namespace WzComparerR2
                     progressBarX1.Text = string.Format("{0:N0}/{1:N0}", e.CurrentFileLength, e.Part.NewFileLength);
                     break;
                 case PatchingState.TempFileClosed:
-                    AppendStateText("  Completed creating temporary files...\r\n");
+                    AppendStateText("  一時ファイルが作成されました。\r\n");
                     progressBarX1.Value = 0;
                     progressBarX1.Maximum = 0;
                     progressBarX1.Text = string.Empty;
@@ -509,7 +510,7 @@ namespace WzComparerR2
                             {
                                 ((WzPatcher)sender).SafeMove(part.TempFilePath, part.OldFilePath);
                             }
-                            AppendStateText("  Applying files...\r\n");
+                            AppendStateText("  ファイルを適用しています...\r\n");
                         }
                     }
 
@@ -518,12 +519,12 @@ namespace WzComparerR2
                         if (patcher.IsKMST1125Format.Value)
                         {
                             // TODO: we should build the file dependency tree to make sure all old files could be overridden safely.
-                            AppendStateText("  (즉시 패치) 파일 적용 연기...\r\n");
+                            AppendStateText("  (即時パッチ)ファイル適用の延期...\r\n");
                         }
                         else
                         {
                             patcher.SafeMove(e.Part.TempFilePath, e.Part.OldFilePath);
-                            AppendStateText("  (즉시 패치) Applying files...\r\n");
+                            AppendStateText("  (即時パッチ)ファイルを適用しています...\r\n");
                         }
                     }
                     break;
@@ -540,13 +541,13 @@ namespace WzComparerR2
                     progressBarX1.Text = string.Empty;
                     break;
                 case PatchingState.PrepareVerifyOldChecksumBegin:
-                    AppendStateText($"Checking the pre-patch checksum: {e.Part.FileName}");
+                    AppendStateText($"パッチ前のチェックサムを確認中: {e.Part.FileName}");
                     break;
                 case PatchingState.PrepareVerifyOldChecksumEnd:
-                    AppendStateText(" Completed\r\n");
+                    AppendStateText(" 完了\r\n");
                     break;
                 case PatchingState.ApplyFile:
-                    AppendStateText($"Applying files: {e.Part.FileName}\r\n");
+                    AppendStateText($"ファイルの適用: {e.Part.FileName}\r\n");
                     break;
             }
         }
@@ -587,8 +588,8 @@ namespace WzComparerR2
         private void buttonXOpen3_Click(object sender, EventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Title = "Select Patch File";
-            dlg.Filter = "Patch File (*.patch;*.exe)|*.patch;*.exe";
+            dlg.Title = "パッチファイルの選択";
+            dlg.Filter = "パッチファイル (*.patch;*.exe)|*.patch;*.exe";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 txtPatchFile2.Text = dlg.FileName;
@@ -598,7 +599,7 @@ namespace WzComparerR2
         private void buttonXOpen4_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Please select your MapleStory folder.";
+            dlg.Description = "メイプルストーリーフォルダーを選択してください。";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 txtMSFolder2.Text = dlg.SelectedPath;
@@ -607,11 +608,11 @@ namespace WzComparerR2
 
         private void buttonXCreate_Click(object sender, EventArgs e)
         {
-            MessageBoxEx.Show(@"> This feature is incomplete and requires more testing...
-> Since this is still incomplete, only select the patch file. The .exe patch is not supported right now.
-> It will not check the client version, so please check it yourself before you start.
-> File block filtering or file missing prompts are not available for the time being.
-> It will generate a large file due to no optimization. However, it is guaranteed that the file is complete.", "Notice");
+            MessageBoxEx.Show(@"> この機能は不完全なため、さらなるテストが必要です...
+> まだ不完全なのでパッチファイルのみ選択してください。 .exe パッチは現在サポートされていません。
+> クライアントのバージョンは確認されませんので、開始する前に自分で確認してください。
+> ファイル ブロック フィルタリングまたはファイル欠落プロンプトは、当面は利用できません。
+> 最適化がないため、大きなファイルが生成されます。 ただし、ファイルが完全であることは保証されています。", "通知");
 
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.Filter = "Patch File (*.patch)|*.patch";

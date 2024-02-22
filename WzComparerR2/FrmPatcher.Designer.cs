@@ -174,7 +174,7 @@
             this.buttonXPatch.Size = new System.Drawing.Size(40, 25);
             this.buttonXPatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXPatch.TabIndex = 8;
-            this.buttonXPatch.Text = "Patch";
+            this.buttonXPatch.Text = "パッチ";
             this.buttonXPatch.Click += new System.EventHandler(this.buttonXPatch_Click);
             // 
             // chkDeadPatch
@@ -185,13 +185,13 @@
             // 
             // 
             this.chkDeadPatch.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkDeadPatch.Location = new System.Drawing.Point(81, 87);
+            this.chkDeadPatch.Location = new System.Drawing.Point(90, 87);
             this.chkDeadPatch.Name = "chkDeadPatch";
             this.chkDeadPatch.Size = new System.Drawing.Size(82, 16);
             this.chkDeadPatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("Dead Patch", "", "After launching, and after updating each file, the temporary files will be overwritten with the original files. By doing this it will reduce the file required space, but may cause problems.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(200, 140)));
+            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("即時パッチ", "", "起動後、各ファイルを更新した後、一時ファイルは元のファイルで上書きされます。 これを行うと、ファイルに必要なスペースが減りますが、問題が発生する可能性があります。", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(200, 140)));
             this.chkDeadPatch.TabIndex = 7;
-            this.chkDeadPatch.Text = "Dead Patch";
+            this.chkDeadPatch.Text = "即時パッチ";
             // 
             // chkPrePatch
             // 
@@ -205,9 +205,9 @@
             this.chkPrePatch.Name = "chkPrePatch";
             this.chkPrePatch.Size = new System.Drawing.Size(76, 16);
             this.chkPrePatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkPrePatch, new DevComponents.DotNetBar.SuperTooltipInfo("Prepatch", "", "Preload will start before opening the launcher and before patching. Once the preload is finished, you may freely choose your necessary files to renew or change the order of the files that require patching. Once finished choosing, please click on the Patch button to start the renewal process.", null, null, DevComponents.DotNetBar.eTooltipColor.Default, true, false, new System.Drawing.Size(200, 200)));
+            this.superTooltip1.SetSuperTooltip(this.chkPrePatch, new DevComponents.DotNetBar.SuperTooltipInfo("プリロードパッチ", "", "プリロードはランチャーを開く前とパッチ適用前に開始されます。 プリロードが完了したら、必要なファイルを自由に選択して更新したり、パッチが必要なファイルの順序を変更したりできます。 選択が完了したら、「パッチ」ボタンをクリックしてパッチ適用プロセスを開始してください。", null, null, DevComponents.DotNetBar.eTooltipColor.Default, true, false, new System.Drawing.Size(200, 200)));
             this.chkPrePatch.TabIndex = 6;
-            this.chkPrePatch.Text = "Prepatch";
+            this.chkPrePatch.Text = "プリロードパッチ";
             // 
             // buttonXOpen2
             // 
@@ -219,7 +219,7 @@
             this.buttonXOpen2.Size = new System.Drawing.Size(33, 21);
             this.buttonXOpen2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXOpen2.TabIndex = 4;
-            this.buttonXOpen2.Text = "Open";
+            this.buttonXOpen2.Text = "開く";
             this.buttonXOpen2.Click += new System.EventHandler(this.buttonXOpen2_Click);
             // 
             // txtMSFolder
@@ -248,7 +248,7 @@
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(62, 16);
             this.labelX2.TabIndex = 5;
-            this.labelX2.Text = "MS Folder";
+            this.labelX2.Text = "メイプルフォルダ";
             // 
             // buttonXOpen1
             // 
@@ -260,7 +260,7 @@
             this.buttonXOpen1.Size = new System.Drawing.Size(33, 21);
             this.buttonXOpen1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXOpen1.TabIndex = 1;
-            this.buttonXOpen1.Text = "Open";
+            this.buttonXOpen1.Text = "開く";
             this.buttonXOpen1.Click += new System.EventHandler(this.buttonXOpen1_Click);
             // 
             // txtPatchFile
@@ -289,7 +289,7 @@
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(62, 16);
             this.labelX1.TabIndex = 2;
-            this.labelX1.Text = "Patch File";
+            this.labelX1.Text = "パッチファイル";
             // 
             // expandablePanel1
             // 
@@ -321,7 +321,7 @@
             this.expandablePanel1.TitleStyle.BorderColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandablePanel1.TitleStyle.ForeColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
             this.expandablePanel1.TitleStyle.GradientAngle = 90;
-            this.expandablePanel1.TitleText = "Patch File Download";
+            this.expandablePanel1.TitleText = "パッチファイルのダウンロード";
             // 
             // buttonXCheck
             // 
@@ -330,10 +330,10 @@
             this.buttonXCheck.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.buttonXCheck.Location = new System.Drawing.Point(322, 61);
             this.buttonXCheck.Name = "buttonXCheck";
-            this.buttonXCheck.Size = new System.Drawing.Size(47, 23);
+            this.buttonXCheck.Size = new System.Drawing.Size(55, 23);
             this.buttonXCheck.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXCheck.TabIndex = 4;
-            this.buttonXCheck.Text = "Confirm";
+            this.buttonXCheck.Text = "検査する";
             this.buttonXCheck.Click += new System.EventHandler(this.buttonXCheck_Click);
             // 
             // expandablePanel2
@@ -378,7 +378,7 @@
             this.expandablePanel2.TitleStyle.BorderColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandablePanel2.TitleStyle.ForeColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
             this.expandablePanel2.TitleStyle.GradientAngle = 90;
-            this.expandablePanel2.TitleText = "Manual Patcher";
+            this.expandablePanel2.TitleText = "手動パッチャー";
             // 
             // chkEnableDarkMode
             // 
@@ -394,7 +394,7 @@
             this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("Enable Dark Mode", "", "Outputs the comparison with dark mode HTML.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 70)));
             this.chkEnableDarkMode.TabIndex = 14;
-            this.chkEnableDarkMode.Text = "Enable Dark Mode";
+            this.chkEnableDarkMode.Text = "ダークモード";
             // 
             // chkOutputRemovedImg
             // 
@@ -771,7 +771,7 @@
             this.expandablePanel3.TitleStyle.BorderColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBorder;
             this.expandablePanel3.TitleStyle.ForeColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
             this.expandablePanel3.TitleStyle.GradientAngle = 90;
-            this.expandablePanel3.TitleText = "Reverse Patcher";
+            this.expandablePanel3.TitleText = "逆パッチャー";
             // 
             // buttonXCreate
             // 
@@ -783,7 +783,7 @@
             this.buttonXCreate.Size = new System.Drawing.Size(48, 21);
             this.buttonXCreate.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXCreate.TabIndex = 12;
-            this.buttonXCreate.Text = "Create";
+            this.buttonXCreate.Text = "作成";
             this.buttonXCreate.Click += new System.EventHandler(this.buttonXCreate_Click);
             // 
             // txtPatchFile2
@@ -810,7 +810,7 @@
             this.buttonXOpen4.Size = new System.Drawing.Size(33, 21);
             this.buttonXOpen4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXOpen4.TabIndex = 10;
-            this.buttonXOpen4.Text = "Open";
+            this.buttonXOpen4.Text = "開く";
             this.buttonXOpen4.Click += new System.EventHandler(this.buttonXOpen4_Click);
             // 
             // buttonXOpen3
@@ -823,7 +823,7 @@
             this.buttonXOpen3.Size = new System.Drawing.Size(33, 21);
             this.buttonXOpen3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonXOpen3.TabIndex = 7;
-            this.buttonXOpen3.Text = "Open";
+            this.buttonXOpen3.Text = "開く";
             this.buttonXOpen3.Click += new System.EventHandler(this.buttonXOpen3_Click);
             // 
             // txtMSFolder2
@@ -852,7 +852,7 @@
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(62, 16);
             this.labelX4.TabIndex = 11;
-            this.labelX4.Text = "MS Folder";
+            this.labelX4.Text = "メイプルフォルダ";
             // 
             // labelX5
             // 
@@ -866,7 +866,7 @@
             this.labelX5.Name = "labelX5";
             this.labelX5.Size = new System.Drawing.Size(62, 16);
             this.labelX5.TabIndex = 8;
-            this.labelX5.Text = "Patch File";
+            this.labelX5.Text = "パッチファイル";
             // 
             // labelX3
             // 
@@ -880,7 +880,7 @@
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(285, 18);
             this.labelX3.TabIndex = 1;
-            this.labelX3.Text = "This feature is unstable. Use this with caution!";
+            this.labelX3.Text = "この機能は不安定です。これは注意して使用してください。";
             // 
             // superTooltip1
             // 
