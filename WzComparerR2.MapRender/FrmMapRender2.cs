@@ -1188,7 +1188,7 @@ namespace WzComparerR2.MapRender
 
         private void SwitchResolution()
         {
-            var r = (Resolution)(((int)this.resolution + 1) % 7);
+            var r = (Resolution)(((int)this.resolution + 1) % 9);
             SwitchResolution(r);
         }
 

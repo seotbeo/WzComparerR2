@@ -161,9 +161,9 @@ namespace WzComparerR2.CharaSimControl
             //绘制desc
             picH = 35;
             if (Skill.HyperStat)
-                GearGraphics.DrawString(g, "[最大レベル : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "[最大レベル：" + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
             else if (!Skill.PreBBSkill)
-                GearGraphics.DrawString(g, "[マスターレベル : " + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont, region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "[マスターレベル：" + Skill.MaxLevel + "]", GearGraphics.ItemDetailFont, region.SkillDescLeft, region.TextRight, ref picH, 16);
 
             if (sr.Desc != null)
             {
@@ -174,7 +174,7 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.TimeLimited)
             {
                 DateTime time = DateTime.Now.AddDays(7d);
-                string expireStr = time.ToString("有効期間：yyyy年 M月 d日 HH時 mm分");
+                string expireStr = time.ToString("有効期間: yyyy年 M月 d日 HH時 mm分");
                 GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.RelationSkill != null)
@@ -186,7 +186,7 @@ namespace WzComparerR2.CharaSimControl
                     sr2.Name = "(null)";
                 }
                 DateTime time = DateTime.Now.AddMinutes(Skill.RelationSkill.Item2);
-                string expireStr = time.ToString("有効期間：yyyy年 M月 d日 H時 m分");
+                string expireStr = time.ToString("有効期間: yyyy年 M月 d日 H時 m分");
                 GearGraphics.DrawString(g, "#c" + sr2.Name + "の " + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.IsPetAutoBuff)

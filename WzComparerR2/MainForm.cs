@@ -37,7 +37,7 @@ namespace WzComparerR2
             InitializeComponent();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
+            this.Font = new Font(new FontFamily("Yu Gothic UI"), 8f);
 #endif
             Form.CheckForIllegalCrossThreadCalls = false;
             this.MinimumSize = new Size(600, 450);
@@ -2905,7 +2905,7 @@ namespace WzComparerR2
 
             if (item != null)
             {
-                GearGraphics.SetFontFamily("Arial");
+                GearGraphics.SetFontFamily("MS Gothic");
                 ConfigManager.Reload();
                 CharaSimConfig.Default.SelectedFontIndex = comboBoxItemLanguage.SelectedIndex;
                 ConfigManager.Save();

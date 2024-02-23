@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;net6.0</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <AssemblyName>WzComparerR2.WzLib</AssemblyName>
     <RootNamespace>WzComparerR2.WzLib</RootNamespace>
     <IsPublishable>false</IsPublishable>
