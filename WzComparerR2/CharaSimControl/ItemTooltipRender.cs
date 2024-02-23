@@ -72,7 +72,7 @@ namespace WzComparerR2.CharaSimControl
             string attr = GetItemAttributeString();
             if (!string.IsNullOrEmpty(attr))
             {
-                g.DrawString(attr, GearGraphics.ItemDetailFont, GearGraphics.OrangeBrush4, 145, picHeight, format);
+                g.DrawString(attr, GearGraphics.ItemDetailFont, GearGraphics.GearNameBrushC, 145, picHeight, format);
                 iconY += 19;
             }
 
