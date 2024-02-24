@@ -69,8 +69,8 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incINTr: return "INT : " + sign + value + "%";
                 case GearPropType.incLUK: return "LUK : " + sign + value;
                 case GearPropType.incLUKr: return "LUK : " + sign + value + "%";
-                case GearPropType.incAllStat: return "All Stats: " + sign + value;
-                case GearPropType.statR: return "All Stats: " + sign + value + "%";
+                case GearPropType.incAllStat: return "Allｽﾃｰﾀｽ: " + sign + value;
+                case GearPropType.statR: return "Allｽﾃｰﾀｽ: " + sign + value + "%";
                 case GearPropType.incMHP: return "最大HP : " + sign + value;
                 case GearPropType.incMHPr: return "最大HP : " + sign + value + "%";
                 case GearPropType.incMMP: return "最大MP : " + sign + value;
@@ -104,16 +104,16 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "モンスター防御率無視: +" + value + "%";
                 case GearPropType.limitBreak: return "ダメージ上限: " + (value / 10000).ToString() + "万 " + value.ToString().Substring(value.ToString().Length-4, 4);
-                case GearPropType.reduceReq: return "Required Level: -" + value;
-                case GearPropType.nbdR: return "Damage Against Normal Monsters: +" + value + "%"; //KMST 1069
+                case GearPropType.reduceReq: return "装着レベル減少： - " + value;
+                case GearPropType.nbdR: return "一般モンスター攻撃時のダメージ: +" + value + "%"; //KMST 1069
 
-                case GearPropType.only: return value == 0 ? null : "One-of-a-kind Item";
+                case GearPropType.only: return value == 0 ? null : "固有ｱｲﾃﾑ";
                 case GearPropType.tradeBlock: return value == 0 ? null : "交換不可";
-                case GearPropType.equipTradeBlock: return value == 0 ? null : "装着時交換不可";
+                case GearPropType.equipTradeBlock: return value == 0 ? null : "装着すると交換不可";
                 case GearPropType.accountSharable: return value == 0 ? null : "Account-bound. Transferable within world."; //v218 Transferable within world
                 case GearPropType.sharableOnce: return value == 0 ? null : "Tradable once within the same world.\n(Cannot be traded after transfer)"; //old "Can be traded once within account"
-                case GearPropType.onlyEquip: return value == 0 ? null : "Unique Equipped Item";
-                case GearPropType.notExtend: return value == 0 ? null : "Duration cannot be extended.";
+                case GearPropType.onlyEquip: return value == 0 ? null : "固有装備アイテム";
+                case GearPropType.notExtend: return value == 0 ? null : "有効期限延長不可";
                 case GearPropType.tradeAvailable:
                     switch (value)
                     {
@@ -128,12 +128,12 @@ namespace WzComparerR2.CharaSim
                         default: return null;
                     }
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
-                case GearPropType.fixedPotential: return value == 0 ? null : "Potential Reset Not Allowed";
-                case GearPropType.superiorEqp: return value == 0 ? null : "Allows you to gain even higher stats with successful item enhancement.";
+                case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力設定不可";
+                case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を得ることができます。";
                 case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item.#";
-                case GearPropType.jokerToSetItem: return value == 0 ? null : "\n#cThis lucky item counts towards any set,\n\rso long as you have at least 3 set pieces equipped!#";//\n\r#cThis lucky...
+                case GearPropType.jokerToSetItem: return value == 0 ? null : "\n#c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
                 case GearPropType.plusToSetItem: return value == 0 ? null : "#cWhen equipped, the item set will count as having equipped two.#";
-                case GearPropType.abilityTimeLimited: return value == 0 ? null : "Limited Time Stats";
+                case GearPropType.abilityTimeLimited: return value == 0 ? null : "期間限定能力値";
                 case GearPropType.blockGoldHammer: return value == 0 ? null : "Golden Hammer cannot be used.";
                 case GearPropType.colorvar: return value == 0 ? null : "#cThis item can be dyed using a Dye.#";
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
@@ -144,14 +144,14 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incMHP_incMMP: return "MaxHP / MaxMP: " + sign + value;
                 case GearPropType.incMHPr_incMMPr: return "MaxHP / MaxMP: " + sign + value + "%";
                 case GearPropType.incPAD_incMAD:
-                case GearPropType.incAD: return "Attack Power && Magic ATT: " + sign + value;
+                case GearPropType.incAD: return "攻撃力 / 魔力: " + sign + value;
                 case GearPropType.incPDD_incMDD: return "Defense: " + sign + value;
                 //case GearPropType.incACC_incEVA: return "ACC/AVO :" + sign + value;
 
                 case GearPropType.incARC: return "ARC : " + sign + value;
                 case GearPropType.incAUT: return "AUT : " + sign + value;
 
-                case GearPropType.Etuc: return "Exceptional Enhancement is possible.  (Max" + "\ntime(s):  " + value + ")";
+                case GearPropType.Etuc: return "エクセプショナル強化かできます。 (最大:  " + value + "回)";
                 default: return null;
             }
         }
@@ -231,144 +231,144 @@ namespace WzComparerR2.CharaSim
                 case GearType.hair:
                 case GearType.hair2:
                 case GearType.hair3: return "Hair";
-                case GearType.faceAccessory: return "FACE ACCESSORY";
-                case GearType.eyeAccessory: return "EYE ACCESSORY";
-                case GearType.earrings: return "EARRINGS";
-                case GearType.pendant: return "PENDANT";
-                case GearType.belt: return "BELT";
-                case GearType.medal: return "MEDAL";
-                case GearType.shoulderPad: return "SHOULDER";
-                case GearType.cap: return "Hat";
-                case GearType.cape: return "Cape";
-                case GearType.coat: return "Top";
-                case GearType.dragonMask: return "Dragon Hat";
-                case GearType.dragonPendant: return "Dragon Pendant";
-                case GearType.dragonWings: return "Dragon Wing Accessory";
-                case GearType.dragonTail: return "Dragon Tail Accessory";
-                case GearType.glove: return "GLOVES";
+                case GearType.faceAccessory: return "顔の飾り";
+                case GearType.eyeAccessory: return "目の飾り";
+                case GearType.earrings: return "イヤリング";
+                case GearType.pendant: return "ペンダント";
+                case GearType.belt: return "ベルト";
+                case GearType.medal: return "勲章";
+                case GearType.shoulderPad: return "肩飾り";
+                case GearType.cap: return "帽子";
+                case GearType.cape: return "マント";
+                case GearType.coat: return "服 (上) ";
+                case GearType.dragonMask: return "ドラゴン帽子";
+                case GearType.dragonPendant: return "ドラゴンペンダント";
+                case GearType.dragonWings: return "ドラゴン羽飾り";
+                case GearType.dragonTail: return "ドラゴンしっぽ飾り";
+                case GearType.glove: return "手袋";
                 case GearType.longcoat: return "服 (全身) ";
-                case GearType.machineEngine: return "Mechanic Engine";
-                case GearType.machineArms: return "Mechanic Arm";
+                case GearType.machineEngine: return "メカニックエンジン";
+                case GearType.machineArms: return "メカニックアーム";
                 case GearType.machineLegs: return "Mechanic Leg";
                 case GearType.machineBody: return "Mechanic Frame";
                 case GearType.machineTransistors: return "Mechanic Transistor";
-                case GearType.pants: return "Bottom";
-                case GearType.ring: return "RING";
-                case GearType.shield: return "Shield";
-                case GearType.shoes: return "Shoes";
-                case GearType.shiningRod: return "Shining Rod";
-                case GearType.soulShooter: return "Soul Shooter";
-                case GearType.ohSword: return "One-handed Sword";
-                case GearType.ohAxe: return "One-handed Axe";
-                case GearType.ohBlunt: return "One-handed Blunt Weapon";
-                case GearType.dagger: return "Dagger";
-                case GearType.katara: return "Katara";
-                case GearType.magicArrow: return "Magic Arrow";
-                case GearType.card: return "Card";
-                case GearType.box: return "Core";
-                case GearType.orb: return "Orb";
-                case GearType.novaMarrow: return "Dragon Essence";
-                case GearType.soulBangle: return "Soul Ring";
-                case GearType.mailin: return "Magnum";
-                case GearType.cane: return "Cane";
-                case GearType.wand: return "Wand";
-                case GearType.staff: return "Staff";
-                case GearType.thSword: return "Two-handed Sword";
-                case GearType.thAxe: return "Two-handed Axe";
-                case GearType.thBlunt: return "Two-handed Blunt Weapon";
-                case GearType.spear: return "Spear";
-                case GearType.polearm: return "Polearm";
-                case GearType.bow: return "Bow";
-                case GearType.crossbow: return "Crossbow";
-                case GearType.throwingGlove: return "Claw";
-                case GearType.knuckle: return "Knuckle";
-                case GearType.gun: return "Gun";
-                case GearType.android: return "ANDROID";
-                case GearType.machineHeart: return "MECHANICAL HEART";
+                case GearType.pants: return "服 (下) ";
+                case GearType.ring: return "指輪";
+                case GearType.shield: return "盾";
+                case GearType.shoes: return "靴";
+                case GearType.shiningRod: return "シャイニングロッド (片手武器)";
+                case GearType.soulShooter: return "ソウルシューター (片手武器)";
+                case GearType.ohSword: return "片手剣 (片手武器)";
+                case GearType.ohAxe: return "片手斧 (片手武器)";
+                case GearType.ohBlunt: return "片手鈍器 (片手武器)";
+                case GearType.dagger: return "短剣 (片手武器)";
+                case GearType.katara: return "ブレイド";
+                case GearType.magicArrow: return "魔法矢";
+                case GearType.card: return "カード";
+                case GearType.box: return "コア";
+                case GearType.orb: return "オーブ";
+                case GearType.novaMarrow: return "ノヴァの精髄";
+                case GearType.soulBangle: return "ソウルリング";
+                case GearType.mailin: return "マグナム";
+                case GearType.cane: return "ケイン (片手武器)";
+                case GearType.wand: return "ワンド (片手武器)";
+                case GearType.staff: return "スタッフ (片手武器)";
+                case GearType.thSword: return "両手剣 (両手武器)";
+                case GearType.thAxe: return "両手斧 (両手武器)";
+                case GearType.thBlunt: return "両手鈍器 (両手武器)";
+                case GearType.spear: return "槍 (両手武器)";
+                case GearType.polearm: return "鉾 (両手武器)";
+                case GearType.bow: return "弓 (両手武器)";
+                case GearType.crossbow: return "弩 (両手武器)";
+                case GearType.throwingGlove: return "篭手 (両手武器)";
+                case GearType.knuckle: return "ナックル (両手武器)";
+                case GearType.gun: return "銃 (両手武器)";
+                case GearType.android: return "アンドロイド";
+                case GearType.machineHeart: return "機械心臓部";
                 case GearType.pickaxe: return "Mining Tool";
                 case GearType.shovel: return "Herbalism Tool";
-                case GearType.pocket: return "POCKET ITEM";
-                case GearType.dualBow: return "Dual Bowguns";
-                case GearType.handCannon: return "Hand Cannon";
-                case GearType.badge: return "BADGE";
-                case GearType.emblem: return "EMBLEM";
-                case GearType.soulShield: return "Soul Shield";
-                case GearType.demonShield: return "Demon Aegis";
+                case GearType.pocket: return "ポケットアイテム";
+                case GearType.dualBow: return "デュアルボウガン (両手武器)";
+                case GearType.handCannon: return "ハンドキャノン (両手武器)";
+                case GearType.badge: return "バッジ";
+                case GearType.emblem: return "エンブレム";
+                case GearType.soulShield: return "ソウルシールド";
+                case GearType.demonShield: return "フォースシールド";
                 //case GearType.totem: return "Totem";
-                case GearType.petEquip: return "Pet Equipment";
+                case GearType.petEquip: return "ペット装備";
                 case GearType.taming:
                 case GearType.taming2:
                 case GearType.taming3: 
                 case GearType.tamingChair: return "TAMED MONSTER";
-                case GearType.saddle: return "Saddle";
-                case GearType.katana: return "Katana";
-                case GearType.fan: return "Fan";
-                case GearType.swordZB: return "Heavy Sword";
-                case GearType.swordZL: return "Long Sword";
-                case GearType.weapon: return "Weapon";
-                case GearType.subWeapon: return "Secondary Weapon";
-                case GearType.heroMedal: return "Medallions";
-                case GearType.rosario: return "Rosary";
-                case GearType.chain: return "Iron Chain";
+                case GearType.saddle: return "鞍";
+                case GearType.katana: return "刀 (両手武器)";
+                case GearType.fan: return "扇 (両手武器)";
+                case GearType.swordZB: return "大剣 (両手武器)";
+                case GearType.swordZL: return "太刀 (両手武器)";
+                case GearType.weapon: return "武器";
+                case GearType.subWeapon: return "補助武器";
+                case GearType.heroMedal: return "メダル";
+                case GearType.rosario: return "ロザリオ";
+                case GearType.chain: return "チェーン";
                 case GearType.book1:
                 case GearType.book2:
-                case GearType.book3: return "Magic Book";
-                case GearType.bowMasterFeather: return "Arrow Fletching";
-                case GearType.crossBowThimble: return "Bow Thimble";
-                case GearType.shadowerSheath: return "Dagger Scabbard";
-                case GearType.nightLordPoutch: return "Charm";
-                case GearType.viperWristband: return "Wrist Band";
-                case GearType.captainSight: return "Far Sight";
+                case GearType.book3: return "魔導書";
+                case GearType.bowMasterFeather: return "矢羽根";
+                case GearType.crossBowThimble: return "弓用指貫";
+                case GearType.shadowerSheath: return "短剣用鞘";
+                case GearType.nightLordPoutch: return "お守り";
+                case GearType.viperWristband: return "リストバンド";
+                case GearType.captainSight: return "照準器";
                 case GearType.cannonGunPowder:
-                case GearType.cannonGunPowder2: return "Powder Keg";
-                case GearType.aranPendulum: return "Mass";
-                case GearType.evanPaper: return "Document";
-                case GearType.battlemageBall: return "Magic Marble";
-                case GearType.wildHunterArrowHead: return "Arrowhead";
-                case GearType.cygnusGem: return "Jewel";
-                case GearType.controller: return "Controller";
-                case GearType.foxPearl: return "Fox Marble";
-                case GearType.chess: return "Chess Piece";
-                case GearType.powerSource: return "Power Source";
+                case GearType.cannonGunPowder2: return "火薬";
+                case GearType.aranPendulum: return "錘";
+                case GearType.evanPaper: return "文書";
+                case GearType.battlemageBall: return "魔法玉";
+                case GearType.wildHunterArrowHead: return "矢じり";
+                case GearType.cygnusGem: return "宝石";
+                case GearType.controller: return "コントローラー";
+                case GearType.foxPearl: return "狐玉";
+                case GearType.chess: return "チェスピース";
+                case GearType.powerSource: return "パワーソース";
 
-                case GearType.energySword: return "Whip Blade";
-                case GearType.desperado: return "Desperado";
+                case GearType.energySword: return "エナジーソード (片手武器)";
+                case GearType.desperado: return "デスペラード (片手武器)";
                 case GearType.magicStick: return "メモリアルスタッフ (片手武器)";
                 case GearType.whistle:
-                case GearType.whistle2: return "Leaf";
-                case GearType.boxingClaw: return "Fist";
+                case GearType.whistle2: return "ホイッスル/葉";
+                case GearType.boxingClaw: return "フィスト";
                 case GearType.kodachi:
-                case GearType.kodachi2: return "Kodachi";
-                case GearType.espLimiter: return "Psy-limiter";
+                case GearType.kodachi2: return "小太刀";
+                case GearType.espLimiter: return "ESPリミッター (片手武器)";
 
-                case GearType.GauntletBuster: return "Arm Cannon";
-                case GearType.ExplosivePill: return "Charge";
+                case GearType.GauntletBuster: return "ｶﾞﾝﾄﾚｯﾄﾘﾎﾞﾙﾊﾞｰ (両手武器)";
+                case GearType.ExplosivePill: return "装薬";
 
-                case GearType.chain2: return "Chain";
-                case GearType.magicGauntlet: return "Lucent Gauntlet";
-                case GearType.transmitter: return "Warp Forge";
-                case GearType.magicWing: return "Lucent Wings";
-                case GearType.pathOfAbyss: return "Abyssal Path";
+                case GearType.chain2: return "チェーン (片手武器)";
+                case GearType.magicGauntlet: return "マジックガントレット (片手武器)";
+                case GearType.transmitter: return "武器転送装置";
+                case GearType.magicWing: return "マジックウィング";
+                case GearType.pathOfAbyss: return "パス・オブ・アビス";
 
-                case GearType.relic: return "Relic";
-                case GearType.ancientBow: return "Ancient Bow";
+                case GearType.relic: return "レリック";
+                case GearType.ancientBow: return "エーンシェントボウ (両手武器)";
 
-                case GearType.handFan: return "Ritual Fan";
-                case GearType.fanTassel: return "Fan Tassel";
+                case GearType.handFan: return "術扇 (片手武器)";
+                case GearType.fanTassel: return "飾り房";
 
-                case GearType.tuner: return "Bladecaster";
-                case GearType.bracelet: return "Bladebinder";
+                case GearType.tuner: return "チューナー (片手武器)";
+                case GearType.bracelet: return "ブレスレット";
 
-                case GearType.breathShooter: return "Whispershot";
-                case GearType.weaponBelt: return "Weapon Belt";
+                case GearType.breathShooter: return "ブレスシューター (片手武器)";
+                case GearType.weaponBelt: return "ウェポンベルト";
 
-                case GearType.ornament: return "Ornament";
+                case GearType.ornament: return "装身具";
 
-                case GearType.chakram: return "Chakram";
-                case GearType.hexSeeker: return "Hex Seeker";
+                case GearType.chakram: return "チャクラム (両手武器)";
+                case GearType.hexSeeker: return "ヘックスシーカー";
 
-                case GearType.boxingCannon: return "拳封";//Mo Xuan weapon
-                case GearType.boxingSky: return "拳天";//Mo Xuan weapon
+                case GearType.boxingCannon: return "拳封 (両手武器)";//墨玄 weapon
+                case GearType.boxingSky: return "拳天";//墨玄 weapon
                 default: return null;
             }
         }
@@ -383,13 +383,13 @@ namespace WzComparerR2.CharaSim
             switch (attackSpeed)
             {
                 case 2:
-                case 3: return "Very Fast";
-                case 4:
-                case 5: return "Fast";
-                case 6: return "Average";
+                case 3: return "かなり早い";
+                case 4: 
+                case 5: return "速い";
+                case 6: return "普通";
                 case 7:
-                case 8: return "Slow";
-                case 9: return "Very Slow";
+                case 8: return "遅い";
+                case 9: return "かなり遅い";
                 default:
                     return attackSpeed.ToString();
             }
@@ -415,27 +415,27 @@ namespace WzComparerR2.CharaSim
             switch (type)
             {
                 //0xxx
-                case GearType.heroMedal: return "Hero着用可能";
-                case GearType.rosario: return "Paladin着用可能";
-                case GearType.chain: return "Dark Knight着用可能";
-                case GearType.book1: return "Fire/Poison Magician着用可能";
-                case GearType.book2: return "Ice/Lightning Magician着用可能";
-                case GearType.book3: return "Bishop Magician着用可能";
-                case GearType.bowMasterFeather: return "Bow Master着用可能";
-                case GearType.crossBowThimble: return "Marksman着用可能";
-                case GearType.relic: return "Pathfinder着用可能";
-                case GearType.shadowerSheath: return "Shadower着用可能";
-                case GearType.nightLordPoutch: return "Night Lord着用可能";
-                case GearType.katara: return "Dual Blade着用可能";
-                case GearType.viperWristband: return "Buccaneer着用可能";
-                case GearType.captainSight: return "Corsair着用可能";
+                case GearType.heroMedal: return "ヒーロー職業群着用可能";
+                case GearType.rosario: return "パラディン着用可能";
+                case GearType.chain: return "ダークナイト着用可能";
+                case GearType.book1: return "火、毒系列魔法使い着用可能";
+                case GearType.book2: return "氷、雷系列魔法使い着用可能";
+                case GearType.book3: return "ビショップ系列魔法使い着用可能";
+                case GearType.bowMasterFeather: return "ボウマスター着用可能";
+                case GearType.crossBowThimble: return "クロスボウマスター着用可能";
+                case GearType.relic: return "パスファインダー職業群着用可能";
+                case GearType.shadowerSheath: return "シャドー職業群着用可能";
+                case GearType.nightLordPoutch: return "ナイトロード職業群着用可能";
+                case GearType.katara: return "デュアルブレード着用可能";
+                case GearType.viperWristband: return "ハイパー職業群着用可能";
+                case GearType.captainSight: return "キャプテン職業群着用可能";
                 case GearType.cannonGunPowder:
-                case GearType.cannonGunPowder2: return "Cannoneer着用可能";
+                case GearType.cannonGunPowder2: return "キャノンシューター職業群着用可能";
                 case GearType.box:
-                case GearType.boxingClaw: return "Jett着用可能";
+                case GearType.boxingClaw: return "ジェット着用可能";
 
                 //1xxx
-                case GearType.cygnusGem: return "Cygnus Knights着用可能";
+                case GearType.cygnusGem: return "シグナス騎士団着用可能";
 
                 //2xxx
                 case GearType.aranPendulum: return GetExtraJobReqString(21);
@@ -452,15 +452,15 @@ namespace WzComparerR2.CharaSim
 
                 //3xxx
                 case GearType.demonShield: return GetExtraJobReqString(31);
-                case GearType.desperado: return "Demon Avenger着用可能";
-                case GearType.battlemageBall: return "Battle Mage着用可能";
-                case GearType.wildHunterArrowHead: return "Wild Hunter着用可能";
+                case GearType.desperado: return "デーモンアヴェンジャー着用可能";
+                case GearType.battlemageBall: return "バトルメイジ着用可能";
+                case GearType.wildHunterArrowHead: return "ワイルドハンター着用可能";
                 case GearType.machineEngine:
                 case GearType.machineArms:
                 case GearType.machineLegs:
                 case GearType.machineBody:
                 case GearType.machineTransistors:
-                case GearType.mailin: return "Mechanic着用可能";
+                case GearType.mailin: return "メカニック着用可能";
                 case GearType.controller:
                 case GearType.powerSource:
                 case GearType.energySword: return GetExtraJobReqString(36);
@@ -523,29 +523,29 @@ namespace WzComparerR2.CharaSim
         {
             switch (specJob)
             {
-                case 21: return "Aran着用可能";
-                case 22: return "Evan着用可能";
-                case 23: return "Mercedes着用可能";
-                case 24: return "Phantom着用可能";
-                case 25: return "Shade着用可能";
-                case 27: return "Luminous着用可能";
-                case 31: return "Demon着用可能";
-                case 36: return "Xenon着用可能";
-                case 37: return "Blaster着用可能";
+                case 21: return "アラン着用可能";
+                case 22: return "エヴァン着用可能";
+                case 23: return "メルセデス着用可能";
+                case 24: return "ファントム着用可能";
+                case 25: return "隠月着用可能";
+                case 27: return "ルミナス着用可能";
+                case 31: return "デーモン着用可能";
+                case 36: return "ゼノン着用可能";
+                case 37: return "ブラスター着用可能";
                 case 41: return "ハヤト着用可能";
                 case 42: return "カンナ着用可能";
-                case 51: return "Mihile着用可能";
-                case 61: return "Kaiser着用可能";
-                case 63: return "Kain着用可能";
-                case 64: return "Cadena着用可能";
-                case 65: return "Angelic Buster着用可能";
-                case 101: return "Zero着用可能";
+                case 51: return "ミハエル着用可能";
+                case 61: return "カイザー着用可能";
+                case 63: return "カイン着用可能";
+                case 64: return "カデナ着用可能";
+                case 65: return "エンジェリックバスター着用可能";
+                case 101: return "ゼロ着用可能";
                 case 112: return "リン着用可能";
-                case 142: return "Kinesis着用可能";
-                case 151: return "Adele着用可能";
-                case 152: return "Illium着用可能";
-                case 154: return "Khali着用可能";
-                case 155: return "Ark着用可能";
+                case 142: return "キネシス着用可能";
+                case 151: return "アデル着用可能";
+                case 152: return "イリウム着用可能";
+                case 154: return "カーリー着用可能";
+                case 155: return "アーク着用可能";
                 case 162: return "ララ着用可能";
                 case 164: return "虎影着用可能";
                 case 175: return "墨玄着用可能";
@@ -653,12 +653,12 @@ namespace WzComparerR2.CharaSim
                 case 100: return "Swordsman";
                 case 110: return "Fighter";
                 case 111: return "Crusader";
-                case 112: return "Hero";
+                case 112: return "ヒーロー";
                 case 120: return "Page";
                 case 121: return "White Knight";
-                case 122: return "Paladin";
+                case 122: return "パラディン";
                 case 130: return "Spearman";
-                case 131: return "Dragon Knight";
+                case 131: return "ドラゴン Knight";
                 case 132: return "Dark Knight";
                 case 200: return "Magician";
                 case 210: return "Wizard (Fire,Poison)";
@@ -851,7 +851,7 @@ namespace WzComparerR2.CharaSim
                 case 11000: return "Chase";
                 case 11200: return "Beast Tamer(Bear)";
                 case 11210: return "Beast Tamer(Leopard)";
-                case 11211: return "Beast Tamer(Bird)";
+                case 11211: return "Beast Tamer(Hawk)";
                 case 11212: return "Beast Tamer(Cat)";
 
                 case 13000: return "Pink Bean";
@@ -898,16 +898,16 @@ namespace WzComparerR2.CharaSim
                 case 16411: return "Hoyoung(3)";
                 case 16412: return "Hoyoung(4)";
 
-                case 17000: return "Mo Xuan";
-                case 17001: return "Lynn";
-                case 17200: return "Lynn(1)";
-                case 17210: return "Lynn(2)";
-                case 17211: return "Lynn(3)";
-                case 17212: return "Lynn(4)";
-                case 17500: return "Mo Xuan(1)";
-                case 17510: return "Mo Xuan(2)";
-                case 17511: return "Mo Xuan(3)";
-                case 17512: return "Mo Xuan(4)";
+                case 17000: return "墨玄";
+                case 17001: return "リン";
+                case 17200: return "リン(1)";
+                case 17210: return "リン(2)";
+                case 17211: return "リン(3)";
+                case 17212: return "リン(4)";
+                case 17500: return "墨玄(1)";
+                case 17510: return "墨玄(2)";
+                case 17511: return "墨玄(3)";
+                case 17512: return "墨玄(4)";
             }
             return null;
         }

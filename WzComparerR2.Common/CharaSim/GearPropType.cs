@@ -191,6 +191,7 @@ namespace WzComparerR2.CharaSim
         Etuc,
         price,
         notSale,
+        scissorAmount_wz2,
 
         gatherTool_incSkillLevel = 2000,
         gatherTool_incSpeed,

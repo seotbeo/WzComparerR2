@@ -277,7 +277,7 @@ namespace WzComparerR2.CharaSimControl
             if (Gear.TimeLimited)
             {
                 DateTime time = DateTime.Now.AddDays(7d);
-                string expireStr = "Usable Until: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                string expireStr = time.ToString(@"yyyy年 M月 d日 HH時 mm分") + "まで使用可能";
                 TextRenderer.DrawText(g, expireStr, GearGraphics.EquipDetailFont, new Point(bitmap.Width, picH), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
                 picH += 15;
             }
@@ -291,7 +291,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else
                 {
-                    expireStr = "Usable Until: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                    expireStr = time.ToString(@"yyyy年 M月 d日 HH時 mm分") + "まで使用可能";
                 }
                 TextRenderer.DrawText(g, expireStr, GearGraphics.EquipDetailFont, new Point(bitmap.Width, picH), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
                 picH += 15;
@@ -632,6 +632,14 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "Cannot Set Bonus Potential", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 15;
             }
+
+            // はさみ使用可能回数
+            // Etc/KarmaScissor_WZ2.img
+            // Wz_Node scissorAmountTab = PluginBase.PluginManager.FindWz(string.Format("Etc/KarmaScissor_WZ2.img"));
+            // int scissorAmount = scissorAmountTab?.Nodes["ItemList"]?.Nodes[Gear.ItemID]?.GetValueEx<int>(0) ?? 0;
+
+            // GearGraphics.DrawString(g, "#cはさみ使用可能回数：" + value + (Gear.KarmaScissorAmount ? "" : "回#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 248, ref picH, 15);
+            // picH += 15;
 
             //星星锤子
             if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar() > 0)
