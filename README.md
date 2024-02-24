@@ -1,5 +1,6 @@
-# WzComparerR2
-- A new repository which is based off Spadow's source code, and forked from KENNYSOFT's repository.
+# WzComparerR2-JMS
+- これは、JMS機能を備えたメイプルストーリー用に設計されたエクストラクターです。
+- JMS機能の移植は現在も進行中です。
 
 # Modules
 - **WzComparerR2** 主程序
@@ -29,5 +30,6 @@
 - **[Spine-Runtime](https://github.com/EsotericSoftware/spine-runtimes)**
 - **[EmptyKeysUI](https://github.com/EmptyKeys)**
 - **[@KENNYSOFT](https://github.com/KENNYSOFT)** and his WcR2-KMS version.
-- **[@Kagamia](https://github.com/Kagamia)** and his WcR2-CMS version.
+- **[@Kagamia](https://github.com/Kagamia)** and her WcR2-CMS version.
 - **[@Spadow](https://github.com/Sunaries)** for providing his WcR2-GMS version.
+- **[@PirateIzzy](https://github.comPirateIzzy)** for providing the basis of this fork.
