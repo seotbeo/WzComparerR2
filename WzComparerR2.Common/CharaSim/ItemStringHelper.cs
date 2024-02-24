@@ -81,15 +81,15 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incMAD: return "魔力: " + sign + value;
                 case GearPropType.incMADr: return "魔力: " + sign + value + "%";
                 case GearPropType.incPDD: return "防御力: " + sign + value;
-                case GearPropType.incPDDr: return "防御: " + sign + value + "%";
+                case GearPropType.incPDDr: return "防御力: " + sign + value + "%";
                 //case GearPropType.incMDD: return "MAGIC DEF. : " + sign + value;
                 //case GearPropType.incMDDr: return "MAGIC DEF. : " + sign + value + "%";
                 //case GearPropType.incACC: return "ACCURACY : " + sign + value;
                 //case GearPropType.incACCr: return "ACCURACY : " + sign + value + "%";
                 //case GearPropType.incEVA: return "AVOIDABILITY : " + sign + value;
                 //case GearPropType.incEVAr: return "AVOIDABILITY : " + sign + value + "%";
-                case GearPropType.incSpeed: return "Speed: " + sign + value;
-                case GearPropType.incJump: return "Jump: " + sign + value;
+                case GearPropType.incSpeed: return "移動速度: " + sign + value;
+                case GearPropType.incJump: return "ジャンプ力: " + sign + value;
                 case GearPropType.incCraft: return "Diligence: " + sign + value;
                 case GearPropType.damR:
                 case GearPropType.incDAMr: return "Damage: " + sign + value + "%";

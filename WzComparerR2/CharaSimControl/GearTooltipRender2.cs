@@ -891,7 +891,7 @@ namespace WzComparerR2.CharaSimControl
                     GearPropType.charmEXP };
 
                 string[] inclineString = new string[]{
-                    " Ambition"," Insight"," Willpower"," Diligence"," Empathy"," Charm"};
+                    "カリスマ ","洞察力 ","意志 ","器用さ ","感性 ","魅力 "};
 
                 for (int i = 0; i < inclineTypes.Length; i++)
                 {
@@ -927,7 +927,7 @@ namespace WzComparerR2.CharaSimControl
 
                     if (success && value > 0)
                     {
-                        incline += ", " + value + inclineString[i];
+                        incline += ", " + inclineString[i] + value;
                         //incline += ", " + value + " " + inclineString[i];
                     }
                 }
@@ -941,7 +941,7 @@ namespace WzComparerR2.CharaSimControl
 
                 if (!string.IsNullOrEmpty(incline))
                 {
-                    desc.Add("#cGrants " + incline.Substring(2) + " EXP when first equipped (up to the daily maximum).");
+                    desc.Add("#c装着時1回に限り" + incline.Substring(2) + "の経験値を獲得できます。(1日獲得期間の最大値を超えると、獲得できません)");
                 }
 
                 if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))
