@@ -822,7 +822,7 @@ namespace WzComparerR2
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 dlg.Title = "Please select a MapleStory IMG file.";
-                dlg.Filter = "*.img|*.img|*.wz|*.wz";
+                dlg.Filter = "*.img;Data.wz (マイナー修正ファイル)|*.img;Data.wz|*.wz|*.wz";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     openImg(dlg.FileName);
