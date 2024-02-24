@@ -447,35 +447,35 @@ namespace WzComparerR2.CharaSimControl
             //绘制属性
             if (Gear.Props.TryGetValue(GearPropType.superiorEqp, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Superior", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
-                picH += 15;
+                TextRenderer.DrawText(g, "シュペリエル", GearGraphics.ItemNameFont, new Point(261, picH), ((SolidBrush)GearGraphics.JMSGreenBrush).Color, TextFormatFlags.HorizontalCenter);
+                picH += 18;
             }
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "ダメージ突破武器", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
-                picH += 16;
+                TextRenderer.DrawText(g, "ダメージ突破武器", GearGraphics.ItemNameFont, new Point(261, picH), ((SolidBrush)GearGraphics.JMSGreenBrush).Color, TextFormatFlags.HorizontalCenter);
+                picH += 18;
             }
 
             //绘制装备升级
             if (Gear.Props.TryGetValue(GearPropType.level, out value) && !Gear.FixLevel)
             {
                 bool max = (Gear.Levels != null && value >= Gear.Levels.Count);
-                TextRenderer.DrawText(g, "Growth Level: " + (max ? "MAX" : value.ToString()), GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "成長レベル: " + (max ? "MAX" : value.ToString()), GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
                 string expString = Gear.Levels != null && Gear.Levels.First().Point != 0 ? ": 0/" + Gear.Levels.First().Point : ": 0%";
-                TextRenderer.DrawText(g, "Growth EXP" + (max ? ": MAX" : expString), GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, "成長経験値" + (max ? ": MAX" : expString), GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
             }
             else if (Gear.ItemID / 1000 == 1712)
             {
-                TextRenderer.DrawText(g, "Growth Level: 1", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "成長レベル: 1", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
                 TextRenderer.DrawText(g, "Item EXP: 1 / 12 ( 8% )", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
             }
             else if (Gear.ItemID / 1000 == 1713)
             {
-                TextRenderer.DrawText(g, "Growth Level: 1", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, "成長レベル: 1", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
                 TextRenderer.DrawText(g, "Item EXP : 1 / 29 ( 3% )", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
@@ -607,7 +607,7 @@ namespace WzComparerR2.CharaSimControl
             bool hasTuc = Gear.HasTuc && Gear.Props.TryGetValue(GearPropType.tuc, out value);
             if (Gear.GetBooleanValue(GearPropType.exceptUpgrade))
             {
-                TextRenderer.DrawText(g, "Unable to enhance", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "強化不可", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
             }
             else if (hasTuc)
@@ -651,7 +651,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (Gear.Props.TryGetValue(GearPropType.superiorEqp, out value) && value > 0) //极真
                 {
-                    GearGraphics.DrawPlainText(g, ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value), GearGraphics.EquipDetailFont, ((SolidBrush)GearGraphics.GreenBrush2).Color, 12, 256, ref picH, 15);//GMS - Superior green line change 
+                    GearGraphics.DrawPlainText(g, ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value), GearGraphics.ItemDetailFont, ((SolidBrush)GearGraphics.JMSGreenBrush).Color, 12, 256, ref picH, 30);//GMS - Superior green line change 
                 }
 
                 if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade))
@@ -788,7 +788,7 @@ namespace WzComparerR2.CharaSimControl
                     picH += 8;
                 }
                 g.DrawImage(GetAdditionalOptionIcon(Gear.Grade), 9, picH - 2);
-                TextRenderer.DrawText(g, "Potential", GearGraphics.EquipDetailFont, new Point(27, picH), ((SolidBrush)GearGraphics.GetPotentialTextBrush(Gear.Grade)).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "潜在オプション", GearGraphics.EquipDetailFont, new Point(27, picH), ((SolidBrush)GearGraphics.GetPotentialTextBrush(Gear.Grade)).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
                 foreach (Potential potential in Gear.Options)
                 {
@@ -1038,7 +1038,7 @@ namespace WzComparerR2.CharaSimControl
                     string exclusiveEquip;
                     if (!string.IsNullOrEmpty(kv.Value.Info))
                     {
-                        exclusiveEquip = "#cCannot equip multiple " + kv.Value.Info + " items.#";
+                        exclusiveEquip = "#c" + kv.Value.Info + "#";
                     }
                     else
                     {
@@ -1067,7 +1067,7 @@ namespace WzComparerR2.CharaSimControl
                         if (lastCharacter >= 44032 && lastCharacter <= 55203 && (lastCharacter - 44032) % 28 == 0)
                             exclusiveEquip = "#cCannot equip multiple " + string.Join(", ", itemNames.ToArray()) + " items.#";
                         else*/ //Only for Korean branch
-                        exclusiveEquip = "#cCannot equip multiple " + string.Join(", ", itemNames.ToArray()) + " items.#";
+                        exclusiveEquip = "#c" + string.Join(", ", itemNames.ToArray()) + "#";
                     }
 
                     if (hasPart2)

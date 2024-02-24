@@ -86,7 +86,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush GearIconBackBrush2 = new SolidBrush(Color.FromArgb(187, 238, 238, 238));
         public static readonly Brush EpicGearIconBackBrush = new SolidBrush(EpicGearIconBackColor);
         public static readonly Brush StatDetailGrayBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
-
+        public static readonly Brush JMSGreenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
         public static readonly Color OrangeBrushColor = Color.FromArgb(255, 153, 0);
         /// <summary>
         /// 表示物品说明中带有#c标识的橙色字体画刷。

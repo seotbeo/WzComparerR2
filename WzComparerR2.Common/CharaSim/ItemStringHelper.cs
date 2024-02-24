@@ -129,9 +129,9 @@ namespace WzComparerR2.CharaSim
                     }
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
                 case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力設定不可";
-                case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を得ることができます。";
+                case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を\n\r得ることができます。";
                 case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item.#";
-                case GearPropType.jokerToSetItem: return value == 0 ? null : "\n#c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
+                case GearPropType.jokerToSetItem: return value == 0 ? null : "# c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
                 case GearPropType.plusToSetItem: return value == 0 ? null : "#cWhen equipped, the item set will count as having equipped two.#";
                 case GearPropType.abilityTimeLimited: return value == 0 ? null : "期間限定能力値";
                 case GearPropType.blockGoldHammer: return value == 0 ? null : "Golden Hammer cannot be used.";
@@ -139,10 +139,10 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
                 case GearPropType.noLookChange: return value == 0 ? null : "Cannot use Fusion Anvil";
 
-                case GearPropType.incAllStat_incMHP25: return "All Stats: " + sign + value + ", MaxHP : " + sign + (value * 25);// check once Lv 250 set comes out in GMS
-                case GearPropType.incAllStat_incMHP50_incMMP50: return "All Stats: " + sign + value + ", MaxHP / MaxMP : " + sign + (value * 50);
-                case GearPropType.incMHP_incMMP: return "MaxHP / MaxMP: " + sign + value;
-                case GearPropType.incMHPr_incMMPr: return "MaxHP / MaxMP: " + sign + value + "%";
+                case GearPropType.incAllStat_incMHP25: return "Allｽﾃｰﾀｽ: " + sign + value + ", MaxHP : " + sign + (value * 25);// check once Lv 250 set comes out in GMS
+                case GearPropType.incAllStat_incMHP50_incMMP50: return "Allｽﾃｰﾀｽ: " + sign + value + ", 最大HP / 最大MP : " + sign + (value * 50);
+                case GearPropType.incMHP_incMMP: return "最大HP / 最大MP: " + sign + value;
+                case GearPropType.incMHPr_incMMPr: return "最大HP / 最大MP: " + sign + value + "%";
                 case GearPropType.incPAD_incMAD:
                 case GearPropType.incAD: return "攻撃力 / 魔力: " + sign + value;
                 case GearPropType.incPDD_incMDD: return "Defense: " + sign + value;
@@ -471,7 +471,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.katana:
                 case GearType.kodachi:
                 case GearType.kodachi2: return GetExtraJobReqString(41);
-                case GearType.fan: return "カンナ着用可能"; //Haku着用可能?
+                case GearType.fan: return "カンナ/ハク";
 
                 //5xxx
                 case GearType.soulShield: return "Mihile着用可能";
@@ -532,13 +532,14 @@ namespace WzComparerR2.CharaSim
                 case 31: return "デーモン着用可能";
                 case 36: return "ゼノン着用可能";
                 case 37: return "ブラスター着用可能";
-                case 41: return "ハヤト着用可能";
-                case 42: return "カンナ着用可能";
+                case 41: return "ハヤト";
+                case 42: return "カンナ";
                 case 51: return "ミハエル着用可能";
                 case 61: return "カイザー着用可能";
                 case 63: return "カイン着用可能";
                 case 64: return "カデナ着用可能";
                 case 65: return "エンジェリックバスター着用可能";
+                case 99: return "ハク";
                 case 101: return "ゼロ着用可能";
                 case 112: return "リン着用可能";
                 case 142: return "キネシス着用可能";

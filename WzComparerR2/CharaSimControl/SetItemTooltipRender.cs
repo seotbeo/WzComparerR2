@@ -379,15 +379,15 @@ namespace WzComparerR2.CharaSimControl
                 {
                     effTitle = $"Active Within World({effect.Key} / {this.SetItem.CompleteCount})";
                 }
-                else if (specialPetSetEffectName && this.SetItem.SetItemName.EndsWith(" Set"))
+                else if (specialPetSetEffectName && this.SetItem.SetItemName.EndsWith("セット"))
                 {
-                    effTitle = $"{Regex.Replace(this.SetItem.SetItemName, " Set$", "")} {effect.Key} set effect";
+                    effTitle = $"{Regex.Replace(this.SetItem.SetItemName, "セット$", "")} {effect.Key}セット効果";
                 }
                 else
                 {
-                    effTitle = effect.Key + " Set Items Equipped";
+                    effTitle = effect.Key + "セット効果";
                 }
-                TextRenderer.DrawText(g, effTitle, GearGraphics.EquipDetailFont, new Point(10, picHeight), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, effTitle, GearGraphics.ItemDetailFont, new Point(10, picHeight), ((SolidBrush)GearGraphics.JMSGreenBrush).Color, TextFormatFlags.NoPadding);
                 picHeight += 15;
                 //Brush brush = effect.Value.Enabled ? Brushes.White : GearGraphics.GrayBrush2;
                 var color = effect.Value.Enabled ? Color.White : GearGraphics.GrayColor2;
