@@ -243,7 +243,7 @@ namespace WzComparerR2.MapRender.UI
             var sb = new StringBuilder();
             sb.Append("Name: ").AppendLine(item.Name);
 
-            sb.AppendLine("Type: Luminous Body");
+            sb.AppendLine("タイプ: 発光体群集");
 
             sb.Length -= 2;
 

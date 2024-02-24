@@ -19,7 +19,7 @@ namespace WzComparerR2
             InitializeComponent();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
+            this.Font = new Font(new FontFamily("MS Gothic"), 9f);
 #endif
 
             this.lblClrVer.Text = string.Format("{0} ({1})", Environment.Version, Environment.Is64BitProcess ? "x64" : "x86");
@@ -49,8 +49,8 @@ namespace WzComparerR2
         {
             this.advTree1.Nodes.Clear();
 
-            this.advTree1.Nodes.Add(new Node("GMS <font color=\"#808080\">v5.0.0</font>"));
-            this.advTree1.Nodes.Add(new Node("[GMS] English version <font color=\"#808080\">Spadow</font>"));
+            this.advTree1.Nodes.Add(new Node("JMS <font color=\"#808080\">v5.0.1</font>"));
+            this.advTree1.Nodes.Add(new Node("[JMS] 日本語版 <font color=\"#808080\">Hikari Calyx</font>"));
 
             if (PluginBase.PluginManager.LoadedPlugins.Count > 0)
             {

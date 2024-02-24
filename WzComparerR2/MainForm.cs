@@ -37,7 +37,7 @@ namespace WzComparerR2
             InitializeComponent();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Yu Gothic UI"), 8f);
+            this.Font = new Font(new FontFamily("MS Gothic"), 9f);
 #endif
             Form.CheckForIllegalCrossThreadCalls = false;
             this.MinimumSize = new Size(600, 450);
@@ -3233,7 +3233,7 @@ namespace WzComparerR2
 
                         while (true)
                         {
-                            string txt = string.Format("WZ File:\r\n\r\n  New Version: {0} (V{1})\r\n  Old Version: {2} (V{3})\r\n\r\nClick 'Yes' to start the comparison. Click 'No' to reverse the old and new version.",
+                            string txt = string.Format("WZファイル:\r\n\r\n  新しいバージョン: {0} (V{1})\r\n  古いバージョン: {2} (V{3})\r\n\r\n「Yes」をクリックして比較を開始します。 古いバージョンと新しいバージョンを交換するには、「No」をクリックします。",
                                 fileNew.Header.FileName,
                                 fileNew.GetMergedVersion(),
                                 fileOld.Header.FileName,
@@ -3260,17 +3260,17 @@ namespace WzComparerR2
                     }
                     catch (ThreadAbortException)
                     {
-                        MessageBoxEx.Show(this, "The comparison has stopped.", "Error");
+                        MessageBoxEx.Show(this, "比較は一時停止されました。", "エラー");
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show(this, "The comparison has stopped." + ex.ToString(), "Error");
+                        MessageBoxEx.Show(this, "比較は一時停止されました。" + ex.ToString(), "エラー");
                     }
                     finally
                     {
                         sw.Stop();
                         compareThread = null;
-                        labelXComp1.Text = "Comparison completed. Time elapsed: " + sw.Elapsed.ToString();
+                        labelXComp1.Text = "比較が完了しました。 時間が経過した：" + sw.Elapsed.ToString();
                         labelXComp2.Text = "";
                     }
                 });
@@ -3305,7 +3305,7 @@ namespace WzComparerR2
         private void btnExportSkill_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select the destination folder you want to export to.";
+            dlg.Description = "エクスポート先のフォルダーを選択します。";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (!this.stringLinker.HasValues)
@@ -3328,7 +3328,7 @@ namespace WzComparerR2
         private void btnExportSkillOption_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select the destination folder you want to export to.";
+            dlg.Description = "エクスポート先のフォルダーを選択します。";
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (!this.stringLinker.HasValues)
@@ -3381,7 +3381,15 @@ namespace WzComparerR2
 
         private void buttonItemUpdate_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/PirateIzzy/WzComparerR2/releases");
+            #if NET6_0_OR_GREATER
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                FileName = "https://github.com/HikariCalyx/WzComparerR2-JMS/releases",
+                UseShellExecute = true
+                });
+            #else
+                System.Diagnostics.Process.Start("https://github.com/HikariCalyx/WzComparerR2-JMS/releases");
+            #endif
         }
 
         private void btnItemOptions_Click(object sender, System.EventArgs e)

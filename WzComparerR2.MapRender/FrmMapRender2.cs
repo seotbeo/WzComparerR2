@@ -510,7 +510,7 @@ namespace WzComparerR2.MapRender
             this.StringLinker?.StringMap.TryGetValue(mapID, out sr);
             //string mapName = sr?["mapName"] ?? "(null)"; //Kenny ver.
             //int last = (mapName.LastOrDefault(c => c >= '가' && c <= '힣') - '가') % 28; //Kenny ver.
-            var message = string.Format("Will you teleport to this map?\r\n{0} ({1})", sr?.Name ?? "null", mapID);
+            var message = string.Format("このマップにテレポートしますか?\r\n{0} ({1})", sr?.Name ?? "null", mapID);
             //var message = mapName + (last == 0 || last == 8 ? "" : "으") + "로 이동하시겠습니까?"; //Kenny ver.
             MessageBox.Show(message, "", MessageBoxButton.OKCancel, callback, false);
         }

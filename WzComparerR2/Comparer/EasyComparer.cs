@@ -93,8 +93,8 @@ namespace WzComparerR2.Comparer
 
                 FileStream htmlFile = null;
                 StreamWriter sw = null;
-                StateInfo = "Creating Index file...";
-                StateDetail = "Creating the file";
+                StateInfo = "インデックスファイルを作成中...";
+                StateDetail = "ファイルの作成";
                 try
                 {
                     htmlFile = new FileStream(htmlFilePath, FileMode.Create, FileAccess.Write);
@@ -110,7 +110,7 @@ namespace WzComparerR2.Comparer
                     //输出概况
                     sw.WriteLine("<p class=\"wzf\">");
                     sw.WriteLine("<table>");
-                    sw.WriteLine("<tr><th>Filename</th><th>Size New Version</th><th>Size Old Version</th><th>Modified</th><th>Added</th><th>Removed</th></tr>");
+                    sw.WriteLine("<tr><th>ファイル名</th><th>新しいバージョンのサイズ</th><th>古いバージョンのサイズ</th><th>変更済み</th><th>追加</th><th>削除されました</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
                         var vNodeNew = dictNew[wzType];
@@ -347,25 +347,25 @@ namespace WzComparerR2.Comparer
                 //输出概况
                 sw.WriteLine("<p class=\"wzf\">");
                 sw.WriteLine("<table>");
-                sw.WriteLine("<tr><th>&nbsp;</th><th>Filename</th><th>Size</th><th>Version</th></tr>");
-                sw.WriteLine("<tr><td>New Version</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
+                sw.WriteLine("<tr><th>&nbsp;</th><th>ファイル名</th><th>サイズ</th><th>バージョン</th></tr>");
+                sw.WriteLine("<tr><td>新しいバージョン</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
                     string.Join("<br/>", fileNew.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileName))),
                     string.Join("<br/>", fileNew.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileSize.ToString("N0")))),
                     string.Join("<br/>", fileNew.Select(wzf => wzf.GetMergedVersion()))
                     );
-                sw.WriteLine("<tr><td>Old Version</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
+                sw.WriteLine("<tr><td>古いバージョン</td><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
                     string.Join("<br/>", fileOld.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileName))),
                     string.Join("<br/>", fileOld.SelectMany(wzf => GetFileInfo(wzf, ewzf => ewzf.Header.FileSize.ToString("N0")))),
                     string.Join("<br/>", fileOld.Select(wzf => wzf.GetMergedVersion()))
                     );
-                sw.WriteLine("<tr><td>Current Time</td><td colspan='3'>{0:M-d-yyyy HH:mm:ss.fff}</td></tr>", DateTime.Now);
-                sw.WriteLine("<tr><td>Options</td><td colspan='3'>{0}</td></tr>", string.Join("<br/>", new[] {
-                    this.OutputPng ? "- Include PNG" : null,
-                    this.OutputAddedImg ? "- Added Files" : null,
-                    this.OutputRemovedImg ? "- Removed Files" : null,
-                    this.EnableDarkMode ? "- Enable Dark Mode" : null,
+                sw.WriteLine("<tr><td>現在の時刻</td><td colspan='3'>{0:M-d-yyyy HH:mm:ss.fff}</td></tr>", DateTime.Now);
+                sw.WriteLine("<tr><td>オプション</td><td colspan='3'>{0}</td></tr>", string.Join("<br/>", new[] {
+                    this.OutputPng ? "- PNGファイルを出力" : null,
+                    this.OutputAddedImg ? "- 追加ファイル" : null,
+                    this.OutputRemovedImg ? "- 削除済みファイル" : null,
+                    this.EnableDarkMode ? "- ダークモード" : null,
                     "- Compare " + this.Comparer.PngComparison,
-                    this.Comparer.ResolvePngLink ? "- Resolve PNG Link" : null,
+                    this.Comparer.ResolvePngLink ? "- PNGリンクを解決" : null,
                 }.Where(p => p != null)));
                 sw.WriteLine("</table>");
                 sw.WriteLine("</p>");
@@ -438,7 +438,7 @@ namespace WzComparerR2.Comparer
                     {
                         case DifferenceType.Changed:
                             {
-                                StateInfo = string.Format("{0}/{1} Modified: {2}", count[0], count[3], diff.NodeNew.FullPath);
+                                StateInfo = string.Format("{0}/{1} 変更: {2}", count[0], count[3], diff.NodeNew.FullPath);
                                 Wz_Image imgNew, imgOld;
                                 if ((imgNew = diff.ValueNew as Wz_Image) != null
                                     && ((imgOld = diff.ValueOld as Wz_Image) != null))
@@ -454,7 +454,7 @@ namespace WzComparerR2.Comparer
                         case DifferenceType.Append:
                             if (this.OutputAddedImg)
                             {
-                                StateInfo = string.Format("{0}/{1} Added: {2}", count[1], count[4], diff.NodeNew.FullPath);
+                                StateInfo = string.Format("{0}/{1} 追加: {2}", count[1], count[4], diff.NodeNew.FullPath);
                                 Wz_Image imgNew = diff.ValueNew as Wz_Image;
                                 if (imgNew != null)
                                 {
@@ -469,7 +469,7 @@ namespace WzComparerR2.Comparer
                         case DifferenceType.Remove:
                             if (this.OutputRemovedImg)
                             {
-                                StateInfo = string.Format("{0}/{1} Removed: {2}", count[2], count[5], diff.NodeOld.FullPath);
+                                StateInfo = string.Format("{0}/{1} 削除: {2}", count[2], count[5], diff.NodeOld.FullPath);
                                 Wz_Image imgOld = diff.ValueOld as Wz_Image;
                                 if (imgOld != null)
                                 {
@@ -556,10 +556,10 @@ namespace WzComparerR2.Comparer
                 sb.AppendLine("</tr>");
                 count[idx]++;
             }
-            StateDetail = "Creating file";
+            StateDetail = "ファイルを出力中";
             bool noChange = diffList.Count <= 0;
             sw.WriteLine("<table class=\"img{0}\">", noChange ? " noChange" : "");
-            sw.WriteLine("<tr><th colspan=\"3\"><a name=\"{1}\">{0}</a>: Modified: {2}; Added: {3}; Removed: {4}</th></tr>",
+            sw.WriteLine("<tr><th colspan=\"3\"><a name=\"{1}\">{0}</a>: 変更: {2}; 追加: {3}; 削除: {4}</th></tr>",
                 imgName, anchorName, count[0], count[1], count[2]);
             sw.WriteLine(sb.ToString());
             sw.WriteLine("<tr><td colspan=\"3\"><a href=\"#{1}\">{0}</a></td></tr>", "Go Back", menuAnchorName);
@@ -571,7 +571,7 @@ namespace WzComparerR2.Comparer
 
         private void OutputImg(Wz_Image img, DifferenceType diffType, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
-            StateDetail = "Extracting IMG";
+            StateDetail = "IMGを抽出中";
             if (!img.TryExtract())
                 return;
 
@@ -609,7 +609,7 @@ namespace WzComparerR2.Comparer
                 }
             };
 
-            StateDetail = "Creating IMG structure";
+            StateDetail = "IMG構造を作成中";
             sw.WriteLine("<table class=\"img\">");
             sw.WriteLine("<tr><th colspan=\"2\"><a name=\"{1}\">{0}</a></th></tr>", imgName, anchorName);
             fnOutput(img.Node);
