@@ -103,7 +103,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.bdR: return "ボスモンスター攻撃時のダメージ: +" + value + "%";
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "モンスター防御率無視: +" + value + "%";
-                case GearPropType.limitBreak: return "ダメージ上限: " + (value / 10000).ToString() + "万 " + value.ToString().Substring(value.ToString().Length-4, 4);
+                case GearPropType.limitBreak: return "ダメージ上限: " + ToCJKNumberExpr(value);
                 case GearPropType.reduceReq: return "装着レベル減少： - " + value;
                 case GearPropType.nbdR: return "一般モンスター攻撃時のダメージ: +" + value + "%"; //KMST 1069
 
@@ -911,6 +911,39 @@ namespace WzComparerR2.CharaSim
                 case 17512: return "墨玄(4)";
             }
             return null;
+        }
+
+        private static string ToCJKNumberExpr(int value)
+        {
+            var sb = new StringBuilder(16);
+            bool firstPart = true;
+            if (value < 0)
+            {
+                sb.Append("-");
+                value = -value; // just ignore the exception -2147483648
+            }
+            if (value >= 1_0000_0000)
+            {
+                int part = value / 1_0000_0000;
+                sb.AppendFormat("{0}億", part); // Korean: 억, TradChinese+Japanese: 億, SimpChinese: 亿
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000)
+            {
+                int part = value / 1_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
+                value -= part * 1_0000;
+                firstPart = false;
+            }
+            if (value > 0)
+            {
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}", value);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "0";
         }
     }
 }
