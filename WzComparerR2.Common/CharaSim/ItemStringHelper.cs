@@ -110,10 +110,10 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.only: return value == 0 ? null : "固有ｱｲﾃﾑ";
                 case GearPropType.tradeBlock: return value == 0 ? null : "交換不可";
                 case GearPropType.equipTradeBlock: return value == 0 ? null : "装着すると交換不可";
-                case GearPropType.accountSharable: return value == 0 ? null : "Account-bound. Transferable within world."; //v218 Transferable within world
+                case GearPropType.accountSharable: return value == 0 ? null : "ワールド内のキャラクター間移動のみ可能"; //v218 Transferable within world
                 case GearPropType.sharableOnce: return value == 0 ? null : "Tradable once within the same world.\n(Cannot be traded after transfer)"; //old "Can be traded once within account"
                 case GearPropType.onlyEquip: return value == 0 ? null : "固有装備アイテム";
-                case GearPropType.notExtend: return value == 0 ? null : "有効期限延長不可";
+                case GearPropType.notExtend: return value == 0 ? null : "有効期間延長不可";
                 case GearPropType.tradeAvailable:
                     switch (value)
                     {
@@ -128,7 +128,7 @@ namespace WzComparerR2.CharaSim
                         default: return null;
                     }
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
-                case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力設定不可";
+                case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力再設定不可";
                 case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を\n\r得ることができます。";
                 case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item.#";
                 case GearPropType.jokerToSetItem: return value == 0 ? null : " #c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
@@ -206,11 +206,11 @@ namespace WzComparerR2.CharaSim
             switch (rank)
             {
                 //case GearGrade.C: return "C级(一般物品)";
-                case GearGrade.B: return "(Rare Item)";
-                case GearGrade.A: return "(Epic Item)";
-                case GearGrade.S: return "(Unique Item)";
-                case GearGrade.SS: return "(Legendary Item)";
-                case GearGrade.Special: return "(Special Item)";
+                case GearGrade.B: return "(レアアイテム)";
+                case GearGrade.A: return "(エピックアイテム)";
+                case GearGrade.S: return "(ユニークアイテム)";
+                case GearGrade.SS: return "(レジェンダリーアイテム)";
+                case GearGrade.Special: return "(スペシャルアイテム)";
                 default: return null;
             }
         }

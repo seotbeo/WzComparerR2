@@ -446,11 +446,11 @@ namespace WzComparerR2.CharaSimControl
                 DateTime time = DateTime.Now.AddDays(7d);
                 if (!item.Cash)
                 {
-                    expireTime = "Usable Until: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                    expireTime = time.ToString(@"yyyy年 M月 d日 HH時 mm分") + "まで使用可能";
                 }
                 else
                 {
-                    expireTime = "Usable Until: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                    expireTime = time.ToString(@"yyyy年 M月 d日 HH時 mm分") + "まで使用可能";
                 }
             }
             else if (item.ConsumableFrom != null || item.EndUseDate != null)
@@ -462,7 +462,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (item.EndUseDate != null)
                 {
-                    expireTime += string.Format("\nUsable Until: {1}/{2}/{0} {3:D2}:{4:D2} UTC", Convert.ToInt32(item.EndUseDate.Substring(0, 4)), Convert.ToInt32(item.EndUseDate.Substring(4, 2)), Convert.ToInt32(item.EndUseDate.Substring(6, 2)), Convert.ToInt32(item.EndUseDate.Substring(8, 2)), Convert.ToInt32(item.EndUseDate.Substring(10, 2)));
+                    expireTime += string.Format("\n{0}年 {1}月 {2}日 {3:D2}時 {4:D2}分まで使用可能", Convert.ToInt32(item.EndUseDate.Substring(0, 4)), Convert.ToInt32(item.EndUseDate.Substring(4, 2)), Convert.ToInt32(item.EndUseDate.Substring(6, 2)), Convert.ToInt32(item.EndUseDate.Substring(8, 2)), Convert.ToInt32(item.EndUseDate.Substring(10, 2)));
                 }
             }
             else if ((item.Props.TryGetValue(ItemPropType.permanent, out value) && value != 0) || (item.ItemID / 10000 == 500 && item.Props.TryGetValue(ItemPropType.life, out value) && value == 0))
@@ -497,8 +497,7 @@ namespace WzComparerR2.CharaSimControl
                 //hasPart2 = true;
                 foreach (string expireTimeLine in expireTime.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    g.DrawImage(Resource.ToolTip_Equip_Dot_1, 9, picH + 6);//GMS Version, default value is 9, + X?
-                    TextRenderer.DrawText(g, expireTimeLine, GearGraphics.ItemDetailFont, new Point(tooltip.Width / 25, picH), Color.White, TextFormatFlags.Left);
+                    g.DrawString(expireTime, GearGraphics.ItemDetailFont, Brushes.White, tooltip.Width / 2, picH, format);
                     picH += 16;
                 }
                 if (expireTime.Contains('\n'))
@@ -752,7 +751,7 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawString(g, "Tip: You can control what your\n\r pet says once it reaches Lv. 15.", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 GearGraphics.DrawString(g, "#cEx) /Pet [what to say]#", GearGraphics.ItemDetailFont, new Dictionary<string, Color>() { { "c", ((SolidBrush)GearGraphics.OrangeBrush4).Color } }, 100, right, ref picH, 16);
             }
-
+            
             string incline = null;
             ItemPropType[] inclineTypes = new ItemPropType[]{
                     ItemPropType.charismaEXP,
@@ -763,19 +762,19 @@ namespace WzComparerR2.CharaSimControl
                     ItemPropType.charmEXP };
 
             string[] inclineString = new string[]{
-                    " Ambition"," Insight"," Willpower"," Diligence"," Empathy"," Charm"};
+                    "カリスマ ","洞察力 ","意志 ","器用さ ","感性 ","魅力 "};
 
             for (int i = 0; i < inclineTypes.Length; i++)
             {
                 if (item.Props.TryGetValue(inclineTypes[i], out value) && value > 0)
                 {
-                    incline += ", " + value + inclineString[i];
+                    incline += ", " + inclineString[i] + value;
                 }
             }
 
             if (!string.IsNullOrEmpty(incline))
             {
-                GearGraphics.DrawString(g, "#cGrants " + incline.Substring(2) + " EXP when first equipped (up to the daily maximum).", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "#c装着時1回に限り" + incline.Substring(2) + "の経験値を獲得できます。(1日獲得期間の最大値を超えると、獲得できません)", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
 
             picH += 3;

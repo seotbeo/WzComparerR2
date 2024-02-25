@@ -39,6 +39,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Dictionary<string, TextureBrush> TBrushes;
         public static readonly Font ItemNameFont = new Font("MS Gothic", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
         public static readonly Font ItemDetailFont = new Font("MS Gothic", 12f, GraphicsUnit.Pixel);
+        public static readonly Font JMSKunshoFont = new Font("MS PGothic", 12f, GraphicsUnit.Pixel);
         public static readonly Font EquipDetailFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
         public static readonly Font EpicGearDetailFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
         public static readonly Font TahomaFont = new Font("Tahoma", 12f, GraphicsUnit.Pixel);

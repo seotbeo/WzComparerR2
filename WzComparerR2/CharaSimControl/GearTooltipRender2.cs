@@ -287,7 +287,7 @@ namespace WzComparerR2.CharaSimControl
                 string expireStr;
                 if (!Gear.Cash)
                 {
-                    expireStr = "Effects Last Until: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                    expireStr = time.ToString(@"yyyy年 M月 d日 HH時 mm分") + "まで効果持続";
                 }
                 else
                 {
@@ -546,7 +546,7 @@ namespace WzComparerR2.CharaSimControl
             //机器人等级
             if (Gear.Props.TryGetValue(GearPropType.grade, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Rank: " + value, GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "等級：" + value, GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
                 hasPart2 = true;
             }
@@ -624,12 +624,12 @@ namespace WzComparerR2.CharaSimControl
 
             if (!Gear.CanPotential && !Gear.Cash)
             {
-                TextRenderer.DrawText(g, "This item cannot gain Potential.", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, "潜在能力設定不可", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 15;
             }
             if (Gear.Props.TryGetValue(GearPropType.fixedPotential, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Cannot Set Bonus Potential", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, "アディショナル潜在能力設定不可", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 15;
             }
 
@@ -742,7 +742,7 @@ namespace WzComparerR2.CharaSimControl
 
                 int reqLvl;
                 Gear.Props.TryGetValue(GearPropType.reqLevel, out reqLvl);
-                TextRenderer.DrawText(g, "Stats increase with Character Level (Up to Lv. " + reqLvl + ")", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "キャラクターレベル別に能力値追加(" + reqLvl + "Lvまで)", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter);
                 picH += 20;
 
                 int reduceLvl;
@@ -764,7 +764,7 @@ namespace WzComparerR2.CharaSimControl
 
                 if (hasReduce)
                 {
-                    TextRenderer.DrawText(g, "When upgrading or enhancing, it will be viewed as  " + reqLvl, GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);//text is cut-off in GMS as well, once it is fixed, add >> Lv. << after 'as'.
+                    TextRenderer.DrawText(g, "アップグレード/強化時、" + reqLvl + "Lv装備取扱", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                     picH += 16;
                 }
             }
@@ -1020,7 +1020,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 foreach (string str in desc)
                 {
-                    GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont, orange2FontColorTable, 10, 243, ref picH, 15);
+                    GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
                 }
                 picH += 5;
             }
