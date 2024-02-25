@@ -471,7 +471,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.katana:
                 case GearType.kodachi:
                 case GearType.kodachi2: return GetExtraJobReqString(41);
-                case GearType.fan: return "カンナ/ハク";
+                case GearType.fan: return "カンナ";
 
                 //5xxx
                 case GearType.soulShield: return "Mihile着用可能";
