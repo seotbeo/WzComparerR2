@@ -474,7 +474,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.fan: return "カンナ";
 
                 //5xxx
-                case GearType.soulShield: return "Mihile着用可能";
+                case GearType.soulShield: return "ミハエル着用可能";
 
                 //6xxx
                 case GearType.novaMarrow: return GetExtraJobReqString(61);
@@ -574,7 +574,7 @@ namespace WzComparerR2.CharaSim
                 case ItemPropType.exchangeableOnce:
                     return value == 0 ? null : "Tradable once (untradable after using or trading)";
                 case ItemPropType.quest:
-                    return value == 0 ? null : "Quest Item";
+                    return value == 0 ? null : "クエストアイテム";
                 case ItemPropType.pquest:
                     return value == 0 ? null : "Party Quest Item";
                 case ItemPropType.permanent:
@@ -659,8 +659,8 @@ namespace WzComparerR2.CharaSim
                 case 121: return "White Knight";
                 case 122: return "パラディン";
                 case 130: return "Spearman";
-                case 131: return "ドラゴン Knight";
-                case 132: return "Dark Knight";
+                case 131: return "ベルセルク";
+                case 132: return "ダークナイト";
                 case 200: return "Magician";
                 case 210: return "Wizard (Fire,Poison)";
                 case 211: return "Mage (Fire, Poison)";
@@ -750,7 +750,7 @@ namespace WzComparerR2.CharaSim
                 case 2213: return "Evan(2)";
                 case 2214:
                 case 2215:
-                case 2216: return "Evan (3)";
+                case 2216: return "Evan(3)";
                 case 2217:
                 case 2218: return "Evan(4)";
                 case 2300: return "Mercedes(1)";
@@ -843,11 +843,11 @@ namespace WzComparerR2.CharaSim
                 case 6511: return "Angelic Buster(3)";
                 case 6512: return "Angelic Buster(4)";
 
-                case 10000: return "Zero";
-                case 10100: return "Zero(1)";
-                case 10110: return "Zero(2)";
-                case 10111: return "Zero(3)";
-                case 10112: return "Zero(4)";
+                case 10000: return "ゼロ";
+                case 10100: return "ゼロ(1)";
+                case 10110: return "ゼロ(2)";
+                case 10111: return "ゼロ(3)";
+                case 10112: return "ゼロ(4)";
 
                 case 11000: return "Chase";
                 case 11200: return "Beast Tamer(Bear)";
@@ -855,9 +855,9 @@ namespace WzComparerR2.CharaSim
                 case 11211: return "Beast Tamer(Hawk)";
                 case 11212: return "Beast Tamer(Cat)";
 
-                case 13000: return "Pink Bean";
+                case 13000: return "ピンクビーン";
                 case 13001: return "Yetihood";
-                case 13100: return "Pink Bean";
+                case 13100: return "ピンクビーン";
                 case 13500: return "Yeti";
 
                 case 14000: return "Kinesis";
@@ -888,16 +888,16 @@ namespace WzComparerR2.CharaSim
                 case 15511: return "Ark(3)";
                 case 15512: return "Ark(4)";
 
-                case 16000: return "Anima Thief";
-                case 16001: return "Lara";
-                case 16200: return "Lara(1)";
-                case 16210: return "Lara(2)";
-                case 16211: return "Lara(3)";
-                case 16212: return "Lara(4)";
-                case 16400: return "Hoyoung(1)";
-                case 16410: return "Hoyoung(2)";
-                case 16411: return "Hoyoung(3)";
-                case 16412: return "Hoyoung(4)";
+                case 16000: return "アニマ盗賊";
+                case 16001: return "ララ";
+                case 16200: return "ララ(1)";
+                case 16210: return "ララ(2)";
+                case 16211: return "ララ(3)";
+                case 16212: return "ララ(4)";
+                case 16400: return "虎影(1)";
+                case 16410: return "虎影(2)";
+                case 16411: return "虎影(3)";
+                case 16412: return "虎影(4)";
 
                 case 17000: return "墨玄";
                 case 17001: return "リン";
