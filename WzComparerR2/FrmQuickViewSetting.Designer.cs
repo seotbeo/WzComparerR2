@@ -430,7 +430,7 @@
             this.checkBoxX3.Size = new System.Drawing.Size(117, 16);
             this.checkBoxX3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX3.TabIndex = 1;
-            this.checkBoxX3.Text = "成長情報を表示";
+            this.checkBoxX3.Text = "左上隅にIDを表示";
             // 
             // superTabItem2
             // 
