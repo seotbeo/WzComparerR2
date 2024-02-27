@@ -1537,7 +1537,7 @@
             this.ribbonTabItem1.Name = "ribbonTabItem1";
             this.ribbonTabItem1.Panel = this.ribbonPanel1;
             this.ribbonTabItem1.Tag = "Tools";
-            this.ribbonTabItem1.Text = "Tools";
+            this.ribbonTabItem1.Text = "ツール";
             // 
             // ribbonTabItem2
             // 
@@ -1545,21 +1545,21 @@
             this.ribbonTabItem2.Name = "ribbonTabItem2";
             this.ribbonTabItem2.Panel = this.ribbonPanel2;
             this.ribbonTabItem2.Tag = "Modules";
-            this.ribbonTabItem2.Text = "Modules";
+            this.ribbonTabItem2.Text = "モジュール";
             // 
             // ribbonTabItem3
             // 
             this.ribbonTabItem3.Name = "ribbonTabItem3";
             this.ribbonTabItem3.Panel = this.ribbonPanel3;
             this.ribbonTabItem3.Tag = "Help";
-            this.ribbonTabItem3.Text = "Help";
+            this.ribbonTabItem3.Text = "ヘルプ";
             // 
             // buttonItemStyle
             // 
             this.buttonItemStyle.AutoExpandOnClick = true;
             this.buttonItemStyle.ItemAlignment = DevComponents.DotNetBar.eItemAlignment.Far;
             this.buttonItemStyle.Name = "buttonItemStyle";
-            this.buttonItemStyle.Text = "Themes";
+            this.buttonItemStyle.Text = "テーマ";
             // 
             // office2007StartButton1
             // 
@@ -1573,7 +1573,7 @@
             this.office2007StartButton1.ShowSubItems = false;
             this.office2007StartButton1.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.itemContainer1});
-            this.office2007StartButton1.Text = "File";
+            this.office2007StartButton1.Text = "ﾌｧｲﾙ";
             // 
             // itemContainer1
             // 
@@ -1634,13 +1634,13 @@
             this.btnItemOpenWz.ButtonStyle = DevComponents.DotNetBar.eButtonStyle.ImageAndText;
             this.btnItemOpenWz.Name = "btnItemOpenWz";
             this.btnItemOpenWz.SubItemsExpandWidth = 24;
-            this.btnItemOpenWz.Text = "Open WZ File";
+            this.btnItemOpenWz.Text = "WZファイルを開く...";
             this.btnItemOpenWz.Click += new System.EventHandler(this.btnItemOpenWz_Click);
             // 
             // btnItemOpenImg
             // 
             this.btnItemOpenImg.Name = "btnItemOpenImg";
-            this.btnItemOpenImg.Text = "Open IMG";
+            this.btnItemOpenImg.Text = "IMGファイルを開く...";
             this.btnItemOpenImg.Click += new System.EventHandler(this.btnItemOpenImg_Click);
             // 
             // buttonItemClose
@@ -1648,13 +1648,13 @@
             this.buttonItemClose.ButtonStyle = DevComponents.DotNetBar.eButtonStyle.ImageAndText;
             this.buttonItemClose.Name = "buttonItemClose";
             this.buttonItemClose.SubItemsExpandWidth = 24;
-            this.buttonItemClose.Text = "Close";
+            this.buttonItemClose.Text = "閉じる";
             this.buttonItemClose.Click += new System.EventHandler(this.buttonItemClose_Click);
             // 
             // buttonItemCloseAll
             // 
             this.buttonItemCloseAll.Name = "buttonItemCloseAll";
-            this.buttonItemCloseAll.Text = "Close All";
+            this.buttonItemCloseAll.Text = "すべてのファイルを閉じる";
             this.buttonItemCloseAll.Click += new System.EventHandler(this.buttonItemCloseAll_Click);
             // 
             // galleryContainerRecent
@@ -1686,7 +1686,7 @@
             this.labelItem8.PaddingBottom = 2;
             this.labelItem8.PaddingTop = 2;
             this.labelItem8.Stretch = true;
-            this.labelItem8.Text = "Recent Files";
+            this.labelItem8.Text = "最近使用したファイル";
             // 
             // itemContainer4
             // 
@@ -1712,7 +1712,7 @@
             this.btnItemOptions.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnItemOptions.Name = "btnItemOptions";
             this.btnItemOptions.SubItemsExpandWidth = 24;
-            this.btnItemOptions.Text = "Settings";
+            this.btnItemOptions.Text = "設定";
             this.btnItemOptions.Click += new System.EventHandler(this.btnItemOptions_Click);
             // 
             // buttonItem13
@@ -1722,7 +1722,7 @@
             this.buttonItem13.Enabled = false;
             this.buttonItem13.Name = "buttonItem13";
             this.buttonItem13.SubItemsExpandWidth = 24;
-            this.buttonItem13.Text = "Exit";
+            this.buttonItem13.Text = "終了";
             // 
             // styleManager1
             // 
@@ -2353,7 +2353,7 @@
             this.superTabItem1.AttachedControl = this.superTabControlPanel1;
             this.superTabItem1.GlobalItem = false;
             this.superTabItem1.Name = "superTabItem1";
-            this.superTabItem1.Text = "WZ Info";
+            this.superTabItem1.Text = "WZ情報";
             // 
             // superTabControlPanel2
             // 
@@ -2521,7 +2521,7 @@
             this.superTabItem2.AttachedControl = this.superTabControlPanel2;
             this.superTabItem2.GlobalItem = false;
             this.superTabItem2.Name = "superTabItem2";
-            this.superTabItem2.Text = "WZ Compare";
+            this.superTabItem2.Text = "WZ比較";
             // 
             // superTabControlPanel3
             // 
@@ -2563,8 +2563,7 @@
             this.superTabItem3.AttachedControl = this.superTabControlPanel3;
             this.superTabItem3.GlobalItem = false;
             this.superTabItem3.Name = "superTabItem3";
-            this.superTabItem3.Text = "Database";
-            // 
+            this.superTabItem3.Text = "データベース";
             // btnNodeBack
             // 
             this.btnNodeBack.ImagePaddingHorizontal = 6;

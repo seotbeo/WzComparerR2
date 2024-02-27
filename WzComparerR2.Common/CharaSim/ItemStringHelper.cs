@@ -933,7 +933,7 @@ namespace WzComparerR2.CharaSim
             {
                 int part = value / 1_0000;
                 sb.Append(firstPart ? null : " ");
-                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万z
                 value -= part * 1_0000;
                 firstPart = false;
             }
