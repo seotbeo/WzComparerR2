@@ -19,12 +19,12 @@ namespace WzComparerR2
             InitializeComponent();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
+            this.Font = new Font(new FontFamily("MS PGothic"), 9f);
 #endif
 
             cmbWzEncoding.Items.AddRange(new[]
             {
-                new ComboItem("Default"){ Value = 0 },
+                new ComboItem("デフォルト"){ Value = 0 },
                 new ComboItem("Shift-JIS (JMS)"){ Value = 932 },
                 new ComboItem("GB 2312 (CMS)"){ Value = 936 },
                 new ComboItem("EUC-KR (KMS)"){ Value = 949 },
@@ -35,8 +35,8 @@ namespace WzComparerR2
 
             cmbWzVersionVerifyMode.Items.AddRange(new[]
             {
-                new ComboItem("Default"){ Value = WzLib.WzVersionVerifyMode.Default },
-                new ComboItem("Fast"){ Value = WzLib.WzVersionVerifyMode.Fast },
+                new ComboItem("デフォルトの方法"){ Value = WzLib.WzVersionVerifyMode.Default },
+                new ComboItem("高速な方法"){ Value = WzLib.WzVersionVerifyMode.Fast },
             });
         }
 

@@ -89,14 +89,14 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetColumn(lblHint, 0);
 
             Button btnOK = new Button();
-            btnOK.Width = 60;
+            btnOK.Width = 70;
             btnOK.Height = 20;
             btnOK.Margin = new Thickness(5);
             btnOK.Content = "OK";
             btnOK.Click += BtnOK_Click;
 
             Button btnCancel = new Button();
-            btnCancel.Width = 60;
+            btnCancel.Width = 70;
             btnCancel.Height = 20;
             btnCancel.Margin = new Thickness(5);
             btnCancel.Content = "キャンセル";

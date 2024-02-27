@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmGifSetting));
+            DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo2 = new DevComponents.DotNetBar.SuperTooltipInfo();
+            DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo3 = new DevComponents.DotNetBar.SuperTooltipInfo();
+            DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo1 = new DevComponents.DotNetBar.SuperTooltipInfo();
             this.colorPickerButton1 = new DevComponents.DotNetBar.ColorPickerButton();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.checkBoxX1 = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -89,9 +92,9 @@
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX1.Location = new System.Drawing.Point(11, 13);
             this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(99, 16);
+            this.labelX1.Size = new System.Drawing.Size(37, 16);
             this.labelX1.TabIndex = 0;
-            this.labelX1.Text = "Color";
+            this.labelX1.Text = "色";
             // 
             // checkBoxX1
             // 
@@ -105,7 +108,7 @@
             this.checkBoxX1.Size = new System.Drawing.Size(163, 16);
             this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX1.TabIndex = 2;
-            this.checkBoxX1.Text = "Transparent Background";
+            this.checkBoxX1.Text = "透明な背景";
             // 
             // buttonX1
             // 
@@ -116,7 +119,7 @@
             this.buttonX1.Size = new System.Drawing.Size(75, 23);
             this.buttonX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX1.TabIndex = 10;
-            this.buttonX1.Text = "Confirm";
+            this.buttonX1.Text = "OK";
             this.buttonX1.Click += new System.EventHandler(this.buttonX1_Click);
             // 
             // buttonX2
@@ -129,7 +132,7 @@
             this.buttonX2.Size = new System.Drawing.Size(75, 23);
             this.buttonX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX2.TabIndex = 11;
-            this.buttonX2.Text = "Cancel";
+            this.buttonX2.Text = "キャンセル";
             this.buttonX2.Click += new System.EventHandler(this.buttonX2_Click);
             // 
             // labelX2
@@ -143,36 +146,37 @@
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(56, 16);
             this.labelX2.TabIndex = 5;
-            this.labelX2.Text = "Filename";
+            this.labelX2.Text = "ファイル名";
             // 
             // comboBoxEx1
             // 
             this.comboBoxEx1.DisplayMember = "Text";
             this.comboBoxEx1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBoxEx1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxEx1.FormattingEnabled = true;
-            this.comboBoxEx1.ItemHeight = 15;
+            this.comboBoxEx1.ItemHeight = 13;
             this.comboBoxEx1.Items.AddRange(new object[] {
             this.comboItem1,
             this.comboItem2,
             this.comboItem6});
             this.comboBoxEx1.Location = new System.Drawing.Point(76, 170);
             this.comboBoxEx1.Name = "comboBoxEx1";
-            this.comboBoxEx1.Size = new System.Drawing.Size(129, 21);
+            this.comboBoxEx1.Size = new System.Drawing.Size(129, 19);
             this.comboBoxEx1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.comboBoxEx1.TabIndex = 6;
             // 
             // comboItem1
             // 
-            this.comboItem1.Text = "BuildIn";
+            this.comboItem1.Text = "内蔵";
             // 
             // comboItem2
             // 
-            this.comboItem2.Text = "Index GIF Encoder";
+            this.comboItem2.Text = "インデックスGIFエンコーダ";
             // 
             // comboItem6
             // 
-            this.comboItem6.Text = "APNG Encoder";
+            this.comboItem6.Text = "APNGエンコーダ";
             // 
             // labelX3
             // 
@@ -185,7 +189,7 @@
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(87, 16);
             this.labelX3.TabIndex = 3;
-            this.labelX3.Text = "MinAlphaMixed";
+            this.labelX3.Text = "最小限の混合アルファ";
             // 
             // slider1
             // 
@@ -216,7 +220,7 @@
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(68, 16);
             this.labelX4.TabIndex = 0;
-            this.labelX4.Text = "Background";
+            this.labelX4.Text = "背景";
             // 
             // rdoMosaic
             // 
@@ -230,9 +234,11 @@
             this.rdoMosaic.Name = "rdoMosaic";
             this.rdoMosaic.Size = new System.Drawing.Size(64, 16);
             this.rdoMosaic.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.rdoMosaic, new DevComponents.DotNetBar.SuperTooltipInfo("", "", "Adds a mosaic background to a GIF.", null, null, DevComponents.DotNetBar.eTooltipColor.System));
+            superTooltipInfo2.BodyText = "Adds a mosaic background to a GIF.";
+            superTooltipInfo2.Color = DevComponents.DotNetBar.eTooltipColor.System;
+            this.superTooltip1.SetSuperTooltip(this.rdoMosaic, superTooltipInfo2);
             this.rdoMosaic.TabIndex = 3;
-            this.rdoMosaic.Text = "Mosaic";
+            this.rdoMosaic.Text = "モザイク";
             this.rdoMosaic.CheckedChanged += new System.EventHandler(this.rdoMosaic_CheckedChanged);
             // 
             // panelExMosaic
@@ -268,9 +274,9 @@
             this.labelX7.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX7.Location = new System.Drawing.Point(11, 42);
             this.labelX7.Name = "labelX7";
-            this.labelX7.Size = new System.Drawing.Size(62, 16);
+            this.labelX7.Size = new System.Drawing.Size(68, 16);
             this.labelX7.TabIndex = 4;
-            this.labelX7.Text = "Block Size";
+            this.labelX7.Text = "ブロックサイズ";
             // 
             // labelX6
             // 
@@ -281,9 +287,9 @@
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX6.Location = new System.Drawing.Point(104, 14);
             this.labelX6.Name = "labelX6";
-            this.labelX6.Size = new System.Drawing.Size(44, 16);
+            this.labelX6.Size = new System.Drawing.Size(50, 16);
             this.labelX6.TabIndex = 2;
-            this.labelX6.Text = "Color 2";
+            this.labelX6.Text = "色 2";
             // 
             // labelX5
             // 
@@ -294,9 +300,9 @@
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX5.Location = new System.Drawing.Point(11, 14);
             this.labelX5.Name = "labelX5";
-            this.labelX5.Size = new System.Drawing.Size(44, 16);
+            this.labelX5.Size = new System.Drawing.Size(50, 16);
             this.labelX5.TabIndex = 0;
-            this.labelX5.Text = "Color 1";
+            this.labelX5.Text = "色 1";
             // 
             // slider2
             // 
@@ -378,14 +384,16 @@
             this.rdoColor.Name = "rdoColor";
             this.rdoColor.Size = new System.Drawing.Size(57, 16);
             this.rdoColor.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.rdoColor, new DevComponents.DotNetBar.SuperTooltipInfo("", "", "Adds transparency or a solid color to a GIF.", null, null, DevComponents.DotNetBar.eTooltipColor.System));
+            superTooltipInfo3.BodyText = "Adds transparency or a solid color to a GIF.";
+            superTooltipInfo3.Color = DevComponents.DotNetBar.eTooltipColor.System;
+            this.superTooltip1.SetSuperTooltip(this.rdoColor, superTooltipInfo3);
             this.rdoColor.TabIndex = 1;
-            this.rdoColor.Text = "Color";
+            this.rdoColor.Text = "色";
             this.rdoColor.CheckedChanged += new System.EventHandler(this.rdoColor_CheckedChanged);
             // 
             // superTooltip1
             // 
-            this.superTooltip1.DefaultTooltipSettings = new DevComponents.DotNetBar.SuperTooltipInfo("", "", "", null, null, DevComponents.DotNetBar.eTooltipColor.Gray);
+            this.superTooltip1.DefaultTooltipSettings = superTooltipInfo1;
             // 
             // checkBoxX2
             // 
@@ -396,10 +404,10 @@
             this.checkBoxX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.checkBoxX2.Location = new System.Drawing.Point(12, 223);
             this.checkBoxX2.Name = "checkBoxX2";
-            this.checkBoxX2.Size = new System.Drawing.Size(144, 16);
+            this.checkBoxX2.Size = new System.Drawing.Size(163, 16);
             this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX2.TabIndex = 8;
-            this.checkBoxX2.Text = "Save each frame as PNG";
+            this.checkBoxX2.Text = "各フレームをPNGとして保存";
             // 
             // labelX8
             // 
@@ -412,7 +420,7 @@
             this.labelX8.Name = "labelX8";
             this.labelX8.Size = new System.Drawing.Size(37, 16);
             this.labelX8.TabIndex = 8;
-            this.labelX8.Text = "Delay";
+            this.labelX8.Text = "ディレイ";
             // 
             // integerInput1
             // 
@@ -428,7 +436,6 @@
             this.integerInput1.MinValue = 10;
             this.integerInput1.Name = "integerInput1";
             this.integerInput1.ShowUpDown = true;
-            this.integerInput1.Size = new System.Drawing.Size(80, 21);
             this.integerInput1.TabIndex = 9;
             this.integerInput1.Value = 10;
             // 
@@ -443,36 +450,37 @@
             this.labelX9.Name = "labelX9";
             this.labelX9.Size = new System.Drawing.Size(50, 16);
             this.labelX9.TabIndex = 16;
-            this.labelX9.Text = "Encoder";
+            this.labelX9.Text = "エンコーダ";
             // 
             // comboBoxEx2
             // 
             this.comboBoxEx2.DisplayMember = "Text";
             this.comboBoxEx2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBoxEx2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxEx2.FormattingEnabled = true;
-            this.comboBoxEx2.ItemHeight = 15;
+            this.comboBoxEx2.ItemHeight = 13;
             this.comboBoxEx2.Items.AddRange(new object[] {
             this.comboItem3,
             this.comboItem4,
             this.comboItem5});
             this.comboBoxEx2.Location = new System.Drawing.Point(76, 197);
             this.comboBoxEx2.Name = "comboBoxEx2";
-            this.comboBoxEx2.Size = new System.Drawing.Size(129, 21);
+            this.comboBoxEx2.Size = new System.Drawing.Size(129, 19);
             this.comboBoxEx2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.comboBoxEx2.TabIndex = 7;
             // 
             // comboItem3
             // 
-            this.comboItem3.Text = "Default";
+            this.comboItem3.Text = "デフォルト";
             // 
             // comboItem4
             // 
-            this.comboItem4.Text = "IMG Path";
+            this.comboItem4.Text = "IMGパス";
             // 
             // comboItem5
             // 
-            this.comboItem5.Text = "WZ Path";
+            this.comboItem5.Text = "WZパス";
             // 
             // checkBoxX3
             // 
@@ -483,10 +491,10 @@
             this.checkBoxX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.checkBoxX3.Location = new System.Drawing.Point(212, 174);
             this.checkBoxX3.Name = "checkBoxX3";
-            this.checkBoxX3.Size = new System.Drawing.Size(76, 16);
+            this.checkBoxX3.Size = new System.Drawing.Size(119, 16);
             this.checkBoxX3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX3.TabIndex = 23;
-            this.checkBoxX3.Text = "Optimize (APNG)";
+            this.checkBoxX3.Text = "最適化 (APNG)";
             // 
             // FrmGifSetting
             // 
@@ -508,6 +516,7 @@
             this.Controls.Add(this.buttonX2);
             this.Controls.Add(this.buttonX1);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("MS PGothic", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

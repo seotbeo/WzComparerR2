@@ -52,7 +52,7 @@
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX1.Location = new System.Drawing.Point(12, 33);
             this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(68, 18);
+            this.labelX1.Size = new System.Drawing.Size(56, 16);
             this.labelX1.TabIndex = 0;
             this.labelX1.Text = "Program:";
             // 
@@ -65,7 +65,7 @@
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX2.Location = new System.Drawing.Point(11, 57);
             this.labelX2.Name = "labelX2";
-            this.labelX2.Size = new System.Drawing.Size(68, 18);
+            this.labelX2.Size = new System.Drawing.Size(81, 16);
             this.labelX2.TabIndex = 1;
             this.labelX2.Text = "File Ver.: ";
             // 
@@ -78,7 +78,7 @@
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX3.Location = new System.Drawing.Point(11, 81);
             this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(68, 18);
+            this.labelX3.Size = new System.Drawing.Size(50, 16);
             this.labelX3.TabIndex = 2;
             this.labelX3.Text = "Author:";
             // 
@@ -133,7 +133,7 @@
             this.buttonX1.Size = new System.Drawing.Size(75, 23);
             this.buttonX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX1.TabIndex = 8;
-            this.buttonX1.Text = "Close";
+            this.buttonX1.Text = "閉じる";
             // 
             // advTree1
             // 
@@ -173,7 +173,7 @@
             // 
             // 
             // 
-            this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.lblClrVer.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.lblClrVer.Location = new System.Drawing.Point(73, 9);
             this.lblClrVer.Name = "lblClrVer";
             this.lblClrVer.Size = new System.Drawing.Size(13, 16);
@@ -189,7 +189,7 @@
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX4.Location = new System.Drawing.Point(12, 9);
             this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(62, 18);
+            this.labelX4.Size = new System.Drawing.Size(81, 16);
             this.labelX4.TabIndex = 10;
             this.labelX4.Text = ".NET Ver.: ";
             // 
@@ -211,13 +211,14 @@
             this.Controls.Add(this.labelX2);
             this.Controls.Add(this.labelX1);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("MS Gothic", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAbout";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Information";
+            this.Text = "プログラムについて";
             ((System.ComponentModel.ISupportInitialize)(this.advTree1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -104,7 +104,7 @@ namespace WzComparerR2
             if (!soundPlayer.Init())
             {
                 ManagedBass.Errors error = soundPlayer.GetLastError();
-                MessageBoxEx.Show("Failed to initialize Bass\r\n\r\nError: " + (int)error + "(" + error + ")", "Error");
+                MessageBoxEx.Show("Failed to initialize Bass\r\n\r\nError: " + (int)error + "(" + error + ")", "エラー");
             }
             soundTimer = new Timer(120d);
             soundTimer.Elapsed += new System.Timers.ElapsedEventHandler(soundTimer_Elapsed);
@@ -747,7 +747,7 @@ namespace WzComparerR2
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
-                dlg.Title = "Select WZ File";
+                dlg.Title = "WZファイルを選択";
                 dlg.Filter = "Base.wz|*.wz";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -764,7 +764,7 @@ namespace WzComparerR2
                 {
                     if (string.Compare(wz_f.Header.FileName, wzFilePath, true) == 0)
                     {
-                        MessageBoxEx.Show("This WZ file is already open.", "Error");
+                        MessageBoxEx.Show("このWZファイルはすでに開かれています。", "エラー");
                         return;
                     }
                 }
@@ -794,7 +794,7 @@ namespace WzComparerR2
                 this.openedWz.Add(wz);
                 OnWzOpened(new WzStructureEventArgs(wz)); //触发事件
                 QueryPerformance.End();
-                labelItemStatus.Text = "Read WZ File. Time elapsed: " + (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000) + " ms, " + wz.img_number + " images";
+                labelItemStatus.Text = "ファイルがロードされました。 時間が経過した：" + (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000) + "ミリ秒、" + wz.img_number + " IMG";
 
                 ConfigManager.Reload();
                 WcR2Config.Default.RecentDocuments.Remove(wzFilePath);
@@ -804,11 +804,11 @@ namespace WzComparerR2
             }
             catch (FileNotFoundException)
             {
-                MessageBoxEx.Show("File not found.", "Error");
+                MessageBoxEx.Show("ファイルが見つかりません。", "エラー");
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(ex.ToString(), "Error");
+                MessageBoxEx.Show(ex.ToString(), "エラー");
                 wz.Clear();
             }
             finally
@@ -821,7 +821,7 @@ namespace WzComparerR2
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
-                dlg.Title = "Please select a MapleStory IMG file.";
+                dlg.Title = "メイプルストーリーIMGファイルを選択してください。";
                 dlg.Filter = "*.img;Data.wz (マイナー修正ファイル)|*.img;Data.wz|*.wz|*.wz";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -838,7 +838,7 @@ namespace WzComparerR2
                 {
                     if (StringComparer.OrdinalIgnoreCase.Equals(wz_f.Header.FileName, imgFileName))
                     {
-                        MessageBoxEx.Show("This WZ file is already open.", "Error");
+                        MessageBoxEx.Show("このWZファイルはすでに開かれています。", "エラー");
                         return;
                     }
                 }
@@ -857,16 +857,16 @@ namespace WzComparerR2
                 this.openedWz.Add(wz);
                 OnWzOpened(new WzStructureEventArgs(wz)); //触发事件
                 sw.Stop();
-                labelItemStatus.Text = $"Opened the IMG file. Time elapsed: {sw.ElapsedMilliseconds} ms";
+                labelItemStatus.Text = $"IMGファイルを開きました。 時間が経過した：{sw.ElapsedMilliseconds}ミリ秒";
                 refreshRecentDocItems();
             }
             catch (FileNotFoundException)
             {
-                MessageBoxEx.Show("File not found..", "Error");
+                MessageBoxEx.Show("ファイルが見つかりません。", "エラー");
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(ex.ToString(), "Error");
+                MessageBoxEx.Show(ex.ToString(), "エラー");
                 wz.Clear();
             }
             finally
@@ -879,7 +879,7 @@ namespace WzComparerR2
         {
             if (advTree1.SelectedNode == null)
             {
-                MessageBoxEx.Show("You did not select the WZ file you want to close.", "Error");
+                MessageBoxEx.Show("閉じたいWZファイルが選択されていません。", "エラー");
                 return;
             }
             Node baseWzNode = advTree1.SelectedNode;
@@ -888,14 +888,14 @@ namespace WzComparerR2
             if (baseWzNode.Text.ToLower() == "list.wz")
             {
                 advTree1.Nodes.Remove(baseWzNode);
-                labelItemStatus.Text = "List.wz has been deprecated.";
+                labelItemStatus.Text = "List.wzは非推奨になりました。";
                 return;
             }
 
             Wz_File wz_f = advTree1.SelectedNode.AsWzNode()?.GetNodeWzFile();
             if (wz_f == null)
             {
-                MessageBoxEx.Show("You have not selected which WZ file you want to close.", "Error");
+                MessageBoxEx.Show("閉じたいWZファイルが選択されていません。", "エラー");
                 return;
             }
             Wz_Structure wz = wz_f.WzStructure;
@@ -922,9 +922,9 @@ namespace WzComparerR2
             OnWzClosing(new WzStructureEventArgs(wz));
             wz.Clear();
             if (this.openedWz.Remove(wz))
-                labelItemStatus.Text = "Closed";
+                labelItemStatus.Text = "閉まっている";
             else
-                labelItemStatus.Text = "Failed to close WZ file: Unknown Error";
+                labelItemStatus.Text = "WZ ファイルを閉じることができませんでした: 不明なエラー";
         }
 
         private void buttonItemCloseAll_Click(object sender, EventArgs e)
@@ -940,7 +940,7 @@ namespace WzComparerR2
             openedWz.Clear();
             CharaSimLoader.ClearAll();
             stringLinker.Clear();
-            labelItemStatus.Text = "All Closed";
+            labelItemStatus.Text = "すべてのファイルが閉じられています";
             GC.Collect();
         }
 
@@ -1025,35 +1025,35 @@ namespace WzComparerR2
 
             if (selectedNode.Value == null)
             {
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Directory Name", Path.GetFileName(e.Node.Text) }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "ディレクトリ名", Path.GetFileName(e.Node.Text) }));
                 autoResizeColumns(listViewExWzDetail);
             }
             else if (selectedNode.Value is Wz_File wzFile)
             {
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Filename", wzFile.Header.FileName }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "File Size", wzFile.Header.FileSize + " bytes" }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Copyright", wzFile.Header.Copyright }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Version", wzFile.GetMergedVersion().ToString() }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "WZ Type", wzFile.IsSubDir ? "Subdirectory" : wzFile.Type.ToString() }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "ファイル名", wzFile.Header.FileName }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "ファイルサイズ", wzFile.Header.FileSize + " bytes" }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "著作権", wzFile.Header.Copyright }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "バージョン", wzFile.GetMergedVersion().ToString() }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "WZタイプ", wzFile.IsSubDir ? "Subdirectory" : wzFile.Type.ToString() }));
 
                 foreach (Wz_File subFile in wzFile.MergedWzFiles)
                 {
                     listViewExWzDetail.Items.Add(" ");
-                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Filename", subFile.Header.FileName }));
-                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "File Size", subFile.Header.FileSize + " bytes" }));
-                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Copyright", subFile.Header.Copyright }));
-                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Version", subFile.Header.WzVersion.ToString() }));
+                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "ファイル名", subFile.Header.FileName }));
+                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "ファイルサイズ", subFile.Header.FileSize + " bytes" }));
+                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "著作権", subFile.Header.Copyright }));
+                    listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "バージョン", subFile.Header.WzVersion.ToString() }));
                 }
 
                 autoResizeColumns(listViewExWzDetail);
             }
             else if (selectedNode.Value is Wz_Image wzImage)
             {
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Image Name", wzImage.Name }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Image Size", wzImage.Size + " bytes" }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Image Offset", wzImage.Offset + " bytes" }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Path", wzImage.Node.FullPathToFile }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Checksum", wzImage.Checksum.ToString() }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "IMG名", wzImage.Name }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "IMGサイズ", wzImage.Size + " bytes" }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "IMGオフセット", wzImage.Offset + " bytes" }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "パス", wzImage.Node.FullPathToFile }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "チェックサム", wzImage.Checksum.ToString() }));
                 autoResizeColumns(listViewExWzDetail);
 
                 advTree2.ClearAndDisposeAllNodes();
@@ -1070,17 +1070,17 @@ namespace WzComparerR2
                         QueryPerformance.End();
                         double ms = (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000);
 
-                        labelItemStatus.Text = "Imported. Time elapsed: " + ms + " ms";
+                        labelItemStatus.Text = "インポート済み。時間が経過した：" + ms + "ミリ秒";
                     }
                     else
                     {
 
-                        labelItemStatus.Text = "Import failed: " + ex.Message;
+                        labelItemStatus.Text = "インポートに失敗しました：" + ex.Message;
                     }
                 }
                 catch (Exception ex)
                 {
-                    labelItemStatus.Text = "Import failed: " + ex.Message;
+                    labelItemStatus.Text = "インポートに失敗しました：" + ex.Message;
                 }
             }
             listViewExWzDetail.EndUpdate();
@@ -1161,7 +1161,7 @@ namespace WzComparerR2
             }
             else if ((sound = value as Wz_Sound) != null)
             {
-                return "Audio " + sound.Ms + " ms";
+                return "Audio " + sound.Ms + "ミリ秒";
             }
             else if ((img = value as Wz_Image) != null)
             {
@@ -1811,7 +1811,7 @@ namespace WzComparerR2
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show(ex.ToString(), "Error");
+                    MessageBoxEx.Show(ex.ToString(), "エラー");
                 }
                 finally
                 {
@@ -1860,7 +1860,7 @@ namespace WzComparerR2
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show(ex.ToString(), "Error");
+                    MessageBoxEx.Show(ex.ToString(), "エラー");
                 }
                 finally
                 {
@@ -1907,11 +1907,11 @@ namespace WzComparerR2
                 Node searchNode = searchAdvTree(advTree, cellIndex, searchText, exact, regex, true);
                 advTree.SelectedNode = searchNode;
                 if (searchNode == null)
-                    MessageBoxEx.Show("No search results were found.", "Error");
+                    MessageBoxEx.Show("検索結果が見つかりませんでした。", "エラー");
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2033,12 +2033,12 @@ namespace WzComparerR2
             {
                 if (!this.stringLinker.Load(findStringWz(), findItemWz(), findEtcWz()))
                 {
-                    MessageBoxEx.Show("Select Base.wz.", "Error");
+                    MessageBoxEx.Show("Base.wzを選択します。", "エラー");
                     return;
                 }
                 QueryPerformance.End();
                 double ms = (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000);
-                labelItemStatus.Text = "StringLinker has been reset. Time elapsed: " + ms + " ms";
+                labelItemStatus.Text = "文字列テーブルのリンクがリセットされました。 時間が経過した：" + ms + "ミリ秒";
             }
             if (comboBoxItem2.SelectedIndex < 0)
                 comboBoxItem2.SelectedIndex = 0;
@@ -2091,7 +2091,7 @@ namespace WzComparerR2
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -2205,7 +2205,7 @@ namespace WzComparerR2
             Wz_File etcWzFile = advTree1.SelectedNode?.AsWzNode()?.FindNodeByPath("Etc").GetNodeWzFile();
             if (stringWzFile == null || itemWzFile == null || etcWzFile == null)
             {
-                MessageBoxEx.Show("Select Base.wz.", "Error");
+                MessageBoxEx.Show("Select Base.wz.", "エラー");
                 return;
             }
             QueryPerformance.Start();
@@ -2214,18 +2214,18 @@ namespace WzComparerR2
             if (r)
             {
                 double ms = (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000);
-                labelItemStatus.Text = "StringLinker has been reset. Time elapsed: " + ms + " ms";
+                labelItemStatus.Text = "文字列テーブルのリンクがリセットされました。 時間が経過した：" + ms + "ミリ秒";
             }
             else
             {
-                MessageBoxEx.Show("Failed to reset StringLinker.", "Error");
+                MessageBoxEx.Show("文字列テーブルのリンクをリセットできません。", "エラー");
             }
         }
 
         private void buttonItemClearStringWz_Click(object sender, EventArgs e)
         {
             stringLinker.Clear();
-            labelItemStatus.Text = "StringLinker has been cleared.";
+            labelItemStatus.Text = "文字列テーブルのリンクがリセットされました";
         }
 
         private void buttonItemPatcher_Click(object sender, EventArgs e)
@@ -2353,7 +2353,7 @@ namespace WzComparerR2
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n\r\n" + ex.ToString(), "Error");
+                        MessageBoxEx.Show("Failed to save\r\n\r\n" + ex.ToString(), "エラー");
                     }
                     finally
                     {
@@ -2442,7 +2442,7 @@ namespace WzComparerR2
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "Error");
+                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "エラー");
                     }
                 }
             }
@@ -2486,7 +2486,7 @@ namespace WzComparerR2
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "Error");
+                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "エラー");
                     }
                 }
             }
@@ -2522,7 +2522,7 @@ namespace WzComparerR2
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "Error");
+                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "エラー");
                     }
                 }
             }
@@ -3190,7 +3190,7 @@ namespace WzComparerR2
             if (compareThread != null)
             {
                 compareThread.Suspend();
-                if (DialogResult.Yes == MessageBoxEx.Show("There is a comparison in progress. Do you want to abort?", "Notice", MessageBoxButtons.YesNoCancel))
+                if (DialogResult.Yes == MessageBoxEx.Show("比較が進行中です。 中絶しますか?", "Notice", MessageBoxButtons.YesNoCancel))
                 {
                     compareThread.Resume();
                     compareThread.Abort();
@@ -3204,12 +3204,12 @@ namespace WzComparerR2
 
             if (openedWz.Count < 2)
             {
-                MessageBoxEx.Show("Select two or more WZ files to begin comparing.", "Error");
+                MessageBoxEx.Show("比較を開始するには、2つ以上のWZファイルを開いてください。", "エラー");
                 return;
             }
 
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select the destination folder you want to save to.";
+            dlg.Description = "保存先のフォルダーを選択します。";
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {

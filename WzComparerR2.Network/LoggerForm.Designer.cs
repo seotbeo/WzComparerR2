@@ -151,7 +151,7 @@
             // 
             this.dockContainerItem1.Control = this.panelDockContainer1;
             this.dockContainerItem1.Name = "dockContainerItem1";
-            this.dockContainerItem1.Text = "Network Logger";
+            this.dockContainerItem1.Text = "ネットワークロガー";
             // 
             // LoggerForm
             // 

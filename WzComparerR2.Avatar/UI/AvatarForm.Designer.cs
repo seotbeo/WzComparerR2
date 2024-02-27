@@ -620,13 +620,13 @@
             // btnMale
             // 
             this.btnMale.Name = "btnMale";
-            this.btnMale.Text = "Male character";
+            this.btnMale.Text = "男性キャラクター";
             this.btnMale.Click += new System.EventHandler(this.btnMale_Click);
             // 
             // btnFemale
             // 
             this.btnFemale.Name = "btnFemale";
-            this.btnFemale.Text = "Female character";
+            this.btnFemale.Text = "女性キャラクター";
             this.btnFemale.Click += new System.EventHandler(this.btnFemale_Click);
             // 
             // btnReset
@@ -726,7 +726,7 @@
             this.Controls.Add(this.dockSite8);
             this.DoubleBuffered = true;
             this.Name = "AvatarForm";
-            this.Text = "Avatar";
+            this.Text = "アバター";
             this.dockSite2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bar1)).EndInit();
             this.bar1.ResumeLayout(false);

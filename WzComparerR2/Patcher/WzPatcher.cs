@@ -54,7 +54,7 @@ namespace WzComparerR2.Patcher
 
             if (this.patchBlock == null)
             {
-                throw new Exception("Decompress Error, cannot find patch block from the stream.");
+                throw new Exception("解凍エラー。ストリームからパッチブロックが見つかりません。");
             }
 
             BinaryReader r = new BinaryReader(patchBlock);

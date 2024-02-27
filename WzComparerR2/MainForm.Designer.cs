@@ -378,7 +378,7 @@
             this.ribbonBar8.Size = new System.Drawing.Size(270, 91);
             this.ribbonBar8.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar8.TabIndex = 1;
-            this.ribbonBar8.Text = "CharaSim";
+            this.ribbonBar8.Text = "シミュレーション";
             // 
             // 
             // 
@@ -548,11 +548,11 @@
             // 
             // comboItem15
             // 
-            this.comboItem15.Text = "MS YaHei";
+            this.comboItem15.Text = "SimSun";
             // 
             // comboItem16
             // 
-            this.comboItem16.Text = "MS Gothic";
+            this.comboItem16.Text = "Arial";
             // 
             // comboItem17
             // 
@@ -581,7 +581,7 @@
             this.buttonItemQuickView.Name = "buttonItemQuickView";
             this.buttonItemQuickView.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.itemContainer42});
-            this.buttonItemQuickView.Text = "Preview";
+            this.buttonItemQuickView.Text = "プレビュー";
             this.buttonItemQuickView.Click += new System.EventHandler(this.buttonItemQuickView_Click);
             // 
             // itemContainer42
@@ -604,14 +604,14 @@
             // 
             this.buttonItemAutoQuickView.AutoCheckOnClick = true;
             this.buttonItemAutoQuickView.Name = "buttonItemAutoQuickView";
-            this.buttonItemAutoQuickView.Text = "Auto Preview";
-            this.buttonItemAutoQuickView.Tooltip = "Turn on/off Auto Preview";
+            this.buttonItemAutoQuickView.Text = "自動プレビュー";
+            this.buttonItemAutoQuickView.Tooltip = "自動プレビューのオン/オフ";
             this.buttonItemAutoQuickView.Click += new System.EventHandler(this.buttonItemAutoQuickView_Click);
             // 
             // buttonItemQuickViewSetting
             // 
             this.buttonItemQuickViewSetting.Name = "buttonItemQuickViewSetting";
-            this.buttonItemQuickViewSetting.Text = "Settings";
+            this.buttonItemQuickViewSetting.Text = "設定";
             this.buttonItemQuickViewSetting.Click += new System.EventHandler(this.buttonItemQuickViewSetting_Click);
             // 
             // itemContainer26
@@ -633,7 +633,7 @@
             this.buttonItemSetItems.Name = "buttonItemSetItems";
             this.buttonItemSetItems.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.itemContainer43});
-            this.buttonItemSetItems.Text = "Item Management";
+            this.buttonItemSetItems.Text = "アイテム管理";
             // 
             // itemContainer43
             // 
@@ -655,19 +655,19 @@
             // buttonItemClearSetItems
             // 
             this.buttonItemClearSetItems.Name = "buttonItemClearSetItems";
-            this.buttonItemClearSetItems.Text = "Consolidate Set Item";
+            this.buttonItemClearSetItems.Text = "アイテムセットを統合する";
             this.buttonItemClearSetItems.Click += new System.EventHandler(this.buttonItemClearSetItems_Click);
             // 
             // buttonItemClearExclusiveEquips
             // 
             this.buttonItemClearExclusiveEquips.Name = "buttonItemClearExclusiveEquips";
-            this.buttonItemClearExclusiveEquips.Text = "Consolidate Non-Duplicate Item";
+            this.buttonItemClearExclusiveEquips.Text = "重複しないアイテムを統合する";
             this.buttonItemClearExclusiveEquips.Click += new System.EventHandler(this.buttonItemClearExclusiveEquips_Click);
             // 
             // buttonItemClearCommodities
             // 
             this.buttonItemClearCommodities.Name = "buttonItemClearCommodities";
-            this.buttonItemClearCommodities.Text = "Consolidate Cash Item";
+            this.buttonItemClearCommodities.Text = "現金アイテムを統合する";
             this.buttonItemClearCommodities.Click += new System.EventHandler(this.buttonItemClearCommodities_Click);
             // 
             // itemContainer28
@@ -705,8 +705,8 @@
             // 
             this.buttonItemCharItem.AutoCheckOnClick = true;
             this.buttonItemCharItem.Name = "buttonItemCharItem";
-            this.buttonItemCharItem.Text = "Inventory";
-            this.buttonItemCharItem.Tooltip = "Open/close Inventory window";
+            this.buttonItemCharItem.Text = "インベントリ";
+            this.buttonItemCharItem.Tooltip = "インベントリウィンドウのオン/オフ";
             this.buttonItemCharItem.CheckedChanged += new System.EventHandler(this.buttonItemCharItem_CheckedChanged);
             // 
             // itemContainer30
@@ -727,8 +727,8 @@
             // 
             this.buttonItemCharaStat.AutoCheckOnClick = true;
             this.buttonItemCharaStat.Name = "buttonItemCharaStat";
-            this.buttonItemCharaStat.Text = "Stats";
-            this.buttonItemCharaStat.Tooltip = "Open/close Stats window";
+            this.buttonItemCharaStat.Text = "ステータス";
+            this.buttonItemCharaStat.Tooltip = "ステータスウィンドウのON/OFF";
             this.buttonItemCharaStat.CheckedChanged += new System.EventHandler(this.buttonItemCharaStat_CheckedChanged);
             // 
             // itemContainer31
@@ -749,8 +749,8 @@
             // 
             this.buttonItemCharaEquip.AutoCheckOnClick = true;
             this.buttonItemCharaEquip.Name = "buttonItemCharaEquip";
-            this.buttonItemCharaEquip.Text = "Equipment";
-            this.buttonItemCharaEquip.Tooltip = "Open/close Equipment window";
+            this.buttonItemCharaEquip.Text = "装備";
+            this.buttonItemCharaEquip.Tooltip = "装備ウィンドウのON/OFF";
             this.buttonItemCharaEquip.CheckedChanged += new System.EventHandler(this.buttonItemCharaEquip_CheckedChanged);
             // 
             // itemContainer32
@@ -787,8 +787,8 @@
             // buttonItemAddItem
             // 
             this.buttonItemAddItem.Name = "buttonItemAddItem";
-            this.buttonItemAddItem.Text = "Add Item";
-            this.buttonItemAddItem.Tooltip = "Adds an item of your choice to the inventory window";
+            this.buttonItemAddItem.Text = "アイテムの追加";
+            this.buttonItemAddItem.Tooltip = "選択したアイテムをインベントリウィンドウに追加します";
             this.buttonItemAddItem.Click += new System.EventHandler(this.buttonItemAddItem_Click);
             // 
             // itemContainer34
@@ -837,7 +837,7 @@
             this.ribbonBar3.Size = new System.Drawing.Size(262, 91);
             this.ribbonBar3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar3.TabIndex = 0;
-            this.ribbonBar3.Text = "Music Player";
+            this.ribbonBar3.Text = "音楽プレーヤー";
             // 
             // 
             // 
@@ -914,12 +914,12 @@
             // checkBoxItemSoundLoop
             // 
             this.checkBoxItemSoundLoop.Name = "checkBoxItemSoundLoop";
-            this.checkBoxItemSoundLoop.Text = "Repeat";
+            this.checkBoxItemSoundLoop.Text = "ループ";
             this.checkBoxItemSoundLoop.CheckedChanged += new DevComponents.DotNetBar.CheckBoxChangeEventHandler(this.checkBoxItemSoundLoop_CheckedChanged);
             // 
             // itemContainer18
             // 
-            // 
+            // F
             // 
             // 
             this.itemContainer18.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
@@ -986,9 +986,9 @@
             // 
             // sliderItemSoundVol
             // 
-            this.sliderItemSoundVol.LabelWidth = 25;
+            this.sliderItemSoundVol.LabelWidth = 35;
             this.sliderItemSoundVol.Name = "sliderItemSoundVol";
-            this.sliderItemSoundVol.Text = "vol";
+            this.sliderItemSoundVol.Text = "音量";
             this.sliderItemSoundVol.Value = 100;
             this.sliderItemSoundVol.Width = 110;
             this.sliderItemSoundVol.ValueChanged += new System.EventHandler(this.sliderItemSoundVol_ValueChanged);
@@ -1039,7 +1039,7 @@
             this.ribbonBar9.Size = new System.Drawing.Size(63, 91);
             this.ribbonBar9.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar9.TabIndex = 2;
-            this.ribbonBar9.Text = "Patcher";
+            this.ribbonBar9.Text = "ゲームパッチャー";
             // 
             // 
             // 
@@ -1052,8 +1052,8 @@
             // buttonItemPatcher
             // 
             this.buttonItemPatcher.Name = "buttonItemPatcher";
-            this.buttonItemPatcher.SubItemsExpandWidth = 14;
-            this.buttonItemPatcher.Text = "Patcher";
+            this.buttonItemPatcher.SubItemsExpandWidth = 16;
+            this.buttonItemPatcher.Text = "ゲームパッチャー";
             this.buttonItemPatcher.Click += new System.EventHandler(this.buttonItemPatcher_Click);
             // 
             // ribbonBar4
@@ -1077,7 +1077,7 @@
             this.ribbonBar4.Size = new System.Drawing.Size(168, 91);
             this.ribbonBar4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar4.TabIndex = 1;
-            this.ribbonBar4.Text = "String Search";
+            this.ribbonBar4.Text = "キーワード検索";
             // 
             // 
             // 
@@ -1122,7 +1122,7 @@
             // labelItem2
             // 
             this.labelItem2.Name = "labelItem2";
-            this.labelItem2.Text = "String";
+            this.labelItem2.Text = "文字列";
             // 
             // textBoxItemSearchString
             // 
@@ -1149,7 +1149,7 @@
             // checkBoxItemExact2
             // 
             this.checkBoxItemExact2.Name = "checkBoxItemExact2";
-            this.checkBoxItemExact2.Text = "Exact";
+            this.checkBoxItemExact2.Text = "完全一致";
             // 
             // comboBoxItem2
             // 
@@ -1170,23 +1170,23 @@
             // 
             // comboItem3
             // 
-            this.comboItem3.Text = "All";
+            this.comboItem3.Text = "全て";
             // 
             // comboItem4
             // 
-            this.comboItem4.Text = "Equipment";
+            this.comboItem4.Text = "装備";
             // 
             // comboItem5
             // 
-            this.comboItem5.Text = "Item";
+            this.comboItem5.Text = "アイテム";
             // 
             // comboItem6
             // 
-            this.comboItem6.Text = "Map";
+            this.comboItem6.Text = "マップ";
             // 
             // comboItem7
             // 
-            this.comboItem7.Text = "Monster";
+            this.comboItem7.Text = "モンスター";
             // 
             // comboItem8
             // 
@@ -1194,11 +1194,11 @@
             // 
             // comboItem9
             // 
-            this.comboItem9.Text = "Skill";
+            this.comboItem9.Text = "スキル";
             // 
             // comboItem19
             // 
-            this.comboItem19.Text = "Set Item";
+            this.comboItem19.Text = "アイテムセット";
             // 
             // itemContainer12
             // 
@@ -1220,7 +1220,7 @@
             // 
             this.checkBoxItemRegex2.Checked = true;
             this.checkBoxItemRegex2.Name = "checkBoxItemRegex2";
-            this.checkBoxItemRegex2.Text = "Regex";
+            this.checkBoxItemRegex2.Text = "正規表現";
             // 
             // buttonItemSearchString
             // 
@@ -1228,19 +1228,19 @@
             this.buttonItemSearchString.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.buttonItemSelectStringWz,
             this.buttonItemClearStringWz});
-            this.buttonItemSearchString.Text = "Find";
+            this.buttonItemSearchString.Text = "検索";
             this.buttonItemSearchString.Click += new System.EventHandler(this.buttonItemSearchString_Click);
             // 
             // buttonItemSelectStringWz
             // 
             this.buttonItemSelectStringWz.Name = "buttonItemSelectStringWz";
-            this.buttonItemSelectStringWz.Text = "Select Ba&se.wz";
+            this.buttonItemSelectStringWz.Text = "Base.wzを選択 (&A)";
             this.buttonItemSelectStringWz.Click += new System.EventHandler(this.buttonItemSelectStringWz_Click);
             // 
             // buttonItemClearStringWz
             // 
             this.buttonItemClearStringWz.Name = "buttonItemClearStringWz";
-            this.buttonItemClearStringWz.Text = "Clear StringLinker";
+            this.buttonItemClearStringWz.Text = "文字列テーブルのリンクを解除する";
             this.buttonItemClearStringWz.Click += new System.EventHandler(this.buttonItemClearStringWz_Click);
             // 
             // ribbonBar1
@@ -1264,7 +1264,7 @@
             this.ribbonBar1.Size = new System.Drawing.Size(168, 91);
             this.ribbonBar1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar1.TabIndex = 0;
-            this.ribbonBar1.Text = "WZ Node Search";
+            this.ribbonBar1.Text = "WZノード検索";
             // 
             // 
             // 
@@ -1309,7 +1309,7 @@
             // labelItem3
             // 
             this.labelItem3.Name = "labelItem3";
-            this.labelItem3.Text = "Node";
+            this.labelItem3.Text = "ノード";
             // 
             // textBoxItemSearchWz
             // 
@@ -1337,7 +1337,7 @@
             // checkBoxItemExact1
             // 
             this.checkBoxItemExact1.Name = "checkBoxItemExact1";
-            this.checkBoxItemExact1.Text = "Exact";
+            this.checkBoxItemExact1.Text = "完全一致";
             // 
             // comboBoxItem1
             // 
@@ -1353,15 +1353,15 @@
             // 
             // comboItem10
             // 
-            this.comboItem10.Text = "WZ Node";
+            this.comboItem10.Text = "WZノード";
             // 
             // comboItem11
             // 
-            this.comboItem11.Text = "Image Node";
+            this.comboItem11.Text = "IMGノード";
             // 
             // comboItem12
             // 
-            this.comboItem12.Text = "Image Value";
+            this.comboItem12.Text = "IMG値";
             // 
             // itemContainer17
             // 
@@ -1383,12 +1383,12 @@
             // 
             this.checkBoxItemRegex1.Checked = true;
             this.checkBoxItemRegex1.Name = "checkBoxItemRegex1";
-            this.checkBoxItemRegex1.Text = "Regex";
+            this.checkBoxItemRegex1.Text = "正規表現";
             // 
             // buttonItemSearchWz
             // 
             this.buttonItemSearchWz.Name = "buttonItemSearchWz";
-            this.buttonItemSearchWz.Text = "Find Next";
+            this.buttonItemSearchWz.Text = "次を見つける";
             this.buttonItemSearchWz.Click += new System.EventHandler(this.buttonItemSearchWz_Click);
             // 
             // ribbonPanel3
@@ -1435,10 +1435,10 @@
             this.buttonItem1});
             this.ribbonBar11.Location = new System.Drawing.Point(110, 0);
             this.ribbonBar11.Name = "ribbonBar11";
-            this.ribbonBar11.Size = new System.Drawing.Size(69, 91);
+            this.ribbonBar11.Size = new System.Drawing.Size(140, 91);
             this.ribbonBar11.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar11.TabIndex = 2;
-            this.ribbonBar11.Text = "Experimental";
+            this.ribbonBar11.Text = "試験的な機能";
             // 
             // 
             // 
@@ -1451,8 +1451,8 @@
             // buttonItem1
             // 
             this.buttonItem1.Name = "buttonItem1";
-            this.buttonItem1.SubItemsExpandWidth = 14;
-            this.buttonItem1.Text = "Test (Do not use)";
+            this.buttonItem1.SubItemsExpandWidth = 28;
+            this.buttonItem1.Text = "未実装";
             this.buttonItem1.Click += new System.EventHandler(this.buttonItem1_Click);
             // 
             // ribbonBar7
@@ -1476,7 +1476,7 @@
             this.ribbonBar7.Size = new System.Drawing.Size(57, 91);
             this.ribbonBar7.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar7.TabIndex = 1;
-            this.ribbonBar7.Text = "Update";
+            this.ribbonBar7.Text = "アップデート";
             // 
             // 
             // 
@@ -1490,7 +1490,7 @@
             // 
             this.buttonItemUpdate.Name = "buttonItemUpdate";
             this.buttonItemUpdate.SubItemsExpandWidth = 14;
-            this.buttonItemUpdate.Text = "Update";
+            this.buttonItemUpdate.Text = "アップデート";
             this.buttonItemUpdate.Click += new System.EventHandler(this.buttonItemUpdate_Click);
             // 
             // ribbonBar6
@@ -1514,7 +1514,7 @@
             this.ribbonBar6.Size = new System.Drawing.Size(50, 91);
             this.ribbonBar6.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar6.TabIndex = 0;
-            this.ribbonBar6.Text = "About";
+            this.ribbonBar6.Text = "ついて";
             // 
             // 
             // 
@@ -1528,7 +1528,7 @@
             // 
             this.buttonItemAbout.Name = "buttonItemAbout";
             this.buttonItemAbout.SubItemsExpandWidth = 14;
-            this.buttonItemAbout.Text = "About";
+            this.buttonItemAbout.Text = "ついて";
             this.buttonItemAbout.Click += new System.EventHandler(this.buttonItemAbout_Click);
             // 
             // ribbonTabItem1
@@ -1772,7 +1772,7 @@
             // labelItemStatus
             // 
             this.labelItemStatus.Name = "labelItemStatus";
-            this.labelItemStatus.Text = "Status";
+            this.labelItemStatus.Text = "状態";
             this.labelItemStatus.TextChanged += new System.EventHandler(this.labelItemStatus_TextChanged);
             // 
             // progressBarItem1
@@ -1981,7 +1981,7 @@
             this.buttonItemSaveImage.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.itemContainer27});
             this.buttonItemSaveImage.SubItemsExpandWidth = 14;
-            this.buttonItemSaveImage.Text = "Save Image";
+            this.buttonItemSaveImage.Text = "画像を保存";
             this.buttonItemSaveImage.Click += new System.EventHandler(this.buttonItemSaveImage_Click);
             // 
             // itemContainer27
@@ -2005,7 +2005,7 @@
             // 
             this.buttonItemAutoSave.AutoCheckOnClick = true;
             this.buttonItemAutoSave.Name = "buttonItemAutoSave";
-            this.buttonItemAutoSave.Text = "Auto Save";
+            this.buttonItemAutoSave.Text = "自動保存";
             this.buttonItemAutoSave.Click += new System.EventHandler(this.buttonItemAutoSave_Click);
             // 
             // buttonItemAutoSaveFolder
@@ -2013,7 +2013,7 @@
             this.buttonItemAutoSaveFolder.Name = "buttonItemAutoSaveFolder";
             this.buttonItemAutoSaveFolder.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.labelItemAutoSaveFolder});
-            this.buttonItemAutoSaveFolder.Text = "Select Folder";
+            this.buttonItemAutoSaveFolder.Text = "宛先フォルダーの選択";
             this.buttonItemAutoSaveFolder.Click += new System.EventHandler(this.buttonItemAutoSaveFolder_Click);
             // 
             // labelItemAutoSaveFolder
@@ -2033,7 +2033,7 @@
             // buttonItemSaveWithOptions
             // 
             this.buttonItemSaveWithOptions.Name = "buttonItemSaveWithOptions";
-            this.buttonItemSaveWithOptions.Text = "Custom Save";
+            this.buttonItemSaveWithOptions.Text = "カスタム保存オプション";
             this.buttonItemSaveWithOptions.Click += new System.EventHandler(this.buttonItemSaveWithOptions_Click);
             // 
             // buttonItemGif
@@ -2042,7 +2042,7 @@
             this.buttonItemGif.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.itemContainer36});
             this.buttonItemGif.SubItemsExpandWidth = 14;
-            this.buttonItemGif.Text = "Extract Animation";
+            this.buttonItemGif.Text = "アニメーションの生成";
             this.buttonItemGif.Click += new System.EventHandler(this.buttonItemGif_Click);
             // 
             // itemContainer36
@@ -2063,7 +2063,7 @@
             // buttonItemGifSetting
             // 
             this.buttonItemGifSetting.Name = "buttonItemGifSetting";
-            this.buttonItemGifSetting.Text = "Settings";
+            this.buttonItemGifSetting.Text = "設定";
             this.buttonItemGifSetting.Click += new System.EventHandler(this.buttonItemGifSetting_Click);
             // 
             // textBoxX1
@@ -2169,19 +2169,19 @@
             // columnHeader3
             // 
             this.columnHeader3.Name = "columnHeader3";
-            this.columnHeader3.Text = "Image Node";
+            this.columnHeader3.Text = "IMGノード";
             this.columnHeader3.Width.Absolute = 150;
             // 
             // columnHeader4
             // 
             this.columnHeader4.Name = "columnHeader4";
-            this.columnHeader4.Text = "Value";
+            this.columnHeader4.Text = "値";
             this.columnHeader4.Width.Absolute = 150;
             // 
             // columnHeader5
             // 
             this.columnHeader5.Name = "columnHeader5";
-            this.columnHeader5.Text = "Type";
+            this.columnHeader5.Text = "種類";
             this.columnHeader5.Width.Absolute = 150;
             // 
             // contextMenuStrip2
@@ -2538,12 +2538,12 @@
             // 
             this.btnExportSkillOption.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnExportSkillOption.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnExportSkillOption.Location = new System.Drawing.Point(99, 6);
+            this.btnExportSkillOption.Location = new System.Drawing.Point(164, 6);
             this.btnExportSkillOption.Name = "btnExportSkillOption";
-            this.btnExportSkillOption.Size = new System.Drawing.Size(111, 23);
+            this.btnExportSkillOption.Size = new System.Drawing.Size(217, 23);
             this.btnExportSkillOption.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnExportSkillOption.TabIndex = 1;
-            this.btnExportSkillOption.Text = "Export Skill Option";
+            this.btnExportSkillOption.Text = "スキルオプションのエクスポート";
             this.btnExportSkillOption.Click += new System.EventHandler(this.btnExportSkillOption_Click);
             // 
             // btnExportSkill
@@ -2552,10 +2552,10 @@
             this.btnExportSkill.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnExportSkill.Location = new System.Drawing.Point(6, 6);
             this.btnExportSkill.Name = "btnExportSkill";
-            this.btnExportSkill.Size = new System.Drawing.Size(75, 23);
+            this.btnExportSkill.Size = new System.Drawing.Size(140, 23);
             this.btnExportSkill.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnExportSkill.TabIndex = 0;
-            this.btnExportSkill.Text = "Export Skill";
+            this.btnExportSkill.Text = "スキルのエクスポート";
             this.btnExportSkill.Click += new System.EventHandler(this.btnExportSkill_Click);
             // 
             // superTabItem3
@@ -2779,22 +2779,22 @@
             // 
             // columnHeader6
             // 
-            this.columnHeader6.Text = "Code";
+            this.columnHeader6.Text = "ID";
             this.columnHeader6.Width = 80;
             // 
             // columnHeader7
             // 
-            this.columnHeader7.Text = "Name";
+            this.columnHeader7.Text = "名前";
             this.columnHeader7.Width = 250;
             // 
             // columnHeader8
             // 
-            this.columnHeader8.Text = "Description";
+            this.columnHeader8.Text = "説明";
             this.columnHeader8.Width = 450;
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "Path";
+            this.columnHeader9.Text = "パス";
             this.columnHeader9.Width = 200;
             // 
             // comboItem1
@@ -2867,7 +2867,7 @@
             this.bar1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar1.TabIndex = 0;
             this.bar1.TabStop = false;
-            this.bar1.Text = "Search Result";
+            this.bar1.Text = "検索結果";
             // 
             // panelDockContainer1
             // 
@@ -2888,7 +2888,7 @@
             // 
             this.dockContainerItem1.Control = this.panelDockContainer1;
             this.dockContainerItem1.Name = "dockContainerItem1";
-            this.dockContainerItem1.Text = "Search Result";
+            this.dockContainerItem1.Text = "検索結果";
             // 
             // dockSite1
             // 

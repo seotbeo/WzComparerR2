@@ -193,8 +193,8 @@ namespace WzComparerR2
             // 
             // labelX13
             // 
-            this.labelX13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -220,8 +220,8 @@ namespace WzComparerR2
             // 
             // labelX1
             // 
-            this.labelX1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -247,8 +247,8 @@ namespace WzComparerR2
             // 
             // labelX3
             // 
-            this.labelX3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -262,8 +262,8 @@ namespace WzComparerR2
             // 
             // labelX4
             // 
-            this.labelX4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -277,8 +277,8 @@ namespace WzComparerR2
             // 
             // labelX2
             // 
-            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -292,8 +292,8 @@ namespace WzComparerR2
             // 
             // labelX5
             // 
-            this.labelX5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -307,8 +307,8 @@ namespace WzComparerR2
             // 
             // labelX6
             // 
-            this.labelX6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -322,8 +322,8 @@ namespace WzComparerR2
             // 
             // labelX7
             // 
-            this.labelX7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -337,8 +337,8 @@ namespace WzComparerR2
             // 
             // labelX8
             // 
-            this.labelX8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -352,8 +352,8 @@ namespace WzComparerR2
             // 
             // labelX9
             // 
-            this.labelX9.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX9.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -367,8 +367,8 @@ namespace WzComparerR2
             // 
             // labelX10
             // 
-            this.labelX10.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX10.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -394,8 +394,8 @@ namespace WzComparerR2
             // 
             // labelX11
             // 
-            this.labelX11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -409,8 +409,8 @@ namespace WzComparerR2
             // 
             // labelX12
             // 
-            this.labelX12.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX12.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -424,8 +424,8 @@ namespace WzComparerR2
             // 
             // labelX14
             // 
-            this.labelX14.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.labelX14.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -439,8 +439,8 @@ namespace WzComparerR2
             // 
             // txtStartTime
             // 
-            this.txtStartTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtStartTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -452,15 +452,15 @@ namespace WzComparerR2
             this.txtStartTime.IsInputReadOnly = true;
             this.txtStartTime.Location = new System.Drawing.Point(183, 3);
             this.txtStartTime.Name = "txtStartTime";
-            this.txtStartTime.Size = new System.Drawing.Size(68, 21);
+            this.txtStartTime.Size = new System.Drawing.Size(68, 19);
             this.txtStartTime.TabIndex = 0;
             this.txtStartTime.TabStop = false;
             this.txtStartTime.ValueObjectChanged += new System.EventHandler(this.txtTime_ValueObjectChanged);
             // 
             // txtStopTime
             // 
-            this.txtStopTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtStopTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -472,15 +472,15 @@ namespace WzComparerR2
             this.txtStopTime.IsInputReadOnly = true;
             this.txtStopTime.Location = new System.Drawing.Point(183, 29);
             this.txtStopTime.Name = "txtStopTime";
-            this.txtStopTime.Size = new System.Drawing.Size(68, 21);
+            this.txtStopTime.Size = new System.Drawing.Size(68, 19);
             this.txtStopTime.TabIndex = 2;
             this.txtStopTime.TabStop = false;
             this.txtStopTime.ValueObjectChanged += new System.EventHandler(this.txtTime_ValueObjectChanged);
             // 
             // lblDuration
             // 
-            this.lblDuration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lblDuration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -494,8 +494,8 @@ namespace WzComparerR2
             // 
             // txtClipLeft
             // 
-            this.txtClipLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -507,15 +507,15 @@ namespace WzComparerR2
             this.txtClipLeft.IsInputReadOnly = true;
             this.txtClipLeft.Location = new System.Drawing.Point(183, 87);
             this.txtClipLeft.Name = "txtClipLeft";
-            this.txtClipLeft.Size = new System.Drawing.Size(68, 21);
+            this.txtClipLeft.Size = new System.Drawing.Size(68, 19);
             this.txtClipLeft.TabIndex = 6;
             this.txtClipLeft.TabStop = false;
             this.txtClipLeft.ValueObjectChanged += new System.EventHandler(this.txtBound_ValueObjectChanged);
             // 
             // txtClipTop
             // 
-            this.txtClipTop.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipTop.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -527,15 +527,15 @@ namespace WzComparerR2
             this.txtClipTop.IsInputReadOnly = true;
             this.txtClipTop.Location = new System.Drawing.Point(183, 113);
             this.txtClipTop.Name = "txtClipTop";
-            this.txtClipTop.Size = new System.Drawing.Size(68, 21);
+            this.txtClipTop.Size = new System.Drawing.Size(68, 19);
             this.txtClipTop.TabIndex = 8;
             this.txtClipTop.TabStop = false;
             this.txtClipTop.ValueObjectChanged += new System.EventHandler(this.txtBound_ValueObjectChanged);
             // 
             // txtClipRight
             // 
-            this.txtClipRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -547,15 +547,15 @@ namespace WzComparerR2
             this.txtClipRight.IsInputReadOnly = true;
             this.txtClipRight.Location = new System.Drawing.Point(183, 139);
             this.txtClipRight.Name = "txtClipRight";
-            this.txtClipRight.Size = new System.Drawing.Size(68, 21);
+            this.txtClipRight.Size = new System.Drawing.Size(68, 19);
             this.txtClipRight.TabIndex = 10;
             this.txtClipRight.TabStop = false;
             this.txtClipRight.ValueObjectChanged += new System.EventHandler(this.txtBound_ValueObjectChanged);
             // 
             // txtClipBottom
             // 
-            this.txtClipBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -567,15 +567,15 @@ namespace WzComparerR2
             this.txtClipBottom.IsInputReadOnly = true;
             this.txtClipBottom.Location = new System.Drawing.Point(183, 165);
             this.txtClipBottom.Name = "txtClipBottom";
-            this.txtClipBottom.Size = new System.Drawing.Size(68, 21);
+            this.txtClipBottom.Size = new System.Drawing.Size(68, 19);
             this.txtClipBottom.TabIndex = 12;
             this.txtClipBottom.TabStop = false;
             this.txtClipBottom.ValueObjectChanged += new System.EventHandler(this.txtBound_ValueObjectChanged);
             // 
             // lblClipSize
             // 
-            this.lblClipSize.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lblClipSize.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -589,8 +589,8 @@ namespace WzComparerR2
             // 
             // txtWidth
             // 
-            this.txtWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -602,15 +602,15 @@ namespace WzComparerR2
             this.txtWidth.IsInputReadOnly = true;
             this.txtWidth.Location = new System.Drawing.Point(183, 223);
             this.txtWidth.Name = "txtWidth";
-            this.txtWidth.Size = new System.Drawing.Size(68, 21);
+            this.txtWidth.Size = new System.Drawing.Size(68, 19);
             this.txtWidth.TabIndex = 17;
             this.txtWidth.TabStop = false;
             this.txtWidth.ValueObjectChanged += new System.EventHandler(this.txtSize_ValueObjectChanged);
             // 
             // txtHeight
             // 
-            this.txtHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -622,15 +622,15 @@ namespace WzComparerR2
             this.txtHeight.IsInputReadOnly = true;
             this.txtHeight.Location = new System.Drawing.Point(183, 249);
             this.txtHeight.Name = "txtHeight";
-            this.txtHeight.Size = new System.Drawing.Size(68, 21);
+            this.txtHeight.Size = new System.Drawing.Size(68, 19);
             this.txtHeight.TabIndex = 19;
             this.txtHeight.TabStop = false;
             this.txtHeight.ValueObjectChanged += new System.EventHandler(this.txtSize_ValueObjectChanged);
             // 
             // txtScale
             // 
-            this.txtScale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtScale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -642,14 +642,14 @@ namespace WzComparerR2
             this.txtScale.IsInputReadOnly = true;
             this.txtScale.Location = new System.Drawing.Point(183, 275);
             this.txtScale.Name = "txtScale";
-            this.txtScale.Size = new System.Drawing.Size(68, 21);
+            this.txtScale.Size = new System.Drawing.Size(68, 19);
             this.txtScale.TabIndex = 21;
             this.txtScale.TabStop = false;
             // 
             // txtStartTimeNew
             // 
-            this.txtStartTimeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtStartTimeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -662,14 +662,14 @@ namespace WzComparerR2
             this.txtStartTimeNew.MinValue = 0;
             this.txtStartTimeNew.Name = "txtStartTimeNew";
             this.txtStartTimeNew.ShowUpDown = true;
-            this.txtStartTimeNew.Size = new System.Drawing.Size(68, 21);
+            this.txtStartTimeNew.Size = new System.Drawing.Size(68, 19);
             this.txtStartTimeNew.TabIndex = 1;
             this.txtStartTimeNew.ValueObjectChanged += new System.EventHandler(this.txtTimeNew_ValueObjectChanged);
             // 
             // txtStopTimeNew
             // 
-            this.txtStopTimeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtStopTimeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -682,14 +682,14 @@ namespace WzComparerR2
             this.txtStopTimeNew.MinValue = 0;
             this.txtStopTimeNew.Name = "txtStopTimeNew";
             this.txtStopTimeNew.ShowUpDown = true;
-            this.txtStopTimeNew.Size = new System.Drawing.Size(68, 21);
+            this.txtStopTimeNew.Size = new System.Drawing.Size(68, 19);
             this.txtStopTimeNew.TabIndex = 3;
             this.txtStopTimeNew.ValueObjectChanged += new System.EventHandler(this.txtTimeNew_ValueObjectChanged);
             // 
             // lblDurationNew
             // 
-            this.lblDurationNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lblDurationNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -703,8 +703,8 @@ namespace WzComparerR2
             // 
             // txtClipLeftNew
             // 
-            this.txtClipLeftNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipLeftNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -717,14 +717,14 @@ namespace WzComparerR2
             this.txtClipLeftNew.MinValue = -16384;
             this.txtClipLeftNew.Name = "txtClipLeftNew";
             this.txtClipLeftNew.ShowUpDown = true;
-            this.txtClipLeftNew.Size = new System.Drawing.Size(68, 21);
+            this.txtClipLeftNew.Size = new System.Drawing.Size(68, 19);
             this.txtClipLeftNew.TabIndex = 7;
             this.txtClipLeftNew.ValueObjectChanged += new System.EventHandler(this.txtBoundNew_ValueObjectChanged);
             // 
             // txtClipTopNew
             // 
-            this.txtClipTopNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipTopNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -737,14 +737,14 @@ namespace WzComparerR2
             this.txtClipTopNew.MinValue = -16384;
             this.txtClipTopNew.Name = "txtClipTopNew";
             this.txtClipTopNew.ShowUpDown = true;
-            this.txtClipTopNew.Size = new System.Drawing.Size(68, 21);
+            this.txtClipTopNew.Size = new System.Drawing.Size(68, 19);
             this.txtClipTopNew.TabIndex = 9;
             this.txtClipTopNew.ValueObjectChanged += new System.EventHandler(this.txtBoundNew_ValueObjectChanged);
             // 
             // txtClipRightNew
             // 
-            this.txtClipRightNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipRightNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -757,14 +757,14 @@ namespace WzComparerR2
             this.txtClipRightNew.MinValue = -16384;
             this.txtClipRightNew.Name = "txtClipRightNew";
             this.txtClipRightNew.ShowUpDown = true;
-            this.txtClipRightNew.Size = new System.Drawing.Size(68, 21);
+            this.txtClipRightNew.Size = new System.Drawing.Size(68, 19);
             this.txtClipRightNew.TabIndex = 11;
             this.txtClipRightNew.ValueObjectChanged += new System.EventHandler(this.txtBoundNew_ValueObjectChanged);
             // 
             // txtClipBottomNew
             // 
-            this.txtClipBottomNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtClipBottomNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -777,14 +777,14 @@ namespace WzComparerR2
             this.txtClipBottomNew.MinValue = -16384;
             this.txtClipBottomNew.Name = "txtClipBottomNew";
             this.txtClipBottomNew.ShowUpDown = true;
-            this.txtClipBottomNew.Size = new System.Drawing.Size(68, 21);
+            this.txtClipBottomNew.Size = new System.Drawing.Size(68, 19);
             this.txtClipBottomNew.TabIndex = 13;
             this.txtClipBottomNew.ValueObjectChanged += new System.EventHandler(this.txtBoundNew_ValueObjectChanged);
             // 
             // lblClipSizeNew
             // 
-            this.lblClipSizeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lblClipSizeNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -798,8 +798,8 @@ namespace WzComparerR2
             // 
             // txtWidthNew
             // 
-            this.txtWidthNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWidthNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -812,14 +812,14 @@ namespace WzComparerR2
             this.txtWidthNew.MinValue = -16384;
             this.txtWidthNew.Name = "txtWidthNew";
             this.txtWidthNew.ShowUpDown = true;
-            this.txtWidthNew.Size = new System.Drawing.Size(68, 21);
+            this.txtWidthNew.Size = new System.Drawing.Size(68, 19);
             this.txtWidthNew.TabIndex = 18;
             this.txtWidthNew.ValueObjectChanged += new System.EventHandler(this.txtSizeNew_ValueObjectChanged);
             // 
             // txtHeightNew
             // 
-            this.txtHeightNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtHeightNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -832,14 +832,14 @@ namespace WzComparerR2
             this.txtHeightNew.MinValue = -16384;
             this.txtHeightNew.Name = "txtHeightNew";
             this.txtHeightNew.ShowUpDown = true;
-            this.txtHeightNew.Size = new System.Drawing.Size(68, 21);
+            this.txtHeightNew.Size = new System.Drawing.Size(68, 19);
             this.txtHeightNew.TabIndex = 20;
             this.txtHeightNew.ValueObjectChanged += new System.EventHandler(this.txtSizeNew_ValueObjectChanged);
             // 
             // txtScaleNew
             // 
-            this.txtScaleNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtScaleNew.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // 
@@ -852,7 +852,7 @@ namespace WzComparerR2
             this.txtScaleNew.MinValue = 0;
             this.txtScaleNew.Name = "txtScaleNew";
             this.txtScaleNew.ShowUpDown = true;
-            this.txtScaleNew.Size = new System.Drawing.Size(68, 21);
+            this.txtScaleNew.Size = new System.Drawing.Size(68, 19);
             this.txtScaleNew.TabIndex = 22;
             this.txtScaleNew.ValueObjectChanged += new System.EventHandler(this.txtScaleNew_ValueObjectChanged);
             // 
@@ -881,6 +881,7 @@ namespace WzComparerR2
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("MS PGothic", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
