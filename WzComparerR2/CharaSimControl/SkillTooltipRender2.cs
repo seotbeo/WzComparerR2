@@ -7,6 +7,7 @@ using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -31,6 +32,9 @@ namespace WzComparerR2.CharaSimControl
         public bool DisplayPermyriadAsPercent { get; set; } = true;
         public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
+        public bool DoSetDiffColor { get; set; } = false;
+        public Dictionary<string, List<string>> DiffSkillTags { get; set; } = new Dictionary<string, List<string>>();
+        public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
 
@@ -129,6 +133,7 @@ namespace WzComparerR2.CharaSimControl
 
             picH = 0;
             splitterH = new List<int>();
+            string skillIDstr = Skill.SkillID.ToString().PadLeft(7, '0');
 
             //获取文字
             StringResult sr;
@@ -175,7 +180,8 @@ namespace WzComparerR2.CharaSimControl
             {
                 DateTime time = DateTime.Now.AddDays(7d);
                 string expireStr = time.ToString("有効期間: yyyy年 M月 d日 HH時 mm分");
-                GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                // GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "#c" + expireStr + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.RelationSkill != null)
             {
@@ -187,11 +193,20 @@ namespace WzComparerR2.CharaSimControl
                 }
                 DateTime time = DateTime.Now.AddMinutes(Skill.RelationSkill.Item2);
                 string expireStr = time.ToString("有効期間: yyyy年 M月 d日 H時 m分");
-                GearGraphics.DrawString(g, "#c" + sr2.Name + "の " + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                // GearGraphics.DrawString(g, "#c" + sr2.Name + "の " + expireStr + "#", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, "#c" + sr2.Name + "の " + expireStr + "#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.IsPetAutoBuff)
             {
-                GearGraphics.DrawString(g, "#cペットバフ自動スキル登録可能", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                // GearGraphics.DrawString(g, "#cペットバフ自動スキル登録可能", GearGraphics.ItemDetailFont, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                if (DoSetDiffColor && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("IsPetAutoBuff"))
+                {
+                    GearGraphics.DrawString(g, "#gペットバフ自動スキル登録可能#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
+                else
+                {
+                    GearGraphics.DrawString(g, "#cペットバフ自動スキル登録可能#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                }
             }
             /*if (Skill.ReqLevel > 0)
             {
@@ -210,13 +225,69 @@ namespace WzComparerR2.CharaSimControl
 
             if (Skill.Level > 0)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                // string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                // {
+                //                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                //                    ConvertPerM = this.DisplayPermyriadAsPercent,
+                //                    IgnoreEvalError = this.IgnoreEvalError,
+                //                });
+                string hStr = null;
+
+                // 스킬 변경점에 초록색 칠하기
+                if (DoSetDiffColor)
                 {
-                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                    ConvertPerM = this.DisplayPermyriadAsPercent,
-                    IgnoreEvalError = this.IgnoreEvalError,
-                });
-                GearGraphics.DrawString(g, "[現在レベル" + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    //code from SummaryParser
+                    string h = null;
+                    if (Skill.PreBBSkill) //用level声明的技能
+                    {
+                        string hs;
+                        if (Skill.Common.TryGetValue("hs", out hs))
+                        {
+                            h = sr[hs];
+                        }
+                        else if (sr.SkillH.Count >= Skill.Level)
+                        {
+                            h = sr.SkillH[Skill.Level - 1];
+                        }
+                    }
+                    else
+                    {
+                        if (sr.SkillH.Count > 0)
+                        {
+                            h = sr.SkillH[0];
+                        }
+                    }
+
+                    if (DiffSkillTags.ContainsKey(skillIDstr))
+                    {
+                        foreach (var tags in DiffSkillTags[skillIDstr])
+                        {
+                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", "#g#" + tags + "#$1"));
+                        }
+                    }
+
+                    if (Skill.SkillID / 100000 == 4000)
+                    {
+                        if (Skill.VSkillValue == 2) Skill.Level = 60;
+                        if (Skill.VSkillValue == 1) Skill.Level = 30;
+                    }
+                    hStr = SummaryParser.GetSkillSummary(h, Skill.Level, Skill.Common, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
+                    });
+                }
+                else
+                {
+                    hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
+                    {
+                        ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                        ConvertPerM = this.DisplayPermyriadAsPercent,
+                        IgnoreEvalError = this.IgnoreEvalError,
+                    });
+                }
+                    GearGraphics.DrawString(g, "[現在レベル" + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
                     GearGraphics.DrawPlainText(g, "[必要レベル: " + Skill.ReqLevel.ToString() + "レベル以上]", GearGraphics.ItemDetailFont, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
@@ -331,7 +402,15 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (Skill.CombatOrders)
                 {
-                    attr.Add("コンバットオーダー適用");
+                    // attr.Add("コンバットオーダー適用");
+                    if (DoSetDiffColor && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("combatOrders"))
+                    {
+                        attr.Add("#gコンバットオーダー適用#");
+                    }
+                    else
+                    {
+                        attr.Add("コンバットオーダー適用");
+                    }
                 }
                 if (Skill.NotRemoved)
                 {
@@ -352,7 +431,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 foreach (string action in Skill.Action)
                 {
-                    skillDescEx.Add("#c[ディレイ] " + action + ": " + CharaSimLoader.GetActionDelay(action) + " ms#");
+                    skillDescEx.Add("#c[ディレイ] " + action + ": " + CharaSimLoader.GetActionDelay(action, this.wzNode) + " ms#");
                 }
             }
 
