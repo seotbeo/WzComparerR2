@@ -33,3 +33,4 @@
 - **[@Kagamia](https://github.com/Kagamia)** and her WcR2-CMS version.
 - **[@Spadow](https://github.com/Sunaries)** for providing his WcR2-GMS version.
 - **[@PirateIzzy](https://github.comPirateIzzy)** for providing the basis of this fork.
+- **[@seotbeo](https://github.com/seotbeo)** for providing Skill comparison feature.
