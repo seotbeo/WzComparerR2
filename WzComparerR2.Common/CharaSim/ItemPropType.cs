@@ -7,6 +7,7 @@ namespace WzComparerR2.CharaSim
     public enum ItemPropType
     {
         price = 1,
+        autoPrice,
         lv,
         reqLevel,
         cash,
