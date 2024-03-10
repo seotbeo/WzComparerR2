@@ -925,6 +925,13 @@ namespace WzComparerR2.CharaSimControl
             }
 
 
+            // JMS exclusive pricing display
+            if (!item.Props.TryGetValue(ItemPropType.notSale, out value) && (item.Props.TryGetValue(ItemPropType.price, out value) && value > 0))
+            {
+                picH += 16;
+                GearGraphics.DrawString(g, "\r\n · 販売価額：" + value + "メル", GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+            }
+
             //绘制配方需求
             if (item.Specs.TryGetValue(ItemSpecType.recipe, out value))
             {

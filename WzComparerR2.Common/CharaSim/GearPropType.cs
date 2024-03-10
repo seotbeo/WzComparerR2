@@ -189,6 +189,7 @@ namespace WzComparerR2.CharaSim
         noLookChange,
         tucIgnoreForPotential,
         Etuc,
+        CuttableCount,
         price,
         notSale,
         scissorAmount_wz2,

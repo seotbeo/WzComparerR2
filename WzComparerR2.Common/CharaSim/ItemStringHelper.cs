@@ -139,19 +139,20 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
                 case GearPropType.noLookChange: return value == 0 ? null : "Cannot use Fusion Anvil";
 
-                case GearPropType.incAllStat_incMHP25: return "Allｽﾃｰﾀｽ: " + sign + value + ", MaxHP : " + sign + (value * 25);// check once Lv 250 set comes out in GMS
+                case GearPropType.incAllStat_incMHP25: return "Allｽﾃｰﾀｽ: " + sign + value + ", 最大HP : " + sign + (value * 25);// check once Lv 250 set comes out in GMS
                 case GearPropType.incAllStat_incMHP50_incMMP50: return "Allｽﾃｰﾀｽ: " + sign + value + ", 最大HP / 最大MP : " + sign + (value * 50);
                 case GearPropType.incMHP_incMMP: return "最大HP / 最大MP: " + sign + value;
                 case GearPropType.incMHPr_incMMPr: return "最大HP / 最大MP: " + sign + value + "%";
                 case GearPropType.incPAD_incMAD:
                 case GearPropType.incAD: return "攻撃力 / 魔力: " + sign + value;
-                case GearPropType.incPDD_incMDD: return "Defense: " + sign + value;
+                case GearPropType.incPDD_incMDD: return "防御力: " + sign + value;
                 //case GearPropType.incACC_incEVA: return "ACC/AVO :" + sign + value;
 
                 case GearPropType.incARC: return "ARC : " + sign + value;
                 case GearPropType.incAUT: return "AUT : " + sign + value;
 
-                case GearPropType.Etuc: return "エクセプショナル強化かできます。 (最大:  " + value + "回)";
+                case GearPropType.Etuc: return "エクセプショナル強化かできます。 (最大\n\r: " + value + "回)";
+                case GearPropType.CuttableCount: return "はさみ使用可能回数 : " + value + "回";
                 default: return null;
             }
         }

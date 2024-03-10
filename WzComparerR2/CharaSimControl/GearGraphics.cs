@@ -87,7 +87,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush GearIconBackBrush2 = new SolidBrush(Color.FromArgb(187, 238, 238, 238));
         public static readonly Brush EpicGearIconBackBrush = new SolidBrush(EpicGearIconBackColor);
         public static readonly Brush StatDetailGrayBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
-        public static readonly Brush JMSGreenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
+        public static readonly Brush JMSGreenBrush = new SolidBrush(Color.FromArgb(119, 255, 0));
         public static readonly Color OrangeBrushColor = Color.FromArgb(255, 153, 0);
         /// <summary>
         /// 表示物品说明中带有#c标识的橙色字体画刷。
@@ -97,10 +97,11 @@ namespace WzComparerR2.CharaSimControl
         /// 表示物品附加属性中橙色字体画刷。
         /// </summary>
         public static readonly Brush OrangeBrush2 = new SolidBrush(Color.FromArgb(255, 170, 0));
+        public static readonly Color OrangeBrush3Color = Color.FromArgb(255, 204, 0);
         /// <summary>
         /// 表示装备职业额外说明中使用的橙黄色画刷。
         /// </summary>
-        public static readonly Brush OrangeBrush3 = new SolidBrush(Color.FromArgb(255, 204, 0));
+        public static readonly Brush OrangeBrush3 = new SolidBrush(OrangeBrush3Color);
         public static readonly Brush OrangeBrush4 = new SolidBrush(Color.FromArgb(255, 136, 17));
         /// <summary>
         /// 表示装备属性额外说明中使用的绿色画刷。
