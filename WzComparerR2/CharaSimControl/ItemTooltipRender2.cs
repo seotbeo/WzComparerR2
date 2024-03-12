@@ -746,7 +746,7 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawString(g, "[使用可能な命令語]", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 foreach (int l0 in commandLev.Values.OrderBy(i => i).Distinct())
                 {
-                    GearGraphics.DrawString(g, "Lv. " + l0 + "+以上：" + string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s)), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                    GearGraphics.DrawString(g, "Lv. " + l0 + "以上：" + string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s)), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 }
                 GearGraphics.DrawString(g, "Tip. ペットのレベルが15になると特定の言葉を言わせることができます。ペットのセリフは他のキャラクターは見えません。", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 GearGraphics.DrawString(g, "#c例) /ペット [命令語]#", GearGraphics.ItemDetailFont, new Dictionary<string, Color>() { { "c", ((SolidBrush)GearGraphics.OrangeBrush4).Color } }, 100, right, ref picH, 16);
