@@ -2397,7 +2397,7 @@
             // 
             // 
             this.chkEnableDarkMode.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkEnableDarkMode.Location = new System.Drawing.Point(215, 61);
+            this.chkEnableDarkMode.Location = new System.Drawing.Point(235, 61);
             this.chkEnableDarkMode.Name = "chkEnableDarkMode";
             this.chkEnableDarkMode.Size = new System.Drawing.Size(115, 23);
             this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -2425,7 +2425,7 @@
             // 
             // 
             this.chkOutputRemovedImg.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputRemovedImg.Location = new System.Drawing.Point(116, 61);
+            this.chkOutputRemovedImg.Location = new System.Drawing.Point(118, 61);
             this.chkOutputRemovedImg.Name = "chkOutputRemovedImg";
             this.chkOutputRemovedImg.Size = new System.Drawing.Size(135, 23);
             this.chkOutputRemovedImg.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -2439,7 +2439,7 @@
             // 
             // 
             this.chkOutputAddedImg.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputAddedImg.Location = new System.Drawing.Point(34, 61);
+            this.chkOutputAddedImg.Location = new System.Drawing.Point(24, 61);
             this.chkOutputAddedImg.Name = "chkOutputAddedImg";
             this.chkOutputAddedImg.Size = new System.Drawing.Size(135, 23);
             this.chkOutputAddedImg.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -2454,7 +2454,7 @@
             // 
             // 
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(34, 39);
+            this.labelX1.Location = new System.Drawing.Point(24, 39);
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(44, 16);
             this.labelX1.TabIndex = 6;
@@ -2469,7 +2469,7 @@
             this.chkOutputPng.Checked = true;
             this.chkOutputPng.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOutputPng.CheckValue = "Y";
-            this.chkOutputPng.Location = new System.Drawing.Point(215, 34);
+            this.chkOutputPng.Location = new System.Drawing.Point(235, 34);
             this.chkOutputPng.Name = "chkOutputPng";
             this.chkOutputPng.Size = new System.Drawing.Size(107, 23);
             this.chkOutputPng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -2484,11 +2484,11 @@
             this.cmbComparePng.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbComparePng.FormattingEnabled = true;
             this.cmbComparePng.ItemHeight = 15;
-            this.cmbComparePng.Location = new System.Drawing.Point(83, 36);
+            this.cmbComparePng.Location = new System.Drawing.Point(63, 36);
             this.cmbComparePng.Name = "cmbComparePng";
-            this.cmbComparePng.Size = new System.Drawing.Size(120, 21);
+            this.cmbComparePng.Size = new System.Drawing.Size(140, 21);
             this.cmbComparePng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG Compare", "", "Info regarding the comparison of images.\r\nSizeOnly - Compare files sizes to verify if there are any holes or skipped files.\r\nSizeAndDataLength - Compare the size and the time needed when compressing images simultaneously." +
+            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG比較", "", "画像の比較に関する情報。\r\nSizeOnly - ファイルサイズを比較して、トリミングまたはスキップされたファイルがあるかどうかを確認します。\r\nSizeAndDataLength - 画像を同時に圧縮する場合のサイズと時間を比較してください。\r\nPixel - ピクセル精度の画像比較。" +
             "\r\nPixel - Carefully checks the comparison process; although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 170)));
             this.cmbComparePng.TabIndex = 4;
             // 
