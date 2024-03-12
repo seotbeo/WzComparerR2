@@ -2488,8 +2488,8 @@
             this.cmbComparePng.Name = "cmbComparePng";
             this.cmbComparePng.Size = new System.Drawing.Size(140, 21);
             this.cmbComparePng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG比較", "", "画像の比較に関する情報。\r\nSizeOnly - ファイルサイズを比較して、トリミングまたはスキップされたファイルがあるかどうかを確認します。\r\nSizeAndDataLength - 画像を同時に圧縮する場合のサイズと時間を比較してください。\r\nPixel - ピクセル精度の画像比較。" +
-            "\r\nPixel - Carefully checks the comparison process; although this may consume some time, it'll make sure that the size of the images are the same.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 170)));
+            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PNG比較", "", "画像の比較に関する情報。\r\nSizeOnly - ファイルサイズを比較して、トリミングまたはスキップされたファイルがあるかどうかを確認します。\r\nSizeAndDataLength - 画像を同時に圧縮する場合のサイズと時間を比較してください。" +
+            "\r\nPixel - ピクセル精度の画像比較。比較プロセスを注意深くチェックします。これには時間がかかる場合がありますが、画像のサイズが同じであることが確認されます。", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 170)));
             this.cmbComparePng.TabIndex = 4;
             // 
             // labelXComp2
