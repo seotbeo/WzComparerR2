@@ -481,10 +481,10 @@
             superTooltipInfo7.Color = DevComponents.DotNetBar.eTooltipColor.System;
             superTooltipInfo7.CustomSize = new System.Drawing.Size(180, 60);
             superTooltipInfo7.FooterVisible = false;
-            superTooltipInfo7.HeaderText = "追加済みファイル";
+            superTooltipInfo7.HeaderText = "追加ファイル";
             this.superTooltip1.SetSuperTooltip(this.chkOutputAddedImg, superTooltipInfo7);
             this.chkOutputAddedImg.TabIndex = 13;
-            this.chkOutputAddedImg.Text = "追加済みファイル";
+            this.chkOutputAddedImg.Text = "追加ファイル";
             // 
             // cmbComparePng
             // 

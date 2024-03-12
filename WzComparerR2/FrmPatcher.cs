@@ -108,16 +108,16 @@ namespace WzComparerR2
                 item.GetFileLength();
                 if (item.FileLength > 0)
                 {
-                    MessageBoxEx.Show(string.Format("Size: {0:N0} bytes. Last updated: {1:M-d-yyyy HH:mm:ss}", item.FileLength, item.LastModified));
+                    MessageBoxEx.Show(string.Format("サイズ: {0:N0} バイト\n\r最終更新日: {1:yyyy年M月d日 HH:mm:ss}", item.FileLength, item.LastModified));
                 }
                 else
                 {
-                    MessageBoxEx.Show("This file does not exist.");
+                    MessageBoxEx.Show("このファイルは存在しません。");
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show("Error: " + ex.Message);
+                MessageBoxEx.Show("エラー：" + ex.Message);
             }
         }
 
@@ -261,7 +261,7 @@ namespace WzComparerR2
                 if (prePatch)
                 {
                     //advTreePatchFiles.Enabled = true;
-                    AppendStateText("After selecting a patch file, you may click on the Patch button to start.\r\n");
+                    AppendStateText("パッチファイルを選択した後、[パッチ] ボタンをクリックして開始します。\r\n");
                     waiting = true;
                     waitHandle.WaitOne();
                     //advTreePatchFiles.Enabled = false;
