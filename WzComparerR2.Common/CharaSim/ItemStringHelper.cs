@@ -579,8 +579,9 @@ namespace WzComparerR2.CharaSim
                 case ItemPropType.pquest:
                     return value == 0 ? null : "Party Quest Item";
                 case ItemPropType.permanent:
-                    return value == 0 ? null : "PERMANENT";//GMS PLACEHOLDER?
-                case ItemPropType.multiPet://GMS string for: "Normal Pet (Cannot be used with other pets)" and "Multi Pet (Can use up to 3 pets at once)"
+                    return value == 0 ? null : "魔法の時間が終わらないミラクルペットです。";
+                case ItemPropType.multiPet:
+                    // return value == 0 ? null : "マルチペット(他のペットと最大3個重複使用可能)";
                     return value == 0 ? "" : "";
                 default:
                     return null;

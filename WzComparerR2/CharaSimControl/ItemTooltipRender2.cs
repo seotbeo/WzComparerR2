@@ -380,16 +380,16 @@ namespace WzComparerR2.CharaSimControl
                 switch (value)
                 {
                     case 1:
-                        TextRenderer.DrawText(g, "Wonder Black", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter);
+                        TextRenderer.DrawText(g, "ワンダーブラック", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter);
                         break;
                     case 4:
-                        TextRenderer.DrawText(g, "Sweet Luna", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), GearGraphics.itemPinkColor, TextFormatFlags.HorizontalCenter);
+                        TextRenderer.DrawText(g, "ルナスイート", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), GearGraphics.itemPinkColor, TextFormatFlags.HorizontalCenter);
                         break;
                     case 5:
-                        TextRenderer.DrawText(g, "Dream Luna", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
+                        TextRenderer.DrawText(g, "ルナドリーム", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
                         break;
                     case 6:
-                        TextRenderer.DrawText(g, "Petite Luna", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), GearGraphics.itemPurpleColor, TextFormatFlags.HorizontalCenter);
+                        TextRenderer.DrawText(g, "ルナプチ", GearGraphics.ItemDetailFont, new Point(tooltip.Width, picH), GearGraphics.itemPurpleColor, TextFormatFlags.HorizontalCenter);
                         break;
                     default:
                         picH -= 15;
@@ -483,7 +483,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 picH -= 3;
                 DateTime time = DateTime.Now.AddDays(value);
-                expireTime = "Water of Life Dries Up: " + time.ToString(@"M\/d\/yyyy HH\:mm") + " UTC";
+                expireTime = "魔法の効力期限：" + time.ToString(@"yyyy年M月d日HH時mm分まで");
             }
             if (!string.IsNullOrEmpty(expireTime))
             {
@@ -592,7 +592,7 @@ namespace WzComparerR2.CharaSimControl
                             switch (value)
                             {
                                 case 1:
-                                    wonderGradeString = "Wonder Black";
+                                    wonderGradeString = "ワンダーブラック";
                                     foreach (KeyValuePair<GearPropType, object> prop in setItem.Effects.Values.SelectMany(f => f.PropsV5))
                                     {
                                         if (prop.Key == GearPropType.activeSkill)
@@ -610,12 +610,12 @@ namespace WzComparerR2.CharaSimControl
                                     }
                                     break;
                                 case 4:
-                                    wonderGradeString = "Sweet Luna";
-                                    setSkillName = "Sweet Luna";
+                                    wonderGradeString = "ルナスイート";
+                                    setSkillName = "ルナスイート";
                                     break;
                                 case 5:
-                                    wonderGradeString = "Dream Luna";
-                                    setSkillName = "Dream Luna";
+                                    wonderGradeString = "ルナドリーム";
+                                    setSkillName = "ルナドリーム";
                                     break;
                             }
                             if (wonderGradeString != null)
@@ -625,42 +625,42 @@ namespace WzComparerR2.CharaSimControl
                         }
                     }
                 }
-                desc += "\n#cSkill: Meso Magnet";
+                desc += "\n#cスキル：メル収集";
                 if (item.Props.TryGetValue(ItemPropType.pickupItem, out value) && value > 0)
                 {
-                    desc += ", Item Pouch";
+                    desc += ", アイテム収集";
                 }
                 if (item.Props.TryGetValue(ItemPropType.longRange, out value) && value > 0)
                 {
-                    desc += ", Expanded Auto Move";
+                    desc += ", 移動範囲拡大";
                 }
                 if (item.Props.TryGetValue(ItemPropType.sweepForDrop, out value) && value > 0)
                 {
-                    desc += ", Auto Move";
+                    desc += ", 自動収集";
                 }
                 if (item.Props.TryGetValue(ItemPropType.pickupAll, out value) && value > 0)
                 {
-                    desc += ", Expired Pickup Skill";
+                    desc += ", 所有権のないアイテム収集やメルの収集";
                 }
                 if (item.Props.TryGetValue(ItemPropType.consumeHP, out value) && value > 0)
                 {
-                    desc += ", Auto HP Potion Pouch";
+                    desc += ", HP回復薬充填";
                 }
                 if (item.Props.TryGetValue(ItemPropType.consumeMP, out value) && value > 0)
                 {
-                    desc += ", Auto MP Potion Pouch";
+                    desc += ", MP回復薬充填";
                 }
                 if (item.Props.TryGetValue(ItemPropType.autoBuff, out value) && value > 0)
                 {
-                    desc += ", Auto Buff";
+                    desc += ", バフスキル自動発動";
                 }
                 if (item.Props.TryGetValue(ItemPropType.giantPet, out value) && value > 0)
                 {
-                    desc += ", Fatten Up";
+                    desc += ", ペットジャイアントスキル";
                 }
                 if (item.Props.TryGetValue(ItemPropType.consumeCure, out value) && value > 0)
                 {
-                    desc += ", Take All Cure Potion";
+                    desc += ", 万病治療薬自動使用";
                 }
                 desc += "#";
             }
@@ -703,7 +703,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (item.Props.TryGetValue(ItemPropType.onlyCash, out value) && value > 0)
                 {
-                    GearGraphics.DrawString(g, "\n#cCan only be purchased with NX.#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                    GearGraphics.DrawString(g, "\n#cNEXONポイントでのみ購入可能#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 }
                 else if ((!item.Props.TryGetValue(ItemPropType.tradeBlock, out value) || value == 0) && item.ItemID / 10000 != 501 && item.ItemID / 10000 != 502 && item.ItemID / 10000 != 516)
                 {
@@ -743,13 +743,13 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
 
-                GearGraphics.DrawString(g, "[Usable Command]", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "[使用可能な命令語]", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 foreach (int l0 in commandLev.Values.OrderBy(i => i).Distinct())
                 {
-                    GearGraphics.DrawString(g, "Lv. " + l0 + "+: " + string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s)), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                    GearGraphics.DrawString(g, "Lv. " + l0 + "+以上：" + string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s)), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 }
-                GearGraphics.DrawString(g, "Tip: You can control what your\n\r pet says once it reaches Lv. 15.", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
-                GearGraphics.DrawString(g, "#cEx) /Pet [what to say]#", GearGraphics.ItemDetailFont, new Dictionary<string, Color>() { { "c", ((SolidBrush)GearGraphics.OrangeBrush4).Color } }, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "Tip. ペットのレベルが15になると特定の言葉を言わせることができます。ペットのセリフは他のキャラクターは見えません。", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "#c例) /ペット [命令語]#", GearGraphics.ItemDetailFont, new Dictionary<string, Color>() { { "c", ((SolidBrush)GearGraphics.OrangeBrush4).Color } }, 100, right, ref picH, 16);
             }
             
             string incline = null;

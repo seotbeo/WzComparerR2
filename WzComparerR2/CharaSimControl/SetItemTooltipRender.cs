@@ -182,8 +182,8 @@ namespace WzComparerR2.CharaSimControl
                                     }
                                     switch (Gear.GetGender(itemID))
                                     {
-                                        case 0: itemName += " (Male)"; break;
-                                        case 1: itemName += " (Female)"; break;
+                                        case 0: itemName += " (♂)"; break;
+                                        case 1: itemName += " (♀)"; break;
                                     }
                                 }
                                 else if (this.StringLinker.StringItem.TryGetValue(itemID, out sr)) //兼容宠物
@@ -193,7 +193,7 @@ namespace WzComparerR2.CharaSimControl
                                     {
                                         if (itemID / 10000 == 500)
                                         {
-                                            typeName = "Pet";
+                                            typeName = "ペット";
                                         }
                                         else
                                         {
@@ -266,8 +266,8 @@ namespace WzComparerR2.CharaSimControl
                                             itemName = sr.Name;
                                             switch (Gear.GetGender(itemID))
                                             {
-                                                case 0: itemName += " (Male)"; break;
-                                                case 1: itemName += " (Female)"; break;
+                                                case 0: itemName += " (♂)"; break;
+                                                case 1: itemName += " (♀)"; break;
                                             }
                                         }
                                         else if (this.StringLinker.StringItem.TryGetValue(itemID, out sr)) //兼容宠物
@@ -296,7 +296,7 @@ namespace WzComparerR2.CharaSimControl
                 for (int i = 0; i < this.SetItem.CompleteCount; ++i)
                 {
                     TextRenderer.DrawText(g, "(None)", GearGraphics.EquipDetailFont2, new Point(10, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                    TextRenderer.DrawText(g, "Not Equipped", GearGraphics.EquipDetailFont2, new Point(252 - TextRenderer.MeasureText(g, "Not Equipped", GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, "未装備", GearGraphics.EquipDetailFont2, new Point(252 - TextRenderer.MeasureText(g, "未装備", GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width, picHeight), ((SolidBrush)GearGraphics.GrayBrush2).Color, TextFormatFlags.NoPadding);
                     picHeight += 18;
                 }
             }
@@ -424,7 +424,7 @@ namespace WzComparerR2.CharaSimControl
                                 sr.Name = p.SkillID.ToString();
                             }
                             //string summary = "<" + sr.Name.Replace(Environment.NewLine, "") + "> Skill Available";
-                            string summary = $"<{sr.Name.Replace(Environment.NewLine, "")}> Skill Available";
+                            string summary = $"スキル<{sr.Name.Replace(Environment.NewLine, "")}>使用可能";
                             GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipDetailFont2, color, 10, 244, ref picHeight, 15);
                         }
                     }

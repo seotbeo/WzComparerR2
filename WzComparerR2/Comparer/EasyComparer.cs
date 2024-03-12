@@ -626,7 +626,7 @@ namespace WzComparerR2.Comparer
                     skillType = "追加";
                 }
 
-                var skillTypeTextInfo = g.MeasureString(skillType, GearGraphics.ItemDetailFont2);
+                var skillTypeTextInfo = g.MeasureString(skillType, GearGraphics.ItemDetailFont);
                 int picH = 13;
                 GearGraphics.DrawPlainText(g, skillType, skillTypeFont, Color.FromArgb(255, 255, 255), 2, (int)Math.Ceiling(skillTypeTextInfo.Width) + 2, ref picH, 10);
 

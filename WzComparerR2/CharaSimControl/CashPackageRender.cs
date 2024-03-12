@@ -204,10 +204,10 @@ namespace WzComparerR2.CharaSimControl
                 CashPackage.desc += "";
             CashPackage.desc += "\n";
             if (CashPackage.onlyCash == 0)
-                GearGraphics.DrawString(g, CashPackage.desc + "", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+                GearGraphics.DrawString(g, CashPackage.desc + "", GearGraphics.ItemDetailFont, 11, right, ref picH, 16);
             //GearGraphics.DrawString(g, CashPackage.desc + "\n#(Not applicable to free bonus items) Buy this with Nexon Cash and you can trade it with another user once if unused.", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
             else
-                GearGraphics.DrawString(g, CashPackage.desc + "\n#Can only be purchased with NX.#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+                GearGraphics.DrawString(g, CashPackage.desc + "\n#NEXONポイントでのみ購入可能#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
 
             bool hasLine = false;
             picH -= 0;//default is 4
@@ -318,14 +318,14 @@ namespace WzComparerR2.CharaSimControl
                     }
                     if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                     {
-                        info += commodity.originalPrice + " NX        "; // HERE is making space between original price and discounted price
+                        info += commodity.originalPrice + "ポイント    "; // HERE is making space between original price and discounted price
                         totalOriginalPrice += commodity.originalPrice;
                     }
                     else
                     {
                         totalOriginalPrice += commodity.Price;
                     }
-                    info += commodity.Price + " NX";
+                    info += commodity.Price + "ポイント";
                     totalPrice += commodity.Price;
                 }
                 else
@@ -333,19 +333,19 @@ namespace WzComparerR2.CharaSimControl
                     info += "(" + commodity.Count + ") ";//count (개)
                     if (commodity.originalPrice > 0)
                     {
-                        info += commodity.originalPrice + " NX";
+                        info += commodity.originalPrice + "ポイント";
                         totalOriginalPrice += commodity.originalPrice;
                     }
                     else
                     {
-                        info += commodity.Price + " NX";
+                        info += commodity.Price + "ポイント";
                         totalOriginalPrice += commodity.Price;
                     }
                 }
 
                 if (commodity.Period > 0)
                 {
-                    time = "AVAILABLE FOR " + commodity.Period + " DAYS.";
+                    time = "購入時より" + commodity.Period + "日後まで使用可能";
                 }
 
                 g.DrawImage(Resource.CSDiscount_backgrnd, columnLeft + 13, picH + 12);
@@ -361,7 +361,7 @@ namespace WzComparerR2.CharaSimControl
                         TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
-                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
+                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("    ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             g.DrawLine(Pens.White, columnLeft + 55, picH + 33 + 4, columnLeft + 55 + width + 1, picH + 33 + 4);
                             g.DrawImage(Resource.CSDiscount_arrow, columnLeft + 55 + width + 10, picH + 33 + 1);
                             DrawDiscountNum(g, "-" + (int)(100 - 100.0 * commodity.Price / commodity.originalPrice) + "%", columnRight - 40, picH + 16, StringAlignment.Near);
@@ -381,7 +381,7 @@ namespace WzComparerR2.CharaSimControl
                         TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
-                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
+                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("    ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             g.DrawLine(Pens.White, columnLeft + 55, picH + 24 + 4, columnLeft + 55 + width + 1, picH + 24 + 4);
                             g.DrawImage(Resource.CSDiscount_arrow, columnLeft + 55 + width + 10, picH + 24 + 1);
                             DrawDiscountNum(g, "-" + (int)(100 - 100.0 * commodity.Price / commodity.originalPrice) + "%", columnRight - 40, picH + 7, StringAlignment.Near);
@@ -408,13 +408,13 @@ namespace WzComparerR2.CharaSimControl
             g.DrawImage(Resource.CSDiscount_total, 9, picH + 1);
             if (totalOriginalPrice == totalPrice)
             {
-                TextRenderer.DrawText(g, totalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, totalPrice + "ポイント", GearGraphics.ItemDetailFont, new Point(64, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
             }
             else
             {
-                TextRenderer.DrawText(g, totalOriginalPrice + " NX      " + totalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                TextRenderer.DrawText(g, totalOriginalPrice + " NX", GearGraphics.ItemDetailFont, new Point(35, picH), Color.Red, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                g.DrawImage(Resource.CSDiscount_arrow, 35 + TextRenderer.MeasureText(g, totalOriginalPrice + " NX", GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
+                TextRenderer.DrawText(g, totalOriginalPrice + "ポイント   " + totalPrice + "ポイント", GearGraphics.ItemDetailFont, new Point(64, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, totalOriginalPrice + "ポイント", GearGraphics.ItemDetailFont, new Point(64, picH), Color.Red, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                g.DrawImage(Resource.CSDiscount_arrow, 64 + TextRenderer.MeasureText(g, totalOriginalPrice + "ポイント", GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
                 DrawDiscountNum(g, "-" + (int)((100 - 100.0 * totalPrice / totalOriginalPrice)) + "%", cashBitmap.Width - 40, picH - 1, StringAlignment.Near);
             }
             picH += 11;
