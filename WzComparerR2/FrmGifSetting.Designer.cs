@@ -522,7 +522,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmGifSetting";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Animation Settings";
+            this.Text = "アニメーション設定";
             this.panelExMosaic.ResumeLayout(false);
             this.panelExMosaic.PerformLayout();
             this.panelExColor.ResumeLayout(false);
