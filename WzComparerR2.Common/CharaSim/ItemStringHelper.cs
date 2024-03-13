@@ -95,7 +95,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incDAMr: return "ダメージ " + sign + value + "%";
                 case GearPropType.incCr: return "クリティカル率: " + sign + value + "%";
                 case GearPropType.incCDr: return "クリティカルダメージ: " + sign + value + "%";
-                case GearPropType.knockback: return "Knockback Chance: " + value + "%";
+                case GearPropType.knockback: return "直接打撃の時" + value + "%の確率でノックバック";
                 //case GearPropType.incPVPDamage: return "Battle Mode ATT " + sign + " " + value;
                 case GearPropType.incPQEXPr: return "Party Quest EXP: +" + value + "%";
                 case GearPropType.incEXPr: return "Party EXP: +" + value + "%";
