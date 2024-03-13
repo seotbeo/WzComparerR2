@@ -92,9 +92,9 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incJump: return "ジャンプ力: " + sign + value;
                 case GearPropType.incCraft: return "Diligence: " + sign + value;
                 case GearPropType.damR:
-                case GearPropType.incDAMr: return "Damage: " + sign + value + "%";
-                case GearPropType.incCr: return "Critical Rate: " + sign + value + "%";
-                case GearPropType.incCDr: return "Critical Damage: " + sign + value + "%";
+                case GearPropType.incDAMr: return "ダメージ " + sign + value + "%";
+                case GearPropType.incCr: return "クリティカル率: " + sign + value + "%";
+                case GearPropType.incCDr: return "クリティカルダメージ: " + sign + value + "%";
                 case GearPropType.knockback: return "Knockback Chance: " + value + "%";
                 //case GearPropType.incPVPDamage: return "Battle Mode ATT " + sign + " " + value;
                 case GearPropType.incPQEXPr: return "Party Quest EXP: +" + value + "%";
@@ -111,7 +111,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.tradeBlock: return value == 0 ? null : "交換不可";
                 case GearPropType.equipTradeBlock: return value == 0 ? null : "装着すると交換不可";
                 case GearPropType.accountSharable: return value == 0 ? null : "ワールド内のキャラクター間移動のみ可能"; //v218 Transferable within world
-                case GearPropType.sharableOnce: return value == 0 ? null : "Tradable once within the same world.\n(Cannot be traded after transfer)"; //old "Can be traded once within account"
+                case GearPropType.sharableOnce: return value == 0 ? null : "ワールド内の自分のキャラクター間で1回移動可能\n(移動後交換不可)"; //old "Can be traded once within account"
                 case GearPropType.onlyEquip: return value == 0 ? null : "固有装備アイテム";
                 case GearPropType.notExtend: return value == 0 ? null : "有効期間延長不可";
                 case GearPropType.tradeAvailable:
@@ -137,7 +137,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.blockGoldHammer: return value == 0 ? null : "Golden Hammer cannot be used.";
                 case GearPropType.colorvar: return value == 0 ? null : "#cThis item can be dyed using a Dye.#";
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
-                case GearPropType.noLookChange: return value == 0 ? null : "Cannot use Fusion Anvil";
+                case GearPropType.noLookChange: return value == 0 ? null : "神秘のカナトコ使用不可";
 
                 case GearPropType.incAllStat_incMHP25: return "Allｽﾃｰﾀｽ: " + sign + value + ", 最大HP : " + sign + (value * 25);// check once Lv 250 set comes out in GMS
                 case GearPropType.incAllStat_incMHP50_incMMP50: return "Allｽﾃｰﾀｽ: " + sign + value + ", 最大HP / 最大MP : " + sign + (value * 50);
@@ -250,9 +250,9 @@ namespace WzComparerR2.CharaSim
                 case GearType.longcoat: return "服 (全身) ";
                 case GearType.machineEngine: return "メカニックエンジン";
                 case GearType.machineArms: return "メカニックアーム";
-                case GearType.machineLegs: return "メカニック Leg";
-                case GearType.machineBody: return "メカニック Frame";
-                case GearType.machineTransistors: return "メカニック Transistor";
+                case GearType.machineLegs: return "メカニックレッグ";
+                case GearType.machineBody: return "メカニックフレーム";
+                case GearType.machineTransistors: return "メカニックトランジスター";
                 case GearType.pants: return "服 (下) ";
                 case GearType.ring: return "指輪";
                 case GearType.shield: return "盾";
@@ -286,8 +286,8 @@ namespace WzComparerR2.CharaSim
                 case GearType.gun: return "銃 (両手武器)";
                 case GearType.android: return "アンドロイド";
                 case GearType.machineHeart: return "機械心臓部";
-                case GearType.pickaxe: return "Mining Tool";
-                case GearType.shovel: return "Herbalism Tool";
+                case GearType.pickaxe: return "マイニングツール";
+                case GearType.shovel: return "薬草学ツール";
                 case GearType.pocket: return "ポケットアイテム";
                 case GearType.dualBow: return "デュアルボウガン (両手武器)";
                 case GearType.handCannon: return "ハンドキャノン (両手武器)";
@@ -300,7 +300,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.taming:
                 case GearType.taming2:
                 case GearType.taming3: 
-                case GearType.tamingChair: return "TAMED MONSTER";
+                case GearType.tamingChair: return "テイムドモンスター";
                 case GearType.saddle: return "鞍";
                 case GearType.katana: return "刀 (両手武器)";
                 case GearType.fan: return "扇 (両手武器)";

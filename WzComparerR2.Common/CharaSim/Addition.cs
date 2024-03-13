@@ -39,11 +39,11 @@ namespace WzComparerR2.CharaSim
                         string val;
                         if (this.Props.TryGetValue("prob", out val))
                         {
-                            sb.AppendFormat("Critical Rate: +{0}%\r\n", val);
+                            sb.AppendFormat("クリティカル率 +{0}%\r\n", val);
                         }
                         if (this.Props.TryGetValue("damage", out val))
                         {
-                            sb.AppendFormat("Critical Damage: +{0}%\r\n", val);
+                            sb.AppendFormat("クリティカルダメージ +{0}%增加\r\n", val);
                         }
                         if (sb.Length > 2)
                         {
@@ -58,9 +58,9 @@ namespace WzComparerR2.CharaSim
                         {
                             switch (v1[0])
                             {
-                                case 'I': elem = "Ice"; break;
-                                case 'F': elem = "Fire"; break;
-                                case 'L': elem = "Lightning"; break;
+                                case 'I': elem = "氷"; break;
+                                case 'F': elem = "火"; break;
+                                case 'L': elem = "雷"; break;
                                 default: elem = v1[0].ToString(); break;
                             }
                             return elem + " Attribute: +" + v1.Substring(1) + "%";
@@ -228,14 +228,14 @@ namespace WzComparerR2.CharaSim
         {
             switch (weekDay)
             {
-                case 0: return "Sunday";
-                case 1: return "Monday";
-                case 2: return "Tuesday";
-                case 3: return "Wednesday";
-                case 4: return "Thursday";
-                case 5: return "Friday";
-                case 6: return "Saturday";
-                default: return "Week" + weekDay; //这怎么可能...
+                case 0: return "日曜日";
+                case 1: return "月曜日";
+                case 2: return "火曜日";
+                case 3: return "水曜日";
+                case 4: return "木曜日";
+                case 5: return "金曜日";
+                case 6: return "土曜日";
+                default: return "週" + weekDay; //这怎么可能...
             }
         }
 
