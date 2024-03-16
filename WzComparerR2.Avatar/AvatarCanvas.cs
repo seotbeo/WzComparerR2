@@ -1387,7 +1387,7 @@ namespace WzComparerR2.Avatar
                     }
                 }
             }
-            
+
             if (actionFrame.Action == "effect" && actionNode == null) // 의자 아이템 프레임 정보 찾기
             {
                 actionNode = parent;
