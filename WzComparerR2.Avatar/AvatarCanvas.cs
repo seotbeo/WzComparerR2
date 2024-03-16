@@ -332,6 +332,7 @@ namespace WzComparerR2.Avatar
 
             return part;
         }
+
         public AvatarPart AddChairPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, Wz_Vector brm, bool forceAct)  // 의자 아이템 패널 표시 설정
         {
             Wz_Node infoNode = imgNode.FindNodeByPath("info");
@@ -345,6 +346,7 @@ namespace WzComparerR2.Avatar
 
             return part;
         }
+
         /// <summary>
         /// 获取角色动作的动画帧。
         /// </summary>
@@ -483,11 +485,11 @@ namespace WzComparerR2.Avatar
         public ActionFrame[] GetTamingFrames(string action)
         {
             List<ActionFrame> frames = new List<ActionFrame>();
-            if (this.Taming != null) // 의자 아이템
+            if (this.Taming != null)
             {
-                if (action == "effect")
+                if (action == "effect") // 의자 아이템
                 {
-                    if (this.Taming.Node.FindNodeByPath(action)?.Nodes.Count < this.Taming.Node.FindNodeByPath("effect2")?.Nodes.Count)
+                    if ((this.Taming.Node.FindNodeByPath(action)?.Nodes.Count ?? 0) < this.Taming.Node.FindNodeByPath("effect2")?.Nodes.Count)
                     {
                         action = "effect2";
                     }
@@ -504,21 +506,18 @@ namespace WzComparerR2.Avatar
             var actionNode = this.Taming?.Node.Nodes[action]?.ResolveUol();
             if (actionNode == null)
             {
-                return null;
+                if (action == "effect") // 의자 아이템
+                {
+                    actionNode = this.Taming?.Node.Nodes["effect2"]?.ResolveUol();
+                }
+
+                if (actionNode == null)
+                {
+                    return null;
+                }
             }
 
             var frameNode = actionNode.Nodes[frameIndex.ToString()];
-            if (frameNode == null) // 의자 아이템
-            {
-                if (action == "effect")
-                {
-                    actionNode = this.Taming?.Node.Nodes["effect2"]?.ResolveUol();
-                    if (actionNode != null)
-                    {
-                        frameNode = actionNode.Nodes[frameIndex.ToString()];
-                    }
-                }
-            }
             if (frameNode != null)
             {
                 var frame = LoadStandardFrame(frameNode);
@@ -1388,7 +1387,7 @@ namespace WzComparerR2.Avatar
                     }
                 }
             }
-
+            
             if (actionFrame.Action == "effect" && actionNode == null) // 의자 아이템 프레임 정보 찾기
             {
                 actionNode = parent;
