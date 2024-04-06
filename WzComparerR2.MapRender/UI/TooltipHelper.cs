@@ -8,8 +8,43 @@ using WzComparerR2.Rendering;
 
 namespace WzComparerR2.MapRender.UI
 {
+
     public static class TooltipHelper
     {
+        private static string ToCJKNumberExpr(long value)
+        {
+            var sb = new StringBuilder(16);
+            bool firstPart = true;
+            if (value >= 1_0000_0000_0000)
+            {
+                long part = value / 1_0000_0000;
+                sb.AppendFormat("{0}兆", part); // Korean: 조, Chinese+Japanese: 兆
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000_0000)
+            {
+                long part = value / 1_0000_0000;
+                sb.AppendFormat("{0}億", part); // Korean: 억, TradChinese+Japanese: 億, SimpChinese: 亿
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000)
+            {
+                long part = value / 1_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
+                value -= part * 1_0000;
+                firstPart = false;
+            }
+            if (value > 0)
+            {
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}", value);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "0";
+        }
         public static TextBlock PrepareTextBlock(IWcR2Font font, string text, ref Vector2 pos, Color color)
         {
             Vector2 size = font.MeasureString(text);
@@ -68,20 +103,20 @@ namespace WzComparerR2.MapRender.UI
             var current = Vector2.Zero;
             size = Vector2.Zero;
 
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Lv: " + info.level + (info.boss ? " (Boss)" : null), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "レベル: " + info.level + (info.boss ? " (ボス)" : null), ref current, Color.White, ref size.X));
 
 
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "HP: " + info.maxHP.ToString("N0"), ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "MP: " + info.maxMP.ToString("N0"), ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Physical Damage: " + info.PADamage.ToString("N0"), ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Magic Damage: " + info.MADamage.ToString("N0"), ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "PDRate: " + info.PDRate + "%", ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "MDRate: " + info.MDRate + "%", ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "EXP: " + info.exp.ToString("N0"), ref current, Color.White, ref size.X));
-            if (info.undead) blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Undead: Yes", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "HP: " + ToCJKNumberExpr(info.maxHP), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "MP: " + ToCJKNumberExpr(info.maxMP), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "物理ダメージ: " + ToCJKNumberExpr(info.PADamage), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "魔法ダメージ: " + ToCJKNumberExpr(info.MADamage), ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "物理防御率: " + info.PDRate + "%", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "魔法防御率: " + info.MDRate + "%", ref current, Color.White, ref size.X));
+            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "経験値: " + ToCJKNumberExpr(info.exp), ref current, Color.White, ref size.X));
+            if (info.undead) blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "不死型", ref current, Color.White, ref size.X));
             StringBuilder sb;
             if ((sb = GetLifeElemAttrString(ref info.elemAttr)).Length > 0)
-                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "Element: " + sb.ToString().TrimEnd().TrimEnd(','), ref current, Color.White, ref size.X));
+                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "エレメント: " + sb.ToString(), ref current, Color.White, ref size.X));
             size.Y = current.Y;
 
             return blocks.ToArray();
@@ -89,14 +124,14 @@ namespace WzComparerR2.MapRender.UI
 
         public static StringBuilder GetLifeElemAttrString(ref LifeInfo.ElemAttr elemAttr)
         {
-            StringBuilder sb = new StringBuilder();//original value: 14
-            sb.Append(GetElemResistanceString("Physical", elemAttr.P));
-            sb.Append(GetElemResistanceString("Holy", elemAttr.H));
-            sb.Append(GetElemResistanceString("Fire", elemAttr.F));
-            sb.Append(GetElemResistanceString("Ice", elemAttr.I));
-            sb.Append(GetElemResistanceString("Poison", elemAttr.S));
-            sb.Append(GetElemResistanceString("Lightning", elemAttr.L));
-            sb.Append(GetElemResistanceString("Dark", elemAttr.D));
+            StringBuilder sb = new StringBuilder(14);
+            sb.Append(GetElemResistanceString("氷", elemAttr.I));
+            sb.Append(GetElemResistanceString("雷", elemAttr.L));
+            sb.Append(GetElemResistanceString("火", elemAttr.F));
+            sb.Append(GetElemResistanceString("毒", elemAttr.S));
+            sb.Append(GetElemResistanceString("聖", elemAttr.H));
+            sb.Append(GetElemResistanceString("闇", elemAttr.D));
+            sb.Append(GetElemResistanceString("物", elemAttr.P));
             return sb;
         }
 
@@ -105,10 +140,10 @@ namespace WzComparerR2.MapRender.UI
             string e = null;
             switch (resist)
             {
-                case LifeInfo.ElemResistance.Immune: e = " immune, "; break;
-                case LifeInfo.ElemResistance.Resist: e = " strong, "; break;
+                case LifeInfo.ElemResistance.Immune: e = "× "; break;
+                case LifeInfo.ElemResistance.Resist: e = "△ "; break;
                 case LifeInfo.ElemResistance.Normal: e = null; break;
-                case LifeInfo.ElemResistance.Weak: e = " weak, "; break;
+                case LifeInfo.ElemResistance.Weak: e = "◎ "; break;
             }
             return e != null ? (elemName + e) : null;
         }
@@ -117,16 +152,16 @@ namespace WzComparerR2.MapRender.UI
         {
             switch (pType)
             {
-                case 0: return "Starting Point";
-                case 1: return "Normal (Hidden)";
-                case 2: return "Normal";
-                case 3: return "Normal (Collision)";
-                case 6: return "Mystic Door (Warp)";
-                case 7: return "Script";
-                case 8: return "Script Hidden";
-                case 9: return "Script (Collision)";
-                case 10: return "Invisible Portal";
-                case 12: return "Collision Vertical Jump Portal";
+                case 0: return "地図の誕生点";
+                case 1: return "一般ポータル (非表示)";
+                case 2: return "一般ポータル";
+                case 3: return "一般ポータル (タッチ)";
+                case 6: return "時空ゲートポイント";
+                case 7: return "スクリプトポータル";
+                case 8: return "スクリプトポータル (非表示)";
+                case 9: return "スクリプトポータル (タッチ)";
+                case 10: return "マップ内のポータル";
+                case 12: return "弾性デバイス";
                 default: return null;
             }
         }
@@ -211,6 +246,8 @@ namespace WzComparerR2.MapRender.UI
                         return Color.White;
                 }
             }
+
+
         }
     }
 }
