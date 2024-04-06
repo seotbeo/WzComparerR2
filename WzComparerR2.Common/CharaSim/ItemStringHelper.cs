@@ -130,11 +130,11 @@ namespace WzComparerR2.CharaSim
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
                 case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力再設定不可";
                 case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を\n\r得ることができます。";
-                case GearPropType.nActivatedSocket: return value == 0 ? null : "#cYou can mount a Nebulite on this item.#";
+                case GearPropType.nActivatedSocket: return value == 0 ? null : "#cこのアイテムにはネビュライトを取り付けることができます。#";
                 case GearPropType.jokerToSetItem: return value == 0 ? null : " #c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
-                case GearPropType.plusToSetItem: return value == 0 ? null : "#cWhen equipped, the item set will count as having equipped two.#";
+                case GearPropType.plusToSetItem: return value == 0 ? null : "#c装備すると、アイテムセットは2つ装備したものとしてカウントされます。#";
                 case GearPropType.abilityTimeLimited: return value == 0 ? null : "期間限定能力値";
-                case GearPropType.blockGoldHammer: return value == 0 ? null : "Golden Hammer cannot be used.";
+                case GearPropType.blockGoldHammer: return value == 0 ? null : "ビシアスのハンマーは使用できません。";
                 case GearPropType.colorvar: return value == 0 ? null : "#cThis item can be dyed using a Dye.#";
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
                 case GearPropType.noLookChange: return value == 0 ? null : "神秘のカナトコ使用不可";
@@ -226,12 +226,12 @@ namespace WzComparerR2.CharaSim
             switch (type)
             {
                 //case GearType.body: return "Avatar (Body)";
-                case GearType.head: return "Avatar (Head)";
+                case GearType.head: return "スキン";
                 case GearType.face:
-                case GearType.face2: return "Face";
+                case GearType.face2: return "顔";
                 case GearType.hair:
                 case GearType.hair2:
-                case GearType.hair3: return "Hair";
+                case GearType.hair3: return "髮";
                 case GearType.faceAccessory: return "顔の飾り";
                 case GearType.eyeAccessory: return "目の飾り";
                 case GearType.earrings: return "イヤリング";
@@ -1013,7 +1013,7 @@ namespace WzComparerR2.CharaSim
             {
                 int part = value / 1_0000;
                 sb.Append(firstPart ? null : " ");
-                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万z
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
                 value -= part * 1_0000;
                 firstPart = false;
             }

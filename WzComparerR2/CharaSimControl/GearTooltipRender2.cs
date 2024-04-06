@@ -676,18 +676,22 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
                 picH += 0;
-                if (Gear.Hammer < 2)
+                if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade))
                 {
-                    TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : " + Gear.Hammer + "/2", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    if (Gear.Hammer < 2)
+                    {
+                        TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : " + Gear.Hammer + "/2", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    }
+                    else
+                    {
+                        TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : MAX", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    }
+                    //TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, new Point(11, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    //g.DrawString(": " + Gear.Hammer.ToString() + (Gear.Hammer == 2 ? "(MAX)" : null) + "/2", GearGraphics.EquipDetailFont, Brushes.White, 168, picH);
+                    picH += 15;
+                    hasPart2 = true;
                 }
-                else
-                {
-                    TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : MAX", GearGraphics.EquipDetailFont, new Point(12, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                }
-                //TextRenderer.DrawText(g, "ビシアスのハンマー使用回数 : ", GearGraphics.EquipDetailFont, new Point(11, picH), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                //g.DrawString(": " + Gear.Hammer.ToString() + (Gear.Hammer == 2 ? "(MAX)" : null) + "/2", GearGraphics.EquipDetailFont, Brushes.White, 168, picH);
-                picH += 15;
-                hasPart2 = true;
+
             }
 
             picH += 3;//original value is '8'. 3 is perfect.
@@ -951,18 +955,18 @@ namespace WzComparerR2.CharaSimControl
 
                 if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))
                 {
-                    desc.Add("#cThis item cannot be traded once it has been used.#");
+                    desc.Add("#cこのアイテムは一度使用するとトレードできません。#");
                 }
 
                 if (Gear.type != GearType.pickaxe && Gear.type != GearType.shovel && PluginBase.PluginManager.FindWz(string.Format("Effect/ItemEff.img/{0}/effect", Gear.ItemID)) != null)
                 {
-                    desc.Add("This item does not show in some situations, such as in the #cCharacter Info window.#");
+                    desc.Add("この項目は#cキャラクター情報ウィンドウ#など、状況によっては表示されません。");
                 }
 
                 if (Gear.Props.TryGetValue(GearPropType.noPetEquipStatMoveItem, out value) && value != 0)
                 {
                     desc.Add("");
-                    desc.Add("You cannot use the Pet Equipment Stat Transfer Scroll on this item.");
+                    desc.Add("このアイテムではペット能力值移転書は使用できません。");
                 }
 
                 if (desc.Count >= 1 && desc.Last() == "")

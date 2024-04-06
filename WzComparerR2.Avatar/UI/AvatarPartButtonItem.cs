@@ -30,7 +30,7 @@ namespace WzComparerR2.Avatar.UI
                 {
                     colorsRef = LensColors;
                     resourceType = "MixLens";
-                    color = ID / 100 % 10;
+                    color = (ID / 100 % 10) % 8;
                 }
                 else
                 {
@@ -58,8 +58,8 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
-        public static readonly string[] HairColors = new[] { "Black", "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown" };
-        public static readonly string[] LensColors = new[] { "Black", "Blue", "Red", "Green", "Brown", "Emerald", "Purple", "Amethyst" };
+        public static readonly string[] HairColors = new[] { "검은색", "빨간색", "주황색", "노란색", "초록색", "파란색", "보라색", "갈색" };
+        public static readonly string[] LensColors = new[] { "검은색", "파란색", "빨간색", "초록색", "갈색", "에메랄드", "보라색", "자수정색" };
 
         public void SetIcon(Bitmap icon)
         {

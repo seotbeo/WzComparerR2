@@ -119,7 +119,7 @@ namespace WzComparerR2.Avatar.UI
                             if (tamingMobNode != null)
                             {
                                 this.SuspendUpdateDisplay();
-                                LoadTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(skillNode.Nodes["icon"], PluginBase.PluginManager.FindWz), skillID, true);
+                                LoadTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(skillNode.Nodes["icon"], PluginBase.PluginManager.FindWz) , skillID, true);
                                 this.ResumeUpdateDisplay();
                             }
                         }
@@ -516,7 +516,7 @@ namespace WzComparerR2.Avatar.UI
         {
             if (this.avatar.Taming != null)
             {
-                var tamingAction = (this.cmbActionTaming.SelectedItem as ComboItem)?.Text;
+                var tamingAction =  (this.cmbActionTaming.SelectedItem as ComboItem)?.Text;
                 if (tamingAction != null)
                 {
                     string forceAction = this.avatar.Taming.Node.FindNodeByPath($@"characterAction\{tamingAction}").GetValueEx<string>(null);
@@ -1168,19 +1168,28 @@ namespace WzComparerR2.Avatar.UI
 
         private void btnMale_Click(object sender, EventArgs e)
         {
-            if (this.avatar.Parts.All(part => part == null)
-                || MessageBoxEx.Show("Do you want to create a male character?", "OK") == DialogResult.OK)
+            if (this.avatar.Parts.All(part => part == null) 
+                || MessageBoxEx.Show("基本男キャラを呼びますか？", "確認") == DialogResult.OK)
             {
-                LoadCode("2000,12000", 0);
+                LoadCode("2000,12000,20000,30000,1040036,1060026", 0);
             }
         }
 
         private void btnFemale_Click(object sender, EventArgs e)
         {
             if (this.avatar.Parts.All(part => part == null)
-                || MessageBoxEx.Show("Do you want to create a female character?", "OK") == DialogResult.OK)
+                || MessageBoxEx.Show("基本女キャラを呼びますか？", "確認") == DialogResult.OK)
             {
-                LoadCode("2000,12000", 0);
+                LoadCode("2000,12000,21000,31000,1041046,1061039", 0);
+            }
+        }
+
+        private void btnLaraF_Click(object sender, EventArgs e)
+        {
+            if (this.avatar.Parts.All(part => part == null)
+                || MessageBoxEx.Show("基本女ララを呼びますか？", "確認") == DialogResult.OK)
+            {
+                LoadCode("2003,12003,51484,61183,1051667,1073551,1372243", 0);
             }
         }
 
@@ -1207,7 +1216,7 @@ namespace WzComparerR2.Avatar.UI
                 // no animation is playing, save as png
                 var dlg = new SaveFileDialog()
                 {
-                    Title = "Save Avatar Frame",
+                    Title = "Save avatar frame",
                     Filter = "PNG (*.png)|*.png|*.*|*.*",
                     FileName = string.Format("avatar{0}{1}{2}.png",
                         string.IsNullOrEmpty(avatar.ActionName) ? "" : ("_" + avatar.ActionName + "(" + bodyFrame + ")"),
@@ -1231,8 +1240,8 @@ namespace WzComparerR2.Avatar.UI
 
                 var dlg = new SaveFileDialog()
                 {
-                    Title = "Save Avatar",
-                    Filter = string.Format("{0} (*{1})|*{1}|All Files(*.*)|*.*", encParams.FileDescription, encParams.FileExtension),
+                    Title = "Save avatar",
+                    Filter = string.Format("{0} (*{1})|*{1}|すべてのファイル(*.*)|*.*", encParams.FileDescription, encParams.FileExtension),
                     FileName = string.Format("avatar{0}{1}{2}{3}",
                         string.IsNullOrEmpty(avatar.ActionName) ? "" : ("_" + avatar.ActionName),
                         string.IsNullOrEmpty(avatar.EmotionName) ? "" : ("_" + avatar.EmotionName),
@@ -1397,7 +1406,7 @@ namespace WzComparerR2.Avatar.UI
                     var step4 = step3.Select(tp => ApplyFrame(tp.Item1, tp.Item2));
 
                     // run pipeline
-                    foreach (var gifFrame in step4)
+                    foreach(var gifFrame in step4)
                     {
                         gifLayer.AddFrame(gifFrame);
                     }
@@ -1405,7 +1414,7 @@ namespace WzComparerR2.Avatar.UI
 
                 if (gifLayer.Frames.Count <= 0)
                 {
-                    MessageBoxEx.Show(this, "Failed to calculate animation data.", "Error");
+                    MessageBoxEx.Show(this, "アニメーションデータの計算に失敗しました。", "Error");
                     return;
                 }
 
@@ -1475,13 +1484,13 @@ namespace WzComparerR2.Avatar.UI
             var matches = Regex.Matches(code, @"s?(\d+)(\+([0-7])\*(\d{1,2}))?([,\s]|$)");
             if (matches.Count <= 0)
             {
-                MessageBoxEx.Show("There is no item corresponding to the item code.", "Error");
+                MessageBoxEx.Show("アイテムコードに該当するアイテムはありません.", "エラー");
                 return;
             }
 
             if (PluginManager.FindWz(Wz_Type.Base) == null)
             {
-                MessageBoxEx.Show("Please open Base.wz.", "Error");
+                MessageBoxEx.Show("Base.wz ファイルを開けません。", "エラー");
                 return;
             }
 
@@ -1492,7 +1501,7 @@ namespace WzComparerR2.Avatar.UI
             //试图初始化
             if (!this.inited && !this.AvatarInit())
             {
-                MessageBoxEx.Show("Unable to start the Avatar plugin.", "Error");
+                MessageBoxEx.Show("アバタープラグインを初期化できません。", "エラー");
                 return;
             }
             var sl = this.PluginEntry.Context.DefaultStringLinker;
@@ -1577,12 +1586,12 @@ namespace WzComparerR2.Avatar.UI
             if (failList.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("The following item code could not be found: ");
+                sb.AppendLine("そのアイテムコードが見つかりません : ");
                 foreach (var gearID in failList)
                 {
                     sb.Append("  ").AppendLine(gearID.ToString("D8"));
                 }
-                MessageBoxEx.Show(sb.ToString(), "Error");
+                MessageBoxEx.Show(sb.ToString(), "エラー");
             }
 
         }
@@ -1594,6 +1603,11 @@ namespace WzComparerR2.Avatar.UI
 
             foreach (var node1 in characWz.Nodes)
             {
+                if (node1.Text.Contains("_Canvas"))
+                {
+                    continue;
+                }
+
                 if (node1.Text == imgName)
                 {
                     imgNode = node1;
@@ -1799,7 +1813,7 @@ namespace WzComparerR2.Avatar.UI
 
             if (this.avatar.ActionName == null)
             {
-                MessageBoxEx.Show("There is no character.");
+                MessageBoxEx.Show("キャラクターはありません。");
                 return;
             }
 
@@ -1807,7 +1821,7 @@ namespace WzComparerR2.Avatar.UI
             var encParams = AnimateEncoderFactory.GetEncoderParams(config.GifEncoder.Value);
 
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select a destination folder to export.";
+            dlg.Description = "エクスポートしたいフォルダを選択してください。";
 
             async Task ExportGif(string actionName)
             {
@@ -1869,7 +1883,7 @@ namespace WzComparerR2.Avatar.UI
                 }
                 catch (Exception ex)
                 {
-                    context.Message = $"Error: {ex.Message}";
+                    context.Message = $"エラー: {ex.Message}";
                     throw;
                 }
                 finally
@@ -1880,7 +1894,7 @@ namespace WzComparerR2.Avatar.UI
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                ProgressDialog.Show(this.FindForm(), "Exporting...", avatar.Actions.Count + " Exporting action...", true, false, ExportJob);
+                ProgressDialog.Show(this.FindForm(), "エクスポート中...", avatar.Actions.Count + " アクションのエクスポート中...", true, false, ExportJob);
             }
         }
     }

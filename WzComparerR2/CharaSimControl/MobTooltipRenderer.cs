@@ -54,75 +54,75 @@ namespace WzComparerR2.CharaSimControl
             StringBuilder sbExt = new StringBuilder();
             if (MobInfo.Boss && MobInfo.PartyBonusMob)
             {
-                sbExt.Append("[Mini-Boss] ");
+                sbExt.Append("[ミニボス] ");
             }
             if (MobInfo.Boss && !MobInfo.PartyBonusMob)
             {
-                sbExt.Append("[Boss] ");
+                sbExt.Append("[ボス] ");
             }
             if (MobInfo.Undead)
             {
-                sbExt.Append("[Undead] ");
+                sbExt.Append("[アンデッド] ");
             }
             if (MobInfo.FirstAttack)
             {
-                sbExt.Append("[Auto-Aggressive] ");
+                sbExt.Append("[自動攻撃] ");
             }
             if (!MobInfo.BodyAttack)
             {
-                sbExt.Append("[No Touch Damage] ");
+                sbExt.Append("[接触ダメージなし] ");
             }
             if (MobInfo.DamagedByMob)
             {
-                sbExt.Append("[Vulnerable to Monsters] ");
+                sbExt.Append("[モンスターに弱い] ");
             }
             if (MobInfo.ChangeableMob)
             {
-                sbExt.Append("[Level Scaled] ");
+                sbExt.Append("[レベルスケール] ");
             }
             if (MobInfo.AllyMob)
             {
-                sbExt.Append("[Friendly] ");
+                sbExt.Append("[同盟モンスター] ");
             }
             if (MobInfo.Invincible)
             {
-                sbExt.Append("[Invincible] ");
+                sbExt.Append("[無敵] ");
             }
             if (MobInfo.NotAttack)
             {
-                sbExt.Append("[Non-Aggressive] ");//Monster can not attack or damage you. But you can damage it.
+                sbExt.Append("[非攻撃] ");//Monster can not attack or damage you. But you can damage it.
             }
             if (MobInfo.FixedDamage > 0)
             {
-                sbExt.Append("[Fixed Damage: " + MobInfo.FixedDamage.ToString("N0") + "] ");
+                sbExt.Append("[固定ダメージ: " + ToCJKNumberExpr(MobInfo.FixedDamage));
             }
             if (MobInfo.FixedBodyAttackDamageR > 0)
             {
-                sbExt.Append("[Fixed Touch Damage: " + MobInfo.FixedBodyAttackDamageR + "%] ");
+                sbExt.Append("[固定接触ダメージ: " + MobInfo.FixedBodyAttackDamageR + "%] ");
             }
             if (MobInfo.IgnoreDamage)
             {
-                sbExt.Append("[Ignores Damage] ");
+                sbExt.Append("[ダメージを無視] ");
             }
             if (MobInfo.IgnoreMoveImpact)
             {
-                sbExt.Append("[Immune to Rush] ");
+                sbExt.Append("[ラッシュへの免疫] ");
             }
             if (MobInfo.IgnoreMovable)
             {
-                sbExt.Append("[Immune to Stun/Bind] ");
+                sbExt.Append("[気絶/拘束への免疫] ");
             }
             if (MobInfo.NoDebuff)
             {
-                sbExt.Append("[Immune to Debuffs] ");
+                sbExt.Append("[デバフへの免疫] ");
             }
             if (MobInfo.OnlyNormalAttack)
             {
-                sbExt.Append("[Damaged by Basic Attacks only] ");
+                sbExt.Append("[基本攻撃のみでダメージを受ける] ");
             }
             if (MobInfo.OnlyHittedByCommonAttack)
             {
-                sbExt.Append("[Hit by Basic Attacks only] ");
+                sbExt.Append("[基本攻撃のみでヒットする] ");
             }
 
             if (sbExt.Length > 1)
@@ -134,66 +134,75 @@ namespace WzComparerR2.CharaSimControl
 
             if (MobInfo.RemoveAfter > 0)
             {
-                propBlocks.Add(PrepareText(g, "[Disappears after " + MobInfo.RemoveAfter + " seconds]", GearGraphics.ItemDetailFont, Brushes.GreenYellow, 0, picY));
+                propBlocks.Add(PrepareText(g, "[" + MobInfo.RemoveAfter + "秒後に消える]", GearGraphics.ItemDetailFont, Brushes.GreenYellow, 0, picY));
                 picY += 16;
             }
 
-            propBlocks.Add(PrepareText(g, "Type: " + GetMobCategoryName(MobInfo.Category), GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
-            propBlocks.Add(PrepareText(g, "Level: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : MobInfo.MaxHP.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
-            propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : MobInfo.MaxMP.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
-            propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "種類: " + GetMobCategoryName(MobInfo.Category), GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
+            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : ToCJKNumberExpr(MobInfo.MaxHP);
+            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : ToCJKNumberExpr(MobInfo.MaxMP);
+            if (MobInfo.ChangeableMob)
+            {
+                propBlocks.Add(PrepareText(g, "レベル: 不定値", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "HP: 不定値", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "MP: 不定値", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
+            else
+            {
+                propBlocks.Add(PrepareText(g, "レベル: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            }
             if (MobInfo.HPRecovery > 0)
             {
-                propBlocks.Add(PrepareText(g, "HP Recovery: " + MobInfo.HPRecovery.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "HP回復: " + ToCJKNumberExpr(MobInfo.HPRecovery), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.MPRecovery > 0)
             {
-                propBlocks.Add(PrepareText(g, "MP Recovery: " + MobInfo.MPRecovery.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "MP回復: " + ToCJKNumberExpr(MobInfo.MPRecovery), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
-            propBlocks.Add(PrepareText(g, "Physical Damage: " + MobInfo.PADamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "Magic Damage: " + MobInfo.MADamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            //propBlocks.Add(PrepareText(g, "Physical Defense: " + MobInfo.PDDamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            //propBlocks.Add(PrepareText(g, "Magic Defense: " + MobInfo.MDDamage.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "Physical DEF Rate: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "Magic DEF Rate: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "物理ダメージ: " + ToCJKNumberExpr(MobInfo.PADamage), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "魔法ダメージ: " + ToCJKNumberExpr(MobInfo.MADamage), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            //propBlocks.Add(PrepareText(g, "Physical Defense: " + MobInfo.PDDamage), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            //propBlocks.Add(PrepareText(g, "Magic Defense: " + MobInfo.MDDamage), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "物理防御率: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "魔法防御率: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             //propBlocks.Add(PrepareText(g, "Accuracy: " + MobInfo.Acc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16)); //no longer used
             //propBlocks.Add(PrepareText(g, "Avoidability: " + MobInfo.Eva, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16)); //no longer used
-            propBlocks.Add(PrepareText(g, "Knockback: " + MobInfo.Pushed.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "EXP: " + MobInfo.Exp.ToString("N0", System.Globalization.CultureInfo.InvariantCulture), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "ノックバック: " + ToCJKNumberExpr(MobInfo.Pushed), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "経験値: " + ToCJKNumberExpr(MobInfo.Exp), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             if (MobInfo.CharismaEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Ambition EXP: " + MobInfo.CharismaEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "カリスマ: +" + MobInfo.CharismaEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.SenseEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Empathy EXP: " + MobInfo.SenseEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "感性: +" + MobInfo.SenseEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.InsightEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Insight EXP: " + MobInfo.InsightEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "洞察力: +" + MobInfo.InsightEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.WillEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Willpower EXP: " + MobInfo.WillEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "意志: +" + MobInfo.WillEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.CraftEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Diligence EXP: " + MobInfo.CraftEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "器用さ: +" + MobInfo.CraftEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.CharmEXP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Charm EXP: " + MobInfo.CharmEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "魅力: +" + MobInfo.CharmEXP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             if (MobInfo.WP > 0)
             {
-                propBlocks.Add(PrepareText(g, "Weapon Points (for Zero): " + MobInfo.WP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, "WP: " + MobInfo.WP, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
             //propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             if (GetElemAttrString(MobInfo.ElemAttr) != "")
             {
-                propBlocks.Add(PrepareText(g, "Elements: " + GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+                propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             }
 
             picY += 28;
@@ -210,7 +219,7 @@ namespace WzComparerR2.CharaSimControl
 
                 StringBuilder sb = new StringBuilder();
                 //sb.Append("Summons after death: ");
-                sb.Append("Revives into: ");
+                sb.Append("復活する姿: ");
                 int rowCount = 0;
                 foreach (var kv in reviveCounts)
                 {
@@ -310,41 +319,19 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetElemAttrString(MobElemAttr elemAttr)
         {
-            StringBuilder sb1 = new StringBuilder();
-            var elems = new[]
-            {
-                new {name = "Physical", attr = elemAttr.P },
-                new {name = "Holy", attr = elemAttr.H },
-                new {name = "Fire", attr = elemAttr.F },
-                new {name = "Ice", attr = elemAttr.I },
-                new {name = "Poison", attr = elemAttr.S },
-                new {name = "Lightning", attr = elemAttr.L },
-                new {name = "Dark", attr = elemAttr.D },
-            };
-            foreach (var item in elems)
-            {
-                if (item.attr != ElemResistance.Normal)
-                {
-                    sb1.Append($"{item.name} {GetElemAttrResistString(item.attr)}, ");
-                }
-            }
-            return sb1.ToString().TrimEnd().TrimEnd(',');
-        }
+            StringBuilder sb1 = new StringBuilder(),
+                sb2 = new StringBuilder();
 
-        public static string GetMobCategoryName(int category)
-        {
-            switch (category)
-            {
-                case 1: return "Mammal";
-                case 2: return "Plant";
-                case 3: return "Fish";
-                case 4: return "Reptile";
-                case 5: return "Spirit";
-                case 6: return "Devil";
-                case 7: return "Undead";
-                case 8: return "Enchanted";
-                default: return "None";
-            }
+            sb1.Append("氷雷火毒聖闇物");
+            sb2.Append(GetElemAttrResistString(elemAttr.I));
+            sb2.Append(GetElemAttrResistString(elemAttr.L));
+            sb2.Append(GetElemAttrResistString(elemAttr.F));
+            sb2.Append(GetElemAttrResistString(elemAttr.S));
+            sb2.Append(GetElemAttrResistString(elemAttr.H));
+            sb2.Append(GetElemAttrResistString(elemAttr.D));
+            sb2.Append(GetElemAttrResistString(elemAttr.P));
+            sb1.AppendLine().Append(sb2.ToString());
+            return sb1.ToString();
         }
 
         private string GetElemAttrResistString(ElemResistance resist)
@@ -352,12 +339,28 @@ namespace WzComparerR2.CharaSimControl
             string e = null;
             switch (resist)
             {
-                case ElemResistance.Immune: e = "immune"; break;
-                case ElemResistance.Resist: e = "strong"; break;
-                case ElemResistance.Normal: e = "neutral"; break;
-                case ElemResistance.Weak: e = "weak"; break;
+                case ElemResistance.Immune: e = "×"; break;
+                case ElemResistance.Resist: e = "△"; break;
+                case ElemResistance.Normal: e = "○"; break;
+                case ElemResistance.Weak: e = "◎"; break;
             }
             return e ?? "  ";
+        }
+
+        public static string GetMobCategoryName(int category)
+        {
+            switch (category)
+            {
+                case 1: return "動物型";
+                case 2: return "植物型";
+                case 3: return "魚類型";
+                case 4: return "爬虫類型";
+                case 5: return "精霊型";
+                case 6: return "悪魔型";
+                case 7: return "不死型";
+                case 8: return "付呪型";
+                default: return "無";
+            }
         }
 
         private string AddCommaSeparators(string number)
@@ -368,11 +371,46 @@ namespace WzComparerR2.CharaSimControl
                 sb.Append(m.Result("$1"));
                 foreach (Capture cap in m.Groups[2].Captures)
                 {
-                    sb.Append(",");
+                    sb.Append("、");
                     sb.Append(cap.ToString());
                 }
                 return sb.ToString();
             });
+        }
+
+        private static string ToCJKNumberExpr(long value)
+        {
+            var sb = new StringBuilder(16);
+            bool firstPart = true;
+            if (value >= 1_0000_0000_0000)
+            {
+                long part = value / 1_0000_0000;
+                sb.AppendFormat("{0}兆", part); // Korean: 조, Chinese+Japanese: 兆
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000_0000)
+            {
+                long part = value / 1_0000_0000;
+                sb.AppendFormat("{0}億", part); // Korean: 억, TradChinese+Japanese: 億, SimpChinese: 亿
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000)
+            {
+                long part = value / 1_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
+                value -= part * 1_0000;
+                firstPart = false;
+            }
+            if (value > 0)
+            {
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}", value);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "0";
         }
     }
 }

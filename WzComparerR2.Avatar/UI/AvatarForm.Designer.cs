@@ -66,6 +66,7 @@
             this.btnCharac = new DevComponents.DotNetBar.ButtonItem();
             this.btnMale = new DevComponents.DotNetBar.ButtonItem();
             this.btnFemale = new DevComponents.DotNetBar.ButtonItem();
+            this.btnLaraF = new DevComponents.DotNetBar.ButtonItem();
             this.btnReset = new DevComponents.DotNetBar.ButtonItem();
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
@@ -155,7 +156,7 @@
             this.bar1.AutoSyncBarCaption = true;
             this.bar1.CloseSingleTab = true;
             this.bar1.Controls.Add(this.panelDockContainer1);
-            this.bar1.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.bar1.Font = new System.Drawing.Font("MS Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.bar1.GrabHandleStyle = DevComponents.DotNetBar.eGrabHandleStyle.Caption;
             this.bar1.IsMaximized = false;
             this.bar1.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -168,7 +169,7 @@
             this.bar1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar1.TabIndex = 0;
             this.bar1.TabStop = false;
-            this.bar1.Text = "Panel";
+            this.bar1.Text = "패널";
             // 
             // panelDockContainer1
             // 
@@ -208,7 +209,7 @@
             // 
             this.dockContainerItem1.Control = this.panelDockContainer1;
             this.dockContainerItem1.Name = "dockContainerItem1";
-            this.dockContainerItem1.Text = "Panel";
+            this.dockContainerItem1.Text = "パネル";
             // 
             // bar2
             // 
@@ -218,7 +219,7 @@
             this.bar2.AutoSyncBarCaption = true;
             this.bar2.CloseSingleTab = true;
             this.bar2.Controls.Add(this.panelDockContainer2);
-            this.bar2.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.bar2.Font = new System.Drawing.Font("MS Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.bar2.GrabHandleStyle = DevComponents.DotNetBar.eGrabHandleStyle.Caption;
             this.bar2.IsMaximized = false;
             this.bar2.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -231,7 +232,7 @@
             this.bar2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar2.TabIndex = 1;
             this.bar2.TabStop = false;
-            this.bar2.Text = "Action";
+            this.bar2.Text = "行動";
             // 
             // panelDockContainer2
             // 
@@ -274,7 +275,7 @@
             this.cmbWeaponIdx.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbWeaponIdx.FormattingEnabled = true;
             this.cmbWeaponIdx.ItemHeight = 15;
-            this.cmbWeaponIdx.Location = new System.Drawing.Point(128, 84);
+            this.cmbWeaponIdx.Location = new System.Drawing.Point(89, 103);
             this.cmbWeaponIdx.Name = "cmbWeaponIdx";
             this.cmbWeaponIdx.Size = new System.Drawing.Size(50, 21);
             this.cmbWeaponIdx.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -288,9 +289,9 @@
             this.cmbWeaponType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbWeaponType.FormattingEnabled = true;
             this.cmbWeaponType.ItemHeight = 15;
-            this.cmbWeaponType.Location = new System.Drawing.Point(46, 84);
+            this.cmbWeaponType.Location = new System.Drawing.Point(35, 103);
             this.cmbWeaponType.Name = "cmbWeaponType";
-            this.cmbWeaponType.Size = new System.Drawing.Size(78, 21);
+            this.cmbWeaponType.Size = new System.Drawing.Size(50, 21);
             this.cmbWeaponType.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbWeaponType.TabIndex = 12;
             this.cmbWeaponType.SelectedIndexChanged += new System.EventHandler(this.cmbWeaponType_SelectedIndexChanged);
@@ -303,12 +304,12 @@
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(3, 87);
+            this.labelX4.Location = new System.Drawing.Point(3, 106);
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(31, 18);
             this.labelX4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelX4.TabIndex = 13;
-            this.labelX4.Text = "Weapon";
+            this.labelX4.Text = "武器";
             // 
             // chkTamingPlay
             // 
@@ -405,14 +406,14 @@
             // 
             // cmbActionTaming
             // 
-            this.cmbActionTaming.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cmbActionTaming.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbActionTaming.DisplayMember = "Text";
             this.cmbActionTaming.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbActionTaming.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbActionTaming.FormattingEnabled = true;
             this.cmbActionTaming.ItemHeight = 15;
-            this.cmbActionTaming.Location = new System.Drawing.Point(37, 57);
+            this.cmbActionTaming.Location = new System.Drawing.Point(35, 57);
             this.cmbActionTaming.Name = "cmbActionTaming";
             this.cmbActionTaming.Size = new System.Drawing.Size(87, 21);
             this.cmbActionTaming.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -421,14 +422,14 @@
             // 
             // cmbEmotion
             // 
-            this.cmbEmotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cmbEmotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbEmotion.DisplayMember = "Text";
             this.cmbEmotion.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEmotion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEmotion.FormattingEnabled = true;
             this.cmbEmotion.ItemHeight = 15;
-            this.cmbEmotion.Location = new System.Drawing.Point(37, 30);
+            this.cmbEmotion.Location = new System.Drawing.Point(35, 30);
             this.cmbEmotion.Name = "cmbEmotion";
             this.cmbEmotion.Size = new System.Drawing.Size(87, 21);
             this.cmbEmotion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -448,7 +449,7 @@
             this.labelX3.Size = new System.Drawing.Size(31, 18);
             this.labelX3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelX3.TabIndex = 3;
-            this.labelX3.Text = "Mount";
+            this.labelX3.Text = "乗る";
             // 
             // labelX2
             // 
@@ -463,7 +464,7 @@
             this.labelX2.Size = new System.Drawing.Size(31, 18);
             this.labelX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelX2.TabIndex = 2;
-            this.labelX2.Text = "Emote";
+            this.labelX2.Text = "表情";
             // 
             // labelX1
             // 
@@ -478,18 +479,18 @@
             this.labelX1.Size = new System.Drawing.Size(31, 18);
             this.labelX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelX1.TabIndex = 1;
-            this.labelX1.Text = "Action";
+            this.labelX1.Text = "行動";
             // 
             // cmbActionBody
             // 
-            this.cmbActionBody.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cmbActionBody.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbActionBody.DisplayMember = "Text";
             this.cmbActionBody.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbActionBody.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbActionBody.FormattingEnabled = true;
             this.cmbActionBody.ItemHeight = 15;
-            this.cmbActionBody.Location = new System.Drawing.Point(37, 3);
+            this.cmbActionBody.Location = new System.Drawing.Point(35, 3);
             this.cmbActionBody.Name = "cmbActionBody";
             this.cmbActionBody.Size = new System.Drawing.Size(87, 21);
             this.cmbActionBody.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -504,12 +505,12 @@
             // 
             // 
             this.chkHairShade.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkHairShade.Location = new System.Drawing.Point(82, 142);
+            this.chkHairShade.Location = new System.Drawing.Point(82, 84);
             this.chkHairShade.Name = "chkHairShade";
             this.chkHairShade.Size = new System.Drawing.Size(85, 19);
             this.chkHairShade.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkHairShade.TabIndex = 10;
-            this.chkHairShade.Text = "Hair Shadow";
+            this.chkHairShade.Text = "髪の影";
             this.chkHairShade.CheckedChanged += new System.EventHandler(this.chkHairShade_CheckedChanged);
             // 
             // chkHairCover
@@ -520,19 +521,19 @@
             // 
             // 
             this.chkHairCover.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkHairCover.Location = new System.Drawing.Point(5, 142);
+            this.chkHairCover.Location = new System.Drawing.Point(5, 84);
             this.chkHairCover.Name = "chkHairCover";
             this.chkHairCover.Size = new System.Drawing.Size(83, 19);
             this.chkHairCover.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkHairCover.TabIndex = 9;
-            this.chkHairCover.Text = "Flatten Hair";
+            this.chkHairCover.Text = "髪を押す";
             this.chkHairCover.CheckedChanged += new System.EventHandler(this.chkHairCover_CheckedChanged);
             // 
             // dockContainerItem2
             // 
             this.dockContainerItem2.Control = this.panelDockContainer2;
             this.dockContainerItem2.Name = "dockContainerItem2";
-            this.dockContainerItem2.Text = "Options";
+            this.dockContainerItem2.Text = "行動";
             // 
             // dockSite8
             // 
@@ -582,7 +583,7 @@
             this.bar3.AccessibleRole = System.Windows.Forms.AccessibleRole.ToolBar;
             this.bar3.CanCustomize = false;
             this.bar3.DockSide = DevComponents.DotNetBar.eDockSide.Top;
-            this.bar3.Font = new System.Drawing.Font("Arial", 9F);
+            this.bar3.Font = new System.Drawing.Font("Yu Gothic UI", 9F);
             this.bar3.GrabHandleStyle = DevComponents.DotNetBar.eGrabHandleStyle.Office2003;
             this.bar3.IsMaximized = false;
             this.bar3.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -598,13 +599,13 @@
             this.bar3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar3.TabIndex = 0;
             this.bar3.TabStop = false;
-            this.bar3.Text = "Tools";
+            this.bar3.Text = "ツール";
             // 
             // btnCode
             // 
             this.btnCode.Image = global::WzComparerR2.Avatar.Properties.Resources.script_code;
             this.btnCode.Name = "btnCode";
-            this.btnCode.Tooltip = "Preset";
+            this.btnCode.Tooltip = "コード";
             this.btnCode.Click += new System.EventHandler(this.btnCode_Click);
             // 
             // btnCharac
@@ -614,26 +615,33 @@
             this.btnCharac.Name = "btnCharac";
             this.btnCharac.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.btnMale,
-            this.btnFemale});
-            this.btnCharac.Tooltip = "Default Settings";
+            this.btnFemale,
+            this.btnLaraF});
+            this.btnCharac.Tooltip = "初期化";
             // 
             // btnMale
             // 
             this.btnMale.Name = "btnMale";
-            this.btnMale.Text = "男性キャラクター";
+            this.btnMale.Text = "男性キャラ";
             this.btnMale.Click += new System.EventHandler(this.btnMale_Click);
             // 
             // btnFemale
             // 
             this.btnFemale.Name = "btnFemale";
-            this.btnFemale.Text = "女性キャラクター";
+            this.btnFemale.Text = "女性キャラ";
             this.btnFemale.Click += new System.EventHandler(this.btnFemale_Click);
+            // 
+            // btnLaraF
+            // 
+            this.btnLaraF.Name = "btnLaraF";
+            this.btnLaraF.Text = "女性ララ";
+            this.btnLaraF.Click += new System.EventHandler(this.btnLaraF_Click);
             // 
             // btnReset
             // 
             this.btnReset.Image = global::WzComparerR2.Avatar.Properties.Resources.arrow_in;
             this.btnReset.Name = "btnReset";
-            this.btnReset.Tooltip = "Reset Position";
+            this.btnReset.Tooltip = "最初の位置に";
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // btnLock
@@ -641,13 +649,13 @@
             this.btnLock.AutoCheckOnClick = true;
             this.btnLock.Image = global::WzComparerR2.Avatar.Properties.Resources._lock;
             this.btnLock.Name = "btnLock";
-            this.btnLock.Tooltip = "Lock";
+            this.btnLock.Tooltip = "ロック";
             // 
             // btnSaveAsGif
             // 
             this.btnSaveAsGif.Image = global::WzComparerR2.Avatar.Properties.Resources.disk;
             this.btnSaveAsGif.Name = "btnSaveAsGif";
-            this.btnSaveAsGif.Tooltip = "Save";
+            this.btnSaveAsGif.Tooltip = "保存";
             this.btnSaveAsGif.Click += new System.EventHandler(this.btnSaveAsGif_Click);
             // 
             // dockSite3
@@ -684,12 +692,12 @@
             // 
             // 
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX5.Location = new System.Drawing.Point(3, 111);
+            this.labelX5.Location = new System.Drawing.Point(139, 106);
             this.labelX5.Name = "labelX5";
             this.labelX5.Size = new System.Drawing.Size(25, 16);
             this.labelX5.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelX5.TabIndex = 14;
-            this.labelX5.Text = "Ear";
+            this.labelX5.Text = "耳";
             // 
             // cmbEar
             // 
@@ -698,7 +706,7 @@
             this.cmbEar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEar.FormattingEnabled = true;
             this.cmbEar.ItemHeight = 15;
-            this.cmbEar.Location = new System.Drawing.Point(45, 111);
+            this.cmbEar.Location = new System.Drawing.Point(163, 103);
             this.cmbEar.Name = "cmbEar";
             this.cmbEar.Size = new System.Drawing.Size(39, 21);
             this.cmbEar.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -709,7 +717,7 @@
             //
             this.btnExport.Name = "btnExport";
             this.btnExport.Image = global::WzComparerR2.Avatar.Properties.Resources.export;
-            this.btnExport.Tooltip = "Export Action";
+            this.btnExport.Tooltip = "アクションのエクスポート";
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
             // AvatarForm
@@ -785,6 +793,7 @@
         private DevComponents.DotNetBar.ButtonItem btnLock;
         private DevComponents.DotNetBar.ButtonItem btnMale;
         private DevComponents.DotNetBar.ButtonItem btnFemale;
+        private DevComponents.DotNetBar.ButtonItem btnLaraF;
         private DevComponents.DotNetBar.ButtonItem btnSaveAsGif;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;

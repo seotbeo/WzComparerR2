@@ -62,7 +62,7 @@ namespace WzComparerR2.Avatar.UI
             BitmapOrigin[] layers;
             if (currentKey != null && this.bmpCache.TryGetValue(currentKey, out layers) && layers != null)
             {
-                foreach (var bmp in layers)
+                foreach(var bmp in layers)
                 {
                     if (bmp.Bitmap != null)
                     {
@@ -70,6 +70,7 @@ namespace WzComparerR2.Avatar.UI
                         g.DrawImage(bmp.Bitmap, point);
                     }
                 }
+               
             }
 
             base.OnPaint(pe);

@@ -43,66 +43,66 @@
             // btnItemShow
             // 
             this.btnItemShow.Name = "btnItemShow";
-            this.btnItemShow.Text = "Show/Hide";
+            this.btnItemShow.Text = "보이기/감추기";
             // 
             // btnItemDel
             // 
             this.btnItemDel.Name = "btnItemDel";
-            this.btnItemDel.Text = "Delete";
+            this.btnItemDel.Text = "삭제";
             // 
             // rdoMixColor0
             // 
             this.rdoMixColor0.Name = "rdoMixColor0";
-            this.rdoMixColor0.Text = "Mix Color: ";
+            this.rdoMixColor0.Text = "믹스 컬러: ";
             this.rdoMixColor0.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor0.AutoCollapseOnClick = false;
             // 
             // rdoMixColor1
             // 
             this.rdoMixColor1.Name = "rdoMixColor1";
-            this.rdoMixColor1.Text = "Mix Color: ";
+            this.rdoMixColor1.Text = "믹스 컬러: ";
             this.rdoMixColor1.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor1.AutoCollapseOnClick = false;
             // 
             // rdoMixColor2
             // 
             this.rdoMixColor2.Name = "rdoMixColor2";
-            this.rdoMixColor2.Text = "Mix Color: ";
+            this.rdoMixColor2.Text = "믹스 컬러: ";
             this.rdoMixColor2.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor2.AutoCollapseOnClick = false;
             // 
             // rdoMixColor3
             // 
             this.rdoMixColor3.Name = "rdoMixColor3";
-            this.rdoMixColor3.Text = "Mix Color: ";
+            this.rdoMixColor3.Text = "믹스 컬러: ";
             this.rdoMixColor3.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor3.AutoCollapseOnClick = false;
             // 
             // rdoMixColor4
             // 
             this.rdoMixColor4.Name = "rdoMixColor4";
-            this.rdoMixColor4.Text = "Mix Color: ";
+            this.rdoMixColor4.Text = "믹스 컬러: ";
             this.rdoMixColor4.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor4.AutoCollapseOnClick = false;
             // 
             // rdoMixColor5
             // 
             this.rdoMixColor5.Name = "rdoMixColor5";
-            this.rdoMixColor5.Text = "Mix Color: ";
+            this.rdoMixColor5.Text = "믹스 컬러: ";
             this.rdoMixColor5.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor5.AutoCollapseOnClick = false;
             // 
             // rdoMixColor6
             // 
             this.rdoMixColor6.Name = "rdoMixColor6";
-            this.rdoMixColor6.Text = "Mix Color: ";
+            this.rdoMixColor6.Text = "믹스 컬러: ";
             this.rdoMixColor6.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor6.AutoCollapseOnClick = false;
             // 
             // rdoMixColor7
             // 
             this.rdoMixColor7.Name = "rdoMixColor7";
-            this.rdoMixColor7.Text = "Mix Color: ";
+            this.rdoMixColor7.Text = "믹스 컬러: ";
             this.rdoMixColor7.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor7.AutoCollapseOnClick = false;
             // 
