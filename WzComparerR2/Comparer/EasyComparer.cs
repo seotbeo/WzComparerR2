@@ -574,7 +574,7 @@ namespace WzComparerR2.Comparer
 
             foreach (var skillID in OutputSkillTooltipIDs)
             {
-                StateInfo = string.Format("{0}/{1} 스킬: {2}", ++count, allCount, skillID);
+                StateInfo = string.Format("{0}/{1} スキル: {2}", ++count, allCount, skillID);
                 StateDetail = "Skill 変更点をツールチップ画像に出力中...";
 
                 Bitmap[] skillImageNewOld = { null, null };

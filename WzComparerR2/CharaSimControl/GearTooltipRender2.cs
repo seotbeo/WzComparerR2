@@ -405,7 +405,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (Gear.type == GearType.android && Gear.Props.TryGetValue(GearPropType.android, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Appearance:", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, "外見：", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
                 picH += 15;
 
                 Wz_Node android = PluginBase.PluginManager.FindWz(string.Format("Etc/Android/{0:D4}.img", value));
@@ -421,19 +421,19 @@ namespace WzComparerR2.CharaSimControl
                 List<string> randomParts = new List<string>();
                 if (costume?.Nodes["face"]?.Nodes["1"] != null)
                 {
-                    randomParts.Add("Face");
+                    randomParts.Add("顔");
                 }
                 if (costume?.Nodes["hair"]?.Nodes["1"] != null)
                 {
-                    randomParts.Add("Hair");
+                    randomParts.Add("髪");
                 }
                 if (costume?.Nodes["skin"]?.Nodes["1"] != null)
                 {
-                    randomParts.Add("Skin");
+                    randomParts.Add("スキン");
                 }
                 if (randomParts.Count > 0)
                 {
-                    GearGraphics.DrawString(g, $"#c{string.Join(", ", randomParts)} The image is an example. The android's appearance is determined upon equipping it for the first time.#", GearGraphics.EquipDetailFont, orange2FontColorTable, 13, 244, ref picH, 15);
+                    GearGraphics.DrawString(g, $"#c{string.Join("、", randomParts)}の整形画像は参考用で、最初に裝着すると外見が決まるアンドロイドだ。#", GearGraphics.EquipDetailFont, orange2FontColorTable, 13, 244, ref picH, 15);
                 }
             }
 
@@ -505,6 +505,10 @@ namespace WzComparerR2.CharaSimControl
                 if (isWeapon)
                 {
                     typeStr = "武器分類: " + typeStr;
+                }
+                else if (Gear.type == GearType.android)
+                {
+                    typeStr = "装備の分類: " + typeStr;
                 }
                 else
                 {
