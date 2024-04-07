@@ -67,8 +67,12 @@
             this.btnMale = new DevComponents.DotNetBar.ButtonItem();
             this.btnFemale = new DevComponents.DotNetBar.ButtonItem();
             this.btnZero = new DevComponents.DotNetBar.ButtonItem();
+            this.btnBeastTamer = new DevComponents.DotNetBar.ButtonItem();
             this.btnPathfinder = new DevComponents.DotNetBar.ButtonItem();
             this.btnLara = new DevComponents.DotNetBar.ButtonItem();
+            this.btnLynn = new DevComponents.DotNetBar.ButtonItem();
+            this.btnHayato = new DevComponents.DotNetBar.ButtonItem();
+            this.btnKanna = new DevComponents.DotNetBar.ButtonItem();
             this.btnReset = new DevComponents.DotNetBar.ButtonItem();
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
@@ -171,7 +175,7 @@
             this.bar1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.bar1.TabIndex = 0;
             this.bar1.TabStop = false;
-            this.bar1.Text = "패널";
+            this.bar1.Text = "パネル";
             // 
             // panelDockContainer1
             // 
@@ -618,9 +622,13 @@
             this.btnCharac.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.btnMale,
             this.btnFemale,
+            this.btnHayato,
+            this.btnKanna,
             this.btnZero,
+            this.btnBeastTamer,
             this.btnPathfinder,
-            this.btnLara});
+            this.btnLara,
+            this.btnLynn});
             this.btnCharac.Tooltip = "初期化";
             // 
             // btnMale
@@ -635,11 +643,32 @@
             this.btnFemale.Text = "女性キャラ";
             this.btnFemale.Click += new System.EventHandler(this.btnFemale_Click);
             // 
+            // 
+            // btnHayato
+            // 
+            this.btnHayato.Name = "btnHayato";
+            this.btnHayato.Text = "ハヤト";
+            this.btnHayato.Click += new System.EventHandler(this.btnHayato_Click);
+            // 
+            // 
+            // btnKanna
+            // 
+            this.btnKanna.Name = "btnKanna";
+            this.btnKanna.Text = "カンナ";
+            this.btnKanna.Click += new System.EventHandler(this.btnKanna_Click);
+            // 
             // btnZero
             // 
             this.btnZero.Name = "btnZero";
             this.btnZero.Text = "ゼロ";
             this.btnZero.Click += new System.EventHandler(this.btnZero_Click);
+            // 
+            // 
+            // btnBeastTamer
+            // 
+            this.btnBeastTamer.Name = "btnBeastTamer";
+            this.btnBeastTamer.Text = "ビーストテーマー";
+            this.btnBeastTamer.Click += new System.EventHandler(this.btnBeastTamer_Click);
             // 
             // btnPathfinder
             // 
@@ -653,6 +682,13 @@
             this.btnLara.Name = "btnLara";
             this.btnLara.Text = "ララ";
             this.btnLara.Click += new System.EventHandler(this.btnLara_Click);
+            // 
+            // 
+            // btnLynn
+            // 
+            this.btnLynn.Name = "btnLynn";
+            this.btnLynn.Text = "リン";
+            this.btnLynn.Click += new System.EventHandler(this.btnLynn_Click);
             // 
             // btnReset
             // 
@@ -810,9 +846,13 @@
         private DevComponents.DotNetBar.ButtonItem btnLock;
         private DevComponents.DotNetBar.ButtonItem btnMale;
         private DevComponents.DotNetBar.ButtonItem btnFemale;
+        private DevComponents.DotNetBar.ButtonItem btnHayato;
+        private DevComponents.DotNetBar.ButtonItem btnKanna;
         private DevComponents.DotNetBar.ButtonItem btnZero;
+        private DevComponents.DotNetBar.ButtonItem btnBeastTamer;
         private DevComponents.DotNetBar.ButtonItem btnPathfinder;
         private DevComponents.DotNetBar.ButtonItem btnLara;
+        private DevComponents.DotNetBar.ButtonItem btnLynn;
         private DevComponents.DotNetBar.ButtonItem btnSaveAsGif;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;

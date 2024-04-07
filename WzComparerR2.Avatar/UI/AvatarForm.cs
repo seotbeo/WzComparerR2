@@ -1237,6 +1237,76 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
+        private void btnLynn_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本リンを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2033,12033,56262,68197,1001163,1051821,1073839,1252000", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2033,12033,55241,65147,1000137,1050742,1073839,1252000", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+
+        private void btnHayato_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本ハヤトを呼びますか？\r\n\r\nYes - 男\r\nNo - 女", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,20273,36207,1003557,1052466,1072671,1082437,1542011", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,24364,38891,1003557,1052466,1072671,1082437,1542011", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+        private void btnBeastTamer_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本ビーストテーマーを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,24209,38257,1004062,1051378,1072902,1102661,1252000", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,23213,,1004062,1051378,1072902,1102661,1252000", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+        private void btnKanna_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本カンナを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,21676,37086,1003573,1052482,1072674,1082453,1552011", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,23665,35825,1000064,1052482,1072674,1082453,1552011", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+
         private void btnReset_Click(object sender, EventArgs e)
         {
             this.avatarContainer1.Origin = new Point(this.avatarContainer1.Width / 2, this.avatarContainer1.Height / 2 + 40);
