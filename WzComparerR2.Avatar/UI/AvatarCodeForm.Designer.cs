@@ -47,7 +47,7 @@
             this.buttonX1.Size = new System.Drawing.Size(75, 23);
             this.buttonX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX1.TabIndex = 0;
-            this.buttonX1.Text = "확인";
+            this.buttonX1.Text = "OK";
             // 
             // buttonX2
             // 
@@ -60,7 +60,7 @@
             this.buttonX2.Size = new System.Drawing.Size(75, 23);
             this.buttonX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonX2.TabIndex = 1;
-            this.buttonX2.Text = "취소";
+            this.buttonX2.Text = "キャンセル";
             // 
             // textBoxX1
             // 
@@ -97,7 +97,7 @@
             this.checkBoxX1.Size = new System.Drawing.Size(51, 18);
             this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX1.TabIndex = 3;
-            this.checkBoxX1.Text = "덮기";
+            this.checkBoxX1.Text = "覆う";
             // 
             // checkBoxX2
             // 
@@ -112,7 +112,7 @@
             this.checkBoxX2.Size = new System.Drawing.Size(51, 18);
             this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX2.TabIndex = 4;
-            this.checkBoxX2.Text = "추가";
+            this.checkBoxX2.Text = "追加";
             // 
             // labelX1
             // 
@@ -125,7 +125,7 @@
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(56, 18);
             this.labelX1.TabIndex = 5;
-            this.labelX1.Text = "적용방식 :";
+            this.labelX1.Text = "適用方式 :";
             // 
             // AvatarCodeForm
             // 
@@ -142,7 +142,7 @@
             this.MinimizeBox = false;
             this.Name = "AvatarCodeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "아이템 코드 입력";
+            this.Text = "アイテムコード入力";
             this.ResumeLayout(false);
             this.PerformLayout();
 

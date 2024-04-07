@@ -66,7 +66,9 @@
             this.btnCharac = new DevComponents.DotNetBar.ButtonItem();
             this.btnMale = new DevComponents.DotNetBar.ButtonItem();
             this.btnFemale = new DevComponents.DotNetBar.ButtonItem();
-            this.btnLaraF = new DevComponents.DotNetBar.ButtonItem();
+            this.btnZero = new DevComponents.DotNetBar.ButtonItem();
+            this.btnPathfinder = new DevComponents.DotNetBar.ButtonItem();
+            this.btnLara = new DevComponents.DotNetBar.ButtonItem();
             this.btnReset = new DevComponents.DotNetBar.ButtonItem();
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
@@ -616,7 +618,9 @@
             this.btnCharac.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.btnMale,
             this.btnFemale,
-            this.btnLaraF});
+            this.btnZero,
+            this.btnPathfinder,
+            this.btnLara});
             this.btnCharac.Tooltip = "初期化";
             // 
             // btnMale
@@ -631,11 +635,24 @@
             this.btnFemale.Text = "女性キャラ";
             this.btnFemale.Click += new System.EventHandler(this.btnFemale_Click);
             // 
-            // btnLaraF
+            // btnZero
             // 
-            this.btnLaraF.Name = "btnLaraF";
-            this.btnLaraF.Text = "女性ララ";
-            this.btnLaraF.Click += new System.EventHandler(this.btnLaraF_Click);
+            this.btnZero.Name = "btnZero";
+            this.btnZero.Text = "ゼロ";
+            this.btnZero.Click += new System.EventHandler(this.btnZero_Click);
+            // 
+            // btnPathfinder
+            // 
+            this.btnPathfinder.Name = "btnPathfinder";
+            this.btnPathfinder.Text = "パスファインダー";
+            this.btnPathfinder.Click += new System.EventHandler(this.btnPathfinder_Click);
+            // 
+            // 
+            // btnLara
+            // 
+            this.btnLara.Name = "btnLara";
+            this.btnLara.Text = "ララ";
+            this.btnLara.Click += new System.EventHandler(this.btnLara_Click);
             // 
             // btnReset
             // 
@@ -793,7 +810,9 @@
         private DevComponents.DotNetBar.ButtonItem btnLock;
         private DevComponents.DotNetBar.ButtonItem btnMale;
         private DevComponents.DotNetBar.ButtonItem btnFemale;
-        private DevComponents.DotNetBar.ButtonItem btnLaraF;
+        private DevComponents.DotNetBar.ButtonItem btnZero;
+        private DevComponents.DotNetBar.ButtonItem btnPathfinder;
+        private DevComponents.DotNetBar.ButtonItem btnLara;
         private DevComponents.DotNetBar.ButtonItem btnSaveAsGif;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;

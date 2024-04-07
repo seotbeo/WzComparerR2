@@ -1184,12 +1184,56 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
-        private void btnLaraF_Click(object sender, EventArgs e)
+        private void btnLara_Click(object sender, EventArgs e)
         {
-            if (this.avatar.Parts.All(part => part == null)
-                || MessageBoxEx.Show("基本女ララを呼びますか？", "確認") == DialogResult.OK)
+            switch (MessageBoxEx.Show("基本ララを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
             {
-                LoadCode("2003,12003,51484,61183,1051667,1073551,1372243", 0);
+                case DialogResult.Yes:
+                    LoadCode("2003,12003,51484,61183,1051667,1073551,1372243", 0); 
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2003,12003,50469,60193,1050593,1073551,1372243", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+        private void btnZero_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本ゼロを呼びますか？\r\n\r\nYes - アルファ\r\nNo - ベター", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,20294,36633,1052606,1072814,1082521,1102552,1572001", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,21290,37623,1052607,1072814,1082521,1102552,1562001", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
+
+        private void btnPathfinder_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本パスファインダーを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,28141,47525,1005313,1053402,1073334,1592000", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,27135,46025,1005313,1053402,1073334,1592000", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
             }
         }
 

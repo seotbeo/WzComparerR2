@@ -58,8 +58,8 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
-        public static readonly string[] HairColors = new[] { "검은색", "빨간색", "주황색", "노란색", "초록색", "파란색", "보라색", "갈색" };
-        public static readonly string[] LensColors = new[] { "검은색", "파란색", "빨간색", "초록색", "갈색", "에메랄드", "보라색", "자수정색" };
+        public static readonly string[] HairColors = new[] { "黒", "赤", "オレンジ", "黄", "緑", "青", "紫", "茶" };
+        public static readonly string[] LensColors = new[] { "黒", "青", "赤", "緑", "茶", "エメラルド", "紫", "アメジスト" };
 
         public void SetIcon(Bitmap icon)
         {
