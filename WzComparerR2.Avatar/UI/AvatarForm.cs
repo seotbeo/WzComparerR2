@@ -1281,7 +1281,7 @@ namespace WzComparerR2.Avatar.UI
                     return;
 
                 case DialogResult.No:
-                    LoadCode("2000,12000,23213,,1004062,1051378,1072902,1102661,1252000", 0);
+                    LoadCode("2000,12000,23213,35177,1004062,1050307,1072902,1102661,1252000", 0);
                     return;
 
                 case DialogResult.Cancel:
