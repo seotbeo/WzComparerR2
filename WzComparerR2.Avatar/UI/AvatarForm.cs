@@ -1201,6 +1201,23 @@ namespace WzComparerR2.Avatar.UI
                     return;
             }
         }
+        private void btnAngelicBuster_Click(object sender, EventArgs e)
+        {
+            switch (MessageBoxEx.Show("基本エンジェリックバスターを呼びますか？\r\n\r\nYes - 新\r\nNo - 古", "確認", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    LoadCode("2000,12000,21173,37141,1051812,1222000", 0);
+                    return;
+
+                case DialogResult.No:
+                    LoadCode("2000,12000,21173,37141,1051291,1222000", 0);
+                    return;
+
+                case DialogResult.Cancel:
+                default:
+                    return;
+            }
+        }
         private void btnZero_Click(object sender, EventArgs e)
         {
             switch (MessageBoxEx.Show("基本ゼロを呼びますか？\r\n\r\nYes - アルファ\r\nNo - ベター", "確認", MessageBoxButtons.YesNoCancel))
