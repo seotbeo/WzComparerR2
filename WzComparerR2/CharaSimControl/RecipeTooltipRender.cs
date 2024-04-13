@@ -70,7 +70,7 @@ namespace WzComparerR2.CharaSimControl
 
             picH = 10;
             StringResult sr;
-            string title = "Crafting Recipe";
+            string title = "製作レシピ";
             if (this.Recipe.MainTargetItemID != 0)
             {
                 sr = GetSRByItemID(this.Recipe.MainTargetItemID);
@@ -86,7 +86,7 @@ namespace WzComparerR2.CharaSimControl
             g.DrawString(title, GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 145, picH, fmt);
             picH += 16;
 
-            g.DrawString("Item", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 13, picH);
+            g.DrawString("アイテム", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 13, picH);
             picH += 16;
 
             fmt.Alignment = StringAlignment.Far;
@@ -102,7 +102,7 @@ namespace WzComparerR2.CharaSimControl
 
             picH += 4;
 
-            g.DrawString("Material", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 13, picH);
+            g.DrawString("材料", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 13, picH);
             picH += 16;
             foreach (RecipeItemInfo itemInfo in this.Recipe.RecipeItems)
             {

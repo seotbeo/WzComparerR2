@@ -685,21 +685,21 @@ namespace WzComparerR2.CharaSimControl
             }
             if (item.Specs.TryGetValue(ItemSpecType.recipeValidDay, out value) && value > 0)
             {
-                GearGraphics.DrawString(g, "(Use within: " + value + " days )", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "( 制作可能期間：" + value + "日)", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.Specs.TryGetValue(ItemSpecType.recipeUseCount, out value) && value > 0)
             {
-                GearGraphics.DrawString(g, "(Craftable: " + value + " time(s))", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "( 制作可能回数：" + value + "回)", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.ItemID / 1000 == 5533)
             {
-                GearGraphics.DrawString(g, "\n#cBy double-clicking on it, you can preview the items inside the box, in order, every 3 seconds. Some random boxes can't be previewed.#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "\n#cこれをダブルクリックすると、ボックス内のアイテムを 3 秒ごとに順番にプレビューできます。 一部のランダムボックスはプレビューできません。#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.Cash)
             {
                 if (item.Props.TryGetValue(ItemPropType.noMoveToLocker, out value) && value > 0)
                 {
-                    GearGraphics.DrawString(g, "\n#cThis item cannot be moved to the Cash inventory.#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                    GearGraphics.DrawString(g, "\n#cこのアイテムは現金在庫に移動できません。#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                 }
                 else if (item.Props.TryGetValue(ItemPropType.onlyCash, out value) && value > 0)
                 {
@@ -712,11 +712,11 @@ namespace WzComparerR2.CharaSimControl
             }
             if (item.Props.TryGetValue(ItemPropType.flatRate, out value) && value > 0)
             {
-                GearGraphics.DrawString(g, "\n#c기간 정액제 아이템입니다.#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "\n#c期間定額アイテムです。#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.Props.TryGetValue(ItemPropType.noScroll, out value) && value > 0)
             {
-                GearGraphics.DrawString(g, "#cYou cannot use the Pet Skill Scroll or Pet Name tag at this time.#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "#cペットのスキルスクロールやペットの名前タグは使用できません。#", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.Props.TryGetValue(ItemPropType.noRevive, out value) && value > 0)
             {
@@ -955,7 +955,7 @@ namespace WzComparerR2.CharaSimControl
                 picH = Math.Max(picH, iconY + 107);
                 g.DrawLine(Pens.White, 6, picH, 283, picH);//分割线
                 picH += 10;
-                TextRenderer.DrawText(g, "<Requirements>", GearGraphics.ItemDetailFont, new Point(8, picH), ((SolidBrush)GearGraphics.SetItemNameBrush).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "< 使用制限条件 >", GearGraphics.ItemDetailFont, new Point(8, picH), ((SolidBrush)GearGraphics.SetItemNameBrush).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 17;
 
                 //技能标题
@@ -1148,7 +1148,7 @@ namespace WzComparerR2.CharaSimControl
                     }
                     if (info.Skills.Count > 0)
                     {
-                        string title = string.Format("{2:P2}({0}/{1}) 확률로 스킬 강화 옵션 추가 :", info.Prob, info.ProbTotal, info.Prob * 1.0 / info.ProbTotal);
+                        string title = string.Format("{2:P2}({0}/{1}) 確率でスキル強化オプションを追加 :", info.Prob, info.ProbTotal, info.Prob * 1.0 / info.ProbTotal);
                         TextRenderer.DrawText(g, title, GearGraphics.ItemDetailFont, new Point(10, picHeight), Color.White, TextFormatFlags.NoPadding);
                         picHeight += 15;
                         foreach (var kv in info.Skills)
@@ -1168,11 +1168,11 @@ namespace WzComparerR2.CharaSimControl
                         string title;
                         if (info.Prob < info.ProbTotal)
                         {
-                            title = string.Format("{2:P2}({0}/{1}) 확률로 스킬 사용 가능 :", info.Prob, info.ProbTotal, info.Prob * 1.0 / info.ProbTotal);
+                            title = string.Format("{2:P2}({0}/{1}) 確率でスキル使用可能 :", info.Prob, info.ProbTotal, info.Prob * 1.0 / info.ProbTotal);
                         }
                         else
                         {
-                            title = "스킬 사용 가능 :";
+                            title = "スキル使用可能 :";
                         }
                         TextRenderer.DrawText(g, title, GearGraphics.ItemDetailFont, new Point(10, picHeight), Color.White, TextFormatFlags.NoPadding);
                         picHeight += 15;
@@ -1183,7 +1183,7 @@ namespace WzComparerR2.CharaSimControl
                             {
                                 this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr);
                             }
-                            string text = string.Format(" {0} {2}레벨", sr == null ? null : sr.Name, kv.Key, kv.Value);
+                            string text = string.Format(" {0} {2}レベル", sr == null ? null : sr.Name, kv.Key, kv.Value);
                             TextRenderer.DrawText(g, text, GearGraphics.ItemDetailFont, new Point(10, picHeight), ((SolidBrush)GearGraphics.OrangeBrush).Color, TextFormatFlags.NoPadding);
                             picHeight += 15;
                         }
