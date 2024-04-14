@@ -193,7 +193,7 @@ namespace WzComparerR2
         {
             if (patchThread != null && patchThread.IsAlive)
             {
-                patchThread.Abort();
+                patchThread.Interrupt();
             }
             ConfigManager.Reload();
             WcR2Config.Default.PatcherSettings.Clear();
@@ -368,6 +368,10 @@ namespace WzComparerR2
             {
                 MessageBoxEx.Show("パッチは中止されました。", "Patcher");
             }
+            catch (ThreadInterruptedException)
+            {
+                MessageBoxEx.Show("パッチは中止されました。", "Patcher");
+            }
             catch (UnauthorizedAccessException ex)
             {
                 // File IO permission error
@@ -376,7 +380,7 @@ namespace WzComparerR2
             catch (Exception ex)
             {
                 AppendStateText(ex.ToString());
-                MessageBoxEx.Show(this, ex.ToString(), "Patcher");
+                MessageBoxEx.Show(this, ex.ToString(), "Patcher"); 
             }
             finally
             {
@@ -403,10 +407,6 @@ namespace WzComparerR2
                 {
                 }
                 htmlFilePath = null;
-                foreach (List<PatchPartContext> parts in typedParts.Values)
-                {
-                    parts.Clear();
-                }
 
                 if (patcher != null)
                 {
@@ -611,7 +611,14 @@ namespace WzComparerR2
 
         private void AppendStateText(string text)
         {
-            this.Invoke((Action<string>)(t => { this.txtPatchState.AppendText(t); }), text);
+            try
+            {
+                this.Invoke((Action<string>)(t => { this.txtPatchState.AppendText(t); }), text);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
             if (this.loggingFileName != null)
             {
                 File.AppendAllText(this.loggingFileName, text, Encoding.UTF8);
