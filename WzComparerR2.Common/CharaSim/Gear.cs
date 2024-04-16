@@ -626,7 +626,7 @@ namespace WzComparerR2.CharaSim
                             break;
 
                         case "sample":
-                            if (subNode.Value is Wz_Png)
+                            if (subNode.Value is Wz_Png || subNode.Value is Wz_Uol)
                             {
                                 gear.Sample = BitmapOrigin.CreateFromNode(subNode, findNode);
                             }
