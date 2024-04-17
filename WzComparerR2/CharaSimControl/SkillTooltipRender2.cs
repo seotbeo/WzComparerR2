@@ -452,6 +452,17 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
+            if (Skill.LT.X != 0)
+            {
+
+                skillDescEx.Add("#c[範囲座標] LT(左上): (" + Skill.LT.X + "," + Skill.LT.Y + ")" + " / " +
+                                            "RB(右下): (" + Skill.RB.X + "," + Skill.RB.Y + ")");
+                int LT = Math.Abs(Skill.LT.X) + Skill.RB.X;
+                int RB = Math.Abs(Skill.LT.Y) + Skill.RB.Y;
+                skillDescEx.Add("#c[範囲] " + LT + " x " + RB);
+
+            }
+
             if (skillDescEx.Count > 0)
             {
                 //delay rendering v6 splitter
