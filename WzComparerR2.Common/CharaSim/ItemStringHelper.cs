@@ -336,7 +336,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.desperado: return "デスペラード (片手武器)";
                 case GearType.magicStick: return "メモリアルスタッフ (片手武器)";
                 case GearType.whistle:
-                case GearType.whistle2: return "ホイッスル/葉";
+                case GearType.whistle2: return "リーフ";
                 case GearType.boxingClaw: return "フィスト";
                 case GearType.kodachi:
                 case GearType.kodachi2: return "小太刀";
