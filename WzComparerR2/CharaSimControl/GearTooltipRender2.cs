@@ -506,13 +506,13 @@ namespace WzComparerR2.CharaSimControl
                 {
                     typeStr = "武器分類: " + typeStr;
                 }
-                else if (Gear.type == GearType.android)
-                {
-                    typeStr = "装備の分類: " + typeStr;
-                }
+                //else if (Gear.type == GearType.android || Gear.type == GearType.pendant)
+                //{
+                //    typeStr = "装備の分類: " + typeStr;
+                //}
                 else
                 {
-                    typeStr = "アイテム分類: " + typeStr;
+                    typeStr = "装備の分類: " + typeStr;
                 }
 
                 if (!Gear.Cash && (Gear.IsLeftWeapon(Gear.type) || Gear.type == GearType.katara))
