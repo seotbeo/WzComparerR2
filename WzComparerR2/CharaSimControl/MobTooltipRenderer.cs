@@ -94,7 +94,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if (MobInfo.FixedDamage > 0)
             {
-                sbExt.Append("[固定ダメージ: " + ToCJKNumberExpr(MobInfo.FixedDamage));
+                sbExt.Append("[固定ダメージ: " + ToCJKNumberExpr(MobInfo.FixedDamage) + "] ");
             }
             if (MobInfo.FixedBodyAttackDamageR > 0)
             {
