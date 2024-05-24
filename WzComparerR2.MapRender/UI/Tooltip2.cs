@@ -168,7 +168,7 @@ namespace WzComparerR2.MapRender.UI
                         var aniName = (item.View?.Animator as StateMachineAnimator)?.GetCurrent();
                         if (aniName != null)
                         {
-                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "Action: " + aniName, ref current, Color.White, ref size.X));
+                            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "現在のアクション: " + aniName, ref current, Color.White, ref size.X));
                         }
 
                         size.Y = current.Y;
@@ -187,17 +187,17 @@ namespace WzComparerR2.MapRender.UI
             Vector2 current = Vector2.Zero;
 
             var sb = new StringBuilder();
-            sb.Append("Name: ").AppendLine(item.PName);
+            sb.Append("ポータル名: ").AppendLine(item.PName);
 
             string pTypeName = GetPortalTypeString(item.Type);
-            sb.Append("Type: ").Append(item.Type);
+            sb.Append("ポータルの種類: ").Append(item.Type);
             if (pTypeName != null)
             {
                 sb.Append(" (").Append(pTypeName).Append(")");
             }
             sb.AppendLine();
 
-            sb.Append("To Map: ").Append(item.ToMap);
+            sb.Append("マップへ: ").Append(item.ToMap);
             if (item.ToMap != null)
             {
                 this.StringLinker?.StringMap.TryGetValue(item.ToMap.Value, out sr);
@@ -206,16 +206,16 @@ namespace WzComparerR2.MapRender.UI
             }
             sb.AppendLine();
 
-            sb.Append("To Portal: ").AppendLine(item.ToName);
+            sb.Append("ポータルへ: ").AppendLine(item.ToName);
 
             if (!string.IsNullOrEmpty(item.Script))
             {
-                sb.Append("Script: ").AppendLine(item.Script);
+                sb.Append("スクリプト: ").AppendLine(item.Script);
 
                 //Graph.img에 따른 이동경로 출력
                 if (item.GraphTargetMap.Count > 0)
                 {
-                    sb.Append("Script Link Map: ");
+                    sb.Append("スクリプトリンクマップ: ");
                     foreach (var targetMapID in item.GraphTargetMap)
                     {
                         sb.Append(targetMapID);
@@ -241,7 +241,7 @@ namespace WzComparerR2.MapRender.UI
             Vector2 current = Vector2.Zero;
 
             var sb = new StringBuilder();
-            sb.Append("Name: ").AppendLine(item.Name);
+            sb.Append("ポータル名: ").AppendLine(item.Name);
 
             sb.AppendLine("タイプ: 発光体群集");
 
