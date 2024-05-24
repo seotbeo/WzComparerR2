@@ -40,7 +40,7 @@ namespace WzComparerR2.MapRender
             else
             {
                 //添加提示语
-                this.ui.ChatBox.AppendTextSystem("MapRender could not load this map. This is not a valid map.");
+                this.ui.ChatBox.AppendTextSystem("MapRender はこのマップを読み込むことができませんでした。これは有効なマップではありません。");
                 this.opacity = 1;
                 yield return cm.Yield(OnSceneRunning());
             }
@@ -518,7 +518,7 @@ namespace WzComparerR2.MapRender
                 }
                 else
                 {
-                    this.ui.ChatBox.AppendTextSystem($"You cannot move to map {toMap.Value}.");
+                    this.ui.ChatBox.AppendTextSystem($"マップ{toMap.Value}には移動できません。");
                 }
             }
             else //当前地图
