@@ -528,7 +528,7 @@ namespace WzComparerR2.CharaSim
                 case 22: return "エヴァン着用可能";
                 case 23: return "メルセデス着用可能";
                 case 24: return "ファントム着用可能";
-                case 25: return "隠月着用可能";
+                case 25: return "ユエ着用可能";
                 case 27: return "ルミナス着用可能";
                 case 31: return "デーモン着用可能";
                 case 36: return "ゼノン着用可能";
@@ -764,7 +764,7 @@ namespace WzComparerR2.CharaSim
                 case 2002: return "メルセデス";
                 case 2003: return "ファントム";
                 case 2004: return "ルミナス";
-                case 2005: return "隠月";
+                case 2005: return "ユエ";
                 case 2100: return "アラン(1次)";
                 case 2110: return "アラン(2次)";
                 case 2111: return "アラン(3次)";
@@ -791,11 +791,11 @@ namespace WzComparerR2.CharaSim
                 case 2411: return "ファントム(3次)";
                 case 2412: return "ファントム(4次)";
                 case 2414: return "ファントム(6次)";
-                case 2500: return "隠月(1次)";
-                case 2510: return "隠月(2次)";
-                case 2511: return "隠月(3次)";
-                case 2512: return "隠月(4次)";
-                case 2514: return "隠月(6次)";
+                case 2500: return "ユエ(1次)";
+                case 2510: return "ユエ(2次)";
+                case 2511: return "ユエ(3次)";
+                case 2512: return "ユエ(4次)";
+                case 2514: return "ユエ(6次)";
                 case 2700: return "ルミナス(1次)";
                 case 2710: return "ルミナス(2次)";
                 case 2711: return "ルミナス(3次)";
