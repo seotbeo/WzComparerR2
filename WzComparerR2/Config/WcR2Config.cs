@@ -50,6 +50,17 @@ namespace WzComparerR2.Config
         }
 
         /// <summary>
+        /// NXOpenAPI Configuration
+        /// </summary>
+        [ConfigurationProperty("nxOpenAPIKey")]
+        [ConfigurationCollection(typeof(ConfigArrayList<string>.ItemElement))]
+        public ConfigItem<string> NxOpenAPIKey
+        {
+            get { return (ConfigItem<string>)this["nxOpenAPIKey"]; }
+            set { this["nxOpenAPIKey"] = value; }
+        }
+
+        /// <summary>
         /// 获取或设置Wz对比报告默认输出文件夹。
         /// </summary>
         [ConfigurationProperty("comparerOutputFolder")]

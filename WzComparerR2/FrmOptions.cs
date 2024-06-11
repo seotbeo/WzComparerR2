@@ -80,6 +80,12 @@ namespace WzComparerR2
             set { chkImgCheckDisabled.Checked = value; }
         }
 
+        public string NxOpenAPIKey
+        {
+            get { return txtAPIkey.Text; }
+            set { txtAPIkey.Text = value; }
+        }
+
         public WzLib.WzVersionVerifyMode WzVersionVerifyMode
         {
             get { return ((cmbWzVersionVerifyMode.SelectedItem as ComboItem)?.Value as WzLib.WzVersionVerifyMode?) ?? default; }
@@ -100,7 +106,7 @@ namespace WzComparerR2
             this.AutoDetectExtFiles = config.AutoDetectExtFiles;
             this.ImgCheckDisabled = config.ImgCheckDisabled;
             this.WzVersionVerifyMode = config.WzVersionVerifyMode;
-
+            this.NxOpenAPIKey = config.NxOpenAPIKey;
         }
 
         public void Save(WcR2Config config)
@@ -111,6 +117,7 @@ namespace WzComparerR2
             config.AutoDetectExtFiles = this.AutoDetectExtFiles;
             config.ImgCheckDisabled = this.ImgCheckDisabled;
             config.WzVersionVerifyMode = this.WzVersionVerifyMode;
+            config.NxOpenAPIKey = this.NxOpenAPIKey;
         }
     }
 }

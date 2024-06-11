@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
+            this.txtAPIkey = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
             this.superTabControl1 = new DevComponents.DotNetBar.SuperTabControl();
             this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
+            this.superTabControlPanel2 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.cmbWzVersionVerifyMode = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.chkImgCheckDisabled = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -40,12 +42,15 @@
             this.chkAutoCheckExtFiles = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.cmbWzEncoding = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
+            this.labelX3 = new DevComponents.DotNetBar.LabelX();
             this.chkWzAutoSort = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.superTabItem1 = new DevComponents.DotNetBar.SuperTabItem();
+            this.superTabItem2 = new DevComponents.DotNetBar.SuperTabItem();
             this.panelEx1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
+            this.superTabControlPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelEx1
@@ -113,6 +118,7 @@
             this.superTabControl1.ControlBox.MenuBox,
             this.superTabControl1.ControlBox.CloseBox});
             this.superTabControl1.Controls.Add(this.superTabControlPanel1);
+            this.superTabControl1.Controls.Add(this.superTabControlPanel2);
             this.superTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControl1.Location = new System.Drawing.Point(0, 0);
             this.superTabControl1.Name = "superTabControl1";
@@ -124,7 +130,8 @@
             this.superTabControl1.TabFont = new System.Drawing.Font("MS Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.superTabControl1.TabIndex = 4;
             this.superTabControl1.Tabs.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.superTabItem1});
+            this.superTabItem1,
+            this.superTabItem2});
             this.superTabControl1.Text = "superTabControl1";
             // 
             // superTabControlPanel1
@@ -143,6 +150,18 @@
             this.superTabControlPanel1.Size = new System.Drawing.Size(351, 171);
             this.superTabControlPanel1.TabIndex = 1;
             this.superTabControlPanel1.TabItem = this.superTabItem1;
+            // 
+            // superTabControlPanel2
+            // 
+            this.superTabControlPanel2.Controls.Add(this.labelX3);
+            this.superTabControlPanel2.Controls.Add(this.txtAPIkey);
+            this.superTabControlPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.superTabControlPanel2.Location = new System.Drawing.Point(49, 0);
+            this.superTabControlPanel2.Name = "superTabControlPanel2";
+            this.superTabControlPanel2.Size = new System.Drawing.Size(351, 171);
+            this.superTabControlPanel2.TabIndex = 1;
+            this.superTabControlPanel2.TabItem = this.superTabItem2;
+            this.superTabControlPanel2.Visible = false;
             // 
             // cmbWzVersionVerifyMode
             // 
@@ -170,6 +189,29 @@
             this.labelX2.Size = new System.Drawing.Size(142, 16);
             this.labelX2.TabIndex = 7;
             this.labelX2.Text = "WZのバージョン確認方法";
+            // 
+            // labelX3
+            // 
+            this.labelX3.AutoSize = true;
+            this.labelX3.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX3.Location = new System.Drawing.Point(14, 15);
+            this.labelX3.Name = "labelX3";
+            this.labelX3.Size = new System.Drawing.Size(142, 16);
+            this.labelX3.TabIndex = 9;
+            this.labelX3.Text = "APIキー";
+            // 
+            // txtAPIkey
+            // 
+            this.txtAPIkey.Border.Class = "TextBoxBorder";
+            this.txtAPIkey.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.txtAPIkey.Location = new System.Drawing.Point(63, 13);
+            this.txtAPIkey.Name = "txtAPIkey";
+            this.txtAPIkey.Size = new System.Drawing.Size(220, 21);
+            this.txtAPIkey.TabIndex = 10;
             // 
             // chkImgCheckDisabled
             // 
@@ -265,6 +307,13 @@
             this.superTabItem1.Name = "superTabItem1";
             this.superTabItem1.Text = "一般";
             // 
+            // superTabItem2
+            // 
+            this.superTabItem2.AttachedControl = this.superTabControlPanel2;
+            this.superTabItem2.GlobalItem = false;
+            this.superTabItem2.Name = "superTabItem2";
+            this.superTabItem2.Text = "NX OpenAPI";
+            // 
             // FrmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -291,9 +340,12 @@
         #endregion
 
         private DevComponents.DotNetBar.PanelEx panelEx1;
+        private DevComponents.DotNetBar.Controls.TextBoxX txtAPIkey;
         private DevComponents.DotNetBar.SuperTabControl superTabControl1;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel1;
+        private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel2;
         private DevComponents.DotNetBar.SuperTabItem superTabItem1;
+        private DevComponents.DotNetBar.SuperTabItem superTabItem2;
         private DevComponents.DotNetBar.ButtonX buttonX2;
         private DevComponents.DotNetBar.ButtonX buttonX1;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkWzAutoSort;
@@ -304,5 +356,6 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkImgCheckDisabled;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbWzVersionVerifyMode;
         private DevComponents.DotNetBar.LabelX labelX2;
+        private DevComponents.DotNetBar.LabelX labelX3;
     }
 }
