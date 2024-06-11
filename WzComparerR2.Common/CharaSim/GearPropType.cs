@@ -136,6 +136,8 @@ namespace WzComparerR2.CharaSim
         reqINT,
         reqLUK,
         reqJob,
+        // ハク
+        reqJob2,
         reqPOP,
         reqSpecJob,
         reqWeekDay, //要求日子

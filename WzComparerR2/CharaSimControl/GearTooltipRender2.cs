@@ -1519,8 +1519,17 @@ namespace WzComparerR2.CharaSimControl
         private void DrawJobReq(Graphics g, ref int picH)
         {
             int value;
-            string extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type) ??
+            string extraReq;
+            if (Gear.type == GearType.fan)
+            {
+                extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob2, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
+            }
+            else
+            {
+                extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type) ??
                 (Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
+            }
+            
             Image jobImage = extraReq == null ? Resource.UIToolTip_img_Item_Equip_Job_normal : Resource.UIToolTip_img_Item_Equip_Job_expand;
             g.DrawImage(jobImage, 10, picH);
 
