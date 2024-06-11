@@ -178,18 +178,18 @@ namespace WzComparerR2
                 item.GetFileLength();
                 if (item.FileLength > 0)
                 {
-                    switch (MessageBoxEx.Show(string.Format("サイズ: {0:N0} バイト\n\r最終更新日: {1:yyyy年M月d日 HH:mm:ss}\n\rダウンロードしますか？", item.FileLength, item.LastModified), "確認", MessageBoxButtons.YesNo))
+                    switch (MessageBoxEx.Show(string.Format("サイズ: {0:N0} バイト\r\n最終更新日: {1:yyyy年M月d日 HH:mm:ss}\r\nダウンロードしますか？", item.FileLength, item.LastModified), "確認", MessageBoxButtons.YesNo))
                     {
                         case DialogResult.Yes:
-#if NET6_0_OR_GREATER
-            Process.Start(new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                FileName = txtUrl.Text,
-            });
-#else
+                        #if NET6_0_OR_GREATER
+                            Process.Start(new ProcessStartInfo
+                            {
+                                UseShellExecute = true,
+                                FileName = txtUrl.Text,
+                            });
+                        #else
                             Process.Start(txtUrl.Text);
-#endif
+                        #endif
                             return;
 
                         case DialogResult.No:
