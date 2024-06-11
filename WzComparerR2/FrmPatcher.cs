@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -177,7 +178,23 @@ namespace WzComparerR2
                 item.GetFileLength();
                 if (item.FileLength > 0)
                 {
-                    MessageBoxEx.Show(string.Format("サイズ: {0:N0} バイト\n\r最終更新日: {1:yyyy年M月d日 HH:mm:ss}", item.FileLength, item.LastModified));
+                    switch (MessageBoxEx.Show(string.Format("サイズ: {0:N0} バイト\n\r最終更新日: {1:yyyy年M月d日 HH:mm:ss}\n\rダウンロードしますか？", item.FileLength, item.LastModified), "確認", MessageBoxButtons.YesNo))
+                    {
+                        case DialogResult.Yes:
+#if NET6_0_OR_GREATER
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = txtUrl.Text,
+            });
+#else
+                            Process.Start(txtUrl.Text);
+#endif
+                            return;
+
+                        case DialogResult.No:
+                            return;
+                    }
                 }
                 else
                 {
