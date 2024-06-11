@@ -113,13 +113,13 @@ namespace WzComparerR2.Controls
 
                     mt = Matrix.CreateScale(GlobalScale, GlobalScale, 1);
 
-                    if (animation is FrameAnimator)
+                    if (animation is FrameAnimator frameAni)
                     {
-                        graphics.Draw((FrameAnimator)animation, mt);
+                        graphics.Draw(frameAni, mt);
                     }
-                    else if (animation is SpineAnimator)
+                    else if (animation is ISpineAnimator spineAni)
                     {
-                        graphics.Draw((SpineAnimator)animation, mt);
+                        graphics.Draw(spineAni, mt);
                     }
                     else if (animation is MultiFrameAnimator)
                     {
@@ -222,9 +222,17 @@ namespace WzComparerR2.Controls
 
         private void AnimationControl_MouseWheel(object sender, MouseEventArgs e)
         {
+            const int WHEEL_DELTA = 120;
             if ((Control.ModifierKeys & Keys.Control) != 0)
             {
-                this.GlobalScale += 0.1f * e.Delta / 120;
+                float wheelTicks = e.Delta / WHEEL_DELTA;
+                float oldScale = this.GlobalScale;
+                float newScale = oldScale * (1 + 0.1f * wheelTicks);
+                if (oldScale.CompareTo(1f) * newScale.CompareTo(1f) == -1) // scaling cross 100%
+                {
+                    newScale = 1f;
+                }
+                this.GlobalScale = newScale;
             }
         }
 

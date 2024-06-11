@@ -223,6 +223,14 @@ namespace WzComparerR2.CharaSimControl
             splitterH.Add(picH);
             picH += 15;
 
+            var skillSummaryOptions = new SkillSummaryOptions
+            {
+                ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                ConvertPerM = this.DisplayPermyriadAsPercent,
+                IgnoreEvalError = this.IgnoreEvalError,
+                EndColorOnNewLine = true,
+            };
+
             if (Skill.Level > 0)
             {
                 // string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
@@ -231,7 +239,7 @@ namespace WzComparerR2.CharaSimControl
                 //                    ConvertPerM = this.DisplayPermyriadAsPercent,
                 //                    IgnoreEvalError = this.IgnoreEvalError,
                 //                });
-                string hStr = null;
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
 
                 // 스킬 변경점에 초록색 칠하기
                 if (DoSetDiffColor)

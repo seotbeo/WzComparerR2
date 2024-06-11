@@ -9,6 +9,7 @@ using WzComparerR2.Common;
 using WzComparerR2.MapRender.Config;
 using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.MapRender.UI;
+using WzComparerR2.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Form = System.Windows.Forms.Form;
@@ -27,13 +28,12 @@ namespace WzComparerR2.MapRender
 {
     public partial class FrmMapRender2 : Game
     {
-        public FrmMapRender2(Wz_Image img)
+        public FrmMapRender2()
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.DeviceCreated += Graphics_DeviceCreated;
             graphics.DeviceResetting += Graphics_DeviceResetting;
 
-            this.mapImg = img;
             this.MaxElapsedTime = TimeSpan.MaxValue;
             this.IsFixedTimeStep = false;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60);
@@ -121,6 +121,7 @@ namespace WzComparerR2.MapRender
         MapData mapData;
         ResourceLoader resLoader;
         MeshBatcher batcher;
+        LightRenderer lightRenderer;
         PatchVisibility patchVisibility;
 
         bool prepareCapture;
@@ -145,6 +146,7 @@ namespace WzComparerR2.MapRender
 
         protected override void Initialize()
         {
+
             //init services
             this.Services.AddService<Random>(new Random());
             this.Services.AddService<IRandom>(new ParticleRandom(this.Services.GetService<Random>()));
@@ -155,6 +157,7 @@ namespace WzComparerR2.MapRender
             //init components
             this.renderEnv = new RenderEnv(this, this.graphics);
             this.batcher = new MeshBatcher(this.GraphicsDevice) { CullingEnabled = true };
+            this.lightRenderer = new LightRenderer(this.GraphicsDevice);
             this.resLoader = new ResourceLoader(this.Services);
             this.resLoader.PatchVisibility = this.patchVisibility;
             this.ui = new MapRenderUIRoot();
@@ -170,6 +173,9 @@ namespace WzComparerR2.MapRender
             this.ApplySetting();
             SwitchResolution(Resolution.Window_800_600);
             base.Initialize();
+
+            //init UI teleport
+            this.ui.Teleport.Sl = this.StringLinker;
         }
 
         protected override void OnActivated(object sender, EventArgs args)
@@ -510,7 +516,7 @@ namespace WzComparerR2.MapRender
             this.StringLinker?.StringMap.TryGetValue(mapID, out sr);
             //string mapName = sr?["mapName"] ?? "(null)"; //Kenny ver.
             //int last = (mapName.LastOrDefault(c => c >= '가' && c <= '힣') - '가') % 28; //Kenny ver.
-            var message = string.Format("このマップにテレポートしますか?\r\n{0} ({1})", sr?.Name ?? "null", mapID);
+            var message = string.Format("Will you teleport to this map?\r\n{0} ({1})", sr?.Name ?? "null", mapID);
             //var message = mapName + (last == 0 || last == 8 ? "" : "으") + "로 이동하시겠습니까?"; //Kenny ver.
             MessageBox.Show(message, "", MessageBoxButton.OKCancel, callback, false);
         }
@@ -548,16 +554,16 @@ namespace WzComparerR2.MapRender
             {
                 case "/help":
                 case "/?":
-                    this.ui.ChatBox.AppendTextHelp(@"/help Show available commands");
-                    this.ui.ChatBox.AppendTextHelp(@"/map (mapID) Teleport to a specified map");
-                    this.ui.ChatBox.AppendTextHelp(@"/back Return to the previous map");
-                    this.ui.ChatBox.AppendTextHelp(@"/home Teleport to the town of the region you are in");
-                    this.ui.ChatBox.AppendTextHelp(@"/history [maxCount] History of visited maps");
-                    this.ui.ChatBox.AppendTextHelp(@"/minimap Mini map settings");
-                    this.ui.ChatBox.AppendTextHelp(@"/scene Scene settings");
-                    this.ui.ChatBox.AppendTextHelp(@"/quest Quest settings");
-                    this.ui.ChatBox.AppendTextHelp(@"/date Date settings");
-                    this.ui.ChatBox.AppendTextHelp(@"/multibgm Multi BGM settings");
+                    this.ui.ChatBox.AppendTextHelp(@"/help 利用可能なコマンドを表示");
+                    this.ui.ChatBox.AppendTextHelp(@"/map (マップID) 指定されたマップにテレポートする");
+                    this.ui.ChatBox.AppendTextHelp(@"/back 前のマップに戻る");
+                    this.ui.ChatBox.AppendTextHelp(@"/home あなたがいる地域の町にテレポートする");
+                    this.ui.ChatBox.AppendTextHelp(@"/history [最大数] 訪問したマップの履歴");
+                    this.ui.ChatBox.AppendTextHelp(@"/minimap ミニマップ設定");
+                    this.ui.ChatBox.AppendTextHelp(@"/scene シーン設定");
+                    this.ui.ChatBox.AppendTextHelp(@"/quest クエスト設定");
+                    this.ui.ChatBox.AppendTextHelp(@"/date 日付設定");
+                    this.ui.ChatBox.AppendTextHelp(@"/multibgm マルチBGM設定");
                     break;
 
                 case "/map":
@@ -568,7 +574,7 @@ namespace WzComparerR2.MapRender
                     }
                     else
                     {
-                        this.ui.ChatBox.AppendTextSystem($"Please enter a correct map ID.");
+                        this.ui.ChatBox.AppendTextSystem($"正しいマップIDを入力してください。");
                     }
                     break;
 
@@ -579,7 +585,7 @@ namespace WzComparerR2.MapRender
                     }
                     else
                     {
-                        this.ui.ChatBox.AppendTextSystem($"There is no previous map to return to.");
+                        this.ui.ChatBox.AppendTextSystem($"戻る前のマップはありません。");
                     }
                     break;
 
@@ -587,7 +593,7 @@ namespace WzComparerR2.MapRender
                     var retMapID = this.mapData?.ReturnMap;
                     if (retMapID == null || retMapID == 999999999)
                     {
-                        this.ui.ChatBox.AppendTextSystem($"You cannot return to town.");
+                        this.ui.ChatBox.AppendTextSystem($"町に戻ることはできません。");
                     }
                     else
                     {
@@ -603,7 +609,7 @@ namespace WzComparerR2.MapRender
                     {
                         historyCount = 5;
                     }
-                    this.ui.ChatBox.AppendTextHelp($"Number of visited maps: ({this.viewHistory.Count})");
+                    this.ui.ChatBox.AppendTextHelp($"{this.viewHistory.Count}個のマップを訪問しました。");
                     var node = this.viewHistory.Last;
                     while (node != null && historyCount > 0)
                     {
@@ -624,7 +630,7 @@ namespace WzComparerR2.MapRender
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            this.ui.ChatBox.AppendTextHelp($"Mini map: {string.Join(", ", canvasList?.Keys)}");
+                            this.ui.ChatBox.AppendTextHelp($"ミニマップ: {string.Join(", ", canvasList?.Keys)}");
                             break;
 
                         case "set":
@@ -632,17 +638,17 @@ namespace WzComparerR2.MapRender
                             if (canvasList != null && canvasList.TryGetValue(canvasName, out Texture2D canvas))
                             {
                                 this.ui.Minimap.MinimapCanvas = engine.Renderer.CreateTexture(canvas);
-                                this.ui.ChatBox.AppendTextHelp($"Mini map change completed: {canvasName}");
+                                this.ui.ChatBox.AppendTextHelp($"ミニマップの変更が完了しました: {canvasName}");
                             }
                             else
                             {
-                                this.ui.ChatBox.AppendTextSystem($"Mini map not found: {canvasName}");
+                                this.ui.ChatBox.AppendTextSystem($"ミニマップが見つかりません: {canvasName}");
                             }
                             break;
 
                         default:
-                            this.ui.ChatBox.AppendTextHelp(@"/minimap list View list of mini maps");
-                            this.ui.ChatBox.AppendTextHelp(@"/minimap set (canvasName) Change the corresponding mini map");
+                            this.ui.ChatBox.AppendTextHelp(@"/minimap list ミニマップのリストを表示");
+                            this.ui.ChatBox.AppendTextHelp(@"/minimap set (キャンバス名) 対応するミニマップを変更する");
                             break;
                     }
                     break;
@@ -661,14 +667,14 @@ namespace WzComparerR2.MapRender
                                         .Distinct()
                                         .OrderBy(tag => tag)
                                         .ToList();
-                                    this.ui.ChatBox.AppendTextHelp($"Tag list: {string.Join(", ", mapTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"タグリスト: {string.Join(", ", mapTags)}");
                                     break;
                                 case "info":
                                     var visibleTags = this.patchVisibility.TagsVisible.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
                                     var hiddenTags = this.patchVisibility.TagsVisible.Where(kv => !kv.Value).Select(kv => kv.Key).ToList();
-                                    this.ui.ChatBox.AppendTextHelp($"Default tag display state: {this.patchVisibility.DefaultTagVisible}");
-                                    this.ui.ChatBox.AppendTextHelp($"Shown tag: {string.Join(", ", visibleTags)}");
-                                    this.ui.ChatBox.AppendTextHelp($"Hidden tag: {string.Join(", ", hiddenTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"デフォルトのタグ表示状態: {this.patchVisibility.DefaultTagVisible}");
+                                    this.ui.ChatBox.AppendTextHelp($"表示されたタグ: {string.Join(", ", visibleTags)}");
+                                    this.ui.ChatBox.AppendTextHelp($"隠しタグ: {string.Join(", ", hiddenTags)}");
                                     break;
                                 case "show":
                                     string[] tags = arguments.Skip(3).ToArray();
@@ -944,6 +950,7 @@ namespace WzComparerR2.MapRender
         {
             if (this.mapData == null)
             {
+                prepareCapture = false;
                 return;
             }
 
@@ -958,7 +965,8 @@ namespace WzComparerR2.MapRender
             int height = Math.Min(oldRect.Height, maxTextureHeight);
             this.renderEnv.Camera.UseWorldRect = true;
 
-            var target2d = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None);
+            var target2d = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            PngEffect pngEffect = null;
 
             Color bgColor = Color.Black;
             var config = MapRenderConfig.Default;
@@ -966,6 +974,12 @@ namespace WzComparerR2.MapRender
             {
                 bgColor = new Color(colorW.PackedValue);
             }
+            Color bgColorPMA = bgColor.A switch
+            {
+                255 => bgColor,
+                0 => Color.Transparent,
+                _ => Color.FromNonPremultiplied(bgColor.ToVector4()),
+            };
 
             //计算一组截图区
             int horizonBlock = (int)Math.Ceiling(1.0 * oldRect.Width / width);
@@ -984,16 +998,37 @@ namespace WzComparerR2.MapRender
 
                     //绘制
                     GraphicsDevice.SetRenderTarget(target2d);
-                    GraphicsDevice.Clear(bgColor);
+                    GraphicsDevice.Clear(bgColorPMA);
                     DrawScene(gameTime);
-                    GraphicsDevice.SetRenderTarget(null);
                     //保存
-                    Texture2D t2d = target2d;
-                    byte[] data = new byte[target2d.Width * target2d.Height * 4];
-                    t2d.GetData(data);
-                    picBlocks[i, j] = data;
+                    if (bgColor.A == 255)
+                    {
+                        Texture2D t2d = target2d;
+                        byte[] data = new byte[target2d.Width * target2d.Height * 4];
+                        t2d.GetData(data);
+                        picBlocks[i, j] = data;
+                    }
+                    else
+                    {
+                        if (pngEffect == null)
+                        {
+                            pngEffect = new PngEffect(this.GraphicsDevice);
+                            pngEffect.AlphaMixEnabled = false;
+                        }
+                        using var texture = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None);
+                        using var sb = new SpriteBatch(this.GraphicsDevice);
+                        this.GraphicsDevice.SetRenderTarget(texture);
+                        this.GraphicsDevice.Clear(Color.Transparent);
+                        sb.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, null, null, pngEffect, null);
+                        sb.Draw(target2d, Vector2.Zero, Color.White);
+                        sb.End();
+                        byte[] data = new byte[texture.Width * texture.Height * 4];
+                        texture.GetData(data);
+                        picBlocks[i, j] = data;
+                    }
                 }
             }
+            pngEffect?.Dispose();
             target2d.Dispose();
 
             this.renderEnv.Camera.WorldRect = oldRect;
@@ -1003,21 +1038,12 @@ namespace WzComparerR2.MapRender
             prepareCapture = false;
 
             captureTask = Task.Factory.StartNew(() =>
-                SaveTexture(picBlocks, oldRect.Width, oldRect.Height, target2d.Width, target2d.Height)
+                SaveTexture(picBlocks, oldRect.Width, oldRect.Height, width, height, bgColor.A == 255)
             );
         }
 
-        private void SaveTexture(byte[,][] picBlocks, int mapWidth, int mapHeight, int blockWidth, int blockHeight)
+        private void SaveTexture(byte[,][] picBlocks, int mapWidth, int mapHeight, int blockWidth, int blockHeight, bool resetAlphaChannel)
         {
-            //透明处理
-            foreach (byte[] data in picBlocks)
-            {
-                for (int i = 0, j = data.Length; i < j; i += 4)
-                {
-                    data[i + 3] = 255;
-                }
-            }
-
             //组装
             byte[] mapData = new byte[mapWidth * mapHeight * 4];
             for (int j = 0; j < picBlocks.GetLength(1); j++)
@@ -1051,19 +1077,34 @@ namespace WzComparerR2.MapRender
                 }
             }
 
+            if (resetAlphaChannel)
+            {
+                for (int i = 0; i < mapData.Length; i += 4)
+                {
+                    mapData[i + 3] = 255;
+                }
+            }
+
             try
             {
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(
+                using System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(
                     mapWidth,
                     mapHeight,
                     mapWidth * 4,
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb,
                     Marshal.UnsafeAddrOfPinnedArrayElement(mapData, 0));
 
-                bitmap.Save(DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + (this.mapData?.ID ?? 0).ToString("D9") + ".png",
-                    System.Drawing.Imaging.ImageFormat.Png);
+                string outputFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + (this.mapData?.ID ?? 0).ToString("D9") + ".png";
+                bitmap.Save(outputFileName, System.Drawing.Imaging.ImageFormat.Png);
 
-                bitmap.Dispose();
+                this.cm.StartCoroutine(cm.Post((v) =>
+                {
+                    v.ui.ChatBox.AppendTextHelp($"スクリーンショットは {v.outputFileName} に保存されました。");
+                }, new
+                {
+                    this.ui,
+                    outputFileName
+                }));
             }
             catch
             {
@@ -1160,6 +1201,8 @@ namespace WzComparerR2.MapRender
             this.batcher = null;
             this.renderEnv?.Dispose();
             this.renderEnv = null;
+            this.lightRenderer?.Dispose();
+            this.lightRenderer = null;
             this.engine = null;
 
             foreach (var disposable in this.attachedEvent)

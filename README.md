@@ -19,8 +19,7 @@
 - **1.x**: WinXp+/.net2.0+/dx9.0
 
 # Compile
-- vs2015 or vs2012/13+Roslyn
-- put [CharaSimResource](https://github.com/PirateIzzy/CharaSimResource) together
+- vs2022 or higher/.net 6 SDK
 
 # Credits
 - **Fiel** ([Southperry](http://www.southperry.net))  wz文件读取代码改造自WzExtract 以及WzPatcher

@@ -60,7 +60,6 @@ namespace WzComparerR2.CharaSim
             Wz_Node infoNode = node.FindNodeByPath("info");
             if (infoNode != null)
             {
-                Wz_Node pngNode;
                 foreach (Wz_Node subNode in infoNode.Nodes)
                 {
                     switch (subNode.Text)

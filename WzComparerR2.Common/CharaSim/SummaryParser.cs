@@ -22,7 +22,6 @@ namespace WzComparerR2.CharaSim
             int idx = 0;
             StringBuilder sb = new StringBuilder();
             bool beginC = false;
-            bool beginG = false;
             while (idx < H.Length)
             {
                 if (H[idx] == '#')
@@ -138,18 +137,6 @@ namespace WzComparerR2.CharaSim
                         sb.Append(param.CStart);
                         idx += 2;
                     }
-                    else if (idx + 1 < H.Length && H[idx + 1] == 'g')
-                    {
-                        beginG = true;
-                        sb.Append(param.GStart);
-                        idx += 2;
-                    }
-                    else if (beginG)
-                    {
-                        beginG = false;
-                        sb.Append(param.GEnd);
-                        idx++;
-                    }
                     else if (beginC)
                     {
                         beginC = false;
@@ -184,7 +171,14 @@ namespace WzComparerR2.CharaSim
                         {
                             case 'c': break; // \c忽略掉 原因不明
                             case 'r': sb.Append(param.R); break;
-                            case 'n': sb.Append(param.N); break;
+                            case 'n':
+                                if (beginC && options.EndColorOnNewLine)
+                                {
+                                    beginC = false;
+                                    sb.Append(param.CEnd);
+                                }
+                                sb.Append(param.N);
+                                break;
                             case '\\': sb.Append('\\'); break;
                             default: sb.Append(H[idx + 1]); break;
                         }
@@ -203,7 +197,7 @@ namespace WzComparerR2.CharaSim
             return Regex.Replace(sb.ToString().Replace("\t", ""), @"(\\r|\\n)+$", "");
         }
 
-        private static bool GetValueIgnoreCase(Dictionary<string,string> dict, string key, out string value)
+        private static bool GetValueIgnoreCase(Dictionary<string, string> dict, string key, out string value)
         {
             //bool find = false;
             foreach (var kv in dict)
@@ -254,7 +248,7 @@ namespace WzComparerR2.CharaSim
             return GetSkillSummary(h, level, skill.Common, param, options);
         }
 
-        public static Dictionary<string,string> GlobalVariableMapping { get; private set; }
+        public static Dictionary<string, string> GlobalVariableMapping { get; private set; }
     }
 
     public struct SkillSummaryOptions
@@ -262,5 +256,6 @@ namespace WzComparerR2.CharaSim
         public bool ConvertCooltimeMS { get; set; }
         public bool ConvertPerM { get; set; }
         public bool IgnoreEvalError { get; set; }
+        public bool EndColorOnNewLine { get; set; }
     }
 }

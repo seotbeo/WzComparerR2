@@ -812,11 +812,19 @@ namespace WzComparerR2.Comparer
                         char[] invalidChars = Path.GetInvalidFileNameChars();
                         string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
                         string fileName = fullPath.Replace('\\', '.');
+                        string suffix = "_" + colName + ".png";
 
                         if (this.HashPngFileName)
                         {
                             fileName = ToHexString(MD5Hash(fileName));
                             // TODO: save file name mapping to another file?
+                        }
+                        else if (Environment.OSVersion.Platform == PlatformID.Win32NT && fileName.Length + suffix.Length > 255)
+                        {
+                            // force hashing if the file name too long.
+                            // TODO: also need to check full file path, we have tested that all existing browsers on Windows cannot load
+                            //       local files with excessively long path.
+                            fileName = ToHexString(MD5Hash(fileName));
                         }
                         else
                         {
@@ -826,7 +834,7 @@ namespace WzComparerR2.Comparer
                             }
                         }
 
-                        fileName = fileName + "_" + colName + ".png";
+                        fileName = fileName + suffix;
                         using (Bitmap bmp = png.ExtractPng())
                         {
                             bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);

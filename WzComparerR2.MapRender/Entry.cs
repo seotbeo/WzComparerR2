@@ -104,24 +104,31 @@ namespace WzComparerR2.MapRender
                         else
 #endif
                         {
-                            if (this.mapRenderGame2 != null)
-                            {
-                                return;
-                            }
-                            this.mapRenderGame2 = new FrmMapRender2(img) { StringLinker = sl };
-                            this.mapRenderGame2.Window.Title = "MapRender " + this.Version;
-                            try
-                            {
-                                using (this.mapRenderGame2)
+                                if (this.mapRenderGame2 != null)
                                 {
-                                    this.mapRenderGame2.Run();
+                                    // post message to the opening game.
+                                    this.mapRenderGame2.LoadMap(img);
+                                    return;
+                                }
+                                else
+                                {
+                                    this.mapRenderGame2 = new FrmMapRender2() { StringLinker = sl };
+                                    this.mapRenderGame2.Window.Title = "MapRender " + this.Version;
+                                    this.mapRenderGame2.LoadMap(img);
+
+                                    try
+                                    {
+                                        using (this.mapRenderGame2)
+                                        {
+                                            this.mapRenderGame2.Run();
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        this.mapRenderGame2 = null;
+                                    }
                                 }
                             }
-                            finally
-                            {
-                                this.mapRenderGame2 = null;
-                            }
-                        }
 #if !DEBUG
                         }
                         catch (Exception ex)

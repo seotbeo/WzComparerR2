@@ -74,14 +74,27 @@ namespace WzComparerR2
             this.ShowAnimation(frameData);
         }
 
-        public FrameAnimationData LoadFrameAnimation(Wz_Node node)
+        public FrameAnimationData LoadFrameAnimation(Wz_Node node, FrameAnimationCreatingOptions options = default)
         {
-            return FrameAnimationData.CreateFromNode(node, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
+            return FrameAnimationData.CreateFromNode(node, this.GraphicsDevice, options, PluginBase.PluginManager.FindWz);
         }
 
-        public SpineAnimationData LoadSpineAnimation(Wz_Node node)
+        public ISpineAnimationData LoadSpineAnimation(Wz_Node node)
         {
-            return SpineAnimationData.CreateFromNode(node, null, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
+            return this.LoadSpineAnimation(SpineLoader.Detect(node));
+        }
+
+        public ISpineAnimationData LoadSpineAnimation(SpineDetectionResult detectionResult)
+        {
+            if (!detectionResult.Success)
+                return null;
+            var textureLoader = new WzSpineTextureLoader(detectionResult.SourceNode.ParentNode, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
+            if (detectionResult.Version == SpineVersion.V2)
+                return SpineAnimationDataV2.Create(detectionResult, textureLoader);
+            else if (detectionResult.Version == SpineVersion.V4)
+                return SpineAnimationDataV4.Create(detectionResult, textureLoader);
+            else
+                return null;
         }
 
         public MultiFrameAnimationData LoadMultiFrameAnimation(Wz_Node node)
@@ -94,9 +107,9 @@ namespace WzComparerR2
             this.ShowAnimation(new FrameAnimator(data));
         }
 
-        public void ShowAnimation(SpineAnimationData data)
+        public void ShowAnimation(ISpineAnimationData data)
         {
-            this.ShowAnimation(new SpineAnimator(data));
+            this.ShowAnimation(data.CreateAnimator() as AnimationItem);
         }
 
         public void ShowAnimation(MultiFrameAnimationData data)
@@ -134,17 +147,16 @@ namespace WzComparerR2
                 var rect = aniItem.Data.GetBound();
                 aniItem.Position = new Point(-rect.Left, -rect.Top);
             }
-            else if (animator is SpineAnimator)
+            else if (animator is AnimationItem aniItem)
             {
-                var aniItem = (SpineAnimator)animator;
                 var rect = aniItem.Measure();
                 aniItem.Position = new Point(-rect.Left, -rect.Top);
             }
             else if (animator is MultiFrameAnimator)
             {
-                var aniItem = (MultiFrameAnimator)animator;
-                var rect = aniItem.Data.GetBound(aniItem.SelectedAnimationName);
-                aniItem.Position = new Point(-rect.Left, -rect.Top);
+                var multiAniItem = (MultiFrameAnimator)animator;
+                var rect = multiAniItem.Data.GetBound(multiAniItem.SelectedAnimationName);
+                multiAniItem.Position = new Point(-rect.Left, -rect.Top);
             }
         }
 
@@ -227,8 +239,8 @@ namespace WzComparerR2
 
             if (bounds.Width <= 0 || bounds.Height <= 0
                 || targetSize.X <= 0 || targetSize.Y <= 0
-                || startTime < 0 || stopTime > length
-                || stopTime - startTime < 0)
+                || startTime < 0
+                || stopTime - startTime <= 0)
             {
                 return false;
             }
@@ -314,7 +326,7 @@ namespace WzComparerR2
             IEnumerable<int> ClipTimeline(int[] _timeline)
             {
                 int t = 0;
-                for (int i = 0; i < timeline.Length; i++)
+                for (int i = 0; ; i = (i + 1) % timeline.Length)
                 {
                     var frameDelay = timeline[i];
                     if (t < startTime)
@@ -532,13 +544,13 @@ namespace WzComparerR2
             {
                 var aniItem = this.Items[0];
                 int time = 0;
-                if (aniItem is FrameAnimator)
+                if (aniItem is FrameAnimator frameAni)
                 {
-                    time = ((FrameAnimator)aniItem).CurrentTime;
+                    time = frameAni.CurrentTime;
                 }
-                else if (aniItem is SpineAnimator)
+                else if (aniItem is ISpineAnimator spineAni)
                 {
-                    time = ((SpineAnimator)aniItem).CurrentTime;
+                    time = spineAni.CurrentTime;
                 }
                 else if (aniItem is MultiFrameAnimator)
                 {
