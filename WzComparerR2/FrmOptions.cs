@@ -99,16 +99,18 @@ namespace WzComparerR2
             req.Headers.Add("x-nxopen-api-key", txtAPIkey.Text);
             try
             {
-                WebResponse resp = req.GetResponse();
-                Stream recvStream = resp.GetResponseStream();
-                StreamReader sr = new StreamReader(recvStream, Encoding.UTF8);
-                string respJson = sr.ReadToEnd();
+                string respJson = new StreamReader(req.GetResponse().GetResponseStream(), Encoding.UTF8).ReadToEnd();
                 Clipboard.SetText(respJson);
                 respText = "この API キーは有効です。" + Environment.NewLine + "この API キーに関連付けられたキャラクターが JSON 形式でクリップボードにコピーされました。";
             }
+            catch (WebException ex)
+            {
+                string respJson = new StreamReader(ex.Response.GetResponseStream(), Encoding.UTF8).ReadToEnd();
+                respText = "この API キーは無効です。" + Environment.NewLine + respJson;
+            }
             catch (Exception ex)
             {
-                respText = "この API キーは無効です。";
+                respText = "不明なエラーが発生しました：" + ex;
             }
             MessageBoxEx.Show(respText);
         }
