@@ -36,7 +36,7 @@
 |8  |    |H   |K   |D   |P   |G   |J   |
 |9  |    |G   |I   |C   |O   |H   |I   |
 
-たとえば、次の ItemIcon URL はアイテム ID 1802767 を表します。
+たとえば、次の ItemIcon URL はアイテム ID 1802767 を表します。非 KMS アイテムは利用できません。
 ```
 https://open.api.nexon.com/static/maplestory/ItemIcon/KEHCJAIG.png
 ```
