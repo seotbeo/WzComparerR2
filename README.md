@@ -18,9 +18,10 @@
 - **2.x**: Win7+/.net4.8+/dx11.0
 
 # NX OpenAPI
-この機能は KMS 内のリソースでのみ機能します。
-[API キーを取得する方法については、こちらをご覧ください。](https://openapi.nexon.com/guide/prepare-in-advance/)他の国や地域のNX IDは使用できません。韓国のNX IDのみ使用できます。
-[OpenAPI 機能の詳細については、こちらをご覧ください。](https://openapi.nexon.com/game/maplestory/)
+- この機能は KMS 内のリソースでのみ機能します。
+- [API キーを取得する方法については、こちらをご覧ください。](https://openapi.nexon.com/guide/prepare-in-advance/)
+- 他の国や地域のNX IDは使用できません。韓国のNX IDのみ使用できます。
+- [OpenAPI 機能の詳細については、こちらをご覧ください。](https://openapi.nexon.com/game/maplestory/)
 
 ### ItemID to NX OpenAPI ItemIcon Filename
 |   |1st |2nd |3rd |4th |5th |6th |7th |
