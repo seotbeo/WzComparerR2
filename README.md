@@ -1,6 +1,6 @@
 # WzComparerR2-JMS
-- これは、JMS機能を備えたメイプルストーリー用に設計されたエクストラクターです。
-- JMS機能の移植は現在も進行中です。
+- これは、JMS 用に設計されたメイプルストーリー抽出ツールです。
+- KMS、GMS、CMS などの他のクライアントで動作します。
 
 # Modules
 - **WzComparerR2** 主程序
@@ -15,8 +15,31 @@
 - **WzComparerR2.MonsterCard** (可选插件)怪物卡(已废弃)
 
 # Usage
-- **2.x**: Win7+/.net4.0+/dx11.0
-- **1.x**: WinXp+/.net2.0+/dx9.0
+- **2.x**: Win7+/.net4.8+/dx11.0
+
+# NX OpenAPI
+この機能は KMS 内のリソースでのみ機能します。
+[API キーを取得する方法については、こちらをご覧ください。](https://openapi.nexon.com/guide/prepare-in-advance/)他の国や地域のNX IDは使用できません。韓国のNX IDのみ使用できます。
+[OpenAPI 機能の詳細については、こちらをご覧ください。](https://openapi.nexon.com/game/maplestory/)
+
+### ItemID to NX OpenAPI ItemIcon Filename
+| |1st |2nd |3rd |4th |5th |6th |7th 
+-------------------------------------
+|0|    |P   |C   |L   |H   |O   |B   
+|1|E   |O   |D   |A   |G   |P   |A
+|2|H   |N   |A   |J   |F   |M   |D
+|3|G   |M   |B   |I   |E   |N   |C
+|4|B   |L   |G   |P   |D   |K   |F
+|5|A   |K   |H   |O   |C   |L   |E
+|6|    |J   |E   |N   |B   |I   |H
+|7|    |I   |F   |M   |A   |J   |G
+|8|    |H   |K   |D   |P   |G   |J
+|9|    |G   |I   |C   |O   |H   |I
+
+たとえば、次の ItemIcon URL はアイテム ID 1802767 を表します。
+```
+https://open.api.nexon.com/static/maplestory/ItemIcon/KEHCJAIG.png
+```
 
 # Compile
 - vs2022 or higher/.net 6 SDK
