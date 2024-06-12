@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Net;
 using System.Windows.Forms;
 using DevComponents.DotNetBar;
 using DevComponents.Editors;
 using WzComparerR2.Config;
+using System.Security.Policy;
+using System.IO;
+using Spine;
 
 namespace WzComparerR2
 {
@@ -84,6 +89,28 @@ namespace WzComparerR2
         {
             get { return txtAPIkey.Text; }
             set { txtAPIkey.Text = value; }
+        }
+        private void buttonXCheck_Click(object sender, EventArgs e)
+        {
+            string respText;
+            var req = WebRequest.Create(Program.NxAPIBaseURL + "/maplestory/v1/character/list") as HttpWebRequest;
+            req.Timeout = 15000;
+            req.Headers.Add("Accept", "application/json");
+            req.Headers.Add("x-nxopen-api-key", txtAPIkey.Text);
+            try
+            {
+                WebResponse resp = req.GetResponse();
+                Stream recvStream = resp.GetResponseStream();
+                StreamReader sr = new StreamReader(recvStream, Encoding.UTF8);
+                string respJson = sr.ReadToEnd();
+                Clipboard.SetText(respJson);
+                respText = "この API キーは有効です。" + Environment.NewLine + "この API キーに関連付けられたキャラクターが JSON 形式でクリップボードにコピーされました。";
+            }
+            catch (Exception ex)
+            {
+                respText = "この API キーは無効です。";
+            }
+            MessageBoxEx.Show(respText);
         }
 
         public WzLib.WzVersionVerifyMode WzVersionVerifyMode
