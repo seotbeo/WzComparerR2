@@ -9,23 +9,23 @@ namespace WzComparerR2.CharaSim
         public Character()
         {
             this.status = new CharacterStatus();
-            this.status.Job = 0;
-            this.status.Level = 1;
-            this.status.MaxHP.BaseVal = 50;
-            this.status.HP = 50;
-            this.status.MaxMP.BaseVal = 10;
-            this.status.MP = 10;
-            this.status.Strength.BaseVal = 12;
-            this.status.Dexterity.BaseVal = 5;
+            this.status.Job = 1621;
+            this.status.Level = 281;
+            this.status.MaxHP.BaseVal = 65588;
+            this.status.HP = 65588;
+            this.status.MaxMP.BaseVal = 62125;
+            this.status.MP = 62125;
+            this.status.Strength.BaseVal = 4;
+            this.status.Dexterity.BaseVal = 4;
             this.status.Intelligence.BaseVal = 4;
             this.status.Luck.BaseVal = 4;
 
-            this.status.CriticalRate.BaseVal = 5;
-            this.status.MoveSpeed.BaseVal = 100;
-            this.status.Jump.BaseVal = 100;
+            this.status.CriticalRate.BaseVal = 104;
+            this.status.MoveSpeed.BaseVal = 155;
+            this.status.Jump.BaseVal = 123;
             //this.status.CriticalDamageMax.BaseVal = 150;
             //this.status.CriticalDamageMin.BaseVal = 120;
-            this.status.CriticalDamage.BaseVal = 0;
+            this.status.CriticalDamage.BaseVal = 72;
 
             this.itemSlots = new ItemBase[5][];
             for (int i = 0; i < this.itemSlots.Length; i++)
@@ -340,7 +340,7 @@ namespace WzComparerR2.CharaSim
             int newGearIndex = Array.IndexOf<ItemBase>(itemTab, newGear);
             if (newGearIndex < 0 || newGear.State != GearState.itemList)
             {
-                throw new InvalidOperationException("Unknown Error: Equipment not in the inventory.");
+                throw new InvalidOperationException("不明なエラー: 装備がインベントリにありません。");
             }
 
             int onlyEquip;
@@ -350,7 +350,7 @@ namespace WzComparerR2.CharaSim
                 {
                     if (gear.ItemID == newGear.ItemID)
                     {
-                        throw new InvalidOperationException("This item can only be equipped at any one time.");
+                        throw new InvalidOperationException("このアイテムは一度に 1 つしか装備できません。");
                     }
                 }
             }
@@ -364,7 +364,7 @@ namespace WzComparerR2.CharaSim
             Gear[] removedGear;
             if (!this.equip.AddGear(newGear, out removedGear))
             {
-                throw new InvalidOperationException("Unknown Error: Failed to add equipment.");
+                throw new InvalidOperationException("不明なエラー: 装備の追加に失敗しました。");
             }
 
             CheckGearEnabled();
@@ -396,12 +396,12 @@ namespace WzComparerR2.CharaSim
                 }
                 else
                 {
-                    errorString = "Your inventory is full.";
+                    errorString = "インベントリはいっぱいです。";
                 }
             }
             else
             {
-                errorString = "You do not meet the required conditions to equip this item.";
+                errorString = "このアイテムを装備するために必要な条件を満たしていません。";
             }
 
             //还原装备
@@ -434,7 +434,7 @@ namespace WzComparerR2.CharaSim
             if (gear.type == GearType.shield &&
                 (status.Job / 10 == 43 || status.Job / 100 == 23 || status.Job / 100 == 31))
             {
-                errorMessage = "This class cannot equip shields.";
+                errorMessage = "この職業は盾を装備できません。";
                 return false;
             }
             if (gear.type == GearType.magicArrow && status.Job / 100 != 23)
@@ -449,7 +449,7 @@ namespace WzComparerR2.CharaSim
             }
             if (!checkGearPropReq(gear))
             {
-                errorMessage = "You do not meet the required conditions to equip this item.";
+                errorMessage = "このアイテムを装備するために必要な条件を満たしていません。";
                 return false;
             }
             errorMessage = null;
@@ -629,7 +629,7 @@ namespace WzComparerR2.CharaSim
         {
             15,34,57,92,
             135,372,560,840,
-            1242,2207026470,2902427248153
+            1242,2207026470,1731919984062
         };
 
         public static long ExpToNextLevel(int level)
@@ -751,7 +751,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 210 && level <= 214)
             {
-                exp = (long)(ExpToNextLevel(209) * 1.6);
+                exp = (long)(ExpToNextLevel(209) * 1.3);
                 while (level > 210)
                 {
                     exp = (long)(exp * 1.11);
@@ -781,17 +781,17 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 225 && level <= 229)
             {
-                exp = (long)(ExpToNextLevel(224) * 1.38);
+                exp = (long)(ExpToNextLevel(224) * 1.3);
                 while (level > 225)
                 {
-                    exp = (long)(exp * 1.05);
+                    exp = (long)(exp * 1.07);
                     level -= 1;
                 }
                 return exp;
             }
             if (level >= 230 && level <= 234)
             {
-                exp = (long)(ExpToNextLevel(229) * 1.6);
+                exp = (long)(ExpToNextLevel(229) * 1.3);
                 while (level > 230)
                 {
                     exp = (long)(exp * 1.03);
@@ -801,7 +801,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 235 && level <= 239)
             {
-                exp = (long)(ExpToNextLevel(234) * 1.38);
+                exp = (long)(ExpToNextLevel(234) * 1.3);
                 while (level > 235)
                 {
                     exp = (long)(exp * 1.03);
@@ -811,7 +811,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 240 && level <= 244)
             {
-                exp = (long)(ExpToNextLevel(239) * 1.6);
+                exp = (long)(ExpToNextLevel(239) * 1.3);
                 while (level > 240)
                 {
                     exp = (long)(exp * 1.03);
@@ -821,7 +821,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 245 && level <= 249)
             {
-                exp = (long)(ExpToNextLevel(244) * 1.38);
+                exp = (long)(ExpToNextLevel(244) * 1.3);
                 while (level > 245)
                 {
                     exp = (long)(exp * 1.03);
@@ -831,7 +831,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level >= 250 && level <= 259)
             {
-                exp = (long)(ExpToNextLevel(249) * 1.6 + 0.5);
+                exp = (long)(ExpToNextLevel(249) * 1.5);
                 while (level > 250)
                 {
                     exp = (long)(exp * 1.03);
@@ -841,7 +841,7 @@ namespace WzComparerR2.CharaSim
             }
             if (level == 260)
                 return _exptnl[10];
-            if (level >= 261 && level <= 269)
+            if (level >= 261 && level <= 264)
             {
                 exp = ExpToNextLevel(260);
                 while (level > 260)
@@ -851,9 +851,19 @@ namespace WzComparerR2.CharaSim
                 }
                 return exp;
             }
+            if (level >= 265 && level <= 269)
+            {
+                exp = (long)(ExpToNextLevel(264) * 1.3);
+                while (level > 265)
+                {
+                    exp = (long)(exp * 1.01);
+                    level -= 1;
+                }
+                return exp;
+            }
             if (level >= 270 && level <= 274)
             {
-                exp = ExpToNextLevel(269) * 2;
+                exp = (long)(ExpToNextLevel(269) * 2.22);
                 while (level > 269)
                 {
                     exp = (long)(exp * 1.01);

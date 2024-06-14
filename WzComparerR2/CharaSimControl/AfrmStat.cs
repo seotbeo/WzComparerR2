@@ -608,28 +608,28 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(Resource.Stat_main_Disabled_INT, 11, 296);
                         break;
                 }*/
-                g.DrawString(this.character.Name, GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 32f);
-                g.DrawString(ItemStringHelper.GetJobName(charStat.Job), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 50f);
+                g.DrawString(this.character.Name, GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 32f);
+                g.DrawString(ItemStringHelper.GetJobName(charStat.Job), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 50f);
                 /*g.DrawString(charStat.Level.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 68f);
                 g.DrawString(charStat.Exp + " (" + (charStat.Exp == -1 ? 0 : ((long)charStat.Exp * 100 / charStat.Exptnl)) + "%)",
                     GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 86f);
                 g.DrawString("1", GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 104f);
                 g.DrawString("0 (0%)", GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 122f);*/
-                g.DrawString(string.IsNullOrEmpty(this.character.Guild) ? "-" : this.character.Guild, GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 68f);
-                g.DrawString(charStat.Pop.ToString(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 86f);
+                g.DrawString(string.IsNullOrEmpty(this.character.Guild) ? "-" : this.character.Guild, GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 68f);
+                g.DrawString(charStat.Pop.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 86f);
                 int brushSign;
 
                 double max, min;
                 this.character.CalcAttack(out max, out min, out brushSign);
-                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.EquipDetailFont, getDetailBrush(brushSign), 72f, 104f);
-                g.DrawString(charStat.HP + " / " + charStat.MaxHP.GetSum(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 122f);
-                g.DrawString(charStat.MP + " / " + charStat.MaxMP.GetSum(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 140f);
+                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, 104f);
+                g.DrawString(charStat.HP + " / " + charStat.MaxHP.GetSum(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 122f);
+                g.DrawString(charStat.MP + " / " + charStat.MaxMP.GetSum(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 140f);
 
-                g.DrawString(charStat.Ap.ToString().PadLeft(4), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 73f, 181f);
-                g.DrawString(charStat.Strength.ToString(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 210f);
-                g.DrawString(charStat.Dexterity.ToString(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 228f);
-                g.DrawString(charStat.Intelligence.ToString(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 246f);
-                g.DrawString(charStat.Luck.ToString(), GearGraphics.EquipDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 264f);
+                g.DrawString(charStat.Ap.ToString().PadLeft(4), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 73f, 181f);
+                g.DrawString(charStat.Strength.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 210f);
+                g.DrawString(charStat.Dexterity.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 228f);
+                g.DrawString(charStat.Intelligence.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 246f);
+                g.DrawString(charStat.Luck.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 264f);
             }
             g.ResetTransform();
         }
@@ -658,26 +658,26 @@ namespace WzComparerR2.CharaSimControl
                 double max, min;
                 this.character.CalcAttack(out max, out min, out brushSign);
                 float y = 26f;
-                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.EquipDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
+                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 StringFormat format = new StringFormat();
                 format.Alignment = StringAlignment.Far;
-                g.DrawString(charStat.DamageRate.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.DamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.BossDamageRate.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.BossDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.FinalDamageRate.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.FinalDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.IgnoreMobDefenceRate.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.IgnoreMobDefenceRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.CriticalRate.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.CriticalRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.EquipDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 72f, (y += 18f));
-                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.EquipDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 103f, (y += 18f), format);
-                g.DrawString(charStat.KnockbackResistance.GetSum() + "%", GearGraphics.EquipDetailFont, charStat.KnockbackResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.PDDamage.ToStringDetail(out brushSign), GearGraphics.EquipDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
+                g.DrawString(charStat.DamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.DamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
+                g.DrawString(charStat.BossDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.BossDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
+                g.DrawString(charStat.FinalDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.FinalDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
+                g.DrawString(charStat.IgnoreMobDefenceRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.IgnoreMobDefenceRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
+                g.DrawString(charStat.CriticalRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.CriticalRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
+                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 72f, (y += 18f));
+                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.ItemDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 103f, (y += 18f), format);
+                g.DrawString(charStat.KnockbackResistance.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.KnockbackResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
+                g.DrawString(charStat.PDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 /*g.DrawString(charStat.MDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.PAccurate.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.MAccurate.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.PEvasion.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.MEvasion.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));*/
-                g.DrawString(charStat.MoveSpeed.GetSum() + "%", GearGraphics.EquipDetailFont, getDetailBrush(0), 104f, (y += 18f), format);
-                g.DrawString(charStat.Jump.GetSum() + "%", GearGraphics.EquipDetailFont, getDetailBrush(0), 200f, y, format);
-                g.DrawString("0", GearGraphics.EquipDetailFont, getDetailBrush(0), 72f, 289f);
+                g.DrawString(charStat.MoveSpeed.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 104f, (y += 18f), format);
+                g.DrawString(charStat.Jump.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 200f, y, format);
+                g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 72f, 289f);
             }
 
             g.ResetTransform();
@@ -696,9 +696,9 @@ namespace WzComparerR2.CharaSimControl
             for (int i = 0; i < 12; i++)
             {
                 g.DrawImage(hyperStatBitmapList[hyperStatScrollValue + i], 16, 43 + 18 * i);
-                g.DrawString("0", GearGraphics.EquipDetailFont, getDetailBrush(0), 139f, 44f + 18f * i, format);
+                g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 139f, 44f + 18f * i, format);
             }
-            g.DrawString("0", GearGraphics.EquipDetailFont, getDetailBrush(0), 169f, 269f, format);
+            g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 169f, 269f, format);
 
             g.ResetTransform();
         }
