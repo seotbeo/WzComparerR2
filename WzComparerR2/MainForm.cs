@@ -3016,10 +3016,6 @@ namespace WzComparerR2
             {
                 buttonItemCharaStat.Checked = ((AfrmStat)sender).Visible;
             }
-            else if (sender is AfrmEquip)
-            {
-                buttonItemCharaEquip.Checked = ((AfrmEquip)sender).Visible;
-            }
         }
 
         private void buttonItemCharaStat_CheckedChanged(object sender, EventArgs e)
@@ -3031,14 +3027,6 @@ namespace WzComparerR2
             this.charaSimCtrl.UIStat.Visible = buttonItemCharaStat.Checked;
         }
 
-        private void buttonItemCharaEquip_CheckedChanged(object sender, EventArgs e)
-        {
-            if (buttonItemCharaEquip.Checked)
-            {
-                this.charaSimCtrl.UIEquip.Refresh();
-            }
-            this.charaSimCtrl.UIEquip.Visible = buttonItemCharaEquip.Checked;
-        }
 
         private void buttonItemQuickViewSetting_Click(object sender, EventArgs e)
         {

@@ -9,7 +9,7 @@ namespace WzComparerR2.CharaSim
         public Character()
         {
             this.status = new CharacterStatus();
-            this.status.Job = 1621;
+            this.status.Job = 0;
             this.status.Level = 281;
             this.status.MaxHP.BaseVal = 65588;
             this.status.HP = 65588;
@@ -17,7 +17,7 @@ namespace WzComparerR2.CharaSim
             this.status.MP = 62125;
             this.status.Strength.BaseVal = 4;
             this.status.Dexterity.BaseVal = 4;
-            this.status.Intelligence.BaseVal = 4;
+            this.status.Intelligence.BaseVal = 1423;
             this.status.Luck.BaseVal = 4;
 
             this.status.CriticalRate.BaseVal = 104;

@@ -69,9 +69,9 @@
             this.itemContainer30 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemCharaStat = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer31 = new DevComponents.DotNetBar.ItemContainer();
-            this.buttonItemCharaEquip = new DevComponents.DotNetBar.ButtonItem();
+            // this.buttonItemCharaEquip = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer32 = new DevComponents.DotNetBar.ItemContainer();
-            this.itemContainer33 = new DevComponents.DotNetBar.ItemContainer();
+            // this.itemContainer33 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemAddItem = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer34 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainer35 = new DevComponents.DotNetBar.ItemContainer();
@@ -741,7 +741,7 @@
             this.itemContainer31.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.itemContainer31.Name = "itemContainer31";
             this.itemContainer31.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.buttonItemCharaEquip});
+            this.buttonItemAddItem});
             // 
             // 
             // 
@@ -749,11 +749,11 @@
             // 
             // buttonItemCharaEquip
             // 
-            this.buttonItemCharaEquip.AutoCheckOnClick = true;
-            this.buttonItemCharaEquip.Name = "buttonItemCharaEquip";
-            this.buttonItemCharaEquip.Text = "装備";
-            this.buttonItemCharaEquip.Tooltip = "装備ウィンドウのON/OFF";
-            this.buttonItemCharaEquip.CheckedChanged += new System.EventHandler(this.buttonItemCharaEquip_CheckedChanged);
+            // this.buttonItemCharaEquip.AutoCheckOnClick = true;
+            // this.buttonItemCharaEquip.Name = "buttonItemCharaEquip";
+            // this.buttonItemCharaEquip.Text = "装備";
+            // this.buttonItemCharaEquip.Tooltip = "装備ウィンドウのON/OFF";
+            // this.buttonItemCharaEquip.CheckedChanged += new System.EventHandler(this.buttonItemCharaEquip_CheckedChanged);
             // 
             // itemContainer32
             // 
@@ -764,7 +764,6 @@
             this.itemContainer32.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Vertical;
             this.itemContainer32.Name = "itemContainer32";
             this.itemContainer32.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.itemContainer33,
             this.itemContainer34,
             this.itemContainer35});
             // 
@@ -777,14 +776,13 @@
             // 
             // 
             // 
-            this.itemContainer33.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.itemContainer33.Name = "itemContainer33";
-            this.itemContainer33.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.buttonItemAddItem});
+            // this.itemContainer33.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // this.itemContainer33.Name = "itemContainer33";
+            // this.itemContainer33.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {});
             // 
             // 
             // 
-            this.itemContainer33.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // this.itemContainer33.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
             // buttonItemAddItem
             // 
@@ -3205,9 +3203,9 @@
         private DevComponents.DotNetBar.ItemContainer itemContainer30;
         private DevComponents.DotNetBar.ButtonItem buttonItemCharaStat;
         private DevComponents.DotNetBar.ItemContainer itemContainer31;
-        private DevComponents.DotNetBar.ButtonItem buttonItemCharaEquip;
+        // private DevComponents.DotNetBar.ButtonItem buttonItemCharaEquip;
         private DevComponents.DotNetBar.ItemContainer itemContainer32;
-        private DevComponents.DotNetBar.ItemContainer itemContainer33;
+        // private DevComponents.DotNetBar.ItemContainer itemContainer33;
         private DevComponents.DotNetBar.ButtonItem buttonItemAddItem;
         private DevComponents.DotNetBar.ItemContainer itemContainer34;
         private DevComponents.DotNetBar.ItemContainer itemContainer35;
