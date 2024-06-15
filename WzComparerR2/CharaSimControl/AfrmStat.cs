@@ -22,8 +22,8 @@ namespace WzComparerR2.CharaSimControl
             for (int i = 0; i < sec.Length; i++)
                 sec[i] = 1 << i;
 
-            hyperStatList = new int[] { 80000400, 80000401, 80000402, 80000403, 80000404, 80000405, 80000406, 80000409, 80000410, 80000412, 80000413, 80000414, 80000416, 80000417, 80000419, 80000420, 80000421 };
-            hyperStatBitmapList = hyperStatList.Select(id => Resource.ResourceManager.GetObject("HyperStat_Window_statList_" + id) as Bitmap).ToArray();
+            hyperStatList = new int[] { 80000400, 80000401, 80000402, 80000403, 80000404, 80000405, 80000406, 80000409, 80000410, 80000412, 80000413, 80000414, 80000416, 80000419, 80000420, 80000421, 80000422 };
+            hyperStatBitmapList = hyperStatList.Select(id => Resource.ResourceManager.GetObject("UICharacterInfo_img_common_detailStat_HyperStat_Window_statList_" + id) as Bitmap).ToArray();
 
             initCtrl();
         }
@@ -97,7 +97,7 @@ namespace WzComparerR2.CharaSimControl
             get
             {
                 return new Rectangle(
-                    new Point(baseOffset.X + Resource.Stat_main_backgrnd.Width, baseOffset.Y),
+                    new Point(baseOffset.X + Resource.UICharacterInfo_img_common_main_backgrnd.Width, baseOffset.Y),
                     Resource.Stat_detail_backgrnd.Size);
             }
         }
@@ -107,8 +107,8 @@ namespace WzComparerR2.CharaSimControl
             get
             {
                 return new Rectangle(
-                    new Point(baseOffset.X - Resource.HyperStat_Window_backgrnd.Width, baseOffset.Y),
-                    Resource.HyperStat_Window_backgrnd.Size);
+                    new Point(baseOffset.X - Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd.Width, baseOffset.Y),
+                    Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd.Size);
             }
         }
 
@@ -362,7 +362,7 @@ namespace WzComparerR2.CharaSimControl
         {
             this.preRender();
             this.SetBitmap(this.Bitmap);
-            this.CaptionRectangle = new Rectangle(this.baseOffset, new Size(Resource.Stat_main_backgrnd.Width, 24));
+            this.CaptionRectangle = new Rectangle(this.baseOffset, new Size(Resource.UICharacterInfo_img_common_main_backgrnd.Width, 24));
             this.Location = newLocation;
             base.Refresh();
         }
@@ -384,7 +384,7 @@ namespace WzComparerR2.CharaSimControl
             setControlState();
 
             Point baseOffsetnew = calcRenderBaseOffset();
-            Size size = Resource.Stat_main_backgrnd.Size;
+            Size size = Resource.UICharacterInfo_img_common_main_backgrnd.Size;
             size.Width += baseOffsetnew.X;
             if (this.DetailVisible)
                 size = new Size(size.Width + Resource.Stat_detail_backgrnd.Width, Resource.Stat_detail_backgrnd.Height);
@@ -473,7 +473,7 @@ namespace WzComparerR2.CharaSimControl
         private Point calcRenderBaseOffset()
         {
             if (this.HyperStatVisible)
-                return new Point(Resource.HyperStat_Window_backgrnd.Width, 0);
+                return new Point(Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd.Width, 0);
             else
                 return new Point(0, 0);
         }
@@ -581,9 +581,9 @@ namespace WzComparerR2.CharaSimControl
         private void renderBase(Graphics g)
         {
             g.TranslateTransform(baseOffset.X, baseOffset.Y);
-            g.DrawImage(Resource.Stat_main_backgrnd, 0, 0);
-            g.DrawImage(Resource.Stat_main_backgrnd2, 6, 22);
-            g.DrawImage(Resource.Stat_main_backgrnd3, 7, 156);
+            g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd, 0, 0);
+            //g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd2, 6, 22);
+            //g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd3, 7, 156);
 
             if (this.character != null)
             {
@@ -687,17 +687,17 @@ namespace WzComparerR2.CharaSimControl
         {
             Rectangle rect = this.HyperStatRect;
             g.TranslateTransform(rect.X, rect.Y);
-            g.DrawImage(Resource.HyperStat_Window_backgrnd, 0, 0);
-            g.DrawImage(Resource.HyperStat_Window_backgrnd2, 6, 7);
-            g.DrawImage(Resource.HyperStat_Window_backgrnd3, 11, 41);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd, 0, 0);
+            // g.DrawImage(Resource.HyperStat_Window_backgrnd2, 6, 7);
+            // g.DrawImage(Resource.HyperStat_Window_backgrnd3, 11, 41);
 
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Far;
-            for (int i = 0; i < 12; i++)
-            {
-                g.DrawImage(hyperStatBitmapList[hyperStatScrollValue + i], 16, 43 + 18 * i);
-                g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 139f, 44f + 18f * i, format);
-            }
+            //for (int i = 0; i < 12; i++)
+            //{
+            //    g.DrawImage(hyperStatBitmapList[hyperStatScrollValue + i], 16, 43 + 18 * i);
+            //    g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 139f, 44f + 18f * i, format);
+            //}
             g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 169f, 269f, format);
 
             g.ResetTransform();
