@@ -28,6 +28,24 @@ namespace WzComparerR2.CharaSim
             this.status.Jump.BaseVal = 123;
             this.status.CriticalDamage.BaseVal = 72;
 
+            this.status.PADamage.BaseVal = 1082;
+            this.status.MADamage.BaseVal = 3095;
+
+            this.status.NormalMonsterDamR.BaseVal = 12;
+            this.status.CooltimeReduceSecond.BaseVal = 5;
+            this.status.CooltimeReduceR.BaseVal = 0;
+            this.status.CooltimeIgnoreR.BaseVal = 0;
+            this.status.AbnormalDmgR = 11.00;
+            this.status.BuffDurationIncR.BaseVal = 65;
+            this.status.TamingMobDurationIncR.BaseVal = 20;
+            
+            this.status.MesoGainR.BaseVal = 0;
+            this.status.DropGainR.BaseVal = 0;
+            this.status.ExpGainR = 12.50;
+            this.status.StarForce.BaseVal = 281;
+            this.status.ArcaneForce.BaseVal = 1320;
+            this.status.AuthenticForce.BaseVal = 450;
+
             this.itemSlots = new ItemBase[5][];
             for (int i = 0; i < this.itemSlots.Length; i++)
             {

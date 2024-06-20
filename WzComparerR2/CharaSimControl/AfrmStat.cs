@@ -565,13 +565,25 @@ namespace WzComparerR2.CharaSimControl
                 g.DrawString(charStat.FinalDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.FinalDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
                 g.DrawString(charStat.BossDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.BossDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
                 g.DrawString(charStat.IgnoreMobDefenceRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.IgnoreMobDefenceRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
-                y += 22f;
+                g.DrawString(charStat.NormalMonsterDamR.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.NormalMonsterDamR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.PADamage.GetSum().ToString("N0"), GearGraphics.ItemDetailFont, charStat.PADamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
                 g.DrawString(charStat.CriticalRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.CriticalRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
-                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, (y += 22f), format);
-                y += 22f;
-                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.ItemDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, (y += 22f), format);
-                
+                g.DrawString(charStat.MADamage.GetSum().ToString("N0"), GearGraphics.ItemDetailFont, charStat.MADamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.CooltimeReduceSecond.GetSum() + "秒/" + charStat.CooltimeReduceR.GetSum() + "%", GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.BuffDurationIncR.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.BuffDurationIncR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.CooltimeIgnoreR.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.CooltimeIgnoreR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.ItemDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.AbnormalDmgR.ToString("N2") + "%", GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.TamingMobDurationIncR.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.TamingMobDurationIncR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
 
+                y = 594f;
+                g.DrawString(charStat.MesoGainR.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.MesoGainR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, y, format);
+                g.DrawString(charStat.StarForce.GetSum().ToString("N0"), GearGraphics.ItemDetailFont, charStat.StarForce.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.DropGainR.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.DropGainR.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.ArcaneForce.GetSum().ToString("N0"), GearGraphics.ItemDetailFont, charStat.ArcaneForce.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.ExpGainR.ToString("N2") + "%", GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.AuthenticForce.GetSum().ToString("N0"), GearGraphics.ItemDetailFont, charStat.AuthenticForce.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
                 //g.DrawString(charStat.KnockbackResistance.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.KnockbackResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 200f, y, format);
                 //g.DrawString(charStat.PDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
             }

@@ -2919,14 +2919,14 @@ namespace WzComparerR2
         {
             int count = CharaSimLoader.LoadedSetItems.Count;
             CharaSimLoader.LoadedSetItems.Clear();
-            labelItemStatus.Text = "Consolidated " + count + "Set Item(s)";
+            labelItemStatus.Text = count + "Set アイテムが統合されました。";
         }
 
         private void buttonItemClearExclusiveEquips_Click(object sender, EventArgs e)
         {
             int count = CharaSimLoader.LoadedExclusiveEquips.Count;
             CharaSimLoader.LoadedExclusiveEquips.Clear();
-            labelItemStatus.Text = "Consolidated " + count + "Non-Duplicate Item(s)";
+            labelItemStatus.Text = count + "Non-Duplicate アイテムが統合されました。";
         }
 
         private void buttonItemClearCommodities_Click(object sender, EventArgs e)
@@ -2934,7 +2934,7 @@ namespace WzComparerR2
             int count = CharaSimLoader.LoadedCommoditiesBySN.Count;
             CharaSimLoader.LoadedCommoditiesBySN.Clear();
             CharaSimLoader.LoadedCommoditiesByItemId.Clear();
-            labelItemStatus.Text = "Consolidated " + count + "Cash Item(s)";
+            labelItemStatus.Text = count + "Cash アイテムが統合されました。";
         }
 
         private void buttonItemCharItem_CheckedChanged(object sender, EventArgs e)
@@ -2951,7 +2951,7 @@ namespace WzComparerR2
             success = this.charaSimCtrl.UIItem.AddItem(this.tooltipQuickView.TargetItem as ItemBase);
             if (!success)
             {
-                labelItemStatus.Text = "The selected item does not exist or can no longer be used.";
+                labelItemStatus.Text = "選択したアイテムは存在しないか、使用できなくなりました。";
             }
         }
 

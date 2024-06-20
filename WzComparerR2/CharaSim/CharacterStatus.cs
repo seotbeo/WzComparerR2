@@ -66,6 +66,22 @@ namespace WzComparerR2.CharaSim
         private CharaProp ignoreMobDefR = null;
         private CharaProp statusRes = null;
         private CharaProp knockbackRes = null;
+        private CharaProp normalMonsterDamR = null;
+
+        private CharaProp cooltimeReduceSecond = null;
+        private CharaProp cooltimeReduceR = null;
+        private CharaProp cooltimeIgnoreR = null;
+        private CharaProp buffDurationIncR = null;
+        private CharaProp tamingMobDurationIncR = null;
+
+        private CharaProp mesoGainR = null;
+        private CharaProp dropGainR = null;
+        private double abnormalDmgR;
+        private double expGainR;
+        
+        private CharaProp starForce = null;
+        private CharaProp arcaneForce = null;
+        private CharaProp authenticForce = null;
 
         #region 基础属性
         /// <summary>
@@ -208,7 +224,7 @@ namespace WzComparerR2.CharaSim
 
         #region 扩展属性
         /// <summary>
-        /// 获取角色的攻击力，这是一个隐藏属性。
+        /// 获取角色的攻击力。
         /// </summary>
         public CharaProp PADamage
         {
@@ -216,7 +232,7 @@ namespace WzComparerR2.CharaSim
         }
         
         /// <summary>
-        /// 获取角色的魔法攻击力，这是一个隐藏属性。
+        /// 获取角色的魔法攻击力。
         /// </summary>
         public CharaProp MADamage
         {
@@ -361,6 +377,69 @@ namespace WzComparerR2.CharaSim
         public CharaProp KnockbackResistance
         {
             get { return knockbackRes; }
+        }
+
+        public CharaProp NormalMonsterDamR
+        {
+            get { return normalMonsterDamR; }
+        }
+
+        public CharaProp CooltimeReduceSecond
+        {
+            get { return cooltimeReduceSecond; }
+        }
+        public CharaProp CooltimeReduceR
+        {
+            get { return cooltimeReduceR; }
+        }
+        public CharaProp CooltimeIgnoreR
+        {
+            get { return cooltimeIgnoreR; }
+        }
+        public CharaProp BuffDurationIncR
+        {
+            get { return buffDurationIncR; }
+        }
+        public CharaProp TamingMobDurationIncR
+        {
+            get { return tamingMobDurationIncR; }
+        }
+
+        public double AbnormalDmgR
+        {
+            get { return abnormalDmgR; }
+            set { abnormalDmgR = value; }
+        }
+
+        public CharaProp MesoGainR
+        {
+            get { return mesoGainR; }
+        }
+
+        public CharaProp DropGainR
+        {
+            get { return dropGainR; }
+        }
+
+        public double ExpGainR
+        {
+            get { return expGainR; }
+            set { expGainR = value; }
+        }
+
+        public CharaProp StarForce
+        {
+            get { return starForce; }
+        }
+
+        public CharaProp ArcaneForce
+        {
+            get { return arcaneForce; }
+        }
+
+        public CharaProp AuthenticForce
+        {
+            get { return authenticForce; }
         }
         #endregion
     }
