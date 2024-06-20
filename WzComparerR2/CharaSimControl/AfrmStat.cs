@@ -40,21 +40,12 @@ namespace WzComparerR2.CharaSimControl
         private Bitmap[] hyperStatBitmapList;
         private Skill[] hyperStatSkillList;
 
-        private ACtrlButton btnHPUp;
-        private ACtrlButton btnMPUp;
-        private ACtrlButton btnStrUp;
-        private ACtrlButton btnDexUp;
-        private ACtrlButton btnIntUp;
-        private ACtrlButton btnLukUp;
-        private ACtrlButton btnAuto;
         private ACtrlButton btnClose;
         private ACtrlButton btnDetailOpen;
         private ACtrlButton btnDetailClose;
         private ACtrlButton btnHyperStatOpen;
         private ACtrlButton btnHyperStatClose;
-        private ACtrlButton btnAbility;
         private ACtrlButton btnHpUp;
-        private ACtrlVScroll vScroll;
         private ACtrlButton btnLVUp1;
         private ACtrlButton btnLVUp2;
         private ACtrlButton btnLVUp3;
@@ -67,7 +58,6 @@ namespace WzComparerR2.CharaSimControl
         private ACtrlButton btnLVUp10;
         private ACtrlButton btnLVUp11;
         private ACtrlButton btnLVUp12;
-        private ACtrlButton btnReset;
         private ACtrlButton btnReduce;
         private bool waitForRefresh;
 
@@ -98,7 +88,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 return new Rectangle(
                     new Point(baseOffset.X + Resource.UICharacterInfo_img_common_main_backgrnd.Width, baseOffset.Y),
-                    Resource.Stat_detail_backgrnd.Size);
+                    Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd.Size);
             }
         }
 
@@ -114,23 +104,6 @@ namespace WzComparerR2.CharaSimControl
 
         private void initCtrl()
         {
-            this.btnHPUp = new ACtrlButton();
-            this.btnHPUp.Location = new Point(187, 121);
-
-            this.btnMPUp = new ACtrlButton();
-            this.btnMPUp.Location = new Point(187, 139);
-
-            this.btnStrUp = new ACtrlButton();
-            this.btnStrUp.Location = new Point(187, 208);
-
-            this.btnDexUp = new ACtrlButton();
-            this.btnDexUp.Location = new Point(187, 226);
-
-            this.btnIntUp = new ACtrlButton();
-            this.btnIntUp.Location = new Point(187, 244);
-
-            this.btnLukUp = new ACtrlButton();
-            this.btnLukUp.Location = new Point(187, 262);
 
             this.btnLVUp1 = new ACtrlButton();
             this.btnLVUp1.Location = new Point(147, 43);
@@ -168,7 +141,7 @@ namespace WzComparerR2.CharaSimControl
             this.btnLVUp12 = new ACtrlButton();
             this.btnLVUp12.Location = new Point(147, 241);
 
-            ACtrlButton[] addBtnList = new ACtrlButton[] { btnHPUp, btnMPUp, btnStrUp, btnDexUp, btnIntUp, btnLukUp, btnLVUp1, btnLVUp2, btnLVUp3, btnLVUp4, btnLVUp5, btnLVUp6, btnLVUp7, btnLVUp8, btnLVUp9, btnLVUp10, btnLVUp11, btnLVUp12 };
+            ACtrlButton[] addBtnList = new ACtrlButton[] { btnLVUp1, btnLVUp2, btnLVUp3, btnLVUp4, btnLVUp5, btnLVUp6, btnLVUp7, btnLVUp8, btnLVUp9, btnLVUp10, btnLVUp11, btnLVUp12 };
             for (int i = 0; i < addBtnList.Length; i++)
             {
                 addBtnList[i].Normal = new BitmapOrigin(Resource.Stat_main_BtUp_normal_0);
@@ -180,130 +153,72 @@ namespace WzComparerR2.CharaSimControl
             }
 
             this.btnClose = new ACtrlButton();
-            this.btnClose.Normal = new BitmapOrigin(Resource.BtClose3_normal_0);
-            this.btnClose.Pressed = new BitmapOrigin(Resource.BtClose3_pressed_0);
-            this.btnClose.MouseOver = new BitmapOrigin(Resource.BtClose3_mouseOver_0);
-            this.btnClose.Disabled = new BitmapOrigin(Resource.BtClose3_disabled_0);
-            this.btnClose.Location = new Point(190, 6);
-            this.btnClose.Size = new Size(13, 13);
+            this.btnClose.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_normal_0);
+            this.btnClose.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_pressed_0);
+            this.btnClose.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_mouseOver_0);
+            this.btnClose.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_disabled_0);
+            this.btnClose.Location = new Point(449, 12);
+            this.btnClose.Size = new Size(11, 11);
             this.btnClose.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnClose.MouseClick += new MouseEventHandler(btnClose_MouseClick);
 
             this.btnDetailOpen = new ACtrlButton();
-            this.btnDetailOpen.Normal = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_normal_0);
-            this.btnDetailOpen.Pressed = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_pressed_0);
-            this.btnDetailOpen.MouseOver = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_mouseOver_0);
-            this.btnDetailOpen.Disabled = new BitmapOrigin(Resource.Stat_main_BtDetailOpen_disabled_0);
-            this.btnDetailOpen.Location = new Point(132, 288);
-            this.btnDetailOpen.Size = new Size(68, 16);
+            this.btnDetailOpen.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_normal_0);
+            this.btnDetailOpen.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_pressed_0);
+            this.btnDetailOpen.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_mouseOver_0);
+            this.btnDetailOpen.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_disabled_0);
+            this.btnDetailOpen.Location = new Point(355, 679);
+            this.btnDetailOpen.Size = new Size(106, 24);
             this.btnDetailOpen.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnDetailOpen.MouseClick += new MouseEventHandler(btnDetailOpen_MouseClick);
 
             this.btnDetailClose = new ACtrlButton();
-            this.btnDetailClose.Normal = new BitmapOrigin(Resource.Stat_main_BtDetailClose_normal_0);
-            this.btnDetailClose.Pressed = new BitmapOrigin(Resource.Stat_main_BtDetailClose_pressed_0);
-            this.btnDetailClose.MouseOver = new BitmapOrigin(Resource.Stat_main_BtDetailClose_mouseOver_0);
-            this.btnDetailClose.Disabled = new BitmapOrigin(Resource.Stat_main_BtDetailClose_disabled_0);
-            this.btnDetailClose.Location = new Point(132, 288);
-            this.btnDetailClose.Size = new Size(68, 16);
+            this.btnDetailClose.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_normal_0);
+            this.btnDetailClose.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_pressed_0);
+            this.btnDetailClose.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_mouseOver_0);
+            this.btnDetailClose.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonability_disabled_0);
+            this.btnDetailClose.Location = new Point(355, 679);
+            this.btnDetailClose.Size = new Size(106, 24);
             this.btnDetailClose.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnDetailClose.MouseClick += new MouseEventHandler(btnDetailClose_MouseClick);
 
             this.btnHyperStatOpen = new ACtrlButton();
-            this.btnHyperStatOpen.Normal = new BitmapOrigin(Resource.Stat_main_BtHyperStatOpen_normal_0);
-            this.btnHyperStatOpen.Pressed = new BitmapOrigin(Resource.Stat_main_BtHyperStatOpen_pressed_0);
-            this.btnHyperStatOpen.MouseOver = new BitmapOrigin(Resource.Stat_main_BtHyperStatOpen_mouseOver_0);
-            this.btnHyperStatOpen.Disabled = new BitmapOrigin(Resource.Stat_main_BtHyperStatOpen_disabled_0);
-            this.btnHyperStatOpen.Location = new Point(12, 288);
-            this.btnHyperStatOpen.Size = new Size(71, 16);
+            this.btnHyperStatOpen.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_normal_0);
+            this.btnHyperStatOpen.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_pressed_0);
+            this.btnHyperStatOpen.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_mouseOver_0);
+            this.btnHyperStatOpen.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_disabled_0);
+            this.btnHyperStatOpen.Location = new Point(12, 679);
+            this.btnHyperStatOpen.Size = new Size(106, 24);
             this.btnHyperStatOpen.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnHyperStatOpen.MouseClick += new MouseEventHandler(btnHyperStatOpen_MouseClick);
 
             this.btnHyperStatClose = new ACtrlButton();
-            this.btnHyperStatClose.Normal = new BitmapOrigin(Resource.Stat_main_BtHyperStatClose_normal_0);
-            this.btnHyperStatClose.Pressed = new BitmapOrigin(Resource.Stat_main_BtHyperStatClose_pressed_0);
-            this.btnHyperStatClose.MouseOver = new BitmapOrigin(Resource.Stat_main_BtHyperStatClose_mouseOver_0);
-            this.btnHyperStatClose.Disabled = new BitmapOrigin(Resource.Stat_main_BtHyperStatClose_disabled_0);
-            this.btnHyperStatClose.Location = new Point(12, 288);
-            this.btnHyperStatClose.Size = new Size(71, 16);
+            this.btnHyperStatClose.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_normal_0);
+            this.btnHyperStatClose.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_pressed_0);
+            this.btnHyperStatClose.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_mouseOver_0);
+            this.btnHyperStatClose.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_detailStat_buttonhyper_disabled_0);
+            this.btnHyperStatClose.Location = new Point(12, 679);
+            this.btnHyperStatClose.Size = new Size(106, 24);
             this.btnHyperStatClose.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnHyperStatClose.MouseClick += new MouseEventHandler(btnHyperStatClose_MouseClick);
 
-            this.btnAuto = new ACtrlButton();
-            this.btnAuto.Normal = new BitmapOrigin(Resource.Stat_main_BtAuto_normal_3);
-            this.btnAuto.Pressed = new BitmapOrigin(Resource.Stat_main_BtAuto_pressed_0);
-            this.btnAuto.MouseOver = new BitmapOrigin(Resource.Stat_main_BtAuto_mouseOver_0);
-            this.btnAuto.Disabled = new BitmapOrigin(Resource.Stat_main_BtAuto_disabled_0);
-            this.btnAuto.Location = new Point(128, 162);
-            this.btnAuto.Size = new Size(67, 34);
-            this.btnAuto.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
-
-            this.btnAbility = new ACtrlButton();
-            this.btnAbility.Normal = new BitmapOrigin(Resource.Stat_detail_BtAbility_normal_0);
-            this.btnAbility.Pressed = new BitmapOrigin(Resource.Stat_detail_BtAbility_pressed_0);
-            this.btnAbility.MouseOver = new BitmapOrigin(Resource.Stat_detail_BtAbility_mouseOver_0);
-            this.btnAbility.Disabled = new BitmapOrigin(Resource.Stat_detail_BtAbility_disabled_0);
-            this.btnAbility.Location = new Point(152, 286);
-            this.btnAbility.Size = new Size(50, 16);
-            this.btnAbility.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
-
             this.btnHpUp = new ACtrlButton();
-            this.btnHpUp.Normal = new BitmapOrigin(Resource.Stat_detail_BtHpUp_normal_0);
-            this.btnHpUp.Pressed = new BitmapOrigin(Resource.Stat_detail_BtHpUp_pressed_0);
-            this.btnHpUp.MouseOver = new BitmapOrigin(Resource.Stat_detail_BtHpUp_mouseOver_0);
-            this.btnHpUp.Disabled = new BitmapOrigin(Resource.Stat_detail_BtHpUp_disabled_0);
-            this.btnHpUp.Location = new Point(185, 312);
-            this.btnHpUp.Size = new Size(17, 16);
+            this.btnHpUp.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_normal_0);
+            this.btnHpUp.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_pressed_0);
+            this.btnHpUp.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_mouseOver_0);
+            this.btnHpUp.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_disabled_0);
+            this.btnHpUp.Location = new Point(222, Resource.UICharacterInfo_img_common_main_backgrnd.Height + Resource.UICharacterInfo_img_local_detail_backgrnd.Height - Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd.Height + 13);
+            this.btnHpUp.Size = new Size(11, 11);
             this.btnHpUp.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnHpUp.MouseClick += new MouseEventHandler(btnDetailClose_MouseClick);
 
-            this.vScroll = new ACtrlVScroll();
-
-            this.vScroll.PicBase.Normal = new BitmapOrigin(Resource.VScr9_enabled_base);
-            this.vScroll.PicBase.Disabled = new BitmapOrigin(Resource.VScr9_disabled_base);
-
-            this.vScroll.BtnPrev.Normal = new BitmapOrigin(Resource.VScr9_enabled_prev0);
-            this.vScroll.BtnPrev.Pressed = new BitmapOrigin(Resource.VScr9_enabled_prev1);
-            this.vScroll.BtnPrev.MouseOver = new BitmapOrigin(Resource.VScr9_enabled_prev2);
-            this.vScroll.BtnPrev.Disabled = new BitmapOrigin(Resource.VScr9_disabled_prev);
-            this.vScroll.BtnPrev.Size = this.vScroll.BtnPrev.Normal.Bitmap.Size;
-            this.vScroll.BtnPrev.Location = new Point(0, 0);
-
-            this.vScroll.BtnNext.Normal = new BitmapOrigin(Resource.VScr9_enabled_next0);
-            this.vScroll.BtnNext.Pressed = new BitmapOrigin(Resource.VScr9_enabled_next1);
-            this.vScroll.BtnNext.MouseOver = new BitmapOrigin(Resource.VScr9_enabled_next2);
-            this.vScroll.BtnNext.Disabled = new BitmapOrigin(Resource.VScr9_disabled_next);
-            this.vScroll.BtnNext.Size = this.vScroll.BtnNext.Normal.Bitmap.Size;
-            this.vScroll.BtnNext.Location = new Point(0, 202);
-
-            this.vScroll.BtnThumb.Normal = new BitmapOrigin(Resource.VScr9_enabled_thumb0);
-            this.vScroll.BtnThumb.Pressed = new BitmapOrigin(Resource.VScr9_enabled_thumb1);
-            this.vScroll.BtnThumb.MouseOver = new BitmapOrigin(Resource.VScr9_enabled_thumb0);
-            this.vScroll.BtnThumb.Size = this.vScroll.BtnThumb.Normal.Bitmap.Size;
-
-            this.vScroll.Location = new Point(163, 41);
-            this.vScroll.Size = new Size(11, 214);
-            this.vScroll.ScrollableLocation = new Point(11, 41);
-            this.vScroll.ScrollableSize = new Size(163, 214);
-            this.vScroll.ValueChanged += new EventHandler(vScroll_ValueChanged);
-            this.vScroll.ChildButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
-
-            this.btnReset = new ACtrlButton();
-            this.btnReset.Normal = new BitmapOrigin(Resource.Stat_detail_BtAbility_normal_0);
-            this.btnReset.Pressed = new BitmapOrigin(Resource.Stat_detail_BtAbility_pressed_0);
-            this.btnReset.MouseOver = new BitmapOrigin(Resource.Stat_detail_BtAbility_mouseOver_0);
-            this.btnReset.Disabled = new BitmapOrigin(Resource.Stat_detail_BtAbility_disabled_0);
-            this.btnReset.Location = new Point(123, 288);
-            this.btnReset.Size = new Size(50, 16);
-            this.btnReset.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
-
             this.btnReduce = new ACtrlButton();
-            this.btnReduce.Normal = new BitmapOrigin(Resource.HyperStat_Window_BtReduce_normal_0);
-            this.btnReduce.Pressed = new BitmapOrigin(Resource.HyperStat_Window_BtReduce_pressed_0);
-            this.btnReduce.MouseOver = new BitmapOrigin(Resource.HyperStat_Window_BtReduce_mouseOver_0);
-            this.btnReduce.Disabled = new BitmapOrigin(Resource.HyperStat_Window_BtReduce_disabled_0);
-            this.btnReduce.Location = new Point(11, 288);
-            this.btnReduce.Size = new Size(17, 16);
+            this.btnReduce.Normal = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_normal_0);
+            this.btnReduce.Pressed = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_pressed_0);
+            this.btnReduce.MouseOver = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_mouseOver_0);
+            this.btnReduce.Disabled = new BitmapOrigin(Resource.UICharacterInfo_img_common_main_buttonclose_disabled_0);
+            this.btnReduce.Location = new Point(192, 11);
+            this.btnReduce.Size = new Size(11, 11);
             this.btnReduce.ButtonStateChanged += new EventHandler(aCtrl_RefreshCall);
             this.btnReduce.MouseClick += new MouseEventHandler(btnHyperStatOpen_MouseClick);
         }
@@ -312,13 +227,6 @@ namespace WzComparerR2.CharaSimControl
         {
             get
             {
-                yield return btnHPUp;
-                yield return btnMPUp;
-                yield return btnStrUp;
-                yield return btnDexUp;
-                yield return btnIntUp;
-                yield return btnLukUp;
-                yield return btnAuto;
                 yield return btnClose;
                 yield return btnDetailOpen;
                 yield return btnDetailClose;
@@ -331,7 +239,6 @@ namespace WzComparerR2.CharaSimControl
         {
             get
             {
-                yield return btnAbility;
                 yield return btnHpUp;
             }
         }
@@ -340,20 +247,6 @@ namespace WzComparerR2.CharaSimControl
         {
             get
             {
-                yield return vScroll;
-                yield return btnLVUp1;
-                yield return btnLVUp2;
-                yield return btnLVUp3;
-                yield return btnLVUp4;
-                yield return btnLVUp5;
-                yield return btnLVUp6;
-                yield return btnLVUp7;
-                yield return btnLVUp8;
-                yield return btnLVUp9;
-                yield return btnLVUp10;
-                yield return btnLVUp11;
-                yield return btnLVUp12;
-                yield return btnReset;
                 yield return btnReduce;
             }
         }
@@ -384,10 +277,11 @@ namespace WzComparerR2.CharaSimControl
             setControlState();
 
             Point baseOffsetnew = calcRenderBaseOffset();
-            Size size = Resource.UICharacterInfo_img_common_main_backgrnd.Size;
+            Size size = Resource.UICharacterInfo_img_common_main_backgrnd.Size + Resource.UICharacterInfo_img_local_detail_backgrnd.Size;
+            size.Height += 1;
             size.Width += baseOffsetnew.X;
             if (this.DetailVisible)
-                size = new Size(size.Width + Resource.Stat_detail_backgrnd.Width, Resource.Stat_detail_backgrnd.Height);
+                size = new Size(size.Width + Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd.Width, size.Height);
 
             this.newLocation = new Point(this.Location.X + this.baseOffset.X - baseOffsetnew.X,
                 this.Location.Y + this.baseOffset.Y - baseOffsetnew.Y);
@@ -484,14 +378,12 @@ namespace WzComparerR2.CharaSimControl
             {
                 this.btnDetailOpen.Visible = false;
                 this.btnDetailClose.Visible = true;
-                this.btnAbility.Visible = true;
                 this.btnHpUp.Visible = true;
             }
             else
             {
                 this.btnDetailOpen.Visible = true;
                 this.btnDetailClose.Visible = false;
-                this.btnAbility.Visible = true;
                 this.btnHpUp.Visible = false;
             }
 
@@ -499,55 +391,25 @@ namespace WzComparerR2.CharaSimControl
             {
                 this.btnHyperStatOpen.Visible = true;
                 this.btnHyperStatClose.Visible = false;
-                this.vScroll.Visible = true;
-                this.vScroll.Maximum = hyperStatList.Length - 12;
-                this.vScroll.Value = this.hyperStatScrollValue;
-                this.btnLVUp1.Visible = true;
-                this.btnLVUp2.Visible = true;
-                this.btnLVUp3.Visible = true;
-                this.btnLVUp4.Visible = true;
-                this.btnLVUp5.Visible = true;
-                this.btnLVUp6.Visible = true;
-                this.btnLVUp7.Visible = true;
-                this.btnLVUp8.Visible = true;
-                this.btnLVUp9.Visible = true;
-                this.btnLVUp10.Visible = true;
-                this.btnLVUp11.Visible = true;
-                this.btnLVUp12.Visible = true;
-                this.btnReset.Visible = true;
                 this.btnReduce.Visible = true;
             }
             else
             {
                 this.btnHyperStatOpen.Visible = false;
                 this.btnHyperStatClose.Visible = true;
-                this.vScroll.Visible = false;
-                this.btnLVUp1.Visible = false;
-                this.btnLVUp2.Visible = false;
-                this.btnLVUp3.Visible = false;
-                this.btnLVUp4.Visible = false;
-                this.btnLVUp5.Visible = false;
-                this.btnLVUp6.Visible = false;
-                this.btnLVUp7.Visible = false;
-                this.btnLVUp8.Visible = false;
-                this.btnLVUp9.Visible = false;
-                this.btnLVUp10.Visible = false;
-                this.btnLVUp11.Visible = false;
-                this.btnLVUp12.Visible = false;
-                this.btnReset.Visible = false;
                 this.btnReduce.Visible = false;
             }
 
             if (this.character != null)
             {
                 CharacterStatus charStat = this.character.Status;
-                setButtonEnabled(this.btnHPUp, charStat.Ap > 0 && charStat.MaxHP.BaseVal < charStat.MaxHP.TotalMax);
-                setButtonEnabled(this.btnMPUp, charStat.Ap > 0 && charStat.MaxMP.BaseVal < charStat.MaxMP.TotalMax);
-                setButtonEnabled(this.btnStrUp, charStat.Ap > 0/* && charStat.Strength.BaseVal <= 999*/);
-                setButtonEnabled(this.btnDexUp, charStat.Ap > 0/* && charStat.Dexterity.BaseVal <= 999*/);
-                setButtonEnabled(this.btnIntUp, charStat.Ap > 0/* && charStat.Intelligence.BaseVal <= 999*/);
-                setButtonEnabled(this.btnLukUp, charStat.Ap > 0/* && charStat.Luck.BaseVal <= 999*/);
-                setButtonEnabled(this.btnAuto, charStat.Ap > 0);
+                //setButtonEnabled(this.btnHPUp, charStat.Ap > 0 && charStat.MaxHP.BaseVal < charStat.MaxHP.TotalMax);
+                //setButtonEnabled(this.btnMPUp, charStat.Ap > 0 && charStat.MaxMP.BaseVal < charStat.MaxMP.TotalMax);
+                //setButtonEnabled(this.btnStrUp, charStat.Ap > 0/* && charStat.Strength.BaseVal <= 999*/);
+                //setButtonEnabled(this.btnDexUp, charStat.Ap > 0/* && charStat.Dexterity.BaseVal <= 999*/);
+                //setButtonEnabled(this.btnIntUp, charStat.Ap > 0/* && charStat.Intelligence.BaseVal <= 999*/);
+                //setButtonEnabled(this.btnLukUp, charStat.Ap > 0/* && charStat.Luck.BaseVal <= 999*/);
+                //setButtonEnabled(this.btnAuto, charStat.Ap > 0);
             }
             else
             {
@@ -578,12 +440,71 @@ namespace WzComparerR2.CharaSimControl
             }
         }
 
+        private static string ToCJKNumberExpr(long value)
+        {
+            var sb = new StringBuilder(32);
+            bool firstPart = true;
+            if (value >= 1_0000_0000_0000_0000)
+            {
+                long part = value / 1_0000_0000_0000_0000;
+                sb.AppendFormat("{0}京", part); // Korean: 교, Chinese+Japanese: 京
+                value -= part * 1_0000_0000_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000_0000_0000)
+            {
+                long part = value / 1_0000_0000_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}兆", part); // Korean: 조, Chinese+Japanese: 兆
+                value -= part * 1_0000_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000_0000)
+            {
+                long part = value / 1_0000_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}億", part); // Korean: 억, TradChinese+Japanese: 億, SimpChinese: 亿
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000)
+            {
+                long part = value / 1_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}万", part); // Korean: 만, TradChinese: 萬, SimpChinese+Japanese: 万
+                value -= part * 1_0000;
+                firstPart = false;
+            }
+            if (value > 0)
+            {
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}", value);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "0";
+        }
+
         private void renderBase(Graphics g)
         {
             g.TranslateTransform(baseOffset.X, baseOffset.Y);
             g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd, 0, 0);
-            //g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd2, 6, 22);
-            //g.DrawImage(Resource.UICharacterInfo_img_common_main_backgrnd3, 7, 156);
+            g.DrawImage(Resource.UICharacterInfo_img_customBackground_5_image_0, 140, 32);
+            g.DrawImage(Resource.UICharacterInfo_img_common_main_layername, 182, 32);
+            g.DrawImage(Resource.UICharacterInfo_img_local_detail_backgrnd, 0, 231);
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_canvasattackBack, 12, 269);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_canvasmainStatBack, 12, 307);
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_canvasutilityBack, 12, 583);
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_canvasmainStatFont, 24, 321);
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_canvasattackFont, 24, 400);
+
+            // Tab Placeholders
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detail_tabdetailTab_selected_0, 11, 242);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detail_tabdetailTab_normal_1, 124, 242);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detail_tabdetailTab_normal_2, 237, 242);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detail_tabdetailTab_normal_3, 350, 242);
+
+            // utility stat placeholder
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_canvasutilityFont, 24, 594);
 
             if (this.character != null)
             {
@@ -608,28 +529,51 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(Resource.Stat_main_Disabled_INT, 11, 296);
                         break;
                 }*/
-                g.DrawString(this.character.Name, GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 32f);
-                g.DrawString(ItemStringHelper.GetJobName(charStat.Job), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 50f);
-                /*g.DrawString(charStat.Level.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 68f);
+                g.DrawString(this.character.Name, GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 198f, 174f);
+                g.DrawString(ItemStringHelper.GetJobName(charStat.Job), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 62f, 44f);
+                /*g.DrawString(charStat.Level.ToString(), GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 72f, 68f);
                 g.DrawString(charStat.Exp + " (" + (charStat.Exp == -1 ? 0 : ((long)charStat.Exp * 100 / charStat.Exptnl)) + "%)",
-                    GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 86f);
-                g.DrawString("1", GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 104f);
-                g.DrawString("0 (0%)", GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 122f);*/
-                g.DrawString(string.IsNullOrEmpty(this.character.Guild) ? "-" : this.character.Guild, GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 68f);
-                g.DrawString(charStat.Pop.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 86f);
+                    GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 72f, 86f);
+                g.DrawString("1", GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 72f, 104f);
+                g.DrawString("0 (0%)", GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 72f, 122f);*/
+                g.DrawString(string.IsNullOrEmpty(this.character.Guild) ? "  King丶Back" : this.character.Guild.PadLeft(12), GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 373f, 149f);
+                g.DrawString("    一世长安", GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 373f, 173f);
+                g.DrawString(charStat.Pop.ToString().PadLeft(5), GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 92f, 173f);
                 int brushSign;
 
                 double max, min;
                 this.character.CalcAttack(out max, out min, out brushSign);
-                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, 104f);
-                g.DrawString(charStat.HP + " / " + charStat.MaxHP.GetSum(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 122f);
-                g.DrawString(charStat.MP + " / " + charStat.MaxMP.GetSum(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 140f);
+                // g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, 104f);
+                g.DrawString(charStat.MaxHP.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 187f, 320f);
+                g.DrawString(charStat.MaxMP.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                g.DrawString(charStat.Level.ToString().PadLeft(3), GearGraphics.LevelBoldFont, GearGraphics.WhiteBrush, 234f, 35f);
+                g.DrawString(charStat.UnionLevel.ToString().PadLeft(5), GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 92f, 129f);
+                g.DrawString(charStat.DojoFloor.ToString().PadLeft(3) + "階", GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 92f, 151f);
 
-                g.DrawString(charStat.Ap.ToString().PadLeft(4), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 73f, 181f);
-                g.DrawString(charStat.Strength.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 210f);
-                g.DrawString(charStat.Dexterity.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 228f);
-                g.DrawString(charStat.Intelligence.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 246f);
-                g.DrawString(charStat.Luck.ToString(), GearGraphics.ItemDetailFont, GearGraphics.StatDetailGrayBrush, 72f, 264f);
+                // g.DrawString(charStat.Ap.ToString().PadLeft(4), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 73f, 181f);
+                g.DrawString(charStat.Strength.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 187f, 342f);
+                g.DrawString(charStat.Dexterity.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 342f);
+                g.DrawString(charStat.Intelligence.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 187f, 364f);
+                g.DrawString(charStat.Luck.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 364f);
+
+                float y = 401f;
+                //g.DrawString(max == 0 ? "0" : Math.Round(max).ToString(), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
+                StringFormat format = new StringFormat();
+                format.Alignment = StringAlignment.Far;
+                g.DrawString(ToCJKNumberExpr(18668051), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 234f, y, format);
+                g.DrawString(charStat.DamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.DamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.FinalDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.FinalDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                g.DrawString(charStat.BossDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.BossDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.IgnoreMobDefenceRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.IgnoreMobDefenceRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 234f, (y += 22f), format);
+                y += 22f;
+                g.DrawString(charStat.CriticalRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.CriticalRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, y, format);
+                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, (y += 22f), format);
+                y += 22f;
+                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.ItemDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 451f, (y += 22f), format);
+                
+
+                //g.DrawString(charStat.KnockbackResistance.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.KnockbackResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.WhiteBrush, 200f, y, format);
+                //g.DrawString(charStat.PDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
             }
             g.ResetTransform();
         }
@@ -638,46 +582,28 @@ namespace WzComparerR2.CharaSimControl
         {
             Rectangle rect = this.DetailRect;
             g.TranslateTransform(rect.X, rect.Y);
-            g.DrawImage(Resource.Stat_detail_backgrnd, 0, 1);
-            g.DrawImage(Resource.Stat_detail_backgrnd2, 7, 8);
-            g.DrawImage(Resource.Stat_detail_backgrnd3, 12, 13);
-            g.DrawImage(Resource.Stat_detail_backgrnd4, 12, 222);
+            int AbilityYOffset = Resource.UICharacterInfo_img_common_main_backgrnd.Height + Resource.UICharacterInfo_img_local_detail_backgrnd.Height - Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd.Height + 2;
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd, 0, AbilityYOffset);
+            //g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_ability_backgrnd4, 12, 222);
 
-            g.DrawImage(Resource.Stat_detail_abilityTitle_normal_0, 12, 195);
-            g.DrawImage(Resource.Stat_detail_metierLine_disabled_0, 15, 225);
-            g.DrawImage(Resource.Stat_detail_metierLine_disabled_1, 15, 244);
-            g.DrawImage(Resource.Stat_detail_metierLine_disabled_1, 15, 263);
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_ability_abilityTitle_legendary_0, 10, (AbilityYOffset + 31));
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_ability_metierLine_activated_0_legendary_0, 12, (AbilityYOffset + 63));
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_ability_metierLine_activated_0_unique_0, 12, (AbilityYOffset + 83));
+            g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_ability_metierLine_activated_0_unique_0, 12, (AbilityYOffset + 103));
 
             if (this.character != null)
             {
                 CharacterStatus charStat = this.character.Status;
                 //g.DrawString("0 ( 0% )", GearGraphics.GearDetailFont, getDetailBrush(0), 72f, 16f);
                 //g.DrawString("0", GearGraphics.GearDetailFont, getDetailBrush(0), 72f, 34f);
-                int brushSign;
-
-                double max, min;
-                this.character.CalcAttack(out max, out min, out brushSign);
-                float y = 26f;
-                g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
-                StringFormat format = new StringFormat();
-                format.Alignment = StringAlignment.Far;
-                g.DrawString(charStat.DamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.DamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.BossDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.BossDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.FinalDamageRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.FinalDamageRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.IgnoreMobDefenceRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.IgnoreMobDefenceRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.CriticalRate.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.CriticalRate.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 104f, (y += 18f), format);
-                g.DrawString(charStat.CriticalDamage.GetSum() + ".00%", GearGraphics.ItemDetailFont, charStat.CriticalDamage.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 72f, (y += 18f));
-                g.DrawString(charStat.StatusResistance.GetSum().ToString(), GearGraphics.ItemDetailFont, charStat.StatusResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 103f, (y += 18f), format);
-                g.DrawString(charStat.KnockbackResistance.GetSum() + "%", GearGraphics.ItemDetailFont, charStat.KnockbackResistance.BuffAdd > 0 ? Brushes.Red : GearGraphics.StatDetailGrayBrush, 200f, y, format);
-                g.DrawString(charStat.PDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 /*g.DrawString(charStat.MDDamage.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.PAccurate.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.MAccurate.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.PEvasion.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));
                 g.DrawString(charStat.MEvasion.ToStringDetail(out brushSign), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, (y += 18f));*/
-                g.DrawString(charStat.MoveSpeed.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 104f, (y += 18f), format);
-                g.DrawString(charStat.Jump.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 200f, y, format);
-                g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 72f, 289f);
+                //g.DrawString(charStat.MoveSpeed.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 104f, (y += 18f), format);
+                //g.DrawString(charStat.Jump.GetSum() + "%", GearGraphics.ItemDetailFont, getDetailBrush(0), 200f, y, format);
+                //g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 72f, 289f);
             }
 
             g.ResetTransform();
@@ -687,7 +613,7 @@ namespace WzComparerR2.CharaSimControl
         {
             Rectangle rect = this.HyperStatRect;
             g.TranslateTransform(rect.X, rect.Y);
-            g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd, 0, 0);
+            g.DrawImage(Resource.UICharacterInfo_img_remote_detailStat_HyperStat_Window_backgrnd, 0, -1);
             // g.DrawImage(Resource.HyperStat_Window_backgrnd2, 6, 7);
             // g.DrawImage(Resource.HyperStat_Window_backgrnd3, 11, 41);
 
@@ -698,7 +624,7 @@ namespace WzComparerR2.CharaSimControl
             //    g.DrawImage(hyperStatBitmapList[hyperStatScrollValue + i], 16, 43 + 18 * i);
             //    g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 139f, 44f + 18f * i, format);
             //}
-            g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 169f, 269f, format);
+            //g.DrawString("0", GearGraphics.ItemDetailFont, getDetailBrush(0), 169f, 269f, format);
 
             g.ResetTransform();
         }
@@ -710,7 +636,7 @@ namespace WzComparerR2.CharaSimControl
                 case 1: return Brushes.Red;
                 case -1: return Brushes.Blue;
                 case 0:
-                default: return GearGraphics.StatDetailGrayBrush;
+                default: return GearGraphics.GrayBrush;
             }
 
         }
@@ -794,12 +720,6 @@ namespace WzComparerR2.CharaSimControl
         private void btnHyperStatClose_MouseClick(object sender, MouseEventArgs e)
         {
             this.HyperStatVisible = true;
-            this.waitForRefresh = true;
-        }
-
-        private void vScroll_ValueChanged(object sender, EventArgs e)
-        {
-            this.hyperStatScrollValue = this.vScroll.Value;
             this.waitForRefresh = true;
         }
 

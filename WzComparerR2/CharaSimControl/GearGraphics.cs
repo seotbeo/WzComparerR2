@@ -39,6 +39,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Dictionary<string, TextureBrush> TBrushes;
         public static readonly Font ItemNameFont = new Font("MS Gothic", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
         public static readonly Font ItemDetailFont = new Font("MS Gothic", 12f, GraphicsUnit.Pixel);
+        public static readonly Font LevelBoldFont = new Font("MS Gothic", 12f, FontStyle.Bold, GraphicsUnit.Pixel);
         public static readonly Font JMSKunshoFont = new Font("MS PGothic", 12f, GraphicsUnit.Pixel);
         public static readonly Font EquipDetailFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
         public static readonly Font EpicGearDetailFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
@@ -87,6 +88,8 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush GearIconBackBrush2 = new SolidBrush(Color.FromArgb(187, 238, 238, 238));
         public static readonly Brush EpicGearIconBackBrush = new SolidBrush(EpicGearIconBackColor);
         public static readonly Brush StatDetailGrayBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
+        public static readonly Brush WhiteBrush = new SolidBrush(Color.FromArgb(255, 255, 255));
+        public static readonly Brush GrayBrush = new SolidBrush(Color.FromArgb(102, 102, 102));
         public static readonly Brush JMSGreenBrush = new SolidBrush(Color.FromArgb(119, 255, 0));
         public static readonly Color OrangeBrushColor = Color.FromArgb(255, 153, 0);
         /// <summary>

@@ -8,23 +8,24 @@ namespace WzComparerR2.CharaSim
     {
         public Character()
         {
+            this.Name = "光卡的拉羊羊";
             this.status = new CharacterStatus();
-            this.status.Job = 0;
+            this.status.Job = 16001;
             this.status.Level = 281;
             this.status.MaxHP.BaseVal = 65588;
             this.status.HP = 65588;
             this.status.MaxMP.BaseVal = 62125;
             this.status.MP = 62125;
-            this.status.Strength.BaseVal = 4;
-            this.status.Dexterity.BaseVal = 4;
-            this.status.Intelligence.BaseVal = 1423;
-            this.status.Luck.BaseVal = 4;
+            this.status.Strength.BaseVal = 2052;
+            this.status.Dexterity.BaseVal = 1670;
+            this.status.Intelligence.BaseVal = 39263;
+            this.status.Luck.BaseVal = 3011;
+            this.status.UnionLevel = 8882;
+            this.status.DojoFloor = 54;
 
             this.status.CriticalRate.BaseVal = 104;
             this.status.MoveSpeed.BaseVal = 155;
             this.status.Jump.BaseVal = 123;
-            //this.status.CriticalDamageMax.BaseVal = 150;
-            //this.status.CriticalDamageMin.BaseVal = 120;
             this.status.CriticalDamage.BaseVal = 72;
 
             this.itemSlots = new ItemBase[5][];
@@ -101,8 +102,6 @@ namespace WzComparerR2.CharaSim
             status.MoveSpeed.ResetAdd();
             status.Jump.ResetAdd();
             status.CriticalRate.ResetAdd();
-            //status.CriticalDamageMax.ResetAdd();
-            //status.CriticalDamageMin.ResetAdd();
             status.CriticalDamage.ResetAdd();
             status.DamageRate.ResetAll();
 

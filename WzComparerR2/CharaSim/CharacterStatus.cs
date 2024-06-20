@@ -35,6 +35,8 @@ namespace WzComparerR2.CharaSim
         private long exp;
         private int ap;
         private int pop;
+        private int unionLevel;
+        private int dojoFloor;
 
         private CharaProp maxHP;
         private CharaProp maxMP;
@@ -142,6 +144,24 @@ namespace WzComparerR2.CharaSim
         {
             get { return pop; }
             set { pop = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置角色的冒险岛联盟等级。
+        /// </summary>
+        public int UnionLevel
+        {
+            get { return unionLevel; }
+            set { unionLevel = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置角色的武陵道场等级。
+        /// </summary>
+        public int DojoFloor
+        {
+            get { return dojoFloor; }
+            set { dojoFloor = value; }
         }
 
         /// <summary>
