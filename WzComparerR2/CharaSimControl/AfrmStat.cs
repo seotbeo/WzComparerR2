@@ -545,7 +545,51 @@ namespace WzComparerR2.CharaSimControl
                 this.character.CalcAttack(out max, out min, out brushSign);
                 // g.DrawString(max == 0 ? "0" : Math.Round(min) + " ~ " + Math.Round(max), GearGraphics.ItemDetailFont, getDetailBrush(brushSign), 72f, 104f);
                 g.DrawString(charStat.MaxHP.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 187f, 320f);
-                g.DrawString(charStat.MaxMP.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                switch (charStat.Job)
+                {
+                    case 3101:
+                    case 3120:
+                    case 3121:
+                    case 3122:
+                    case 3124:
+                    case 14000:
+                    case 14200:
+                    case 14210:
+                    case 14211:
+                    case 14212:
+                    case 14213:
+                    case 14214:
+                        break;
+                    case 3100:
+                    case 3110:
+                    case 3111:
+                    case 3112:
+                    case 3114:
+                        g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_Stat_1_titleImageDF, 244, 321);
+                        g.DrawString(charStat.SpecialValue.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                        break;
+                    case 4200:
+                    case 4210:
+                    case 4211:
+                    case 4212:
+                    case 4216:
+                        g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_Stat_1_titleImageSE, 244, 321);
+                        g.DrawString(charStat.SpecialValue.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                        break;
+                    case 10000:
+                    case 10100:
+                    case 10110:
+                    case 10111:
+                    case 10112:
+                    case 10114:
+                        g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_Stat_1_titleImageTF, 244, 321);
+                        g.DrawString(charStat.SpecialValue.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                        break;
+                    default:
+                        g.DrawImage(Resource.UICharacterInfo_img_common_detailStat_Stat_1_titleImage, 244, 321);
+                        g.DrawString(charStat.MaxMP.GetSum().ToString("N0").PadLeft(7), GearGraphics.ItemDetailFont, GearGraphics.WhiteBrush, 406f, 320f);
+                        break;
+                }
                 g.DrawString(charStat.Level.ToString().PadLeft(3), GearGraphics.LevelBoldFont, GearGraphics.WhiteBrush, 234f, 35f);
                 g.DrawString(charStat.UnionLevel.ToString().PadLeft(5), GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 92f, 129f);
                 g.DrawString(charStat.DojoFloor.ToString().PadLeft(3) + "階", GearGraphics.ItemDetailFont, GearGraphics.GrayBrush, 92f, 151f);

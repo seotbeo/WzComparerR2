@@ -38,6 +38,8 @@ namespace WzComparerR2.CharaSim
         private int unionLevel;
         private int dojoFloor;
 
+        private CharaProp specialValue;
+
         private CharaProp maxHP;
         private CharaProp maxMP;
         private CharaProp str = null;
@@ -109,6 +111,14 @@ namespace WzComparerR2.CharaSim
         {
             get { hp = Math.Max(0, Math.Min(maxHP.GetSum(), hp)); return hp; }
             set { value = Math.Max(0, Math.Min(maxHP.GetSum(), value)); hp = value; }
+        }
+
+        /// <summary>
+        /// 获取角色的特殊能量值（DF、TF、灵力、PP）。
+        /// </summary>
+        public CharaProp SpecialValue
+        {
+            get { return specialValue; }
         }
 
         /// <summary>

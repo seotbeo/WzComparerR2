@@ -10,12 +10,14 @@ namespace WzComparerR2.CharaSim
         {
             this.Name = "光卡的拉羊羊";
             this.status = new CharacterStatus();
-            this.status.Job = 16001;
+            this.status.Job = 4200;
             this.status.Level = 281;
             this.status.MaxHP.BaseVal = 65588;
             this.status.HP = 65588;
             this.status.MaxMP.BaseVal = 62125;
             this.status.MP = 62125;
+            this.status.SpecialValue.BaseVal = 0;
+
             this.status.Strength.BaseVal = 2052;
             this.status.Dexterity.BaseVal = 1670;
             this.status.Intelligence.BaseVal = 39263;
