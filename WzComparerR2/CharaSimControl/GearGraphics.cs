@@ -112,6 +112,10 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush GreenBrush2 = new SolidBrush(Color.FromArgb(204, 255, 0));
         public static readonly Color GrayColor2 = Color.FromArgb(153, 153, 153);
         /// <summary>
+        /// 表示装备属性额外说明中使用的卷轴强化数值画刷。
+        /// </summary>
+        public static readonly Brush ScrollEnhancementBrush = new SolidBrush(Color.FromArgb(170, 170, 255));
+        /// <summary>
         /// 表示用于绘制“攻击力提升”文字的灰色画刷。
         /// </summary>
         public static readonly Brush GrayBrush2 = new SolidBrush(GrayColor2);

@@ -148,6 +148,7 @@ namespace WzComparerR2.CharaSim
         //dropBlock,
         tradeBlock,
         accountSharable,
+        accountSharableAfterExchange,
         onlyEquip,
         tradeAvailable,
         equipTradeBlock,

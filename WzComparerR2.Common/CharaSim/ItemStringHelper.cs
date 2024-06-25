@@ -114,6 +114,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.sharableOnce: return value == 0 ? null : "ﾜｰﾙﾄﾞ内の自分のｷｬﾗｸﾀｰ間で1回移動可能\n(移動後交換不可)"; //old "Can be traded once within account"
                 case GearPropType.onlyEquip: return value == 0 ? null : "固有装備アイテム";
                 case GearPropType.notExtend: return value == 0 ? null : "有効期間延長不可";
+                case GearPropType.accountSharableAfterExchange: return value == 0 ? null : "1回交換可能\n(取引後ワールド内のキャラクター間移動のみ可能)";
                 case GearPropType.tradeAvailable:
                     switch (value)
                     {
@@ -564,7 +565,7 @@ namespace WzComparerR2.CharaSim
                 case ItemPropType.tradeBlock:
                     return GetGearPropString(GearPropType.tradeBlock, value);
                 case ItemPropType.useTradeBlock:
-                    return value == 0 ? null : "Cannot be traded after use";
+                    return value == 0 ? null : "使用後交換不可";
                 case ItemPropType.tradeAvailable:
                     return GetGearPropString(GearPropType.tradeAvailable, value);
                 case ItemPropType.only:
@@ -573,12 +574,14 @@ namespace WzComparerR2.CharaSim
                     return GetGearPropString(GearPropType.accountSharable, value);
                 case ItemPropType.sharableOnce:
                     return GetGearPropString(GearPropType.sharableOnce, value);
+                case ItemPropType.accountSharableAfterExchange:
+                    return GetGearPropString(GearPropType.accountSharableAfterExchange, value);
                 case ItemPropType.exchangeableOnce:
                     return value == 0 ? null : "1回交換可能 (取引後交換不可)";
                 case ItemPropType.quest:
                     return value == 0 ? null : "クエストアイテム";
                 case ItemPropType.pquest:
-                    return value == 0 ? null : "Party Quest Item";
+                    return value == 0 ? null : "パーティクエストアイテム";
                 case ItemPropType.permanent:
                     return value == 0 ? null : "魔法の時間が終わらないミラクルペットです。";
                 case ItemPropType.multiPet:
