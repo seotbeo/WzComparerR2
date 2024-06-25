@@ -148,12 +148,10 @@ namespace WzComparerR2.CharaSimControl
             picH += 14;
             if (commodityPackage.termStart > 0 || commodityPackage.termEnd != null)
             {
-                string term = "";
+                string term = "< 販売期間 :";
                 if (commodityPackage.termStart > 0)
-                    //term += string.Format("{1:D2}/{2:D2}/{0:D2} {3:D2}:00 ", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
-                    //term += string.Format("{1:D2}/{2}/{0} {3}:00:00", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
-                term += string.Format("{1:D2}/{2}/{0} {3}:00:00", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100, commodityPackage.termStart % 100);
-                //term += "-";
+                    term += string.Format(" {0}年{1}月{2}日", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
+
                 if (commodityPackage.termStart > 0 && commodityPackage.termEnd != null)
                     term += "\n~";
                 else
@@ -163,29 +161,31 @@ namespace WzComparerR2.CharaSimControl
                 {
                     int termEndDate = Convert.ToInt32(commodityPackage.termEnd.Split('/')[0]);
                     int termEndTime = Convert.ToInt32(commodityPackage.termEnd.Split('/')[1]);
-                    term += string.Format(" {1:D2}/{2}/{0} {3:D2}:{4:D2}:{5:D2} UTC", termEndDate / 10000, (termEndDate / 100) % 100, termEndDate % 100, termEndTime / 10000, (termEndTime / 100) % 100, termEndTime % 100);
+                    term += string.Format(" {0}年{1}月{2}日{3}時{4}分{5}秒", termEndDate / 10000, (termEndDate / 100) % 100, termEndDate % 100, termEndTime / 10000, (termEndTime / 100) % 100, termEndTime % 100);
                 }
-                //term += " >";
+                term += " >";
 
                 picH += 8;
-                //term += " >";
-                TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
-                picH += 16 * term.Split('\n').Length;
-                //picH += 12; < --- commented because of line above, check!
+                TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
+                picH += 12 * term.Split('\n').Length;
             }
             if (commodityPackage.Limit > 0)
             {
+                if (commodityPackage.termStart <= 0 || commodityPackage.termEnd == null)
+                {
+                    picH += 4;
+                }
                 string limit = null;
                 switch (commodityPackage.Limit)
                 {
                     case 2:
-                        //Max Purchase
+                        //최초구매
                         break;
                     case 3:
-                        limit = "Purchase Limit per Nexon ID";
+                        limit = "NEXON ID";
                         break;
                     case 4:
-                        limit = "Character Limited Sale";
+                        limit = "キャラクター";
                         break;
                     default:
                         limit = commodityPackage.Limit.ToString();
@@ -193,7 +193,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (limit != null && limit.Length > 0)
                 {
-                    TextRenderer.DrawText(g, "<" + limit + ">", GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
+                    TextRenderer.DrawText(g, "< " + limit + "購入制限 >", GearGraphics.ItemDetailFont, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
                     picH += 12;
                 }
             }
