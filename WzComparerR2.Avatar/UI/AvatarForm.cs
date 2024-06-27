@@ -1206,7 +1206,7 @@ namespace WzComparerR2.Avatar.UI
             switch (MessageBoxEx.Show("基本エンジェリックバスターを呼びますか？\r\n\r\nYes - 新\r\nNo - 古", "確認", MessageBoxButtons.YesNoCancel))
             {
                 case DialogResult.Yes:
-                    LoadCode("2000,12000,21173,37141,1051812,1222000", 0);
+                    LoadCode("2000,12000,56660,68181,1051812,1222000", 0);
                     return;
 
                 case DialogResult.No:

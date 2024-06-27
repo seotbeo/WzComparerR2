@@ -150,12 +150,14 @@ namespace WzComparerR2.CharaSimControl
             {
                 string term = "< 販売期間 :";
                 if (commodityPackage.termStart > 0)
+                    //term += string.Format("{1:D2}/{2:D2}/{0:D2} {3:D2}:00 ", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
+                    //term += string.Format("{1:D2}/{2}/{0} {3}:00:00", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
                     term += string.Format(" {0}年{1}月{2}日", commodityPackage.termStart / 1000000, (commodityPackage.termStart / 10000) % 100, (commodityPackage.termStart / 100) % 100);
-
+                //term += "-";
                 if (commodityPackage.termStart > 0 && commodityPackage.termEnd != null)
                     term += "\n~";
                 else
-                    term += " ~";
+                    term += " ～";
 
                 if (commodityPackage.termEnd != null)
                 {
@@ -166,12 +168,14 @@ namespace WzComparerR2.CharaSimControl
                 term += " >";
 
                 picH += 8;
-                TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
-                picH += 12 * term.Split('\n').Length;
+                //term += " >";
+                TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
+                picH += 16 * term.Split('\n').Length;
+                //picH += 12; < --- commented because of line above, check!
             }
             if (commodityPackage.Limit > 0)
             {
-                if (commodityPackage.termStart <= 0 || commodityPackage.termEnd == null)
+                if (!(commodityPackage.termStart > 0 || commodityPackage.termEnd != null))
                 {
                     picH += 4;
                 }
@@ -179,7 +183,7 @@ namespace WzComparerR2.CharaSimControl
                 switch (commodityPackage.Limit)
                 {
                     case 2:
-                        //최초구매
+                        //Max Purchase
                         break;
                     case 3:
                         limit = "NEXON ID";
@@ -193,7 +197,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (limit != null && limit.Length > 0)
                 {
-                    TextRenderer.DrawText(g, "< " + limit + "購入制限 >", GearGraphics.ItemDetailFont, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
+                    TextRenderer.DrawText(g, "<" + limit + "購入制限 >", GearGraphics.ItemDetailFont, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
                     picH += 12;
                 }
             }

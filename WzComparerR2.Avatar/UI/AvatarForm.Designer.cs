@@ -73,6 +73,7 @@
             this.btnLynn = new DevComponents.DotNetBar.ButtonItem();
             this.btnHayato = new DevComponents.DotNetBar.ButtonItem();
             this.btnKanna = new DevComponents.DotNetBar.ButtonItem();
+            this.btnAngelicBuster = new DevComponents.DotNetBar.ButtonItem();
             this.btnReset = new DevComponents.DotNetBar.ButtonItem();
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
@@ -628,7 +629,8 @@
             this.btnBeastTamer,
             this.btnPathfinder,
             this.btnLara,
-            this.btnLynn});
+            this.btnLynn,
+            this.btnAngelicBuster});
             this.btnCharac.Tooltip = "初期化";
             // 
             // btnMale
@@ -689,6 +691,13 @@
             this.btnLynn.Name = "btnLynn";
             this.btnLynn.Text = "リン";
             this.btnLynn.Click += new System.EventHandler(this.btnLynn_Click);
+            // 
+            // 
+            // btnAngelicBuster
+            // 
+            this.btnAngelicBuster.Name = "btnAngelicBuster";
+            this.btnAngelicBuster.Text = "エンジェリックバスター";
+            this.btnAngelicBuster.Click += new System.EventHandler(this.btnAngelicBuster_Click);
             // 
             // btnReset
             // 
@@ -853,6 +862,7 @@
         private DevComponents.DotNetBar.ButtonItem btnPathfinder;
         private DevComponents.DotNetBar.ButtonItem btnLara;
         private DevComponents.DotNetBar.ButtonItem btnLynn;
+        private DevComponents.DotNetBar.ButtonItem btnAngelicBuster;
         private DevComponents.DotNetBar.ButtonItem btnSaveAsGif;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;
