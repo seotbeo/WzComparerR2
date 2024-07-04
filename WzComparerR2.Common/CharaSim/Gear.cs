@@ -404,6 +404,18 @@ namespace WzComparerR2.CharaSim
                 case 1404:
                     return GearType.chakram;
             }
+            if (code / 10000 == 125)
+            {
+                switch (code / 1000)
+                {
+                    case 1252:
+                        return GearType.memorialStaff;
+                    case 1259:
+                        return GearType.magicStick;
+                    default:
+                        return (GearType)(code / 100 * 10);
+                }
+            }
             if (code / 10000 == 135)
             {
                 switch (code / 100)

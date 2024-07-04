@@ -170,7 +170,11 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 记忆长杖 125
         /// </summary>
-        memorialStaff = 125,
+        memorialStaff = 1252,
+        /// <summary>
+        /// 驯兽魔法棒 1259
+        /// </summary>
+        magicStick = 1259,
         /// <summary>
         /// ESP限制器
         /// </summary>
