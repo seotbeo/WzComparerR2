@@ -114,7 +114,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.sharableOnce: return value == 0 ? null : "ﾜｰﾙﾄﾞ内の自分のｷｬﾗｸﾀｰ間で1回移動可能\n(移動後交換不可)"; //old "Can be traded once within account"
                 case GearPropType.onlyEquip: return value == 0 ? null : "固有装備アイテム";
                 case GearPropType.notExtend: return value == 0 ? null : "有効期間延長不可";
-                case GearPropType.accountSharableAfterExchange: return value == 0 ? null : "1回交換可能\n(取引後ワールド内のキャラクター間移動のみ可能)";
+                case GearPropType.accountSharableAfterExchange: return value == 0 ? null : "1回交換可能\n(取引後、ワールド内のキャラクター間移動のみ可能)";
                 case GearPropType.tradeAvailable:
                     switch (value)
                     {
