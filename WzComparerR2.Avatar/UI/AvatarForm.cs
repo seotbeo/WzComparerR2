@@ -1259,11 +1259,11 @@ namespace WzComparerR2.Avatar.UI
             switch (MessageBoxEx.Show("基本リンを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
             {
                 case DialogResult.Yes:
-                    LoadCode("2033,12033,56262,68197,1001163,1051821,1073839,1259000", 0);
+                    LoadCode("2033,12033,56262,68197,1001163,1051821,1073839,1252000", 0);
                     return;
 
                 case DialogResult.No:
-                    LoadCode("2033,12033,55241,65147,1000137,1050742,1073839,1259000", 0);
+                    LoadCode("2033,12033,55241,65147,1000137,1050742,1073839,1252000", 0);
                     return;
 
                 case DialogResult.Cancel:
@@ -1294,11 +1294,11 @@ namespace WzComparerR2.Avatar.UI
             switch (MessageBoxEx.Show("基本ビーストテーマーを呼びますか？\r\n\r\nYes - 女\r\nNo - 男", "確認", MessageBoxButtons.YesNoCancel))
             {
                 case DialogResult.Yes:
-                    LoadCode("2000,12000,24209,38257,1004062,1051378,1072902,1102661,1252000", 0);
+                    LoadCode("2000,12000,24209,38257,1004062,1051378,1072902,1102661,1259000", 0);
                     return;
 
                 case DialogResult.No:
-                    LoadCode("2000,12000,23213,35177,1004062,1050307,1072902,1102661,1252000", 0);
+                    LoadCode("2000,12000,23213,35177,1004062,1050307,1072902,1102661,1259000", 0);
                     return;
 
                 case DialogResult.Cancel:
