@@ -139,8 +139,8 @@ namespace WzComparerR2.CharaSimControl
             }
 
             propBlocks.Add(PrepareText(g, "種類: " + GetMobCategoryName(MobInfo.Category), GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
-            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : ToCJKNumberExpr(MobInfo.MaxHP);
-            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : ToCJKNumberExpr(MobInfo.MaxMP);
+            string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? ToCJKNumberExpr(long.Parse(MobInfo.FinalMaxHP)) : ToCJKNumberExpr(MobInfo.MaxHP);
+            string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? ToCJKNumberExpr(long.Parse(MobInfo.FinalMaxMP)) : ToCJKNumberExpr(MobInfo.MaxMP);
             if (MobInfo.ChangeableMob)
             {
                 propBlocks.Add(PrepareText(g, "レベル: 不定値", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
@@ -371,7 +371,7 @@ namespace WzComparerR2.CharaSimControl
                 sb.Append(m.Result("$1"));
                 foreach (Capture cap in m.Groups[2].Captures)
                 {
-                    sb.Append("、");
+                    sb.Append(",");
                     sb.Append(cap.ToString());
                 }
                 return sb.ToString();
