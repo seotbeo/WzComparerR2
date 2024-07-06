@@ -42,7 +42,7 @@ namespace WzComparerR2.MapRender
 #endif
 
             this.bar2 = Context.AddRibbonBar("Modules", "マップレンダラー");
-            btnItemMapRenderV2 = new ButtonItem("", "レンダーマップ");
+            btnItemMapRenderV2 = new ButtonItem("", " レンダーマップ ");
             btnItemMapRenderV2.Click += btnItem_Click;
             bar2.Items.Add(btnItemMapRenderV2);
 

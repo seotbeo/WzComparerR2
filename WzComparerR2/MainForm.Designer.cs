@@ -960,28 +960,28 @@
             // 
             this.buttonItemLoadSound.Image = global::WzComparerR2.Properties.Resources.Open;
             this.buttonItemLoadSound.Name = "buttonItemLoadSound";
-            this.buttonItemLoadSound.Text = "Load";
+            this.buttonItemLoadSound.Text = "ファイルを開く";
             this.buttonItemLoadSound.Click += new System.EventHandler(this.buttonItemLoadSound_Click);
             // 
             // buttonItemSoundPlay
             // 
             this.buttonItemSoundPlay.Image = global::WzComparerR2.Properties.Resources.Play;
             this.buttonItemSoundPlay.Name = "buttonItemSoundPlay";
-            this.buttonItemSoundPlay.Text = " Play";
+            this.buttonItemSoundPlay.Text = "再生";
             this.buttonItemSoundPlay.Click += new System.EventHandler(this.buttonItemSoundPlay_Click);
             // 
             // buttonItemSoundStop
             // 
             this.buttonItemSoundStop.Image = global::WzComparerR2.Properties.Resources.Stop;
             this.buttonItemSoundStop.Name = "buttonItemSoundStop";
-            this.buttonItemSoundStop.Text = "Stop";
+            this.buttonItemSoundStop.Text = "停止";
             this.buttonItemSoundStop.Click += new System.EventHandler(this.buttonItemSoundStop_Click);
             // 
             // buttonItemSoundSave
             // 
             this.buttonItemSoundSave.Image = global::WzComparerR2.Properties.Resources.Save;
             this.buttonItemSoundSave.Name = "buttonItemSoundSave";
-            this.buttonItemSoundSave.Text = "Save";
+            this.buttonItemSoundSave.Text = "保存";
             this.buttonItemSoundSave.Click += new System.EventHandler(this.buttonItemSoundSave_Click);
             // 
             // sliderItemSoundVol
@@ -2225,7 +2225,7 @@
             // 
             this.tsmi2HandleUol.Name = "tsmi2HandleUol";
             this.tsmi2HandleUol.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2HandleUol.Text = "Follow UOL";
+            this.tsmi2HandleUol.Text = "UOLをフォローする";
             this.tsmi2HandleUol.Click += new System.EventHandler(this.tsmi2HandleUol_Click);
             // 
             // tsmi2Splitter1
@@ -2237,14 +2237,14 @@
             // 
             this.tsmi2ExpandAll.Name = "tsmi2ExpandAll";
             this.tsmi2ExpandAll.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2ExpandAll.Text = "Expand All";
+            this.tsmi2ExpandAll.Text = "すべて展開";
             this.tsmi2ExpandAll.Click += new System.EventHandler(this.tsmi2ExpandAll_Click);
             // 
             // tsmi2CollapseAll
             // 
             this.tsmi2CollapseAll.Name = "tsmi2CollapseAll";
             this.tsmi2CollapseAll.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2CollapseAll.Text = "Collapse All";
+            this.tsmi2CollapseAll.Text = "すべて閉じる";
             this.tsmi2CollapseAll.Click += new System.EventHandler(this.tsmi2CollapseAll_Click);
             // 
             // toolStripMenuItem1
@@ -2256,14 +2256,14 @@
             // 
             this.tsmi2ExpandLevel.Name = "tsmi2ExpandLevel";
             this.tsmi2ExpandLevel.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2ExpandLevel.Text = "Expand This Group";
+            this.tsmi2ExpandLevel.Text = "このグループを展開";
             this.tsmi2ExpandLevel.Click += new System.EventHandler(this.tsmi2ExpandLevel_Click);
             // 
             // tsmi2CollapseLevel
             // 
             this.tsmi2CollapseLevel.Name = "tsmi2CollapseLevel";
             this.tsmi2CollapseLevel.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2CollapseLevel.Text = "Collapse This Group";
+            this.tsmi2CollapseLevel.Text = "このグループを閉じる";
             this.tsmi2CollapseLevel.Click += new System.EventHandler(this.tsmi2CollapseLevel_Click);
             // 
             // toolStripMenuItem2
@@ -2275,14 +2275,14 @@
             // 
             this.tsmi2ExpandType.Name = "tsmi2ExpandType";
             this.tsmi2ExpandType.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2ExpandType.Text = "Expand Same Type";
+            this.tsmi2ExpandType.Text = "同じタイプを展開";
             this.tsmi2ExpandType.Click += new System.EventHandler(this.tsmi2ExpandType_Click);
             // 
             // tsmi2CollapseType
             // 
             this.tsmi2CollapseType.Name = "tsmi2CollapseType";
             this.tsmi2CollapseType.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2CollapseType.Text = "Collapse Same Type";
+            this.tsmi2CollapseType.Text = "同じタイプを閉じる";
             this.tsmi2CollapseType.Click += new System.EventHandler(this.tsmi2CollapseType_Click);
             // 
             // toolStripMenuItem3
@@ -2295,7 +2295,7 @@
             this.tsmi2Prev.Name = "tsmi2Prev";
             this.tsmi2Prev.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.tsmi2Prev.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2Prev.Text = "Undo Move";
+            this.tsmi2Prev.Text = "移動の取り消し";
             this.tsmi2Prev.Click += new System.EventHandler(this.tsmi2Prev_Click);
             // 
             // tsmi2Next
@@ -2303,7 +2303,7 @@
             this.tsmi2Next.Name = "tsmi2Next";
             this.tsmi2Next.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.tsmi2Next.Size = new System.Drawing.Size(195, 22);
-            this.tsmi2Next.Text = "Redo";
+            this.tsmi2Next.Text = "移動をやり直す";
             this.tsmi2Next.Click += new System.EventHandler(this.tsmi2Next_Click);
             // 
             // imageList1
@@ -2743,7 +2743,7 @@
             // 
             this.tsmi1Sort.Name = "tsmi1Sort";
             this.tsmi1Sort.Size = new System.Drawing.Size(154, 22);
-            this.tsmi1Sort.Text = "Sort";
+            this.tsmi1Sort.Text = "ソート";
             this.tsmi1Sort.Click += new System.EventHandler(this.tsmi1Sort_Click);
             // 
             // toolStripMenuItem4
@@ -2755,14 +2755,14 @@
             // 
             this.tsmi1Export.Name = "tsmi1Export";
             this.tsmi1Export.Size = new System.Drawing.Size(154, 22);
-            this.tsmi1Export.Text = "Export";
+            this.tsmi1Export.Text = "エクスポート";
             this.tsmi1Export.Click += new System.EventHandler(this.tsmi1Export_Click);
             // 
             // tsmi1DumpAsXml
             // 
             this.tsmi1DumpAsXml.Name = "tsmi1DumpAsXml";
             this.tsmi1DumpAsXml.Size = new System.Drawing.Size(154, 22);
-            this.tsmi1DumpAsXml.Text = "Export XML";
+            this.tsmi1DumpAsXml.Text = "XMLファイルにエクスポート";
             this.tsmi1DumpAsXml.Click += new System.EventHandler(this.tsmi1DumpAsXml_Click);
             // 
             // elementStyle1
@@ -2877,7 +2877,7 @@
             this.bar1.CanDockTop = false;
             this.bar1.CloseSingleTab = true;
             this.bar1.Controls.Add(this.panelDockContainer1);
-            this.bar1.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.bar1.Font = new System.Drawing.Font("MS Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.bar1.GrabHandleStyle = DevComponents.DotNetBar.eGrabHandleStyle.Caption;
             this.bar1.IsMaximized = false;
             this.bar1.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
