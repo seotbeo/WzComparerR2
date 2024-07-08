@@ -58,21 +58,21 @@ namespace WzComparerR2.CharaSimControl
                 ItemNameFont2.Dispose();
                 ItemNameFont2 = null;
             }
-            ItemNameFont2 = new Font("MS Gothic", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
+            ItemNameFont2 = new Font(fontName, 14f, FontStyle.Bold, GraphicsUnit.Pixel);
 
             if (ItemDetailFont2 != null)
             {
                 ItemDetailFont2.Dispose();
                 ItemDetailFont2 = null;
             }
-            ItemDetailFont2 = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
+            ItemDetailFont2 = new Font(fontName, 11f, GraphicsUnit.Pixel);
 
             if (EquipDetailFont2 != null)
             {
                 EquipDetailFont2.Dispose();
                 EquipDetailFont2 = null;
             }
-            EquipDetailFont2 = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
+            EquipDetailFont2 = new Font(fontName, 11f, GraphicsUnit.Pixel);
         }
 
         public static readonly Color GearBackColor = Color.FromArgb(204, 0, 51, 85);
