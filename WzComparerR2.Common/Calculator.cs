@@ -35,21 +35,21 @@ namespace WzComparerR2
             string filteredExpression = expression;
             int leftBracketQuantity = System.Text.RegularExpressions.Regex.Matches(expression, "[(]").Count;
             int rightBracketQuantity = System.Text.RegularExpressions.Regex.Matches(expression, "[)]").Count;
-            int BracketQuantityDelta = rightBracketQuantity - leftBracketQuantity;
-            if (BracketQuantityDelta > 0)
+            int bracketQuantityDelta = rightBracketQuantity - leftBracketQuantity;
+            if (bracketQuantityDelta > 0)
             {
-                while (BracketQuantityDelta > 0)
+                while (bracketQuantityDelta > 0)
                 {
                     filteredExpression = filteredExpression.Remove(filteredExpression.LastIndexOf(")"));
-                    BracketQuantityDelta--;
+                    bracketQuantityDelta--;
                 }
             }
-            else if (BracketQuantityDelta < 0)
+            else if (bracketQuantityDelta < 0)
             {
-                while (BracketQuantityDelta < 0)
+                while (bracketQuantityDelta < 0)
                 {
                     filteredExpression = filteredExpression.Remove(filteredExpression.IndexOf("("));
-                    BracketQuantityDelta++;
+                    bracketQuantityDelta++;
                 }
             }
             return filteredExpression;
