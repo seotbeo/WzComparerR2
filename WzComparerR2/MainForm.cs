@@ -629,7 +629,7 @@ namespace WzComparerR2
         {
             using (FolderBrowserDialog dlg = new FolderBrowserDialog())
             {
-                dlg.Description = "Select a destination folder to automatically save images in.";
+                dlg.Description = "画像を自動的に保存する保存先フォルダを選択します。";
                 dlg.SelectedPath = ImageHandlerConfig.Default.AutoSavePictureFolder;
                 if (DialogResult.OK == dlg.ShowDialog())
                 {
@@ -677,7 +677,7 @@ namespace WzComparerR2
                 else
                 {
                     var dlg = new SaveFileDialog();
-                    dlg.Filter = "PNG (*.png)|*.png|All Files (*.*)|*.*";
+                    dlg.Filter = "PNG (*.png)|*.png|すべてのファイル (*.*)|*.*";
                     dlg.FileName = pngFileName;
                     if (dlg.ShowDialog() != DialogResult.OK)
                     {
@@ -691,11 +691,11 @@ namespace WzComparerR2
                 {
                     bmp.Save(pngFileName, System.Drawing.Imaging.ImageFormat.Png);
                 }
-                labelItemStatus.Text = "Image saved: " + pngFileName;
+                labelItemStatus.Text = "保存された画像: " + pngFileName;
             }
             else
             {
-                labelItemStatus.Text = "Failed to save the image.";
+                labelItemStatus.Text = "画像の保存に失敗しました。";
             }
         }
 
@@ -725,7 +725,7 @@ namespace WzComparerR2
             {
                 var dlg = new SaveFileDialog();
 
-                dlg.Filter = string.Format("{0} (*{1})|*{1}|All Files (*.*)|*.*", encParams.FileDescription, encParams.FileExtension);
+                dlg.Filter = string.Format("{0} (*{1})|*{1}|すべてのファイル (*.*)|*.*", encParams.FileDescription, encParams.FileExtension);
                 dlg.FileName = aniFileName;
 
                 if (dlg.ShowDialog() != DialogResult.OK)
@@ -738,7 +738,7 @@ namespace WzComparerR2
             var clonedAniItem = (AnimationItem)aniItem.Clone();
             if (this.pictureBoxEx1.SaveAsGif(clonedAniItem, aniFileName, config, options))
             {
-                labelItemStatus.Text = "Image saved: " + aniFileName;
+                labelItemStatus.Text = "保存された画像: " + aniFileName;
             }
         }
         #endregion
@@ -1413,9 +1413,9 @@ namespace WzComparerR2
             }
             else
             {
-                path = "(" + objPathList.Count + ") node(s)";
+                path = "(" + objPathList.Count + ") ノード";
             }
-            labelItemStatus.Text = "Failed to find imageNode: " + path;
+            labelItemStatus.Text = "画像ノードが見つかりませんでした: " + path;
         }
 
         private Wz_Node SearchNode(Wz_Node parent, string[] path, int startIndex)
@@ -1529,7 +1529,7 @@ namespace WzComparerR2
             }
             sb.Remove(sb.Length - 1, 1);
             Clipboard.SetText(sb.ToString(), TextDataFormat.UnicodeText);
-            labelItemStatus.Text = "Copied to clipboard.";
+            labelItemStatus.Text = "クリップボードにコピーされました。";
         }
 
         private List<string[]> detectObjPathByStringPath(string id, string stringNodePath)
@@ -1774,11 +1774,11 @@ namespace WzComparerR2
                     sw.Stop();
                 }
                 GC.Collect();
-                labelItemStatus.Text = $"Sorted in {sw.ElapsedMilliseconds} ms";
+                labelItemStatus.Text = $"{sw.ElapsedMilliseconds}ミリ秒でソートされました。";
             }
             else
             {
-                labelItemStatus.Text = "Failed to sort: There is no WZ file open";
+                labelItemStatus.Text = "並べ替えに失敗しました: WZ ファイルが開かれませんでした。";
             }
         }
 
@@ -1787,7 +1787,7 @@ namespace WzComparerR2
             Wz_Image img = advTree1.SelectedNode?.AsWzNode()?.GetValue<Wz_Image>();
             if (img == null)
             {
-                MessageBoxEx.Show("Select an IMG to export.");
+                MessageBoxEx.Show("エクスポートする IMG を選択します。");
                 return;
             }
             SaveFileDialog dlg = new SaveFileDialog();
@@ -1810,7 +1810,7 @@ namespace WzComparerR2
                         fs.Write(buffer, 0, count);
                         size -= count;
                     }
-                    labelItemStatus.Text = "Exported: " + img.Name;
+                    labelItemStatus.Text = "エクスポートされた: " + img.Name;
                 }
                 catch (Exception ex)
                 {
@@ -1831,7 +1831,7 @@ namespace WzComparerR2
             Wz_Image img = advTree1.SelectedNode?.AsWzNode()?.GetValue<Wz_Image>();
             if (img == null)
             {
-                MessageBoxEx.Show("Select an IMG to export.");
+                MessageBoxEx.Show("エクスポートする XML を選択します。");
                 return;
             }
             SaveFileDialog dlg = new SaveFileDialog();
@@ -1859,7 +1859,7 @@ namespace WzComparerR2
                     writer.WriteEndDocument();
                     writer.Close();
 
-                    labelItemStatus.Text = "Exported: " + img.Name + "to XML.";
+                    labelItemStatus.Text = "エクスポートされた: " + img.Name + "を XML として";
                 }
                 catch (Exception ex)
                 {
@@ -2284,14 +2284,14 @@ namespace WzComparerR2
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 List<string> supportExt = new List<string>();
-                supportExt.Add("Audio File (*.mp3;*.ogg;*.wav)|*.mp3;*.ogg;*.wav");
+                supportExt.Add("オーディオファイル (*.mp3;*.ogg;*.wav)|*.mp3;*.ogg;*.wav");
                 foreach (string ext in this.soundPlayer.GetPluginSupportedExt())
                 {
                     supportExt.Add(ext);
                 }
-                supportExt.Add("All Files (*.*)|*.*");
+                supportExt.Add("すべてのファイル (*.*)|*.*");
 
-                dlg.Title = "Select Audio File";
+                dlg.Title = "オーディオファイルを選択";
                 dlg.Filter = string.Join("|", supportExt.ToArray());
                 dlg.Multiselect = false;
 
@@ -2340,8 +2340,8 @@ namespace WzComparerR2
             using (SaveFileDialog dlg = new SaveFileDialog())
             {
                 dlg.AddExtension = true;
-                dlg.Title = "Save As";
-                dlg.Filter = "MP3 File (*.mp3)|*.mp3|WAV File (*.wav)|*.wav|OGG File (*.ogg)|*.ogg|All Files (*.*)|*.*";
+                dlg.Title = "名前を付けて保存";
+                dlg.Filter = "MP3 (*.mp3)|*.mp3|WAV File (*.wav)|*.wav|OGG File (*.ogg)|*.ogg|すべてのファイル (*.*)|*.*";
                 dlg.AddExtension = false;
                 dlg.FileName = soundPlayer.PlayingSoundName;
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -2352,11 +2352,11 @@ namespace WzComparerR2
                         fs = new FileStream(dlg.FileName, FileMode.Create);
                         fs.Write(data, 0, data.Length);
 
-                        MessageBoxEx.Show("Saved");
+                        MessageBoxEx.Show("ファイルを保存しました。");
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n\r\n" + ex.ToString(), "エラー");
+                        MessageBoxEx.Show("ファイルの保存に失敗しました。\r\n\r\n" + ex.ToString(), "エラー");
                     }
                     finally
                     {
@@ -2414,7 +2414,7 @@ namespace WzComparerR2
             CustomSoundFile soundFile = new CustomSoundFile(fileName, 0, (int)(new FileInfo(fileName).Length));
             soundPlayer.PreLoad(soundFile);
             soundPlayer.PlayingSoundName = Path.GetFileName(fileName);
-            labelItemSoundTitle.Text = "(External File) " + soundPlayer.PlayingSoundName;
+            labelItemSoundTitle.Text = "(外部ファイル) " + soundPlayer.PlayingSoundName;
             labelItemSoundTitle.Tooltip = fileName;
         }
         #endregion
@@ -2435,7 +2435,7 @@ namespace WzComparerR2
                 {
                     dlg.FileName += ".txt";
                 }
-                dlg.Filter = "All Files (*.*)|*.*";
+                dlg.Filter = "すべてのファイル (*.*)|*.*";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     try
@@ -2461,7 +2461,7 @@ namespace WzComparerR2
                         case Wz_SoundType.WavRaw: dlg.FileName += ".wav"; break;
                     }
                 }
-                dlg.Filter = "All Files (*.*)|*.*";
+                dlg.Filter = "すべてのファイル (*.*)|*.*";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     try
@@ -2497,7 +2497,7 @@ namespace WzComparerR2
             {
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = advTree3.SelectedNode.Text;
-                dlg.Filter = "All Files (*.*)|*.*";
+                dlg.Filter = "すべてのファイル (*.*)|*.*";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     try
