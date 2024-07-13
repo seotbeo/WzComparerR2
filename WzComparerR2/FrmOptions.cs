@@ -90,6 +90,11 @@ namespace WzComparerR2
             get { return txtAPIkey.Text; }
             set { txtAPIkey.Text = value; }
         }
+        public string NxSecretKey
+        {
+            get { return txtSecretkey.Text; }
+            set { txtSecretkey.Text = value;}
+        }
         private void buttonXCheck_Click(object sender, EventArgs e)
         {
             string respText;
@@ -136,6 +141,7 @@ namespace WzComparerR2
             this.ImgCheckDisabled = config.ImgCheckDisabled;
             this.WzVersionVerifyMode = config.WzVersionVerifyMode;
             this.NxOpenAPIKey = config.NxOpenAPIKey;
+            this.NxSecretKey = config.NxSecretKey;
         }
 
         public void Save(WcR2Config config)
@@ -147,6 +153,7 @@ namespace WzComparerR2
             config.ImgCheckDisabled = this.ImgCheckDisabled;
             config.WzVersionVerifyMode = this.WzVersionVerifyMode;
             config.NxOpenAPIKey = this.NxOpenAPIKey;
+            config.NxSecretKey = this.NxSecretKey;
         }
     }
 }

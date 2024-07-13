@@ -59,7 +59,16 @@ namespace WzComparerR2.Config
             get { return (ConfigItem<string>)this["nxOpenAPIKey"]; }
             set { this["nxOpenAPIKey"] = value; }
         }
-
+        /// <summary>
+        /// NXSecretKey Configuration
+        /// </summary>
+        [ConfigurationProperty("nxSecretKey")]
+        [ConfigurationCollection(typeof(ConfigArrayList<string>.ItemElement))]
+        public ConfigItem<string> NxSecretKey
+        {
+            get { return (ConfigItem<string>)this["nxSecretKey"]; }
+            set { this["nxSecretKey"] = value; }
+        }
         /// <summary>
         /// 获取或设置Wz对比报告默认输出文件夹。
         /// </summary>
