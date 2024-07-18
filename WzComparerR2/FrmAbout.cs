@@ -49,7 +49,7 @@ namespace WzComparerR2
         {
             this.advTree1.Nodes.Clear();
 
-            this.advTree1.Nodes.Add(new Node("JMS <font color=\"#808080\">v5.4.0</font>"));
+            this.advTree1.Nodes.Add(new Node("JMS <font color=\"#808080\">v5.5.0</font>"));
             this.advTree1.Nodes.Add(new Node("[JMS] 日本語版 <font color=\"#808080\">Hikari Calyx</font>"));
 
             if (PluginBase.PluginManager.LoadedPlugins.Count > 0)
