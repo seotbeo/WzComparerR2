@@ -533,26 +533,30 @@ namespace WzComparerR2.Comparer
             foreach (var diff in diffList)
             {
                 int idx = -1;
-                string col0 = null;
+                string fullPath = null;
+                string fullPathToFile = null;
                 switch (diff.DifferenceType)
                 {
                     case DifferenceType.Changed:
                         idx = 0;
-                        col0 = diff.NodeNew.FullPath;
+                        fullPath = diff.NodeNew.FullPath;
+                        fullPathToFile = diff.NodeNew.FullPathToFile;
                         break;
                     case DifferenceType.Append:
                         idx = 1;
-                        col0 = diff.NodeNew.FullPath;
+                        fullPath = diff.NodeNew.FullPath;
+                        fullPathToFile = diff.NodeNew.FullPathToFile;
                         break;
                     case DifferenceType.Remove:
                         idx = 2;
-                        col0 = diff.NodeOld.FullPath;
+                        fullPath = diff.NodeOld.FullPath;
+                        fullPathToFile = diff.NodeOld.FullPathToFile;
                         break;
                 }
                 sb.AppendFormat("<tr class=\"r{0}\">", idx);
-                sb.AppendFormat("<td>{0}</td>", col0 ?? " ");
-                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(col0, diff.NodeNew, 0, outputDir) ?? " ");
-                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(col0, diff.NodeOld, 1, outputDir) ?? " ");
+                sb.AppendFormat("<td>{0}</td>", fullPath ?? " ");
+                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(fullPathToFile, diff.NodeNew, 0, outputDir) ?? " ");
+                sb.AppendFormat("<td>{0}</td>", OutputNodeValue(fullPathToFile, diff.NodeOld, 1, outputDir) ?? " ");
                 sb.AppendLine("</tr>");
                 count[idx]++;
             }
@@ -594,9 +598,10 @@ namespace WzComparerR2.Comparer
                 if (node != null)
                 {
                     string fullPath = node.FullPath;
+                    string fullPathToFile = node.FullPathToFile;
                     sw.Write("<tr class=\"r{0}\">", idx);
                     sw.Write("<td>{0}</td>", fullPath ?? " ");
-                    sw.Write("<td>{0}</td>", OutputNodeValue(fullPath, node, 0, outputDir) ?? " ");
+                    sw.Write("<td>{0}</td>", OutputNodeValue(fullPathToFile, node, 0, outputDir) ?? " ");
                     sw.WriteLine("</tr>");
 
                     if (node.Nodes.Count > 0)
@@ -637,11 +642,19 @@ namespace WzComparerR2.Comparer
                         char[] invalidChars = Path.GetInvalidFileNameChars();
                         string colName = col == 0 ? "new" : (col == 1 ? "old" : col.ToString());
                         string fileName = fullPath.Replace('\\', '.');
+                        string suffix = "_" + colName + ".png";
 
                         if (this.HashPngFileName)
                         {
                             fileName = ToHexString(MD5Hash(fileName));
                             // TODO: save file name mapping to another file? 
+                        }
+                        else if (Environment.OSVersion.Platform == PlatformID.Win32NT && fileName.Length + suffix.Length > 255)
+                        {
+                            // force hashing if the file name too long.
+                            // TODO: also need to check full file path, we have tested that all existing browsers on Windows cannot load
+                            //       local files with excessively long path.
+                            fileName = ToHexString(MD5Hash(fileName));
                         }
                         else
                         {
@@ -651,7 +664,7 @@ namespace WzComparerR2.Comparer
                             }
                         }
 
-                        fileName = fileName + "_" + colName + ".png";
+                        fileName = fileName + suffix;
                         using (Bitmap bmp = png.ExtractPng())
                         {
                             bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);

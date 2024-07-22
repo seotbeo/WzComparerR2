@@ -1594,6 +1594,11 @@ namespace WzComparerR2.Avatar.UI
 
             foreach (var node1 in characWz.Nodes)
             {
+                if (node1.Text.Contains("_Canvas"))
+                {
+                    continue;
+                }
+
                 if (node1.Text == imgName)
                 {
                     imgNode = node1;

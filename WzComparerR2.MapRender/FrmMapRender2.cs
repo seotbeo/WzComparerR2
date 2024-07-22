@@ -9,6 +9,7 @@ using WzComparerR2.Common;
 using WzComparerR2.MapRender.Config;
 using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.MapRender.UI;
+using WzComparerR2.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Form = System.Windows.Forms.Form;
@@ -27,13 +28,12 @@ namespace WzComparerR2.MapRender
 {
     public partial class FrmMapRender2 : Game
     {
-        public FrmMapRender2(Wz_Image img)
+        public FrmMapRender2()
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.DeviceCreated += Graphics_DeviceCreated;
             graphics.DeviceResetting += Graphics_DeviceResetting;
 
-            this.mapImg = img;
             this.MaxElapsedTime = TimeSpan.MaxValue;
             this.IsFixedTimeStep = false;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60);
@@ -46,7 +46,7 @@ namespace WzComparerR2.MapRender
             this.patchVisibility.LadderRopeVisible = false;
             this.patchVisibility.SkyWhaleVisible = false;
             this.patchVisibility.IlluminantClusterPathVisible = false;
-            
+
             var form = Form.FromHandle(this.Window.Handle) as Form;
             form.Load += Form_Load;
             form.GotFocus += Form_GotFocus;
@@ -121,6 +121,7 @@ namespace WzComparerR2.MapRender
         MapData mapData;
         ResourceLoader resLoader;
         MeshBatcher batcher;
+        LightRenderer lightRenderer;
         PatchVisibility patchVisibility;
 
         bool prepareCapture;
@@ -145,6 +146,7 @@ namespace WzComparerR2.MapRender
 
         protected override void Initialize()
         {
+
             //init services
             this.Services.AddService<Random>(new Random());
             this.Services.AddService<IRandom>(new ParticleRandom(this.Services.GetService<Random>()));
@@ -155,6 +157,7 @@ namespace WzComparerR2.MapRender
             //init components
             this.renderEnv = new RenderEnv(this, this.graphics);
             this.batcher = new MeshBatcher(this.GraphicsDevice) { CullingEnabled = true };
+            this.lightRenderer = new LightRenderer(this.GraphicsDevice);
             this.resLoader = new ResourceLoader(this.Services);
             this.resLoader.PatchVisibility = this.patchVisibility;
             this.ui = new MapRenderUIRoot();
@@ -170,6 +173,9 @@ namespace WzComparerR2.MapRender
             this.ApplySetting();
             SwitchResolution(Resolution.Window_800_600);
             base.Initialize();
+
+            //init UI teleport
+            this.ui.Teleport.Sl = this.StringLinker;
         }
 
         protected override void OnActivated(object sender, EventArgs args)
@@ -944,6 +950,7 @@ namespace WzComparerR2.MapRender
         {
             if (this.mapData == null)
             {
+                prepareCapture = false;
                 return;
             }
 
@@ -958,7 +965,8 @@ namespace WzComparerR2.MapRender
             int height = Math.Min(oldRect.Height, maxTextureHeight);
             this.renderEnv.Camera.UseWorldRect = true;
 
-            var target2d = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None);
+            var target2d = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            PngEffect pngEffect = null;
 
             Color bgColor = Color.Black;
             var config = MapRenderConfig.Default;
@@ -966,6 +974,12 @@ namespace WzComparerR2.MapRender
             {
                 bgColor = new Color(colorW.PackedValue);
             }
+            Color bgColorPMA = bgColor.A switch
+            {
+                255 => bgColor,
+                0 => Color.Transparent,
+                _ => Color.FromNonPremultiplied(bgColor.ToVector4()),
+            };
 
             //计算一组截图区
             int horizonBlock = (int)Math.Ceiling(1.0 * oldRect.Width / width);
@@ -984,16 +998,37 @@ namespace WzComparerR2.MapRender
 
                     //绘制
                     GraphicsDevice.SetRenderTarget(target2d);
-                    GraphicsDevice.Clear(bgColor);
+                    GraphicsDevice.Clear(bgColorPMA);
                     DrawScene(gameTime);
-                    GraphicsDevice.SetRenderTarget(null);
                     //保存
-                    Texture2D t2d = target2d;
-                    byte[] data = new byte[target2d.Width * target2d.Height * 4];
-                    t2d.GetData(data);
-                    picBlocks[i, j] = data;
+                    if (bgColor.A == 255)
+                    {
+                        Texture2D t2d = target2d;
+                        byte[] data = new byte[target2d.Width * target2d.Height * 4];
+                        t2d.GetData(data);
+                        picBlocks[i, j] = data;
+                    }
+                    else
+                    {
+                        if (pngEffect == null)
+                        {
+                            pngEffect = new PngEffect(this.GraphicsDevice);
+                            pngEffect.AlphaMixEnabled = false;
+                        }
+                        using var texture = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None);
+                        using var sb = new SpriteBatch(this.GraphicsDevice);
+                        this.GraphicsDevice.SetRenderTarget(texture);
+                        this.GraphicsDevice.Clear(Color.Transparent);
+                        sb.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, null, null, pngEffect, null);
+                        sb.Draw(target2d, Vector2.Zero, Color.White);
+                        sb.End();
+                        byte[] data = new byte[texture.Width * texture.Height * 4];
+                        texture.GetData(data);
+                        picBlocks[i, j] = data;
+                    }
                 }
             }
+            pngEffect?.Dispose();
             target2d.Dispose();
 
             this.renderEnv.Camera.WorldRect = oldRect;
@@ -1003,21 +1038,12 @@ namespace WzComparerR2.MapRender
             prepareCapture = false;
 
             captureTask = Task.Factory.StartNew(() =>
-                SaveTexture(picBlocks, oldRect.Width, oldRect.Height, target2d.Width, target2d.Height)
+                SaveTexture(picBlocks, oldRect.Width, oldRect.Height, width, height, bgColor.A == 255)
             );
         }
 
-        private void SaveTexture(byte[,][] picBlocks, int mapWidth, int mapHeight, int blockWidth, int blockHeight)
+        private void SaveTexture(byte[,][] picBlocks, int mapWidth, int mapHeight, int blockWidth, int blockHeight, bool resetAlphaChannel)
         {
-            //透明处理
-            foreach (byte[] data in picBlocks)
-            {
-                for (int i = 0, j = data.Length; i < j; i += 4)
-                {
-                    data[i + 3] = 255;
-                }
-            }
-
             //组装
             byte[] mapData = new byte[mapWidth * mapHeight * 4];
             for (int j = 0; j < picBlocks.GetLength(1); j++)
@@ -1051,19 +1077,34 @@ namespace WzComparerR2.MapRender
                 }
             }
 
+            if (resetAlphaChannel)
+            {
+                for (int i = 0; i < mapData.Length; i += 4)
+                {
+                    mapData[i + 3] = 255;
+                }
+            }
+
             try
             {
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(
+                using System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(
                     mapWidth,
                     mapHeight,
                     mapWidth * 4,
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb,
                     Marshal.UnsafeAddrOfPinnedArrayElement(mapData, 0));
 
-                bitmap.Save(DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + (this.mapData?.ID ?? 0).ToString("D9") + ".png",
-                    System.Drawing.Imaging.ImageFormat.Png);
+                string outputFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + (this.mapData?.ID ?? 0).ToString("D9") + ".png";
+                bitmap.Save(outputFileName, System.Drawing.Imaging.ImageFormat.Png);
 
-                bitmap.Dispose();
+                this.cm.StartCoroutine(cm.Post((v) =>
+                {
+                    v.ui.ChatBox.AppendTextHelp($"截图保存到文件{v.outputFileName}");
+                }, new
+                {
+                    this.ui,
+                    outputFileName
+                }));
             }
             catch
             {
@@ -1160,6 +1201,8 @@ namespace WzComparerR2.MapRender
             this.batcher = null;
             this.renderEnv?.Dispose();
             this.renderEnv = null;
+            this.lightRenderer?.Dispose();
+            this.lightRenderer = null;
             this.engine = null;
 
             foreach (var disposable in this.attachedEvent)

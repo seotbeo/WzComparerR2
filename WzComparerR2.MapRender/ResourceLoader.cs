@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Content;
 using WzComparerR2.Animation;
 using WzComparerR2.Rendering;
 using WzComparerR2.Common;
-using Spine;
 
 namespace WzComparerR2.MapRender
 {
@@ -127,10 +126,10 @@ namespace WzComparerR2.MapRender
                     case "duration": desc.Duration = pNode.GetValue<float>(); break;
                     case "blendFuncSrc": desc.BlendFuncSrc = (ParticleBlendFunc)pNode.GetValue<int>(); break;
                     case "blendFuncDst": desc.BlendFuncDst = (ParticleBlendFunc)pNode.GetValue<int>(); break;
-                    case "startColor": desc.StartColor = System.Drawing.Color.FromArgb(pNode.GetValue<int>()).ToXnaColor(); break;
-                    case "startColorVar": desc.StartColorVar = System.Drawing.Color.FromArgb(pNode.GetValue<int>()).ToXnaColor(); break;
-                    case "endColor": desc.EndColor = System.Drawing.Color.FromArgb(pNode.GetValue<int>()).ToXnaColor(); break;
-                    case "endColorVar": desc.EndColorVar = System.Drawing.Color.FromArgb(pNode.GetValue<int>()).ToXnaColor(); break;
+                    case "startColor": desc.StartColor = pNode.GetXnaColor(); break;
+                    case "startColorVar": desc.StartColorVar = pNode.GetXnaColor(); break;
+                    case "endColor": desc.EndColor = pNode.GetXnaColor(); break;
+                    case "endColorVar": desc.EndColorVar = pNode.GetXnaColor(); break;
                     case "MiddlePoint0": desc.MiddlePoint0 = pNode.GetValue<int>(); break;
                     case "MiddlePointAlpha0": desc.MiddlePointAlpha0 = pNode.GetValue<int>(); break;
                     case "MiddlePoint1": desc.MiddlePoint1 = pNode.GetValue<int>(); break;
@@ -308,12 +307,9 @@ namespace WzComparerR2.MapRender
 
         private object InnerLoadAnimationData(Wz_Node node)
         {
-            if (node != null)
+            if (node != null && (node = node.ResolveUol()) != null)
             {
-                while (node.Value is Wz_Uol)
-                {
-                    node = ((Wz_Uol)node.Value).HandleUol(node);
-                }
+                SpineDetectionResult detectionResult;
 
                 if (node.Value is Wz_Png) //单帧动画
                 {
@@ -322,15 +318,23 @@ namespace WzComparerR2.MapRender
                     aniData.Frames.Add(frame);
                     return aniData;
                 }
+                else if ((detectionResult = SpineLoader.Detect(node)).Success)
+                {
+                    return this.LoadSpineAnimationData(detectionResult);
+                }
                 else if (node.Value == null && node.Nodes.Count > 0) //分析目录
                 {
                     string spine = node.Nodes["spine"].GetValueEx<string>(null);
                     if (spine != null) //读取spine动画
                     {
-                        var loader = new SpineTextureLoader(this, node);
+                        var textureLoader = new SpineTextureLoader(this, node);
                         var atlasNode = node.Nodes[spine + ".atlas"];
-                        var aniData = SpineAnimationData.CreateFromNode(atlasNode, null, loader);
-                        return aniData;
+
+                        detectionResult = SpineLoader.Detect(atlasNode);
+                        if (detectionResult.Success)
+                        {
+                            return this.LoadSpineAnimationData(detectionResult);
+                        }
                     }
                     else //读取序列帧动画
                     {
@@ -379,6 +383,24 @@ namespace WzComparerR2.MapRender
             return frame;
         }
 
+        private ISpineAnimationData LoadSpineAnimationData(SpineDetectionResult detectionResult)
+        {
+            if (detectionResult.Success)
+            {
+                var textureLoader = new SpineTextureLoader(this, detectionResult.SourceNode.ParentNode);
+                if (detectionResult.Version == SpineVersion.V2)
+                {
+                    return SpineAnimationDataV2.Create(detectionResult, textureLoader);
+                }
+                else if (detectionResult.Version == SpineVersion.V4)
+                {
+                    return SpineAnimationDataV4.Create(detectionResult, textureLoader);
+                }
+            }
+            
+            return null;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -398,7 +420,7 @@ namespace WzComparerR2.MapRender
             public int Count { get; set; }
         }
 
-        private class SpineTextureLoader : Spine.TextureLoader
+        private class SpineTextureLoader : Spine.TextureLoader, Spine.V2.TextureLoader
         {
             public SpineTextureLoader(ResourceLoader resLoader, Wz_Node topNode)
             {
@@ -409,33 +431,55 @@ namespace WzComparerR2.MapRender
             public ResourceLoader BaseLoader { get; set; }
             public Wz_Node TopNode { get; set; }
 
-            public void Load(AtlasPage page, string path)
+            public void Load(Spine.AtlasPage page, string path)
             {
-                var frameNode = this.TopNode.FindNodeByPath(path);
-
-                if (frameNode == null || frameNode.Value == null)
+                if (this.TryLoadTexture(path, out var texture))
                 {
-                    return;
+                    page.rendererObject = texture;
+                    page.width = texture.Width;
+                    page.height = texture.Height;
                 }
+            }
 
-                //处理uol
-                while (frameNode.Value is Wz_Uol)
+            public void Load(Spine.V2.AtlasPage page, string path)
+            {
+                if (this.TryLoadTexture(path, out var texture))
                 {
-                    frameNode = ((Wz_Uol)frameNode.Value).HandleUol(frameNode);
+                    page.rendererObject = texture;
+                    page.width = texture.Width;
+                    page.height = texture.Height;
                 }
-                //寻找link
-                var linkNode = frameNode.GetLinkedSourceNode(PluginManager.FindWz);
-                //加载资源
-                var texture = BaseLoader.Load<Texture2D>(linkNode);
-
-                page.rendererObject = texture;
-                page.width = texture.Width;
-                page.height = texture.Height;
             }
 
             public void Unload(object texture)
             {
                 //什么都不做
+            }
+
+            private bool TryLoadTexture(string path, out Texture2D texture)
+            {
+                texture = null;
+                var frameNode = this.TopNode.FindNodeByPath(path);
+
+                while (frameNode.Value is Wz_Uol uol)
+                {
+                    Wz_Node uolNode = uol.HandleUol(frameNode);
+                    if (uolNode != null)
+                    {
+                        frameNode = uolNode;
+                    }
+                }
+
+                if (frameNode.Value is Wz_Png)
+                {
+                    var linkNode = frameNode.GetLinkedSourceNode(PluginManager.FindWz);
+                    // workaround for KMST 1172, skeleton atlas and other obj may link to the same png node.
+                    // TODO: add options to always load into a standalone texture, disable dynamic atlas on this resource, 
+                    texture = BaseLoader.Load<TextureAtlas>(linkNode).Texture;
+                    return true;
+                }
+
+                return false;
             }
         }
     }

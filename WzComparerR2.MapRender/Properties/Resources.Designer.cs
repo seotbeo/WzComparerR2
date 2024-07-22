@@ -549,12 +549,14 @@ namespace WzComparerR2.MapRender.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
-        internal static System.Drawing.Bitmap UIWindow2_img_Teleport_customBG {
-            get {
+        internal static System.Drawing.Bitmap UIWindow2_img_Teleport_customBG
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("UIWindow2_img_Teleport_customBG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }

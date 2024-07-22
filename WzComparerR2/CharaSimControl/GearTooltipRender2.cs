@@ -612,7 +612,11 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (hasTuc)
             {
-                GearGraphics.DrawString(g, "업그레이드 가능 횟수 : " + value + (Gear.Cash ? "" : " #c(복구 가능 횟수 : 0)#"), GearGraphics.EquipDetailFont, orange3FontColorTable, 13, 244, ref picH, 15);
+                var colorTable = new Dictionary<string, Color>
+                {
+                    { "c", GearGraphics.OrangeBrush3Color }
+                };
+                GearGraphics.DrawString(g, "업그레이드 가능 횟수 : " + value + (Gear.Cash ? "" : " #c(복구 가능 횟수 : 0)#"), GearGraphics.EquipDetailFont, colorTable, 13, 244, ref picH, 15);
                 hasPart2 = true;
             }
 
@@ -639,6 +643,13 @@ namespace WzComparerR2.CharaSimControl
                 {
                     GearGraphics.DrawPlainText(g, ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value), GearGraphics.EquipDetailFont, ((SolidBrush)GearGraphics.GreenBrush2).Color, 13, 244, ref picH, 15);
                 }
+            }
+
+            if (Gear.Props.TryGetValue(GearPropType.CuttableCount, out value) && value > 0) //可使用剪刀
+            {
+                g.DrawString(ItemStringHelper.GetGearPropString(GearPropType.CuttableCount, value), GearGraphics.ItemDetailFont, GearGraphics.OrangeBrush3, 11, picH);
+                picH += 16;
+                hasPart2 = true;
             }
 
             if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0) //突破上限
@@ -849,7 +860,7 @@ namespace WzComparerR2.CharaSimControl
             //绘制倾向
             if (Gear.State == GearState.itemList)
             {
-                string incline = null;
+                StringBuilder incline = new StringBuilder();
                 GearPropType[] inclineTypes = new GearPropType[]{
                     GearPropType.charismaEXP,
                     GearPropType.insightEXP,
@@ -893,13 +904,17 @@ namespace WzComparerR2.CharaSimControl
 
                     if (success && value > 0)
                     {
-                        incline += ", " + inclineString[i] + " " + value;
+                        if (incline.Length > 0)
+                        {
+                            incline.Append(", ");
+                        }
+                        incline.Append(inclineString[i]).Append(" ").Append(value);
                     }
                 }
 
-                if (!string.IsNullOrEmpty(incline))
+                if (incline.Length > 0)
                 {
-                    desc.Add(" #c장착 시 1회에 한해 " + incline.Substring(2) + "의 경험치를 얻을 수 있습니다.(일일제한, 최대치 초과 시 제외)#");
+                    desc.Add($"\n #c장착 시 1회에 한해 {incline}의 경험치를 얻을 수 있습니다.(일일제한, 최대치 초과 시 제외)#");
                 }
 
                 if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))

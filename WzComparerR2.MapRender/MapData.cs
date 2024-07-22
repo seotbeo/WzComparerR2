@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.WzLib;
 using WzComparerR2.Common;
 using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.PluginBase;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.Animation;
-
+using WzComparerR2.Rendering;
 
 namespace WzComparerR2.MapRender
 {
@@ -43,6 +43,7 @@ namespace WzComparerR2.MapRender
         public string FieldScript { get; set; }
 
         public MiniMap MiniMap { get; private set; }
+        public MapLight Light { get; private set; }
         #endregion
 
         public MapScene Scene { get; private set; }
@@ -140,6 +141,10 @@ namespace WzComparerR2.MapRender
             {
                 LoadParticle(node);
             }
+            if ((node = mapImgNode.Nodes["light"]) != null)
+            {
+                LoadLight(node);
+            }
 
             //计算地图大小
             CalcMapSize();
@@ -152,10 +157,7 @@ namespace WzComparerR2.MapRender
             {
                 this.ID = int.Parse(m.Result("$1"));
             }
-            else
-            {
-                this.Name = mapImgNode.Text;
-            }
+            this.Name = mapImgNode.Text;
         }
 
         private void LoadInfo(Wz_Node infoNode)
@@ -333,11 +335,12 @@ namespace WzComparerR2.MapRender
             var graphMapNode = PluginManager.FindWz(string.Format("Map/Map/Graph.img/{0:D2}/{1}/portal", this.ID / 10000000, mapID));
             if (graphMapNode == null)
             {
-                foreach (var graphImgSubNode in PluginManager.FindWz("Map/Map/Graph.img")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                foreach (var graphImgSubNode in PluginManager.FindWz("Map/Map/Graph.img")?.Nodes ?? Enumerable.Empty<Wz_Node>())
                 {
                     if (graphImgSubNode.Nodes[mapID] != null)
                     {
                         graphMapNode = graphImgSubNode.Nodes[mapID].Nodes["portal"];
+                        break;
                     }
                 }
             }
@@ -495,6 +498,42 @@ namespace WzComparerR2.MapRender
             }
         }
 
+        private void LoadLight(Wz_Node node)
+        {
+            var mapLight = new MapLight()
+            {
+                Mode = node.Nodes["mode"].GetValueEx(0),
+                AmbientColor = node.Nodes["ambient_color"].GetXnaColor(),
+                DirectionalLightColor = node.Nodes["directional_light_color"].GetXnaColor(),
+                LuminanceLimit = node.Nodes["luminance_limit"].GetValueEx(0f),
+                BackColor = node.Nodes["back_color"].GetXnaColor(),
+            };
+
+            for (int i=0; ; i++)
+            {
+                var lightNode = node.Nodes[i.ToString()];
+                if (lightNode == null)
+                {
+                    break;
+                }
+
+                var light = new Light2D()
+                {
+                    Type = lightNode.Nodes["type"].GetValueEx(0),
+                    X = lightNode.Nodes["x"].GetValueEx(0),
+                    Y = lightNode.Nodes["y"].GetValueEx(0),
+                    Color = lightNode.Nodes["color"].GetXnaColor(),
+                    InnerRadius = lightNode.Nodes["inner_radius"].GetValueEx(0),
+                    OuterRadius = lightNode.Nodes["outer_radius"].GetValueEx(0),
+                    InnerAngle = lightNode.Nodes["inner_angle"].GetValueEx(0),
+                    OuterAngle = lightNode.Nodes["outer_angle"].GetValueEx(0),
+                    DirectionAngle = lightNode.Nodes["direction_angle"].GetValueEx(0),
+                };
+                mapLight.Lights.Add(light);
+            }
+            this.Light = mapLight;
+        }
+
         private void CalcMapSize()
         {
             if (!this.VRect.IsEmpty)
@@ -641,7 +680,7 @@ namespace WzComparerR2.MapRender
             var aniItem = resLoader.LoadAnimationData(path);
             obj.View = new ObjItem.ItemView()
             {
-                Animator = CreateAnimator(aniItem)
+                Animator = CreateAnimator(aniItem, obj.SpineAni)
             };
         }
 
@@ -965,29 +1004,24 @@ namespace WzComparerR2.MapRender
 
         private object CreateAnimator(object animationData, string aniName = null)
         {
-            if (animationData is RepeatableFrameAnimationData)
-            {
-                var aniData = (RepeatableFrameAnimationData)animationData;
-                var animator = new RepeatableFrameAnimator(aniData);
-                return animator;
+            switch (animationData) {
+                case RepeatableFrameAnimationData repFrameAni:
+                    return new RepeatableFrameAnimator(repFrameAni);
+
+                case FrameAnimationData frameAni:
+                    return new FrameAnimator(frameAni);
+
+                case ISpineAnimationData spineAniData:
+                    var spineAni = spineAniData.CreateAnimator();
+                    if (aniName != null)
+                    {
+                        spineAni.SelectedAnimationName = aniName;
+                    }
+                    return spineAni;
+
+                default:
+                    return null;
             }
-            else if (animationData is FrameAnimationData)
-            {
-                var aniData = (FrameAnimationData)animationData;
-                var animator = new FrameAnimator(aniData);
-                return animator;
-            }
-            else if (animationData is SpineAnimationData)
-            {
-                var aniData = (SpineAnimationData)animationData;
-                var animator = new SpineAnimator(aniData);
-                if (aniName != null)
-                {
-                    animator.SelectedAnimationName = aniName;
-                }
-                return animator;
-            }
-            return null;
         }
 
         private void AddMobAI(StateMachineAnimator ani)

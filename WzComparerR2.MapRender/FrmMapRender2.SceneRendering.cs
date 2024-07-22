@@ -10,7 +10,8 @@ using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.Animation;
 
 using Microsoft.Xna.Framework;
-using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework.Graphics;
+using WzComparerR2.Controls;
 
 namespace WzComparerR2.MapRender
 {
@@ -232,8 +233,7 @@ namespace WzComparerR2.MapRender
                 else if (portal.GraphTargetMap.Count > 1)
                 {
                     this.ui.Teleport.Sl = this.StringLinker;
-                    this.ui.Teleport.CmbMaps.ItemsSource = null;
-                    this.ui.Teleport.CmbMaps.ItemsSource = portal.GraphTargetMap;
+                    this.ui.Teleport.CmbMaps.ItemsSource = portal.GraphTargetMap.ToList();
                     this.ui.Teleport.CmbMaps.SelectedIndex = 0;
                     this.ui.Teleport.Toggle();
                 }
@@ -255,6 +255,18 @@ namespace WzComparerR2.MapRender
             if (this.mapData == null)
             {
                 return;
+            }
+            RenderTarget2D lightMapTexture = null;
+
+            // draw lightmap if available
+            if (this.mapData?.Light != null)
+            {
+                var viewport = this.GraphicsDevice.Viewport;
+                lightMapTexture = new RenderTarget2D(this.GraphicsDevice, viewport.Width, viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
+                var oldRenderTarget = this.GraphicsDevice.GetRenderTargets();
+                this.GraphicsDevice.SetRenderTarget(lightMapTexture);
+                this.PrepareLightMap();
+                this.GraphicsDevice.SetRenderTargets(oldRenderTarget);
             }
 
             allItems.Clear();
@@ -293,8 +305,14 @@ namespace WzComparerR2.MapRender
 
             //在场景之上绘制额外标记
             DrawFootholds(gameTime);
-
             this.batcher.End();
+
+            // apply light map
+            if (lightMapTexture != null)
+            {
+                this.ApplyLightMap(lightMapTexture);
+                lightMapTexture.Dispose();
+            }
         }
 
         private void DrawTooltipItems(GameTime gameTime)
@@ -548,6 +566,40 @@ namespace WzComparerR2.MapRender
             }
         }
 
+        private void PrepareLightMap()
+        {
+            var mapLight = this.mapData.Light;
+            var origin = this.renderEnv.Camera.Origin.ToPoint();
+            this.GraphicsDevice.Clear(mapLight.BackColor);
+
+            this.lightRenderer.Begin(Matrix.CreateTranslation(new Vector3(-origin.X, -origin.Y, 0)));
+            // render spot light
+            foreach (var light2D in mapLight.Lights)
+            {
+                this.lightRenderer.DrawSpotLight(light2D);
+            }
+            // render texture light
+            foreach(var container in GetSceneContainers(this.mapData.Scene))
+            {
+                foreach (var item in container.Slots)
+                {
+                    if (item is ObjItem obj && obj.Light && obj.View.Animator is FrameAnimator frameAni)
+                    {
+                        var frame = frameAni.CurrentFrame;
+                        this.lightRenderer.DrawTextureLight(frame.Texture, new Vector2(obj.X, obj.Y), frame.AtlasRect, frame.Origin.ToVector2(), obj.Flip, new Color(Color.White, frame.A0));
+                    }
+                }
+            }
+            this.lightRenderer.End();
+        }
+
+        private void ApplyLightMap(Texture2D lightMapTexture)
+        {
+            this.renderEnv.Sprite.Begin(blendState: this.renderEnv.BlendStateMultiplyRGB);
+            this.renderEnv.Sprite.Draw(lightMapTexture, Vector2.Zero, Color.White);
+            this.renderEnv.Sprite.End();
+        }
+
         private IEnumerable<ContainerNode> GetSceneContainers(SceneNode node)
         {
             /*
@@ -664,15 +716,15 @@ namespace WzComparerR2.MapRender
                     return GetMeshBack(back);
                 }
             }
-            else if (item is ObjItem)
+            else if (item is ObjItem obj)
             {
-                if (patchVisibility.ObjVisible)
+                if (patchVisibility.ObjVisible && !obj.Light)
                 {
                     if (((ObjItem)item).Quest.Exists(quest => !patchVisibility.IsVisible(quest.Item1, quest.Item2)))
                     {
                         return null;
                     }
-                    return GetMeshObj((ObjItem)item);
+                    return GetMeshObj(obj);
                 }
             }
             else if (item is TileItem)
@@ -729,17 +781,14 @@ namespace WzComparerR2.MapRender
 
             //计算坐标
             Point renderSize;
-            if (back.View.Animator is FrameAnimator)
+            if (back.View.Animator is FrameAnimator frameAni)
             {
-                var ani = (FrameAnimator)back.View.Animator;
-                renderSize = ani.CurrentFrame.Rectangle.Size;
+                renderSize = frameAni.CurrentFrame.Rectangle.Size;
             }
-            else if (back.View.Animator is SpineAnimator)
+            else if (back.View.Animator is AnimationItem aniItem)
             {
-                var ani = (SpineAnimator)back.View.Animator;
-                var data = ani.Data.SkeletonData;
-                var rect = ani.Measure();
-                renderSize = rect.Size; // new Point((int)data.Width, (int)data.Height);
+                var rect = aniItem.Measure();
+                renderSize = rect.Size;
             }
             else
             {
@@ -831,7 +880,7 @@ namespace WzComparerR2.MapRender
 
         private MeshItem GetMeshObj(ObjItem obj)
         {
-            var renderObj = GetRenderObject(obj.View.Animator, flip: obj.Flip, blend: obj.Light);
+            var renderObj = GetRenderObject(obj.View.Animator, flip: obj.Flip);
             if (renderObj == null)
             {
                 return null;
@@ -951,27 +1000,23 @@ namespace WzComparerR2.MapRender
             return mesh;
         }
 
-        private object GetRenderObject(object animator, bool flip = false, int alpha = 255, bool blend = false)
+        private object GetRenderObject(object animator, bool flip = false, int alpha = 255)
         {
-            if (animator is FrameAnimator)
+            if (animator is FrameAnimator frameAni)
             {
-                var frame = ((FrameAnimator)animator).CurrentFrame;
+                var frame = frameAni.CurrentFrame;
                 if (frame != null)
                 {
                     if (alpha < 255) //理论上应该返回一个新的实例
                     {
                         frame.A0 = frame.A0 * alpha / 255;
                     }
-                    if (blend)
-                    {
-                        frame.Blend = blend;
-                    }
                     return frame;
                 }
             }
-            else if (animator is SpineAnimator)
+            else if (animator is SpineAnimatorV2 spineAniV2)
             {
-                var skeleton = ((SpineAnimator)animator).Skeleton;
+                var skeleton = spineAniV2.Skeleton;
                 if (skeleton != null)
                 {
                     if (alpha < 255)
@@ -981,13 +1026,23 @@ namespace WzComparerR2.MapRender
                     return skeleton;
                 }
             }
-            else if (animator is StateMachineAnimator)
+            else if (animator is SpineAnimatorV4 spineAniV4)
             {
-                var smAni = (StateMachineAnimator)animator;
+                var skeleton = spineAniV4.Skeleton;
+                if (skeleton != null)
+                {
+                    if (alpha < 255)
+                    {
+                        skeleton.A = alpha / 255.0f;
+                    }
+                    return skeleton;
+                }
+            }
+            else if (animator is StateMachineAnimator smAni)
+            {
                 return smAni.Data.GetMesh();
             }
 
-            //各种意外
             return null;
         }
     }

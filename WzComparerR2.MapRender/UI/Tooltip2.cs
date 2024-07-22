@@ -252,6 +252,7 @@ namespace WzComparerR2.MapRender.UI
             return new TooltipContent() { blocks = blocks, size = size };
         }
 
+
         private TooltipContent DrawItem(GameTime gameTime, RenderEnv env, ReactorItem item)
         {
             var blocks = new List<TextBlock>();
@@ -333,7 +334,6 @@ namespace WzComparerR2.MapRender.UI
                 int spotBarrier = 0, spotBarrierArc = 0, spotBarrierAut = 0;
                 var mobNames = new List<string>();
                 var npcNames = new List<string>();
-                int minLevel = 0, maxLevel = 0;
 
                 if (!spot.NoTooltip)
                 {
@@ -384,16 +384,7 @@ namespace WzComparerR2.MapRender.UI
                             var mobDescLevelForWorldMap = PluginManager.FindWz(string.Format("Mob/{0:D7}.img/info/descLevelforWorldmap", mobID)).GetValueEx<string>(null);
                             string mobText = sr != null ? string.Format("{0}(Lv.{1})", sr.Name, mobDescLevelForWorldMap ?? mobLevel.ToString()) : mobID.ToString();
                             mobNames.Add(mobText);
-                            if (mobLevel > 0)
-                            {
-                                if (minLevel > 0) minLevel = Math.Min(minLevel, mobLevel);
-                                else minLevel = mobLevel;
-                                if (maxLevel > 0) maxLevel = Math.Max(maxLevel, mobLevel);
-                                else maxLevel = mobLevel;
-                            }
                         }
-                        minLevel = Math.Max(10, minLevel - 3);
-                        maxLevel = Math.Max(10, maxLevel - 2);
                     }
                     if (npcs.Count > 0)
                     {
@@ -518,19 +509,6 @@ namespace WzComparerR2.MapRender.UI
                 if (mobNames.Count > 0)
                 {
                     part3 = new List<object>();
-
-                    /*//绘制分割线
-                    lines.Add(new TextureBlock(line, new Rectangle(current.ToPoint(), Point.Zero)));
-                    current.Y += 8;
-
-                    //推荐等级
-                    current.X = 15;
-                    part3.Add(PrepareTextBlock(font,
-                        string.Format("推荐等级 : Lv.{0} ~ Lv.{1}", minLevel, maxLevel),
-                        ref current, new Color(119, 204, 255)));
-                    size.X = Math.Max(size.X, current.X);
-                    current.X = 0;
-                    current.Y += 18;*/
 
                     //绘制分割线
                     lines.Add(new TextureBlock(line, new Rectangle(current.ToPoint(), Point.Zero)));

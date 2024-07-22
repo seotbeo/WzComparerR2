@@ -610,21 +610,21 @@ namespace WzComparerR2.CharaSim
                     switch (subNode.Text)
                     {
                         case "icon":
-                            if (subNode.Value is Wz_Png || subNode.Value is Wz_Uol)
+                            if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
                                 gear.Icon = BitmapOrigin.CreateFromNode(subNode, findNode);
                             }
                             break;
 
                         case "iconRaw":
-                            if (subNode.Value is Wz_Png || subNode.Value is Wz_Uol)
+                            if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
                                 gear.IconRaw = BitmapOrigin.CreateFromNode(subNode, findNode);
                             }
                             break;
 
                         case "sample":
-                            if (subNode.Value is Wz_Png)
+                            if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
                                 gear.Sample = BitmapOrigin.CreateFromNode(subNode, findNode);
                             }
@@ -910,6 +910,13 @@ namespace WzComparerR2.CharaSim
                     gear.Props.Remove(GearPropType.incMMP);
                     gear.Props.Add(GearPropType.incMDF, value);
                 }
+            }
+
+            //检查道具默认的剪刀次数
+            var cuttableCountOverride = findNode?.Invoke(@$"Etc\KarmaScissor_WZ2.img\ItemList\{gear.ItemID}")?.GetValueEx<int>();
+            if (cuttableCountOverride != null && cuttableCountOverride > 0)
+            {
+                gear.Props[GearPropType.CuttableCount] = cuttableCountOverride.Value;
             }
 
             //备份标准属性

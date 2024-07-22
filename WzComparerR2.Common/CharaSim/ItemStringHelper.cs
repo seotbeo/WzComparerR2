@@ -103,7 +103,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.bdR: return "보스 몬스터 공격 시 데미지 +" + value + "%";
                 case GearPropType.incIMDR:
                 case GearPropType.imdR: return "몬스터 방어율 무시 : +" + value + "%";
-                //case GearPropType.limitBreak: return "최대 데미지 제한 증가 : +" + value;
+                //case GearPropType.limitBreak:return "伤害上限突破至" + ToChineseNumberExpr(value) + "。";
                 case GearPropType.reduceReq: return "착용 레벨 감소 : - " + value;
                 case GearPropType.nbdR: return "일반 몬스터 공격 시 데미지 : +" + value + "%";
 
@@ -151,6 +151,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incAUT: return "AUT : " + sign + value;
 
                 case GearPropType.Etuc: return "익셉셔널 강화가 가능합니다. (최대 : " + value + "회)";
+                case GearPropType.CuttableCount: return "可使用剪刀：" + value + "次";
                 default: return null;
             }
         }
@@ -332,9 +333,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.energySword: return "에너지소드";
                 case GearType.desperado: return "데스페라도";
-                case GearType.magicStick: return "驯兽魔法棒";
+                case GearType.magicStick: return "记忆长杖";
                 case GearType.whistle:
-                case GearType.whistle2: return "哨子";
+                case GearType.whistle2: return "飞越";
                 case GearType.boxingClaw: return "拳爪";
                 case GearType.kodachi:
                 case GearType.kodachi2:  return "小太刀";
@@ -543,7 +544,7 @@ namespace WzComparerR2.CharaSim
                 case 64: return "카데나 착용 가능";
                 case 65: return "엔젤릭 버스터 착용 가능";
                 case 101: return "제로 착용 가능";
-                case 112: return "林之灵可穿戴装备";
+                case 112: return "琳可穿戴装备";
                 case 142: return "키네시스 착용 가능";
                 case 151: return "아델 착용 가능";
                 case 152: return "일리움 착용 가능";
@@ -895,6 +896,39 @@ namespace WzComparerR2.CharaSim
                 case 16412: return "호영(4차)";
             }
             return null;
+        }
+
+        private static string ToChineseNumberExpr(int value)
+        {
+            var sb = new StringBuilder(16);
+            bool firstPart = true;
+            if (value < 0)
+            {
+                sb.Append("-");
+                value = -value; // just ignore the exception -2147483648
+            }
+            if (value >= 1_0000_0000)
+            {
+                int part = value / 1_0000_0000;
+                sb.AppendFormat("{0}亿", part);
+                value -= part * 1_0000_0000;
+                firstPart = false;
+            }
+            if (value >= 1_0000)
+            {
+                int part = value / 1_0000;
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}万", part);
+                value -= part * 1_0000;
+                firstPart = false;
+            }
+            if (value > 0)
+            {
+                sb.Append(firstPart ? null : " ");
+                sb.AppendFormat("{0}", value);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "0";
         }
     }
 }

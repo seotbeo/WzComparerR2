@@ -17,6 +17,7 @@ namespace WzComparerR2.MapRender.Patches2
         public int Z { get; set; }
         public bool Flip { get; set; }
         public bool Light { get; set; }
+        public string SpineAni { get; set; }
         public List<Tuple<int, int>> Quest { get; set; }
 
         public ItemView View { get; set; }
@@ -35,7 +36,8 @@ namespace WzComparerR2.MapRender.Patches2
                 Z = node.Nodes["z"].GetValueEx(0),
 
                 Flip = node.Nodes["f"].GetValueEx(false),
-                Light = node.Nodes["light"].GetValueEx(false),
+                Light = node.Nodes["light"].GetValueEx<int>(0) != 0,
+                SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
             };
 
             string objTags = node.Nodes["tags"].GetValueEx<string>(null);

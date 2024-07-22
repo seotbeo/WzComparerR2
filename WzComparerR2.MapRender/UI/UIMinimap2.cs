@@ -86,7 +86,6 @@ namespace WzComparerR2.MapRender.UI
         }
 
         public MapArea MapAreaControl { get; private set; }
-
         public bool Mirror
         {
             get { return mirror; }

@@ -188,6 +188,7 @@ namespace WzComparerR2.CharaSim
         noLookChange,
         tucIgnoreForPotential,
         Etuc,
+        CuttableCount,
 
         gatherTool_incSkillLevel = 2000,
         gatherTool_incSpeed,

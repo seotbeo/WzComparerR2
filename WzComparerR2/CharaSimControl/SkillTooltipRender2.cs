@@ -208,14 +208,17 @@ namespace WzComparerR2.CharaSimControl
             splitterH.Add(picH);
             picH += 15;
 
+            var skillSummaryOptions = new SkillSummaryOptions
+            {
+                ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                ConvertPerM = this.DisplayPermyriadAsPercent,
+                IgnoreEvalError = this.IgnoreEvalError,
+                EndColorOnNewLine = true,
+            };
+
             if (Skill.Level > 0)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, new SkillSummaryOptions
-                {
-                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                    ConvertPerM = this.DisplayPermyriadAsPercent,
-                    IgnoreEvalError = this.IgnoreEvalError,
-                });
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
@@ -229,12 +232,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, new SkillSummaryOptions
-                {
-                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
-                    ConvertPerM = this.DisplayPermyriadAsPercent,
-                    IgnoreEvalError = this.IgnoreEvalError,
-                });
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions);
                 GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
                 {

@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WzComparerR2.PluginBase;
+
+#if NET6_0_OR_GREATER
+using System.Runtime.Loader;
+#endif
 
 namespace WzComparerR2
 {
@@ -17,11 +22,18 @@ namespace WzComparerR2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Program.SetDllDirectory();
+#if NET6_0_OR_GREATER
+            Dotnet6Patch.Patch();
+#endif
             Program.StartMainForm();
         }
 
         public static string LibPath { get; private set; }
+        private static List<Assembly> loadedPluginAssemblies = new List<Assembly>();
+
+        private
 
         /// <summary>
         /// 这是程序入口无雾。
@@ -46,17 +58,26 @@ namespace WzComparerR2
             {
                 try
                 {
+#if NET6_0_OR_GREATER
+                    var ctx = new PluginLoadContext(GetUnmanagedDllDirectory(), asmFile);
+                    return ctx.LoadFromAssemblyPath(asmFile);
+#else
                     var asmName = AssemblyName.GetAssemblyName(asmFile);
                     return Assembly.Load(asmName);
+#endif
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return null;
                 }
             }).OfType<Assembly>().ToList();
+            loadedPluginAssemblies.AddRange(asmList);
 
             var context = new PluginContext(provider);
-            asmList.SelectMany(asm => PluginManager.LoadPlugin(asm, context)).ToList();
+            foreach (var asm in asmList)
+            {
+                PluginManager.LoadPlugin(asm, context);
+            }
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -76,9 +97,37 @@ namespace WzComparerR2
             }
         }
 
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            foreach (var asm in loadedPluginAssemblies)
+            {
+                if (asm.FullName == args.Name)
+                {
+                    return asm;
+                }
+            }
+
+#if NET6_0_OR_GREATER
+            try
+            {
+                var assemblyName = new AssemblyName(args.Name);
+                string assemblyPath = Path.Combine(GetManagedDllDirectory(), assemblyName.Name + ".dll");
+                if (File.Exists(assemblyPath))
+                {
+                    return AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+#endif
+            return null;
+        }
+
         static void SetDllDirectory()
         {
-            LibPath = Path.Combine(Application.StartupPath, "Lib", Environment.Is64BitProcess ? "x64" : "x86");
+            LibPath = GetUnmanagedDllDirectory();
             SetDllDirectory(LibPath);
 
             foreach (var dllName in Directory.GetFiles(LibPath, "*.dll"))
@@ -86,6 +135,9 @@ namespace WzComparerR2
                 var handle = LoadLibrary(dllName);
             }
         }
+
+        static string GetManagedDllDirectory() => Path.Combine(Application.StartupPath, "Lib");
+        static string GetUnmanagedDllDirectory() => Path.Combine(Application.StartupPath, "Lib", Environment.Is64BitProcess ? "x64" : "x86");
 
         [DllImport("kernel32.dll")]
         static extern bool SetDllDirectory(string path);
