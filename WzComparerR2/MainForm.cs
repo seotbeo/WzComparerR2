@@ -2977,6 +2977,32 @@ namespace WzComparerR2
                             fileName = "skill_" + skill.SkillID + ".png";
                         }
                     }
+                    else if (Regex.IsMatch(skillNode.FullPathToFile, @"^Skill\d*\\Roguelike\\(Buff|Skill).img\\\d+$"))
+                    {
+                        int type = 0;
+                        if (skillNode.FullPathToFile.Contains("Buff"))
+                        {
+                            type = 1;
+                        }
+                        else
+                        {
+                            type = 2;
+                        }
+                        Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, true, type);
+
+                        if (skill != null)
+                        {
+                            switch (this.skillDefaultLevel)
+                            {
+                                case DefaultLevel.Level0: skill.Level = 0; break;
+                                case DefaultLevel.Level1: skill.Level = 1; break;
+                                case DefaultLevel.LevelMax: skill.Level = skill.MaxLevel; break;
+                                case DefaultLevel.LevelMaxWithCO: skill.Level = skill.MaxLevel + 2; break;
+                            }
+                            obj = skill;
+                            fileName = "skill_Roguelike_" + skill.SkillID + ".png";
+                        }
+                    }
                     break;
 
                 case Wz_Type.Mob:

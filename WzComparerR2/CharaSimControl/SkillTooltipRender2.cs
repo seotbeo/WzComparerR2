@@ -132,10 +132,21 @@ namespace WzComparerR2.CharaSimControl
 
             //获取文字
             StringResult sr;
-            if (StringLinker == null || !StringLinker.StringSkill.TryGetValue(Skill.SkillID, out sr))
+            if (Skill.RoguelikeSkill)
             {
-                sr = new StringResultSkill();
-                sr.Name = "(null)";
+                if (StringLinker == null || !StringLinker.StringSkillRoguelike.TryGetValue(Skill.SkillID.ToString(), out sr))
+                {
+                    sr = new StringResultSkill();
+                    sr.Name = "(null)";
+                }
+            }
+            else
+            {
+                if (StringLinker == null || !StringLinker.StringSkill.TryGetValue(Skill.SkillID, out sr))
+                {
+                    sr = new StringResultSkill();
+                    sr.Name = "(null)";
+                }
             }
 
             //绘制技能名称
@@ -216,31 +227,46 @@ namespace WzComparerR2.CharaSimControl
                 EndColorOnNewLine = true,
             };
 
-            if (Skill.Level > 0)
+            if (Skill.RoguelikeSkill)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
-                GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
+                for (int level = 1; level <= Skill.MaxLevel; level++)
                 {
-                    GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                }
-                if (hStr != null)
-                {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    string hStr = SummaryParser.GetSkillSummary(Skill, level, sr, SummaryParams.Default, skillSummaryOptions);
+                    if (hStr != null)
+                    {
+                        GearGraphics.DrawString(g, "#c[레벨 " + level + "]#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                        GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    }
                 }
             }
-
-            if (Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
+            else
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions);
-                GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
+                if (Skill.Level > 0)
                 {
-                    GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
+                    GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
+                    {
+                        GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    }
+                    if (hStr != null)
+                    {
+                        GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    }
                 }
-                if (hStr != null)
+
+                if (Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
                 {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions);
+                    GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
+                    {
+                        GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    }
+                    if (hStr != null)
+                    {
+                        GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    }
                 }
             }
             picH += 3;

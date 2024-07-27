@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
@@ -17,6 +19,7 @@ namespace WzComparerR2.CharaSim
             this.RelationSkill = null;
             this.ReqSkill = new Dictionary<int, int>();
             this.Action = new List<string>();
+            this.RoguelikeSkill = false;
         }
 
         private int level;
@@ -63,6 +66,7 @@ namespace WzComparerR2.CharaSim
         public bool NotRemoved { get; set; }
         public bool VSkill { get; set; }
         public bool Origin { get; set; }
+        public bool RoguelikeSkill { get; set; }
         public bool TimeLimited { get; set; }
         public Tuple<int, int> RelationSkill { get; set; }
         public bool IsPetAutoBuff { get; set; }
@@ -83,11 +87,18 @@ namespace WzComparerR2.CharaSim
                     return levelCommon.Count;
                 else if (common.TryGetValue("maxLevel", out v))
                     return Convert.ToInt32(v);
+                else if (RoguelikeSkill)
+                    return 1;
                 return 0;
             }
         }
 
         public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        {
+            return CreateFromNode(node, findNode, false, 0);
+        }
+
+        public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, bool isRoguelikeSkill, int roguelikeSkillType)
         {
             Skill skill = new Skill();
             int skillID;
@@ -95,8 +106,20 @@ namespace WzComparerR2.CharaSim
                 return null;
             skill.SkillID = skillID;
 
+            if (isRoguelikeSkill)
+            {
+                skill.RoguelikeSkill = true;
+            }
+
             foreach (Wz_Node childNode in node.Nodes)
             {
+                if (isRoguelikeSkill && roguelikeSkillType == 1)
+                {
+                    if (childNode.Value != null && !(childNode.Value is Wz_Vector))
+                    {
+                        skill.common[childNode.Text] = childNode.Value.ToString();
+                    }
+                }
                 switch (childNode.Text)
                 {
                     case "icon":
@@ -114,6 +137,21 @@ namespace WzComparerR2.CharaSim
                             if (commonNode.Value != null && !(commonNode.Value is Wz_Vector))
                             {
                                 skill.common[commonNode.Text] = commonNode.Value.ToString();
+                            }
+                            if (isRoguelikeSkill)
+                            {
+                                switch (commonNode.Text)
+                                {
+                                    case "icon":
+                                        skill.Icon = BitmapOrigin.CreateFromNode(commonNode, findNode);
+                                        break;
+                                    case "iconMouseOver":
+                                        skill.IconMouseOver = BitmapOrigin.CreateFromNode(commonNode, findNode);
+                                        break;
+                                    case "iconDisabled":
+                                        skill.IconDisabled = BitmapOrigin.CreateFromNode(commonNode, findNode);
+                                        break;
+                                }
                             }
                         }
                         break;

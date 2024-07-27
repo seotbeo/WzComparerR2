@@ -16,6 +16,7 @@ namespace WzComparerR2.Common
             stringNpc = new Dictionary<int, StringResult>();
             stringSkill = new Dictionary<int, StringResult>();
             stringSkill2 = new Dictionary<string, StringResult>();
+            stringSkillRoguelike = new Dictionary<string, StringResult>();
             stringSetItem = new Dictionary<int, StringResult>();
         }
 
@@ -157,6 +158,36 @@ namespace WzComparerR2.Common
                             stringSkill2[tree.Text] = strResult;
                         }
                         break;
+                    case "Roguelike.img":
+                        if (!image.TryExtract()) break;
+                        foreach (Wz_Node tree in image.Node.Nodes["skill"].Nodes)
+                        {
+                            StringResult strResult = new StringResultSkill();
+                            strResult.Name = GetDefaultString(tree, "name");//?? GetDefaultString(tree, "bookName");
+                            strResult.Desc = GetDefaultString(tree, "desc");
+                            strResult.Pdesc = GetDefaultString(tree, "pdesc");
+                            strResult.SkillH.Add(GetDefaultString(tree, "h"));
+                            strResult.SkillpH.Add(GetDefaultString(tree, "ph"));
+                            strResult.SkillhcH.Add(GetDefaultString(tree, "hch"));
+                            if (strResult.SkillH[0] == null)
+                            {
+                                strResult.SkillH.RemoveAt(0);
+                                for (int i = 1; ; i++)
+                                {
+                                    string hi = GetDefaultString(tree, "h" + i);
+                                    if (string.IsNullOrEmpty(hi))
+                                        break;
+                                    strResult.SkillH.Add(hi);
+                                }
+                            }
+                            strResult.SkillH.TrimExcess();
+                            strResult.SkillpH.TrimExcess();
+                            strResult.FullPath = tree.FullPath;
+
+                            AddAllValue(strResult, tree);
+                            stringSkillRoguelike[tree.Text] = strResult;
+                        }
+                        break;
                     case "Eqp.img":
                         if (!image.TryExtract()) break;
                         foreach (Wz_Node tree0 in image.Node.Nodes)
@@ -245,6 +276,7 @@ namespace WzComparerR2.Common
             stringNpc.Clear();
             stringSkill.Clear();
             stringSkill2.Clear();
+            stringSkillRoguelike.Clear();
             stringSetItem.Clear();
         }
 
@@ -264,6 +296,7 @@ namespace WzComparerR2.Common
         private Dictionary<int, StringResult> stringNpc;
         private Dictionary<int, StringResult> stringSkill;
         private Dictionary<string, StringResult> stringSkill2;
+        private Dictionary<string, StringResult> stringSkillRoguelike;
         private Dictionary<int, StringResult> stringSetItem;
 
         private string GetDefaultString(Wz_Node node, string searchNodeText)
@@ -316,6 +349,11 @@ namespace WzComparerR2.Common
         public Dictionary<string, StringResult> StringSkill2
         {
             get { return stringSkill2; }
+        }
+
+        public Dictionary<string, StringResult> StringSkillRoguelike
+        {
+            get { return stringSkillRoguelike; }
         }
 
         public Dictionary<int, StringResult> StringSetItem
