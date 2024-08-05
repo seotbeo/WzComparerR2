@@ -165,6 +165,7 @@ namespace WzComparerR2.CharaSim
             if (value > standardValue)
             {
                 string subfix = null;
+                string openAPISubfix = "";
                 switch (propType)
                 {
                     case GearPropType.incSTR:
@@ -183,7 +184,6 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.incSpeed:
                     case GearPropType.incJump:
                         subfix = $"({standardValue} #e+{value - standardValue}#)"; break;
-
                     case GearPropType.bdR:
                     case GearPropType.incBDR:
                     case GearPropType.imdR:
@@ -192,8 +192,59 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.incDAMr:
                     case GearPropType.statR:
                         subfix = $"({standardValue}% #e+{value - standardValue}%#)"; break;
+
+                    case GearPropType.addSTR:
+                    case GearPropType.addDEX:
+                    case GearPropType.addINT:
+                    case GearPropType.addLUK:
+                    case GearPropType.addMHP:
+                    case GearPropType.addMMP:
+                    case GearPropType.addPAD:
+                    case GearPropType.addMAD:
+                    case GearPropType.addDEF:
+                    case GearPropType.addSpeed:
+                    case GearPropType.addJump:
+                    case GearPropType.addLvlDec:
+                        openAPISubfix += $"#g+{value - standardValue}#"; break;
+
+
+                    case GearPropType.addBDR:
+                    case GearPropType.addDamR:
+                    case GearPropType.addAllStatR:
+                        openAPISubfix += $"#g+{value - standardValue}%#"; break;
+
+                    case GearPropType.scrollSTR:
+                    case GearPropType.scrollDEX:
+                    case GearPropType.scrollINT:
+                    case GearPropType.scrollLUK:
+                    case GearPropType.scrollMHP:
+                    case GearPropType.scrollMMP:
+                    case GearPropType.scrollPAD:
+                    case GearPropType.scrollMAD:
+                    case GearPropType.scrollDEF:
+                    case GearPropType.scrollSpeed:
+                    case GearPropType.scrollJump:
+                        openAPISubfix += $" #e+{value - standardValue}#"; break;
+
+                    case GearPropType.starSTR:
+                    case GearPropType.starDEX:
+                    case GearPropType.starINT:
+                    case GearPropType.starLUK:
+                    case GearPropType.starMHP:
+                    case GearPropType.starMMP:
+                    case GearPropType.starPAD:
+                    case GearPropType.starMAD:
+                    case GearPropType.starDEF:
+                    case GearPropType.starSpeed:
+                    case GearPropType.starJump:
+                        openAPISubfix += $" #c+{value - standardValue}#"; break;
+
                 }
-                propStr = "#$" + propStr + "# " + subfix;
+                if (openAPISubfix.Length > 0 )
+                {
+                    openAPISubfix = $"({standardValue}" + openAPISubfix + ")";
+                }
+                propStr = "#$" + propStr + "# " + subfix + openAPISubfix;
             }
             return propStr;
         }
