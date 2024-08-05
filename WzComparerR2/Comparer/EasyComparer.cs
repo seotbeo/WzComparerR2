@@ -819,18 +819,15 @@ namespace WzComparerR2.Comparer
                             fileName = ToHexString(MD5Hash(fileName));
                             // TODO: save file name mapping to another file?
                         }
-                        else if (Environment.OSVersion.Platform == PlatformID.Win32NT && fileName.Length + suffix.Length > 255)
-                        {
-                            // force hashing if the file name too long.
-                            // TODO: also need to check full file path, we have tested that all existing browsers on Windows cannot load
-                            //       local files with excessively long path.
-                            fileName = ToHexString(MD5Hash(fileName));
-                        }
                         else
                         {
                             for (int i = 0; i < invalidChars.Length; i++)
                             {
                                 fileName = fileName.Replace(invalidChars[i], '_');
+                            }
+                            if (outputDir.Length + fileName.Length > 240)
+                            {
+                                fileName = fileName.Substring(0, 40) + "_" + ToHexString(MD5Hash(fileName)).Substring(0, 8);
                             }
                         }
 
