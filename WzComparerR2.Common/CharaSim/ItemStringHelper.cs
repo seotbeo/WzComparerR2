@@ -182,7 +182,7 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.incMDD:
                     case GearPropType.incSpeed:
                     case GearPropType.incJump:
-                        subfix = $"({standardValue} #$+{value - standardValue}#)"; break;
+                        subfix = $"({standardValue} #e+{value - standardValue}#)"; break;
 
                     case GearPropType.bdR:
                     case GearPropType.incBDR:
@@ -191,7 +191,7 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.damR:
                     case GearPropType.incDAMr:
                     case GearPropType.statR:
-                        subfix = $"({standardValue}% #$+{value - standardValue}%#)"; break;
+                        subfix = $"({standardValue}% #e+{value - standardValue}%#)"; break;
                 }
                 propStr = "#$" + propStr + "# " + subfix;
             }

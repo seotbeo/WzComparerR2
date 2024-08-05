@@ -114,7 +114,8 @@ namespace WzComparerR2.CharaSimControl
         /// <summary>
         /// 表示装备属性额外说明中使用的卷轴强化数值画刷。
         /// </summary>
-        public static readonly Brush ScrollEnhancementBrush = new SolidBrush(Color.FromArgb(170, 170, 255));
+        public static readonly Color ScrollEnhancementColor = Color.FromArgb(170, 170, 255);
+        public static readonly Brush ScrollEnhancementBrush = new SolidBrush(ScrollEnhancementColor);
         /// <summary>
         /// 表示用于绘制“攻击力提升”文字的灰色画刷。
         /// </summary>
@@ -727,6 +728,7 @@ namespace WzComparerR2.CharaSimControl
                     switch (colorID)
                     {
                         case "c": color = GearGraphics.OrangeBrushColor; break;
+                        case "e": color = GearGraphics.ScrollEnhancementColor; break;
                         case "g": color = GearGraphics.gearGreenColor; break;
                         case "$": color = GearGraphics.gearCyanColor; break;
                         default: color = this.defaultColor; break;
