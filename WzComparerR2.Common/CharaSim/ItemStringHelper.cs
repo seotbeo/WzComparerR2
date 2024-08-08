@@ -100,9 +100,9 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incPQEXPr: return "Party Quest EXP: +" + value + "%";
                 case GearPropType.incEXPr: return "Party EXP: +" + value + "%";
                 case GearPropType.incBDR:
-                case GearPropType.bdR: return "ボスモンスター攻撃時のダメージ: +" + value + "%";
+                case GearPropType.bdR: return "ボスモンスター攻撃時のダメージ +" + value + "%";
                 case GearPropType.incIMDR:
-                case GearPropType.imdR: return "モンスター防御率無視: +" + value + "%";
+                case GearPropType.imdR: return "モンスター防御率無視 : +" + value + "%";
                 case GearPropType.limitBreak: return "ダメージ上限: " + ToCJKNumberExpr(value);
                 case GearPropType.reduceReq: return "装着レベル減少： - " + value;
                 case GearPropType.nbdR: return "一般モンスター攻撃時のダメージ: +" + value + "%"; //KMST 1069

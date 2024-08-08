@@ -539,7 +539,7 @@ namespace WzComparerR2.CharaSimControl
                 bool isValidSpeed = (2 <= value && value <= 9);
                 string speedStr = string.Format("攻撃速度: {0}{1}{2}",
                     ItemStringHelper.GetAttackSpeedString(value),
-                    isValidSpeed ? $" ({10 - value}段階)" : null,
+                    isValidSpeed ? $"({10 - value}段階)" : null,
                     ShowSpeed ? $" ({value})" : null
                 );
 
@@ -837,7 +837,7 @@ namespace WzComparerR2.CharaSimControl
                     picH += 8;
                 }
                 g.DrawImage(GetAdditionalOptionIcon(Gear.AdditionGrade), 9, picH - 2);
-                TextRenderer.DrawText(g, "Bonus Potential", GearGraphics.EquipDetailFont, new Point(27, picH), ((SolidBrush)GearGraphics.GetPotentialTextBrush(Gear.AdditionGrade)).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                TextRenderer.DrawText(g, "アディショナル潜在オプション", GearGraphics.EquipDetailFont, new Point(27, picH), ((SolidBrush)GearGraphics.GetPotentialTextBrush(Gear.AdditionGrade)).Color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 picH += 15;
 
                 foreach (Potential potential in Gear.AdditionalOptions)

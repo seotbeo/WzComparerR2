@@ -81,7 +81,7 @@ namespace WzComparerR2.Comparer
 
         public void EasyCompareWzFiles(Wz_File fileNew, Wz_File fileOld, string outputDir, StreamWriter index = null)
         {
-            StateInfo = "Comparing...";
+            StateInfo = "比較中...";
 
             if ((fileNew.Type == Wz_Type.Base || fileOld.Type == Wz_Type.Base) && index == null) //至少有一个base 拆分对比
             {
@@ -348,8 +348,8 @@ namespace WzComparerR2.Comparer
 
             FileStream htmlFile = null;
             StreamWriter sw = null;
-            StateInfo = "Creating" + type;
-            StateDetail = "Creating output files";
+            StateInfo = type + "を作成しています...";
+            StateDetail = "出力ファイルを作成しています...";
             try
             {
                 htmlFile = new FileStream(htmlFilePath, FileMode.Create, FileAccess.Write);
@@ -547,7 +547,7 @@ namespace WzComparerR2.Comparer
             }
         }
 
-        // 변경된 스킬 툴팁 출력
+        // 変更されたスキルツールチップ出力
         private void SaveTooltip(string skillTooltipPath)
         {
             SkillTooltipRender2[] skillRenderNewOld = new SkillTooltipRender2[2];
@@ -578,13 +578,15 @@ namespace WzComparerR2.Comparer
                 StateDetail = "Skill 変更点をツールチップ画像に出力中...";
 
                 Bitmap[] skillImageNewOld = { null, null };
+                string oldSkillName = "";
+                string newSkillName = "";
                 string skillType = "削除";
                 string skillNodePath = int.Parse(skillID) / 10000000 == 8 ? String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 100, skillID) : String.Format(@"\{0:D}.img\skill\{1:D}", int.Parse(skillID) / 10000, skillID);
                 if (int.Parse(skillID) / 10000 == 0) skillNodePath = String.Format(@"\000.img\skill\{0:D7}", skillID);
                 int[] heightNewOld = { 0, 0 };
                 int width = 0;
 
-                // 변경 전후 툴팁 이미지 생성
+                // 変更前後のツールチップ画像の作成
                 for (int i = 0; i < 2; i++)
                 {
                     Skill skill = Skill.CreateFromNode(PluginManager.FindWz("Skill" + skillNodePath, WzNewOld[i].GetNodeWzFile()), PluginManager.FindWz, WzNewOld[i]?.GetNodeWzFile()) ??
@@ -604,7 +606,7 @@ namespace WzComparerR2.Comparer
 
                 if (width == 0) continue;
 
-                // 툴팁 이미지 합치기
+                // ツールチップ画像を合わせる
                 Bitmap resultImage = new Bitmap(width, Math.Max(heightNewOld[0], heightNewOld[1]));
                 Graphics g = Graphics.FromImage(resultImage);
 
@@ -630,7 +632,7 @@ namespace WzComparerR2.Comparer
                 int picH = 13;
                 GearGraphics.DrawPlainText(g, skillType, skillTypeFont, Color.FromArgb(255, 255, 255), 2, (int)Math.Ceiling(skillTypeTextInfo.Width) + 2, ref picH, 10);
 
-                string imageName = Path.Combine(skillTooltipPath, "スキル_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "その他") + "]_" + skillType + ".png");
+                string imageName = Path.Combine(skillTooltipPath, "スキル_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "その他") + "]_" + skillType + "_" + oldSkillName + newSkillName + ".png");
                 if (!File.Exists(imageName))
                 {
                     resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
