@@ -13,7 +13,7 @@ namespace WzComparerR2.MapRender
     {
         public static readonly IReadOnlyList<string> DefaultFonts = new ReadOnlyCollection<string>(new[]
         {
-            "MS Gothic", "Arial", "Dotum"
+            "MS Gothic", "Arial", "Dotum", "SimSun", "PMingLiU"
         });
 
         public static string GetFontResourceKey(string familyName, float size, FontStyle style)
