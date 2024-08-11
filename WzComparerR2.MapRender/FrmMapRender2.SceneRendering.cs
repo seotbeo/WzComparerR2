@@ -215,6 +215,12 @@ namespace WzComparerR2.MapRender
             var mouse = this.renderEnv.Input.MousePosition;
             var mousePos = this.renderEnv.Camera.CameraToWorld(mouse);
             sb.AppendFormat("{0},{1}", mousePos.X, mousePos.Y);
+
+            //Power Requirement
+            if (this.mapData?.Barrier > 0 || this.mapData?.BarrierArc > 0 || this.mapData?.BarrierAut > 0)
+            {
+                sb.Append(" ReqPwr:").Append(this.mapData?.Barrier > 0 ? "★" + this.mapData?.Barrier.ToString() : "").Append(this.mapData?.BarrierArc > 0 ? "●" + this.mapData?.BarrierArc.ToString() : "").Append(this.mapData?.BarrierAut > 0 ? "⬢ " + this.mapData?.BarrierAut.ToString() : "");
+            }
             this.ui.TopBar.Text = sb.ToString();
         }
 
