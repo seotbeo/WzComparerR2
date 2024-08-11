@@ -738,7 +738,7 @@ namespace WzComparerR2
             var aniItem = this.pictureBoxEx1.Items[0];
             var frameData = (aniItem as FrameAnimator)?.Data;
             if (frameData != null && frameData.Frames.Count == 1 
-                && frameData.Frames[0].A0 == 255 && frameData.Frames[0].A1 == 255 && frameData.Frames[0].Delay == 0)
+                && frameData.Frames[0].A0 == 255 && frameData.Frames[0].A1 == 255 && (frameData.Frames[0].Delay == 0 || pictureBoxEx1.ShowOverlayAni))
             {
                 // save still picture as png
                 this.OnSavePngFile(frameData.Frames[0]);
