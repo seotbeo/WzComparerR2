@@ -432,7 +432,7 @@ namespace WzComparerR2.Comparer
                     sb[idx].AppendLine("</td></tr>");
                     count[idx]++;
                 }
-                StateDetail = "Creating a table of contents";
+                StateDetail = "目次を作成しています";
                 Array.Copy(count, 0, count, 3, 3);
                 for (int i = 0; i < sb.Length; i++)
                 {
