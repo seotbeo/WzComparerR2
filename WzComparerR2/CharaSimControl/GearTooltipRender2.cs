@@ -1525,13 +1525,17 @@ namespace WzComparerR2.CharaSimControl
             {
                 extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob2, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
+            else if (Gear.type == GearType.shield)
+            {
+                extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
+            }
             else
             {
                 extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type) ??
                 (Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
             
-            Image jobImage = extraReq == null ? Resource.UIToolTip_img_Item_Equip_Job_normal : Resource.UIToolTip_img_Item_Equip_Job_expand;
+            Image jobImage = extraReq == null ? Resource.UIToolTip_img_Item_Equip_Job_normal : extraReq.Contains("\r\n") ? Resource.UIToolTip_img_Item_Equip_Job_expand2 : Resource.UIToolTip_img_Item_Equip_Job_expand;
             g.DrawImage(jobImage, 10, picH);
 
             int reqJob;
