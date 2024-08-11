@@ -1394,8 +1394,8 @@ namespace WzComparerR2
                     preLoadSound(sound, selectedNode.Text);
                     textBoxX1.Text = "dataLength: " + sound.DataLength + " bytes\r\n" +
                         "offset: " + sound.Offset + "\r\n" +
-                        "time: " + sound.Ms + " ms\r\n" +
-                        "headerLength: " + (sound.Header == null ? 0 : sound.Header.Length) + " bytes\r\n" +
+                        "duration: " + sound.Ms + " ms\r\n" +
+                        "channels: " + sound.Channels + "\r\n" +
                         "freq: " + sound.Frequency + " Hz\r\n" +
                         "type: " + sound.SoundType.ToString();
                     break;
@@ -2387,7 +2387,7 @@ namespace WzComparerR2
             switch (sound.SoundType)
             {
                 case Wz_SoundType.Mp3: soundName += ".mp3"; break;
-                case Wz_SoundType.WavRaw: soundName += ".wav"; break;
+                case Wz_SoundType.Pcm: soundName += ".wav"; break;
             }
             soundPlayer.PlayingSoundName = soundName;
             labelItemSoundTitle.Tooltip = soundName;
@@ -2583,7 +2583,7 @@ namespace WzComparerR2
                     switch (wzSound.SoundType)
                     {
                         case Wz_SoundType.Mp3: dlg.FileName += ".mp3"; break;
-                        case Wz_SoundType.WavRaw: dlg.FileName += ".wav"; break;
+                        case Wz_SoundType.Pcm: dlg.FileName += ".pcm"; break;
                     }
                 }
                 dlg.Filter = "모든 파일 (*.*)|*.*";
