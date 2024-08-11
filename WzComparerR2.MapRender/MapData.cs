@@ -40,6 +40,10 @@ namespace WzComparerR2.MapRender
         public int? ReturnMap { get; set; }
         public bool HideMinimap { get; set; }
         public int FieldLimit { get; set; }
+
+        public int? Barrier { get; set; }
+        public int? BarrierArc { get; set; }
+        public int? BarrierAut { get; set; }
         public string FieldScript { get; set; }
 
         public MiniMap MiniMap { get; private set; }
@@ -178,6 +182,10 @@ namespace WzComparerR2.MapRender
             this.HideMinimap = infoNode.Nodes["hideMinimap"].GetValueEx(false);
             this.FieldLimit = infoNode.Nodes["fieldLimit"].GetValueEx(0);
             this.FieldScript = infoNode.Nodes["fieldScript"].GetValueEx<string>(null);
+
+            this.Barrier = infoNode.Nodes["barrier"].GetValueEx<int>();
+            this.BarrierArc = infoNode.Nodes["barrierArc"].GetValueEx<int>();
+            this.BarrierAut = infoNode.Nodes["barrierAut"].GetValueEx<int>();
         }
 
         private void LoadMinimap(Wz_Node miniMapNode, ResourceLoader resLoader)
