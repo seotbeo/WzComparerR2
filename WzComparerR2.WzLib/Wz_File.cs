@@ -7,15 +7,15 @@ using System.Text.RegularExpressions;
 
 namespace WzComparerR2.WzLib
 {
-    public class Wz_File : IDisposable
+    public class Wz_File : IMapleStoryFile, IDisposable
     {
-        public Wz_File(string fileName, Wz_Structure wz, string fallbackFileName = null)
+        public Wz_File(string fileName, Wz_Structure wz)
         {
             this.imageCount = 0;
             this.wzStructure = wz;
-            this.fileStream = new FileStream(File.Exists(fileName) ? fileName : fallbackFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            this.fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             this.bReader = new BinaryReader(this.FileStream);
-            this.loaded = this.GetHeader(File.Exists(fileName) ? fileName : fallbackFileName);
+            this.loaded = this.GetHeader(fileName);
             this.stringTable = new Dictionary<long, string>();
             this.directories = new List<Wz_Directory>();
         }
@@ -35,7 +35,7 @@ namespace WzComparerR2.WzLib
 
         public Encoding TextEncoding { get; set; }
 
-        public readonly object ReadLock = new object();
+        public object ReadLock => this.fileStream;
 
         internal Dictionary<long, string> stringTable;
         internal byte[] tempBuffer;
@@ -98,6 +98,12 @@ namespace WzComparerR2.WzLib
         {
             get { return this.ownerWzFile; }
         }
+
+        Wz_Structure IMapleStoryFile.WzStructure => this.wzStructure;
+
+        Stream IMapleStoryFile.FileStream => this.fileStream;
+
+        object IMapleStoryFile.ReadLock => this.ReadLock;
 
         public void Close()
         {
@@ -230,7 +236,7 @@ namespace WzComparerR2.WzLib
                     break;
 
                 default:
-                    throw new Exception("An error occurred while reading: " + this.FileStream.Name + " " + this.FileStream.Position);
+                    throw new Exception("读取字符串错误 在:" + this.FileStream.Name + " " + this.FileStream.Position);
             }
             return string.Empty;
         }
@@ -357,7 +363,7 @@ namespace WzComparerR2.WzLib
             return offset;
         }
 
-        public void GetDirTree(Wz_Node parent, bool useBaseWz = false, bool loadWzAsFolder = false, string fileName = null, string fallbackFileName = null)
+        public void GetDirTree(Wz_Node parent, bool useBaseWz = false, bool loadWzAsFolder = false)
         {
             List<string> dirs = new List<string>();
             string name = null;
@@ -410,8 +416,7 @@ namespace WzComparerR2.WzLib
             int dirCount = dirs.Count;
             bool willLoadBaseWz = useBaseWz ? parent.Text.Equals("base.wz", StringComparison.OrdinalIgnoreCase) : false;
 
-            var baseFolder = Path.GetDirectoryName(fileName ?? this.header.FileName);
-            var fallbackBaseFolder = Path.GetDirectoryName(fallbackFileName);
+            var baseFolder = Path.GetDirectoryName(this.header.FileName);
 
             if (willLoadBaseWz && this.WzStructure.AutoDetectExtFiles)
             {
@@ -479,10 +484,9 @@ namespace WzComparerR2.WzLib
                         if (loadWzAsFolder)
                         {
                             string wzFolder = willLoadBaseWz ? Path.Combine(Path.GetDirectoryName(baseFolder), dir) : Path.Combine(baseFolder, dir);
-                            string fallbackWzFolder = fallbackBaseFolder == null ? null : (willLoadBaseWz ? Path.Combine(Path.GetDirectoryName(fallbackBaseFolder), dir) : Path.Combine(fallbackBaseFolder, dir));
-                            if (Directory.Exists(wzFolder) || Directory.Exists(fallbackWzFolder))
+                            if (Directory.Exists(wzFolder))
                             {
-                                this.wzStructure.LoadWzFolder(wzFolder, ref t, false, fallbackWzFolder);
+                                this.wzStructure.LoadWzFolder(wzFolder, ref t, false);
                                 if (!willLoadBaseWz)
                                 {
                                     var dirWzFile = t.GetValue<Wz_File>();

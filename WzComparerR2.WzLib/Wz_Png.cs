@@ -76,10 +76,9 @@ namespace WzComparerR2.WzLib
         /// <summary>
         /// 获取或设置图片所属的WzFile
         /// </summary>
-        public Wz_File WzFile
+        public IMapleStoryFile WzFile
         {
-            get { return wz_i.WzFile; }
-            set { wz_i.WzFile = value; }
+            get { return wz_i?.WzFile; }
         }
 
         /// <summary>
@@ -98,37 +97,39 @@ namespace WzComparerR2.WzLib
                 DeflateStream zlib;
                 byte[] plainData = null;
 
-                this.WzFile.FileStream.Position = this.Offset;
+                var stream = this.WzImage.OpenRead();
+                long endPosition = this.Offset + this.DataLength;
+                stream.Position = this.Offset + 1; // skip the first byte
+                var bReader = new BinaryReader(stream);
 
-                if (this.WzFile.BReader.ReadUInt16() == 0x9C78)
+                if (bReader.ReadUInt16() == 0x9C78)
                 {
-                    byte[] buffer = this.WzFile.BReader.ReadBytes(this.data_length - 2);
-                    MemoryStream dataStream = new MemoryStream(buffer);
+                    byte[] buffer = bReader.ReadBytes((int)(endPosition - stream.Position));
+                    MemoryStream dataStream = new MemoryStream(buffer, false);
 
                     zlib = new DeflateStream(dataStream, CompressionMode.Decompress);
                 }
                 else
                 {
-                    this.WzFile.FileStream.Position -= 2;
+                    stream.Position -= 2;
                     byte[] buffer = new byte[this.DataLength];
-                    int startIndex = 0;
-                    long endPosition = this.DataLength + this.WzFile.FileStream.Position;
-
+                    int dataEndOffset = 0;
+                    
                     var encKeys = this.WzImage.EncKeys;
 
-                    while (this.WzFile.FileStream.Position < endPosition)
+                    while (stream.Position < endPosition)
                     {
-                        int blockSize = this.WzFile.BReader.ReadInt32();
-                        if (this.WzFile.FileStream.Position + blockSize > endPosition)
+                        int blockSize = bReader.ReadInt32();
+                        if (stream.Position + blockSize > endPosition)
                         {
-                            throw new Exception($"Wz_Png exceeds the declared data size. (data length: {this.DataLength}, readed bytes: {startIndex}, next block: {blockSize})");
+                            throw new Exception($"Wz_Png exceeds the declared data size. (data length: {this.DataLength}, readed bytes: {dataEndOffset}, next block: {blockSize})");
                         }
-                        this.WzFile.BReader.Read(buffer, startIndex, blockSize);
-                        encKeys.Decrypt(buffer, startIndex, blockSize);
+                        bReader.Read(buffer, dataEndOffset, blockSize);
+                        encKeys.Decrypt(buffer, dataEndOffset, blockSize);
 
-                        startIndex += blockSize;
+                        dataEndOffset += blockSize;
                     }
-                    var dataStream = new MemoryStream(buffer);
+                    var dataStream = new MemoryStream(buffer, 0, dataEndOffset, false);
                     dataStream.Position = 2;
                     zlib = new DeflateStream(dataStream, CompressionMode.Decompress);
                 }
@@ -234,25 +235,25 @@ namespace WzComparerR2.WzLib
                     Marshal.Copy(argb, 0, bmpdata.Scan0, argb.Length);
                     pngDecoded.UnlockBits(bmpdata);
                     break;
-                /* pngDecoded = new Bitmap(this.w, this.h);
-                 pngSize = this.w * this.h / 128;
-                 plainData = new byte[pngSize];
-                 zlib.Read(plainData, 0, pngSize);
-                 byte iB = 0;
-                 for (int i = 0; i < pngSize; i++)
-                 {
-                     for (byte j = 0; j < 8; j++)
-                     {
-                         iB = Convert.ToByte(((plainData[i] & (0x01 << (7 - j))) >> (7 - j)) * 0xFF);
-                         for (int k = 0; k < 16; k++)
-                         {
-                             if (x == this.w) { x = 0; y++; }
-                             pngDecoded.SetPixel(x, y, Color.FromArgb(0xFF, iB, iB, iB));
-                             x++;
-                         }
-                     }
-                 }
-                 break;*/
+                   /* pngDecoded = new Bitmap(this.w, this.h);
+                    pngSize = this.w * this.h / 128;
+                    plainData = new byte[pngSize];
+                    zlib.Read(plainData, 0, pngSize);
+                    byte iB = 0;
+                    for (int i = 0; i < pngSize; i++)
+                    {
+                        for (byte j = 0; j < 8; j++)
+                        {
+                            iB = Convert.ToByte(((plainData[i] & (0x01 << (7 - j))) >> (7 - j)) * 0xFF);
+                            for (int k = 0; k < 16; k++)
+                            {
+                                if (x == this.w) { x = 0; y++; }
+                                pngDecoded.SetPixel(x, y, Color.FromArgb(0xFF, iB, iB, iB));
+                                x++;
+                            }
+                        }
+                    }
+                    break;*/
 
                 case 1026: //dxt3
                     argb = GetPixelDataDXT3(pixel, this.w, this.h);
@@ -313,7 +314,7 @@ namespace WzComparerR2.WzLib
                             SetPixel(pixel,
                                 x + i,
                                 y + j,
-                                width,
+                                width, 
                                 colorTable[colorIdxTable[j * 4 + i]],
                                 alphaTable[j * 4 + i]);
                         }
@@ -501,14 +502,14 @@ namespace WzComparerR2.WzLib
             alpha[1] = a1;
             if (a0 > a1)
             {
-                for (int i = 2; i < 8; i++)
+                for(int i = 2; i < 8; i++)
                 {
                     alpha[i] = (byte)(((8 - i) * a0 + (i - 1) * a1 + 3) / 7);
                 }
             }
             else
             {
-                for (int i = 2; i < 6; i++)
+                for(int i = 2; i < 6; i++)
                 {
                     alpha[i] = (byte)(((6 - i) * a0 + (i - 1) * a1 + 2) / 5);
                 }
@@ -524,7 +525,7 @@ namespace WzComparerR2.WzLib
                 int flags = rawData[offset]
                     | (rawData[offset + 1] << 8)
                     | (rawData[offset + 2] << 16);
-                for (int j = 0; j < 8; j++)
+                for(int j = 0; j < 8; j++)
                 {
                     int mask = 0x07 << (3 * j);
                     alphaIndex[i + j] = (flags & mask) >> (3 * j);
