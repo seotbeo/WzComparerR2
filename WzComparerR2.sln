@@ -1,27 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2", "WzComparerR2\WzComparerR2.csproj", "{5E883BE2-2009-4517-8026-4B90DEB83884}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2", "WzComparerR2\WzComparerR2.csproj", "{5E883BE2-2009-4517-8026-4B90DEB83884}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11E362E4-B8FB-4BD4-B0D3-BA078D5FB002} = {11E362E4-B8FB-4BD4-B0D3-BA078D5FB002}
+		{1995B977-CD5E-4A8B-BE3D-15A2AFE1BFB4} = {1995B977-CD5E-4A8B-BE3D-15A2AFE1BFB4}
+		{EBDA4AE9-4BCE-4824-84B5-B15660437141} = {EBDA4AE9-4BCE-4824-84B5-B15660437141}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharaSimResource", "CharaSimResource\CharaSimResource.csproj", "{54797F38-A12C-4202-92A4-1A3DDCE914B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharaSimResource", "CharaSimResource\CharaSimResource.csproj", "{54797F38-A12C-4202-92A4-1A3DDCE914B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.PluginBase", "WzComparerR2.PluginBase\WzComparerR2.PluginBase.csproj", "{FA74A2FD-0250-4182-845D-DD98D829B525}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.PluginBase", "WzComparerR2.PluginBase\WzComparerR2.PluginBase.csproj", "{FA74A2FD-0250-4182-845D-DD98D829B525}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.WzLib", "WzComparerR2.WzLib\WzComparerR2.WzLib.csproj", "{0E9801FD-44A2-4AF8-AE91-D6E74BAD56B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.WzLib", "WzComparerR2.WzLib\WzComparerR2.WzLib.csproj", "{0E9801FD-44A2-4AF8-AE91-D6E74BAD56B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugin", "Plugin", "{495B5D02-38A2-48C0-B8D2-C2A1783EC231}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.LuaConsole", "WzComparerR2.LuaConsole\WzComparerR2.LuaConsole.csproj", "{1995B977-CD5E-4A8B-BE3D-15A2AFE1BFB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.LuaConsole", "WzComparerR2.LuaConsole\WzComparerR2.LuaConsole.csproj", "{1995B977-CD5E-4A8B-BE3D-15A2AFE1BFB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.MapRender", "WzComparerR2.MapRender\WzComparerR2.MapRender.csproj", "{11E362E4-B8FB-4BD4-B0D3-BA078D5FB002}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.MapRender", "WzComparerR2.MapRender\WzComparerR2.MapRender.csproj", "{11E362E4-B8FB-4BD4-B0D3-BA078D5FB002}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.Common", "WzComparerR2.Common\WzComparerR2.Common.csproj", "{818060BC-404C-470A-94B3-5160716C5247}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.Common", "WzComparerR2.Common\WzComparerR2.Common.csproj", "{818060BC-404C-470A-94B3-5160716C5247}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.Avatar", "WzComparerR2.Avatar\WzComparerR2.Avatar.csproj", "{A0753218-2C58-4E4A-9017-A435D2E5F639}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.Avatar", "WzComparerR2.Avatar\WzComparerR2.Avatar.csproj", "{A0753218-2C58-4E4A-9017-A435D2E5F639}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WzComparerR2.Network", "WzComparerR2.Network\WzComparerR2.Network.csproj", "{EBDA4AE9-4BCE-4824-84B5-B15660437141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WzComparerR2.Network", "WzComparerR2.Network\WzComparerR2.Network.csproj", "{EBDA4AE9-4BCE-4824-84B5-B15660437141}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

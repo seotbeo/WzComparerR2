@@ -904,6 +904,14 @@ namespace WzComparerR2
                 if (wz.IsKMST1125WzFormat(wzFilePath))
                 {
                     wz.LoadKMST1125DataWz(wzFilePath);
+                    string packsDir = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(wzFilePath)), "Packs");
+                    if (Directory.Exists(packsDir))
+                    {
+                        foreach (var msFile in Directory.GetFiles(packsDir, "*.ms"))
+                        {
+                            wz.LoadMsFile(msFile);
+                        }
+                    }
                 }
                 else
                 {
@@ -1925,7 +1933,7 @@ namespace WzComparerR2
                 try
                 {
                     fs = new FileStream(dlg.FileName, FileMode.Create, FileAccess.Write);
-                    FileStream fsWz = img.WzFile.FileStream;
+                    Stream fsWz = img.WzFile.FileStream;
                     fsWz.Seek(img.Offset, SeekOrigin.Begin);
                     byte[] buffer = new byte[2048];
                     int count, size = img.Size;
