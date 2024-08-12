@@ -647,7 +647,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //星星锤子
-            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar() > 0)
+            if (hasTuc && Gear.Hammer > -1 || Gear.GetMaxStar() > 0)
             {
                 if (Gear.Hammer == 2)
                 {
@@ -1389,7 +1389,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if ((Gear.ItemID / 10000 >= 161 && Gear.ItemID / 10000 <= 165) || (Gear.ItemID / 10000 >= 194 && Gear.ItemID / 10000 <= 197))
             {
-                tags.Add("フュージョンアンビルを使用できません");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
+                tags.Add("神秘のカナトコ使用不可");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
             }
 
             return tags;
