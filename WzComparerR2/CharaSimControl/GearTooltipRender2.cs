@@ -1389,7 +1389,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if ((Gear.ItemID / 10000 >= 161 && Gear.ItemID / 10000 <= 165) || (Gear.ItemID / 10000 >= 194 && Gear.ItemID / 10000 <= 197))
             {
-                tags.Add("Cannot use Fusion Anvil");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
+                tags.Add("フュージョンアンビルを使用できません");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
             }
 
             return tags;
@@ -1525,13 +1525,17 @@ namespace WzComparerR2.CharaSimControl
             {
                 extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob2, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
+            else if (Gear.type == GearType.shield)
+            {
+                extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
+            }
             else
             {
                 extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type) ??
                 (Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
             
-            Image jobImage = extraReq == null ? Resource.UIToolTip_img_Item_Equip_Job_normal : Resource.UIToolTip_img_Item_Equip_Job_expand;
+            Image jobImage = extraReq == null ? Resource.UIToolTip_img_Item_Equip_Job_normal : extraReq.Contains("\r\n") ? Resource.UIToolTip_img_Item_Equip_Job_expand2 : Resource.UIToolTip_img_Item_Equip_Job_expand;
             g.DrawImage(jobImage, 10, picH);
 
             int reqJob;
@@ -1568,7 +1572,19 @@ namespace WzComparerR2.CharaSimControl
             {
                 StringFormat format = new StringFormat();
                 format.Alignment = StringAlignment.Center;
-                TextRenderer.DrawText(g, extraReq, GearGraphics.EquipDetailFont, new Point(261, picH + 24), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter);
+                if (extraReq.Contains("\r\n")) {
+                    int currentPicH = picH + 24;
+                    string[] extraReqLines = extraReq.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    foreach (string line in extraReqLines)
+                    {
+                        TextRenderer.DrawText(g, line, GearGraphics.EquipDetailFont, new Point(261, currentPicH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter | TextFormatFlags.ExternalLeading);
+                        currentPicH += 14;
+                    }
+                }
+                else
+                {
+                    TextRenderer.DrawText(g, extraReq, GearGraphics.EquipDetailFont, new Point(261, picH + 24), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.HorizontalCenter | TextFormatFlags.ExternalLeading);
+                }
                 format.Dispose();
             }
             picH += jobImage.Height + 9;
