@@ -102,12 +102,12 @@ namespace WzComparerR2.Animation
             }
 
 
-            Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(graphicsDevice);
+            SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
             Texture2D rectangleTexture;
 
             RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, Microsoft.Xna.Framework.Graphics.RenderTargetUsage.DiscardContents);
             graphicsDevice.SetRenderTarget(renderTarget);
-            graphicsDevice.Clear(bgColor);
+            graphicsDevice.Clear(Color.Transparent);
 
             spriteBatch.Begin();
 

@@ -26,7 +26,7 @@ namespace WzComparerR2
             this.txtTop.Value = 0;
             this.txtBottom.Value = 0;
             this.txtStart.Value = 0;
-            this.txtStart.MaxValue = s;
+            this.txtStart.MaxValue = e;
             this.txtEnd.Value = e;
             this.txtEnd.MaxValue = e;
         }
