@@ -214,6 +214,62 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
+        public void AddOverlayRect()
+        {
+            FrameAnimator baseAniItem;
+            if (this.Items.Count == 0)
+            {
+                var tmpFrame = new Frame(null, Point.Zero, 0, 0, true);
+                var tmpFrameAnimationData = new FrameAnimationData();
+                tmpFrameAnimationData.Frames.Add(tmpFrame);
+                baseAniItem = new FrameAnimator(tmpFrameAnimationData);
+            }
+            else baseAniItem = (FrameAnimator)this.Items[0];
+
+            FrameAnimator aniItem;
+
+            var config = ImageHandlerConfig.Default;
+            var baseDelayAll = 0;
+            foreach (var frame in baseAniItem.Data.Frames)
+            {
+                baseDelayAll += frame.Delay;
+            }
+
+            var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll);
+            Point lt;
+            Point rb;
+            Color rectColor = System.Drawing.Color.FromArgb(153, 0, 255, 255).ToXnaColor();
+            Color outlineColor = System.Drawing.Color.FromArgb(255, 0, 255, 255).ToXnaColor();
+            Color bgColor = System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor();
+            int startTime = 0;
+            int endTime = 0;
+
+            if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
+            {
+                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime);
+
+                aniItem = new FrameAnimator(FrameAnimationData.CreateRectData(lt, rb, endTime - startTime, this.GraphicsDevice, bgColor, rectColor, outlineColor));
+
+                if (aniItem == null) return;
+            }
+            else return;
+
+            this.Items.Clear();
+
+            var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
+                    this.GraphicsDevice, bgColor,
+                    startTime, 0, 0, 0, 0));
+
+            this.Items.Add(newAniItem);
+
+            if (this.AutoAdjustPosition)
+            {
+                this.AdjustPosition();
+            }
+
+            this.Invalidate();
+        }
+
         public void AdjustPosition()
         {
             if (this.Items.Count <= 0)

@@ -705,6 +705,14 @@ namespace WzComparerR2
             }
         }
 
+        private void buttonOverlayRect_Click(object sender, EventArgs e)
+        {
+            if (this.pictureBoxEx1.ShowOverlayAni)
+            {
+                this.pictureBoxEx1.AddOverlayRect();
+            }
+        }
+
         private void buttonItemAutoSave_Click(object sender, EventArgs e)
         {
             ConfigManager.Reload();

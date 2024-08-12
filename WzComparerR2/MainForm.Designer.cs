@@ -177,6 +177,7 @@
             this.itemContainer44 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemGifSetting = new DevComponents.DotNetBar.ButtonItem();
             this.buttonDisableOverlayAni = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonOverlayRect = new DevComponents.DotNetBar.ButtonItem();
             this.textBoxX1 = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
@@ -2094,7 +2095,8 @@
             this.itemContainer44.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Vertical;
             this.itemContainer44.Name = "itemContainer44";
             this.itemContainer44.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.buttonDisableOverlayAni});
+            this.buttonDisableOverlayAni,
+            this.buttonOverlayRect});
             // 
             // 
             // 
@@ -2105,6 +2107,12 @@
             this.buttonDisableOverlayAni.Name = "buttonDisableOverlayAni";
             this.buttonDisableOverlayAni.Text = "중첩 비활성화";
             this.buttonDisableOverlayAni.Click += new System.EventHandler(this.buttonDisableOverlayAni_Click);
+            // 
+            // buttonOverlayRect
+            // 
+            this.buttonOverlayRect.Name = "buttonOverlayRect";
+            this.buttonOverlayRect.Text = "범위 사각형 추가";
+            this.buttonOverlayRect.Click += new System.EventHandler(this.buttonOverlayRect_Click);
             // 
             // textBoxX1
             // 
@@ -3234,6 +3242,7 @@
         private DevComponents.DotNetBar.ItemContainer itemContainer44;
         private DevComponents.DotNetBar.ButtonItem buttonItemGifSetting;
         private DevComponents.DotNetBar.ButtonItem buttonDisableOverlayAni;
+        private DevComponents.DotNetBar.ButtonItem buttonOverlayRect;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem tsmi2ExpandAll;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CollapseAll;

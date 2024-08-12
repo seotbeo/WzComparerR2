@@ -5,6 +5,7 @@ using System.Text;
 using WzComparerR2.WzLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using DevComponents.DotNetBar;
 
 namespace WzComparerR2.Animation
 {
@@ -85,6 +86,61 @@ namespace WzComparerR2.Animation
                 return anime;
             else
                 return null;
+        }
+
+        public static FrameAnimationData CreateRectData(Point lt, Point rb, int delay, GraphicsDevice graphicsDevice, Color bgColor, Color rectColor, Color outlineColor)
+        {
+            int outline = 2;
+
+            var width = -lt.X + rb.X;
+            var height = -lt.Y + rb.Y;
+
+            if (width <= 0 || height <= 0)
+            {
+                MessageBoxEx.Show("입력한 범위가 올바르지 않습니다.", "범위 설정 오류");
+                return null;
+            }
+
+
+            Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(graphicsDevice);
+            Texture2D rectangleTexture;
+
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, Microsoft.Xna.Framework.Graphics.RenderTargetUsage.DiscardContents);
+            graphicsDevice.SetRenderTarget(renderTarget);
+            graphicsDevice.Clear(bgColor);
+
+            spriteBatch.Begin();
+
+            Texture2D colTexture = new Texture2D(graphicsDevice, 1, 1);
+            colTexture.SetData(new[] { rectColor });
+            Texture2D outlineTexture = new Texture2D(graphicsDevice, 1, 1);
+            outlineTexture.SetData(new[] { rectColor });
+
+            Rectangle rectangle = new Rectangle(0, 0, width, height);
+            Color rectangleColor = rectColor;
+
+            spriteBatch.Draw(colTexture, rectangle, rectangleColor); // 반투명 영역
+            spriteBatch.Draw(outlineTexture, new Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, outline), outlineColor); // 테두리
+            spriteBatch.Draw(outlineTexture, new Rectangle(rectangle.Left, rectangle.Top, outline, rectangle.Height), outlineColor);
+            spriteBatch.Draw(outlineTexture, new Rectangle(rectangle.Left, rectangle.Bottom - outline, rectangle.Width, outline), outlineColor);
+            spriteBatch.Draw(outlineTexture, new Rectangle(rectangle.Right - outline, rectangle.Top, outline, rectangle.Height), outlineColor);
+
+            spriteBatch.End();
+
+            graphicsDevice.SetRenderTarget(null);
+
+            rectangleTexture = (Texture2D)renderTarget;
+
+            Point origin = new Point(-lt.X, -lt.Y);
+            var tmpFrame = new Frame(rectangleTexture, origin, 0, delay, true);
+            var tmpFrameAnimationData = new FrameAnimationData();
+            tmpFrameAnimationData.Frames.Add(tmpFrame);
+
+            if (tmpFrameAnimationData.Frames.Count > 0)
+                return tmpFrameAnimationData;
+            else
+                return null;
+
         }
 
         public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, Color bgColor, int delayOffset, int moveX, int moveY, int frameStart, int frameEnd)
