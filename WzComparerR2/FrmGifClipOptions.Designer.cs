@@ -72,6 +72,7 @@ namespace WzComparerR2
             this.txtHeightNew = new DevComponents.Editors.IntegerInput();
             this.txtScaleNew = new DevComponents.Editors.IntegerInput();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.chk768Preset = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtStartTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtStopTime)).BeginInit();
@@ -100,10 +101,10 @@ namespace WzComparerR2
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(58, 3);
+            this.buttonOK.Location = new System.Drawing.Point(30, 3);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.Size = new System.Drawing.Size(65, 23);
             this.buttonOK.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonOK.Symbol = "";
             this.buttonOK.SymbolSize = 1F;
@@ -116,10 +117,10 @@ namespace WzComparerR2
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(195, 3);
+            this.buttonCancel.Location = new System.Drawing.Point(101, 3);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 3, 30, 3);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(65, 23);
             this.buttonCancel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "キャンセル";
@@ -258,7 +259,7 @@ namespace WzComparerR2
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(94, 20);
             this.labelX3.TabIndex = 8;
-            this.labelX3.Text = "開始時間 (ミリ秒)";
+            this.labelX3.Text = "開始時間(ミリ秒)";
             // 
             // labelX4
             // 
@@ -273,7 +274,7 @@ namespace WzComparerR2
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(94, 20);
             this.labelX4.TabIndex = 9;
-            this.labelX4.Text = "終了時間 (ミリ秒)";
+            this.labelX4.Text = "終了時間(ミリ秒)";
             // 
             // labelX2
             // 
@@ -333,7 +334,7 @@ namespace WzComparerR2
             this.labelX7.Name = "labelX7";
             this.labelX7.Size = new System.Drawing.Size(94, 20);
             this.labelX7.TabIndex = 26;
-            this.labelX7.Text = "上座標 (px)";
+            this.labelX7.Text = "上部座標 (px)";
             // 
             // labelX8
             // 
@@ -435,7 +436,7 @@ namespace WzComparerR2
             this.labelX14.Name = "labelX14";
             this.labelX14.Size = new System.Drawing.Size(94, 20);
             this.labelX14.TabIndex = 38;
-            this.labelX14.Text = "高さ (%)";
+            this.labelX14.Text = "スケール (%)";
             // 
             // txtStartTime
             // 
@@ -858,19 +859,33 @@ namespace WzComparerR2
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonOK, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.chk768Preset, 2, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(8, 313);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(328, 30);
             this.tableLayoutPanel2.TabIndex = 3;
+            // 
+            // chk768Preset
+            // 
+            this.chk768Preset.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chk768Preset.AutoSize = true;
+            this.chk768Preset.Font = new System.Drawing.Font("MS PGothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.chk768Preset.Location = new System.Drawing.Point(199, 7);
+            this.chk768Preset.Name = "chk768Preset";
+            this.chk768Preset.Size = new System.Drawing.Size(120, 16);
+            this.chk768Preset.TabIndex = 2;
+            this.chk768Preset.Text = "1366x768プリセット";
+            this.chk768Preset.UseVisualStyleBackColor = true;
+            this.chk768Preset.CheckedChanged += new System.EventHandler(this.chk768Preset_CheckedChanged);
             // 
             // FrmGifClipOptions
             // 
@@ -909,6 +924,7 @@ namespace WzComparerR2
             ((System.ComponentModel.ISupportInitialize)(this.txtHeightNew)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtScaleNew)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -958,5 +974,6 @@ namespace WzComparerR2
         private DevComponents.Editors.IntegerInput txtWidthNew;
         private DevComponents.Editors.IntegerInput txtHeightNew;
         private DevComponents.Editors.IntegerInput txtScaleNew;
+        private System.Windows.Forms.CheckBox chk768Preset;
     }
 }
