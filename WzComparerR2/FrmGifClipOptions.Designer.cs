@@ -122,7 +122,7 @@ namespace WzComparerR2
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonCancel.TabIndex = 1;
-            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.Text = "キャンセル";
             // 
             // tableLayoutPanel1
             // 
@@ -204,7 +204,7 @@ namespace WzComparerR2
             this.labelX13.Name = "labelX13";
             this.labelX13.Size = new System.Drawing.Size(94, 20);
             this.labelX13.TabIndex = 38;
-            this.labelX13.Text = "Height (px)";
+            this.labelX13.Text = "高さ (px)";
             // 
             // line2
             // 
@@ -231,7 +231,7 @@ namespace WzComparerR2
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(74, 20);
             this.labelX1.TabIndex = 0;
-            this.labelX1.Text = "Clip Length";
+            this.labelX1.Text = "クリップ長";
             // 
             // line1
             // 
@@ -258,7 +258,7 @@ namespace WzComparerR2
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(94, 20);
             this.labelX3.TabIndex = 8;
-            this.labelX3.Text = "Start Time (ms)";
+            this.labelX3.Text = "開始時間 (ミリ秒)";
             // 
             // labelX4
             // 
@@ -273,7 +273,7 @@ namespace WzComparerR2
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(94, 20);
             this.labelX4.TabIndex = 9;
-            this.labelX4.Text = "End Time (ms)";
+            this.labelX4.Text = "終了時間 (ミリ秒)";
             // 
             // labelX2
             // 
@@ -288,7 +288,7 @@ namespace WzComparerR2
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(74, 20);
             this.labelX2.TabIndex = 1;
-            this.labelX2.Text = "Range";
+            this.labelX2.Text = "クリップ範囲";
             // 
             // labelX5
             // 
@@ -303,7 +303,7 @@ namespace WzComparerR2
             this.labelX5.Name = "labelX5";
             this.labelX5.Size = new System.Drawing.Size(94, 20);
             this.labelX5.TabIndex = 10;
-            this.labelX5.Text = "Duration";
+            this.labelX5.Text = "持続時間";
             // 
             // labelX6
             // 
@@ -318,7 +318,7 @@ namespace WzComparerR2
             this.labelX6.Name = "labelX6";
             this.labelX6.Size = new System.Drawing.Size(94, 20);
             this.labelX6.TabIndex = 25;
-            this.labelX6.Text = "Left Coordinates (px)";
+            this.labelX6.Text = "左部座標 (px)";
             // 
             // labelX7
             // 
@@ -333,7 +333,7 @@ namespace WzComparerR2
             this.labelX7.Name = "labelX7";
             this.labelX7.Size = new System.Drawing.Size(94, 20);
             this.labelX7.TabIndex = 26;
-            this.labelX7.Text = "Top Coordinates (px)";
+            this.labelX7.Text = "上座標 (px)";
             // 
             // labelX8
             // 
@@ -348,7 +348,7 @@ namespace WzComparerR2
             this.labelX8.Name = "labelX8";
             this.labelX8.Size = new System.Drawing.Size(94, 20);
             this.labelX8.TabIndex = 27;
-            this.labelX8.Text = "Right Coordinates (px)";
+            this.labelX8.Text = "右部座標 (px)";
             // 
             // labelX9
             // 
@@ -363,7 +363,7 @@ namespace WzComparerR2
             this.labelX9.Name = "labelX9";
             this.labelX9.Size = new System.Drawing.Size(94, 20);
             this.labelX9.TabIndex = 28;
-            this.labelX9.Text = "Bottom Coordinates (px)";
+            this.labelX9.Text = "下部座標 (px)";
             // 
             // labelX10
             // 
@@ -378,7 +378,7 @@ namespace WzComparerR2
             this.labelX10.Name = "labelX10";
             this.labelX10.Size = new System.Drawing.Size(94, 20);
             this.labelX10.TabIndex = 29;
-            this.labelX10.Text = "Size";
+            this.labelX10.Text = "サイズ";
             // 
             // line3
             // 
@@ -405,7 +405,7 @@ namespace WzComparerR2
             this.labelX11.Name = "labelX11";
             this.labelX11.Size = new System.Drawing.Size(74, 20);
             this.labelX11.TabIndex = 36;
-            this.labelX11.Text = "Transform";
+            this.labelX11.Text = "サイズ変換";
             // 
             // labelX12
             // 
@@ -420,7 +420,7 @@ namespace WzComparerR2
             this.labelX12.Name = "labelX12";
             this.labelX12.Size = new System.Drawing.Size(94, 20);
             this.labelX12.TabIndex = 37;
-            this.labelX12.Text = "Width (px)";
+            this.labelX12.Text = "幅 (px)";
             // 
             // labelX14
             // 
@@ -435,7 +435,7 @@ namespace WzComparerR2
             this.labelX14.Name = "labelX14";
             this.labelX14.Size = new System.Drawing.Size(94, 20);
             this.labelX14.TabIndex = 38;
-            this.labelX14.Text = "Scale (%)";
+            this.labelX14.Text = "高さ (%)";
             // 
             // txtStartTime
             // 
