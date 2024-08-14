@@ -162,4 +162,14 @@
   <metadata name="colorPickerButton1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="colorPickerButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACUSURBVDhPzY+xDQQhEAMpipCAEiiFTimFErj3ypxXaMWH
+        /yOR+DzmSP9D733NOdc30EGXmhhjrFrrdQTf0EGXmkDhNuJlQE1Y+iEaOWVATTA3/EgkA2qC+QuEUoqd
+        UwbUBPMX3JxztuOfs6EmmBv+t/1zPNQE8/DN0Qg1gTCSN+cINXGTN36EmmitXeUNOuhS+zkpPUXW+jhK
+        57pJAAAAAElFTkSuQmCC
+</value>
+  </data>
 </root>

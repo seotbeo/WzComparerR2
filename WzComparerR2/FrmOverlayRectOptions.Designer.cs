@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOverlayRectOptions));
             this.buttonOK = new DevComponents.DotNetBar.ButtonX();
             this.buttonCancel = new DevComponents.DotNetBar.ButtonX();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -350,6 +351,7 @@
             this.colorPickerButton1.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.colorPickerButton1.AutoExpandOnClick = true;
             this.colorPickerButton1.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.colorPickerButton1.Image = ((System.Drawing.Image)(resources.GetObject("colorPickerButton1.Image")));
             this.colorPickerButton1.Location = new System.Drawing.Point(181, 107);
             this.colorPickerButton1.Name = "colorPickerButton1";
             this.colorPickerButton1.SelectedColorImageRectangle = new System.Drawing.Rectangle(2, 2, 12, 12);
