@@ -16,6 +16,7 @@ namespace WzComparerR2.Config
             BackgroundType = ImageBackgroundType.Transparent;
             MinMixedAlpha = 0;
             MinDelay = 30;
+            OverlayRectColor = Color.Cyan;
         }
 
         [ConfigurationProperty("autoSavePictureFolder")]
@@ -93,6 +94,13 @@ namespace WzComparerR2.Config
         {
             get { return (ConfigItem<bool>)this["paletteOptimized"]; }
             set { this["paletteOptimized"] = value; }
+        }
+
+        [ConfigurationProperty("overlayRectColor")]
+        public ConfigItem<Color> OverlayRectColor
+        {
+            get { return (ConfigItem<Color>)this["overlayRectColor"]; }
+            set { this["overlayRectColor"] = value; }
         }
     }
 

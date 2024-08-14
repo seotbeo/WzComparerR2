@@ -235,22 +235,26 @@ namespace WzComparerR2
                 baseDelayAll += frame.Delay;
             }
 
-            var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll);
-            Point lt;
-            Point rb;
-            Color rectColor = System.Drawing.Color.FromArgb(153, 0, 255, 255).ToXnaColor();
-            Color outlineColor = System.Drawing.Color.FromArgb(255, 0, 255, 255).ToXnaColor();
-            Color bgColor = System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor();
+            var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll, config);
             int startTime = 0;
             int endTime = 0;
+            int rectBlend = 153;
+            int outlineBlend = 255;
+            Point lt;
+            Point rb;
+            Color bgColor = System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor();
 
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime);
+                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime, config);
+                Color rectColor = System.Drawing.Color.FromArgb(rectBlend, config.OverlayRectColor.Value).ToXnaColor();
+                Color outlineColor = System.Drawing.Color.FromArgb(outlineBlend, config.OverlayRectColor.Value).ToXnaColor();
 
-                aniItem = new FrameAnimator(FrameAnimationData.CreateRectData(lt, rb, endTime - startTime, this.GraphicsDevice, bgColor, rectColor, outlineColor));
+                var aniItemData = FrameAnimationData.CreateRectData(lt, rb, endTime - startTime, this.GraphicsDevice, bgColor, rectColor, outlineColor);
 
-                if (aniItem == null) return;
+                if (aniItemData == null) return;
+
+                aniItem = new FrameAnimator(aniItemData);
             }
             else return;
 

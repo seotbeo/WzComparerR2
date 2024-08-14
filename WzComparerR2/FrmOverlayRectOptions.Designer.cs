@@ -36,12 +36,14 @@
             this.labelX4 = new DevComponents.DotNetBar.LabelX();
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.labelX6 = new DevComponents.DotNetBar.LabelX();
+            this.labelX7 = new DevComponents.DotNetBar.LabelX();
             this.txtLeft = new DevComponents.Editors.IntegerInput();
             this.txtRight = new DevComponents.Editors.IntegerInput();
             this.txtTop = new DevComponents.Editors.IntegerInput();
             this.txtBottom = new DevComponents.Editors.IntegerInput();
             this.txtStart = new DevComponents.Editors.IntegerInput();
             this.txtEnd = new DevComponents.Editors.IntegerInput();
+            this.colorPickerButton1 = new DevComponents.DotNetBar.ColorPickerButton();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLeft)).BeginInit();
@@ -95,22 +97,25 @@
             this.tableLayoutPanel1.Controls.Add(this.labelX4, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelX5, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelX6, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.labelX7, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.txtLeft, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtRight, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtTop, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtBottom, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtStart, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.txtEnd, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.colorPickerButton1, 2, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 8);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(332, 124);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(332, 134);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
             // labelX1
@@ -125,8 +130,8 @@
             this.labelX1.Location = new System.Drawing.Point(4, 3);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
-            this.tableLayoutPanel1.SetRowSpan(this.labelX1, 4);
-            this.labelX1.Size = new System.Drawing.Size(55, 118);
+            this.tableLayoutPanel1.SetRowSpan(this.labelX1, 5);
+            this.labelX1.Size = new System.Drawing.Size(55, 128);
             this.labelX1.TabIndex = 7;
             this.labelX1.Text = "설정";
             // 
@@ -142,7 +147,7 @@
             this.labelX3.Location = new System.Drawing.Point(67, 3);
             this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(107, 25);
+            this.labelX3.Size = new System.Drawing.Size(107, 20);
             this.labelX3.TabIndex = 8;
             this.labelX3.Text = "LT";
             // 
@@ -155,10 +160,10 @@
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(67, 34);
+            this.labelX4.Location = new System.Drawing.Point(67, 29);
             this.labelX4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(107, 25);
+            this.labelX4.Size = new System.Drawing.Size(107, 20);
             this.labelX4.TabIndex = 9;
             this.labelX4.Text = "RB";
             // 
@@ -171,10 +176,10 @@
             // 
             // 
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX5.Location = new System.Drawing.Point(67, 65);
+            this.labelX5.Location = new System.Drawing.Point(67, 55);
             this.labelX5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX5.Name = "labelX5";
-            this.labelX5.Size = new System.Drawing.Size(107, 25);
+            this.labelX5.Size = new System.Drawing.Size(107, 20);
             this.labelX5.TabIndex = 10;
             this.labelX5.Text = "시작 딜레이 (ms)";
             // 
@@ -187,12 +192,28 @@
             // 
             // 
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX6.Location = new System.Drawing.Point(67, 96);
+            this.labelX6.Location = new System.Drawing.Point(67, 81);
             this.labelX6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.labelX6.Name = "labelX6";
-            this.labelX6.Size = new System.Drawing.Size(107, 25);
+            this.labelX6.Name = "labelX7";
+            this.labelX6.Size = new System.Drawing.Size(107, 20);
             this.labelX6.TabIndex = 11;
             this.labelX6.Text = "종료 딜레이 (ms)";
+            // 
+            // labelX7
+            // 
+            this.labelX7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.labelX7.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX7.Location = new System.Drawing.Point(67, 107);
+            this.labelX7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX7.Name = "labelX7";
+            this.labelX7.Size = new System.Drawing.Size(107, 24);
+            this.labelX7.TabIndex = 11;
+            this.labelX7.Text = "색상";
             // 
             // txtLeft
             // 
@@ -227,7 +248,7 @@
             this.txtRight.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtRight.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtRight.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtRight.Location = new System.Drawing.Point(182, 34);
+            this.txtRight.Location = new System.Drawing.Point(182, 29);
             this.txtRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtRight.MaxValue = 8192;
             this.txtRight.MinValue = -8192;
@@ -269,7 +290,7 @@
             this.txtBottom.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtBottom.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtBottom.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtBottom.Location = new System.Drawing.Point(258, 34);
+            this.txtBottom.Location = new System.Drawing.Point(258, 29);
             this.txtBottom.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtBottom.MaxValue = 8192;
             this.txtBottom.MinValue = -8192;
@@ -292,7 +313,7 @@
             this.tableLayoutPanel1.SetColumnSpan(this.txtStart, 2);
             this.txtStart.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtStart.Increment = 10;
-            this.txtStart.Location = new System.Drawing.Point(182, 65);
+            this.txtStart.Location = new System.Drawing.Point(182, 55);
             this.txtStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtStart.MaxValue = 65530;
             this.txtStart.MinValue = 0;
@@ -315,7 +336,7 @@
             this.tableLayoutPanel1.SetColumnSpan(this.txtEnd, 2);
             this.txtEnd.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtEnd.Increment = 10;
-            this.txtEnd.Location = new System.Drawing.Point(182, 96);
+            this.txtEnd.Location = new System.Drawing.Point(182, 81);
             this.txtEnd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtEnd.MaxValue = 65530;
             this.txtEnd.MinValue = 0;
@@ -323,6 +344,18 @@
             this.txtEnd.ShowUpDown = true;
             this.txtEnd.Size = new System.Drawing.Size(146, 21);
             this.txtEnd.TabIndex = 5;
+            // 
+            // colorPickerButton1
+            // 
+            this.colorPickerButton1.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.colorPickerButton1.AutoExpandOnClick = true;
+            this.colorPickerButton1.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.colorPickerButton1.Location = new System.Drawing.Point(181, 107);
+            this.colorPickerButton1.Name = "colorPickerButton1";
+            this.colorPickerButton1.SelectedColorImageRectangle = new System.Drawing.Rectangle(2, 2, 12, 12);
+            this.colorPickerButton1.Size = new System.Drawing.Size(37, 23);
+            this.colorPickerButton1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.colorPickerButton1.TabIndex = 7;
             // 
             // tableLayoutPanel2
             // 
@@ -332,7 +365,7 @@
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonOK, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 132);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 142);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -348,7 +381,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(350, 170);
+            this.ClientSize = new System.Drawing.Size(350, 180);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.DoubleBuffered = true;
@@ -359,7 +392,7 @@
             this.Name = "FrmOverlayRectOptions";
             this.Padding = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FrmOverlayAniOptions";
+            this.Text = "범위 사각형 설정";
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRight)).EndInit();
@@ -389,5 +422,7 @@
         private DevComponents.DotNetBar.LabelX labelX4;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.LabelX labelX6;
+        private DevComponents.DotNetBar.LabelX labelX7;
+        private DevComponents.DotNetBar.ColorPickerButton colorPickerButton1;
     }
 }
