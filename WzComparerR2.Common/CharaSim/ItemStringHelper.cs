@@ -578,7 +578,7 @@ namespace WzComparerR2.CharaSim
         {
             switch (specJob)
             {
-                case 2: return "ｱｰｸﾒｲｼﾞ(火･毒)､ｱｰｸﾒｲｼﾞ(氷･雷)､ﾋﾞｼｮｯﾌﾟ､\r\nﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､ｴｳﾞｧﾝ､ﾊﾞﾄﾙﾒｲｼﾞ､ﾘﾝ着用可能";
+                case 2: return "ｱｰｸﾒｲｼﾞ(氷･雷)､ｱｰｸﾒｲｼﾞ(火･毒)､ﾋﾞｼｮｯﾌﾟ､\r\nﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､ｴｳﾞｧﾝ､ﾊﾞﾄﾙﾒｲｼﾞ､ﾘﾝ着用可能";
                 case 21: return "アラン着用可能";
                 case 22: return "エヴァン着用可能";
                 case 23: return "メルセデス着用可能";
