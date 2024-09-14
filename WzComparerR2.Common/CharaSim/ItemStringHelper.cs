@@ -612,6 +612,23 @@ namespace WzComparerR2.CharaSim
             }
         }
 
+        public static string GetReqSpecJobMultipleString(int specJob)
+        {
+            switch (specJob)
+            {
+                case 1: return "ﾋｰﾛｰ､ﾊﾟﾗﾃﾞｨﾝ､";
+                case 2: return "ｱｰｸﾒｲｼﾞ(氷･雷)､ｱｰｸﾒｲｼﾞ(火･毒)､ﾋﾞｼｮｯﾌﾟ､\r\n";
+                case 4: return "シャドー､";
+                case 11: return "ｿｳﾙﾏｽﾀ､";
+                case 12: return "ﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､";
+                case 22: return "ｴｳﾞｧﾝ､";
+                case 32: return "ﾊﾞﾄﾙﾒｲｼﾞ､";
+                case 172: return "ﾘﾝ､";
+
+                default: return null;
+            }
+        }
+
         public static string GetItemPropString(ItemPropType propType, int value)
         {
             switch (propType)

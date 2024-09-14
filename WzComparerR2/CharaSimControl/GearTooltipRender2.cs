@@ -10,6 +10,8 @@ using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
+using WzComparerR2.PluginBase;
+using System.Collections;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -1534,13 +1536,26 @@ namespace WzComparerR2.CharaSimControl
         {
             int value;
             string extraReq;
-            if (Gear.type == GearType.fan)
+            // Temporarily change, will be removed later
+            Wz_Node reqSpecJobs = PluginManager.FindWz("Character/Shield/" + Gear.ItemID.ToString("d8") + ".img/info/reqSpecJobs");
+            if (reqSpecJobs != null)
+            {
+                extraReq = "";
+                foreach (Wz_Node jobCode in reqSpecJobs.Nodes)
+                {
+                    int jobCodeValue;
+                    if (Int32.TryParse(jobCode.Value.ToString(), out jobCodeValue))
+                    {
+
+                        extraReq = extraReq + ItemStringHelper.GetReqSpecJobMultipleString(jobCodeValue);
+                    }
+                }
+                char[] NewLine = { '\r', '\n' };
+                extraReq = extraReq.TrimEnd('､').TrimEnd(NewLine) + "着用可能";
+            }
+            else if (Gear.type == GearType.fan)
             {
                 extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob2, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
-            }
-            else if (Gear.type == GearType.shield)
-            {
-                extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
             else
             {

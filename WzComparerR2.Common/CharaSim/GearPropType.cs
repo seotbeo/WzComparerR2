@@ -193,6 +193,7 @@ namespace WzComparerR2.CharaSim
         reqJob2,
         reqPOP,
         reqSpecJob,
+        reqSpecJobs,
         reqWeekDay, //要求日子
         grade,
 
