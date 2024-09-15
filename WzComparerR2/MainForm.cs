@@ -2384,6 +2384,12 @@ namespace WzComparerR2
                 }
             }
             FrmPatcher patcher = new FrmPatcher();
+            var config = WcR2Config.Default;
+            var defaultEnc = config?.WzEncoding?.Value ?? 0;
+            if (defaultEnc != 0)
+            {
+                patcher.PatcherNoticeEncoding = Encoding.GetEncoding(defaultEnc);
+            }
             patcher.Owner = this;
             patcher.Show();
         }

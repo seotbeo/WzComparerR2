@@ -57,6 +57,8 @@ namespace WzComparerR2
             typedParts = Enum.GetValues(typeof(Wz_Type)).Cast<Wz_Type>().ToDictionary(type => type, type => new List<PatchPartContext>());
         }
 
+        public Encoding PatcherNoticeEncoding { get; set; }
+
         Thread patchThread;
         EventWaitHandle waitHandle;
         bool waiting;
@@ -295,6 +297,7 @@ namespace WzComparerR2
             try
             {
                 patcher = new WzPatcher(patchFile);
+                patcher.NoticeEncoding = this.PatcherNoticeEncoding ?? Encoding.Default;
                 patcher.PatchingStateChanged += new EventHandler<PatchingEventArgs>(patcher_PatchingStateChanged);
                 AppendStateText($"패치 파일명: {patchFile}\r\n");
                 AppendStateText("패치 확인중...");
