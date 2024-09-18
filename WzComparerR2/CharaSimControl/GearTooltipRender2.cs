@@ -233,12 +233,12 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (Gear.Props.TryGetValue(GearPropType.masterSpecial, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Master Label", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "マスターラベル", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
             else if (Gear.Props.TryGetValue(GearPropType.BTSLabel, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "BTS Label", GearGraphics.EquipDetailFont, new Point(70, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "BTSラベル", GearGraphics.EquipDetailFont, new Point(70, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
             else if (Gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
@@ -1062,7 +1062,14 @@ namespace WzComparerR2.CharaSimControl
                     string exclusiveEquip;
                     if (!string.IsNullOrEmpty(kv.Value.Info))
                     {
-                        exclusiveEquip = "#c" + kv.Value.Info + "は重複着用できません。#";
+                        if (kv.Value.Info.EndsWith("。") || kv.Value.Info.EndsWith("."))
+                        {
+                            exclusiveEquip = "#c" + kv.Value.Info + "#";
+                        }
+                        else
+                        {
+                            exclusiveEquip = "#c" + kv.Value.Info + "は重複着用できません。#";
+                        }
                     }
                     else
                     {
