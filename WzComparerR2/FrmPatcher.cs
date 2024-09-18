@@ -58,6 +58,8 @@ namespace WzComparerR2
             }
             cmbComparePng.SelectedItem = WzPngComparison.SizeAndDataLength;
         }
+        
+        public Encoding PatcherNoticeEncoding { get; set; }
 
         Thread patchThread;
         EventWaitHandle waitHandle;
@@ -313,6 +315,7 @@ namespace WzComparerR2
             try
             {
                 patcher = new WzPatcher(patchFile);
+                patcher.NoticeEncoding = this.PatcherNoticeEncoding ?? Encoding.Default;
                 patcher.PatchingStateChanged += new EventHandler<PatchingEventArgs>(patcher_PatchingStateChanged);
                 AppendStateText($"パッチファイル名: {patchFile}\r\n");
                 AppendStateText("パッチを分析中...");
