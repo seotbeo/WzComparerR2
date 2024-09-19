@@ -41,6 +41,12 @@
 https://open.api.nexon.com/static/maplestory/ItemIcon/KEHCJAIG.png
 ```
 
+# About Game Section
+
+Since JMS v427 the old patch server is abandoned. Now the game can be only run with Nexon Game Manager. To make the entire procedure easier for new players, Download Game (ゲームをダウンロード) and Game Start (ゲームスタート) buttons were added to WzComparerR2-JMS v5.5.0.
+
+If you see message says You'll need a new app to open this ngm link, please download Nexon Game Manager from either [KMS official website](https://maplestory.nexon.com/Common/PDS/Download) or [JMS official website](https://maplestory.nexon.co.jp).
+
 # Compile
 - vs2022 or higher/.net 6 SDK
 
