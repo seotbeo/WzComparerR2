@@ -2260,6 +2260,32 @@ namespace WzComparerR2
             patcher.Owner = this;
             patcher.Show();
         }
+
+        private void buttonInstallGame_Click(object sender, EventArgs e)
+        {
+            #if NET6_0_OR_GREATER
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = "ngm://launch/ -mode:install -game:'16785939@bb01'",
+            });
+            #else
+            Process.Start("ngm://launch/ -mode:install -game:'16785939@bb01'");
+            #endif
+        }
+
+        private void buttonGameStart_Click(object sender, EventArgs e)
+        {
+            #if NET6_0_OR_GREATER
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = "ngm://launch/ -mode:launch -game:'16785939@bb01'",
+            });
+            #else
+            Process.Start("ngm://launch/ -mode:launch -game:'16785939@bb01'");
+            #endif
+        }
         #endregion
 
         #region soundPlayer相关事件
