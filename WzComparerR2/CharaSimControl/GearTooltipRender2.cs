@@ -691,7 +691,7 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
                 picH += 0;
-                if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade))
+                if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade) && !Gear.GetBooleanValue(GearPropType.blockGoldHammer))
                 {
                     if (Gear.Hammer < 2)
                     {

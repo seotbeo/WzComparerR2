@@ -1045,7 +1045,7 @@
             this.ribbonBar9.Size = new System.Drawing.Size(63, 91);
             this.ribbonBar9.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar9.TabIndex = 2;
-            this.ribbonBar9.Text = "ゲーム";
+            this.ribbonBar9.Text = "キノコゲーム";
             // 
             // 
             // 
