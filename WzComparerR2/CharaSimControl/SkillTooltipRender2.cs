@@ -231,7 +231,6 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.Level > 0)
             {
                 string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions);
-                string hStr = null;
 
                 // 스킬 변경점에 초록색 칠하기
                 if (DoSetDiffColor)
