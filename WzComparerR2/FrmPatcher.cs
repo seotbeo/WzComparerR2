@@ -58,6 +58,8 @@ namespace WzComparerR2
             }
             cmbComparePng.SelectedItem = WzPngComparison.SizeAndDataLength;
         }
+        
+        public Encoding PatcherNoticeEncoding { get; set; }
 
         Thread patchThread;
         EventWaitHandle waitHandle;
@@ -313,6 +315,7 @@ namespace WzComparerR2
             try
             {
                 patcher = new WzPatcher(patchFile);
+                patcher.NoticeEncoding = this.PatcherNoticeEncoding ?? Encoding.Default;
                 patcher.PatchingStateChanged += new EventHandler<PatchingEventArgs>(patcher_PatchingStateChanged);
                 AppendStateText($"パッチファイル名: {patchFile}\r\n");
                 AppendStateText("パッチを分析中...");
@@ -500,77 +503,13 @@ namespace WzComparerR2
                             {
                                 tempDir = Path.GetDirectoryName(tempDir);
                             }
-                            string newWzFilePath = Path.Combine(tempDir, "Data", e.Part.WzType.ToString(), e.Part.WzType + ".wz");
-                            string oldWzFilePath = Path.Combine(msFolder, "Data", e.Part.WzType.ToString(), e.Part.WzType + ".wz");
-                            bool isNewKMST1125WzFormat = wznew.IsKMST1125WzFormat(newWzFilePath, oldWzFilePath); // TODO: check if deleted
-                            bool isOldKMST1125WzFormat = wzold.IsKMST1125WzFormat(oldWzFilePath);
-                            if (isNewKMST1125WzFormat)
-                            {
-                                wznew.LoadKMST1125DataWz(newWzFilePath, oldWzFilePath);
-                            }
-                            else
-                            {
-                                foreach (PatchPartContext part in typedParts[e.Part.WzType])
-                                {
-                                    if (part.Type != 2)
-                                    {
-                                        wznew.Load(part.TempFilePath, false);
-                                    }
-                                }
-                            }
-                            if (isOldKMST1125WzFormat)
-                            {
-                                wzold.LoadKMST1125DataWz(oldWzFilePath);
-                            }
-                            else
-                            {
-                                foreach (PatchPartContext part in ((WzPatcher)sender).PatchParts.Where(part => part.WzType == e.Part.WzType))
-                                {
-                                    if (part.Type != 0 && File.Exists(Path.Combine(msFolder, part.FileName)))
-                                    {
-                                        wzold.Load(Path.Combine(msFolder, part.FileName), false);
-                                    }
-                                }
-                            }
-                            if (sw == null)
-                            {
-                                htmlFilePath = Path.Combine(this.compareFolder, "index.html");
-
-                                htmlFile = new FileStream(htmlFilePath, FileMode.Create, FileAccess.Write);
-                                sw = new StreamWriter(htmlFile, Encoding.UTF8);
-                                sw.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-                                sw.WriteLine("<html>");
-                                sw.WriteLine("<head>");
-                                sw.WriteLine("<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
-                                sw.WriteLine("<title>Index {0}←{1}</title>", wznew.wz_files.Where(wz_file => wz_file != null).First().Header.WzVersion, wzold.wz_files.Where(wz_file => wz_file != null).First().Header.WzVersion);
-                                sw.WriteLine("<link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />");
-                                sw.WriteLine("</head>");
-                                sw.WriteLine("<body>");
-                                //输出概况
-                                sw.WriteLine("<p class=\"wzf\">");
-                                sw.WriteLine("<table>");
-                                sw.WriteLine("<tr><th>Filename</th><th>Size New Version</th><th>Size Old Version</th><th>Modified</th><th>Added</th><th>Removed</th></tr>");
-                            }
-                            if (isNewKMST1125WzFormat && isOldKMST1125WzFormat)
-                            {
-                                comparer.EasyCompareWzFiles(wznew.wz_files[0], wzold.wz_files[0], this.compareFolder, sw);
-                            }
-                            else if (!isNewKMST1125WzFormat && !isOldKMST1125WzFormat)
-                            {
-                                comparer.EasyCompareWzStructures(wznew, wzold, this.compareFolder, sw);
-                            }
-                            else if (isNewKMST1125WzFormat && !isOldKMST1125WzFormat)
-                            {
-                                comparer.EasyCompareWzStructuresToWzFiles(wznew.wz_files[0], wzold, this.compareFolder, sw);
-                            }
-                            else
-                            {
-                                // TODO
-                            }
+                            wznew.Load(e.Part.TempFilePath, false);
+                            wzold.Load(e.Part.OldFilePath, false);
+                            comparer.EasyCompareWzFiles(wznew.wz_files[0], wzold.wz_files[0], this.compareFolder);
                         }
                         catch (Exception ex)
                         {
-                            AppendStateText(ex.ToString());
+                            txtPatchState.AppendText(ex.ToString());
                         }
                         finally
                         {

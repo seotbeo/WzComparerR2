@@ -17,7 +17,7 @@ namespace WzComparerR2
         {
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
-            this.Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
+            this.Font = new Font(new FontFamily("MS PGothic"), 9f);
 #endif
             InitializeComponent();
         }
@@ -141,7 +141,7 @@ namespace WzComparerR2
             var controls = GetInputGroup(isNew);
             var lbl = isNew ? this.lblDurationNew : this.lblDuration;
             int? duration = (controls[1].ValueObject as int?) - (controls[0].ValueObject as int?);
-            lbl.Text = $"{duration?.ToString() ?? "-"} ms";
+            lbl.Text = $"{duration?.ToString() ?? "-"} ミリ秒";
         }
 
         private void onUpdateSizeAndScale(bool isNew, bool isBoundChanging = false, bool isOutSizeChanging = false, bool isScaleChanging = false)
@@ -182,6 +182,30 @@ namespace WzComparerR2
                     controls[6].ValueObject = (int)Math.Round(0.01 * width.Value * (int)txtScale.ValueObject);
                     controls[7].ValueObject = (int)Math.Round(0.01 * height.Value * (int)txtScale.ValueObject);
                 }
+            }
+        }
+
+        private void chk768Preset_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk768Preset.Checked)
+            {
+                txtClipLeftNew.Value = -683;
+                txtClipTopNew.Value = -384;
+                txtClipRightNew.Value = 683;
+                txtClipBottomNew.Value = 384;
+                txtWidthNew.Value = 1366;
+                txtHeightNew.Value = 768;
+                txtClipLeftNew.Enabled = false;
+                txtClipTopNew.Enabled = false;
+                txtClipRightNew.Enabled = false;
+                txtClipBottomNew.Enabled = false;
+            }
+            else
+            {
+                txtClipLeftNew.Enabled = true;
+                txtClipTopNew.Enabled = true;
+                txtClipRightNew.Enabled = true;
+                txtClipBottomNew.Enabled = true;
             }
         }
     }

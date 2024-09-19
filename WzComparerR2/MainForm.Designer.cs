@@ -93,6 +93,8 @@
             this.ribbonPanel1 = new DevComponents.DotNetBar.RibbonPanel();
             this.ribbonBar9 = new DevComponents.DotNetBar.RibbonBar();
             this.buttonItemPatcher = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemInstallGame = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemGameStart = new DevComponents.DotNetBar.ButtonItem();
             this.ribbonBar4 = new DevComponents.DotNetBar.RibbonBar();
             this.itemContainer10 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainer8 = new DevComponents.DotNetBar.ItemContainer();
@@ -260,6 +262,10 @@
             this.chkHashPngFileName = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btnItemOpenImg = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemSaveWithOptions = new DevComponents.DotNetBar.ButtonItem();
+            this.itemContainer100 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainer101 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainer102 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainer103 = new DevComponents.DotNetBar.ItemContainer();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -1033,13 +1039,13 @@
             this.ribbonBar9.Dock = System.Windows.Forms.DockStyle.Left;
             this.ribbonBar9.DragDropSupport = true;
             this.ribbonBar9.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.buttonItemPatcher});
+            this.itemContainer100});
             this.ribbonBar9.Location = new System.Drawing.Point(339, 0);
             this.ribbonBar9.Name = "ribbonBar9";
             this.ribbonBar9.Size = new System.Drawing.Size(63, 91);
             this.ribbonBar9.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar9.TabIndex = 2;
-            this.ribbonBar9.Text = "ゲームパッチャー";
+            this.ribbonBar9.Text = "キノコゲーム";
             // 
             // 
             // 
@@ -1049,12 +1055,69 @@
             // 
             this.ribbonBar9.TitleStyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             // 
+            // itemContainer100
+            // 
+            // 
+            // 
+            // 
+            this.itemContainer100.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainer100.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Vertical;
+            this.itemContainer100.Name = "itemContainer100";
+            this.itemContainer100.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.itemContainer101,
+            this.itemContainer102,
+            this.itemContainer103});
+            // 
+            // itemContainer101
+            // 
+            // 
+            // 
+            // 
+            this.itemContainer101.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainer101.Name = "itemContainer101";
+            this.itemContainer101.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.buttonItemPatcher});
+            // 
+            // itemContainer102
+            // 
+            // 
+            // 
+            // 
+            this.itemContainer102.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainer102.Name = "itemContainer102";
+            this.itemContainer102.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.buttonItemInstallGame});
+            // 
+            // itemContainer103
+            // 
+            // 
+            // 
+            // 
+            this.itemContainer103.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainer103.Name = "itemContainer103";
+            this.itemContainer103.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.buttonItemGameStart});
+            // 
             // buttonItemPatcher
             // 
             this.buttonItemPatcher.Name = "buttonItemPatcher";
             this.buttonItemPatcher.SubItemsExpandWidth = 16;
             this.buttonItemPatcher.Text = "ゲームパッチャー";
             this.buttonItemPatcher.Click += new System.EventHandler(this.buttonItemPatcher_Click);
+            // 
+            // buttonItemInstallGame
+            // 
+            this.buttonItemInstallGame.Name = "buttonItemInstallGame";
+            this.buttonItemInstallGame.SubItemsExpandWidth = 16;
+            this.buttonItemInstallGame.Text = "ゲームをダウンロード";
+            this.buttonItemInstallGame.Click += new System.EventHandler(this.buttonInstallGame_Click);
+            // 
+            // buttonItemGameStart
+            // 
+            this.buttonItemGameStart.Name = "buttonItemGameStart";
+            this.buttonItemGameStart.SubItemsExpandWidth = 16;
+            this.buttonItemGameStart.Text = "ゲームスタート";
+            this.buttonItemGameStart.Click += new System.EventHandler(this.buttonGameStart_Click);
             // 
             // ribbonBar4
             // 
@@ -3234,6 +3297,8 @@
         private DevComponents.DotNetBar.ButtonItem buttonItemEdit;
         private DevComponents.DotNetBar.RibbonBar ribbonBar9;
         private DevComponents.DotNetBar.ButtonItem buttonItemPatcher;
+        private DevComponents.DotNetBar.ButtonItem buttonItemInstallGame;
+        private DevComponents.DotNetBar.ButtonItem buttonItemGameStart;
         private DevComponents.DotNetBar.ItemContainer itemContainer41;
         private DevComponents.DotNetBar.ButtonItem buttonItemLoadChara;
         private DevComponents.DotNetBar.ButtonItem buttonItemSaveChara;
@@ -3297,5 +3362,9 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputSkillTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
+        private DevComponents.DotNetBar.ItemContainer itemContainer100;
+        private DevComponents.DotNetBar.ItemContainer itemContainer101;
+        private DevComponents.DotNetBar.ItemContainer itemContainer102;
+        private DevComponents.DotNetBar.ItemContainer itemContainer103;
     }
 }

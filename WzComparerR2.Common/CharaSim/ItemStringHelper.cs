@@ -578,7 +578,7 @@ namespace WzComparerR2.CharaSim
         {
             switch (specJob)
             {
-                case 2: return "ｱｰｸﾒｲｼﾞ(火･毒)､ｱｰｸﾒｲｼﾞ(氷･雷)､ﾋﾞｼｮｯﾌﾟ､\r\nﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､ｴｳﾞｧﾝ､ﾊﾞﾄﾙﾒｲｼﾞ､ﾘﾝ着用可能";
+                case 2: return "ｱｰｸﾒｲｼﾞ(氷･雷)､ｱｰｸﾒｲｼﾞ(火･毒)､ﾋﾞｼｮｯﾌﾟ､\r\nﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､ｴｳﾞｧﾝ､ﾊﾞﾄﾙﾒｲｼﾞ､ﾘﾝ着用可能";
                 case 21: return "アラン着用可能";
                 case 22: return "エヴァン着用可能";
                 case 23: return "メルセデス着用可能";
@@ -607,6 +607,23 @@ namespace WzComparerR2.CharaSim
                 case 164: return "虎影着用可能";
                 case 172: return "リン着用可能";
                 case 175: return "墨玄着用可能";
+
+                default: return null;
+            }
+        }
+
+        public static string GetReqSpecJobMultipleString(int specJob)
+        {
+            switch (specJob)
+            {
+                case 1: return "ﾋｰﾛｰ､ﾊﾟﾗﾃﾞｨﾝ､";
+                case 2: return "ｱｰｸﾒｲｼﾞ(氷･雷)､ｱｰｸﾒｲｼﾞ(火･毒)､ﾋﾞｼｮｯﾌﾟ\r\n";
+                case 4: return "シャドー､";
+                case 11: return "ｿｳﾙﾏｽﾀ､";
+                case 12: return "ﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､";
+                case 22: return "ｴｳﾞｧﾝ､";
+                case 32: return "ﾊﾞﾄﾙﾒｲｼﾞ､";
+                case 172: return "ﾘﾝ､";
 
                 default: return null;
             }
@@ -971,6 +988,13 @@ namespace WzComparerR2.CharaSim
                 case 11210: return "ビーストテイマー(ライ)";
                 case 11211: return "ビーストテイマー(エカ)";
                 case 11212: return "ビーストテイマー(アル)";
+
+                case 12000: return "炭治郎";
+                case 12100: return "炭治郎(1次)";
+                case 12110: return "炭治郎(2次)";
+                case 12111: return "炭治郎(3次)";
+                case 12112: return "炭治郎(4次)";
+                case 12114: return "炭治郎(6次)";
 
                 case 13000: return "ピンクビーン";
                 case 13001: return "イェティ";

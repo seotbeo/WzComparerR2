@@ -10,6 +10,8 @@ using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
+using WzComparerR2.PluginBase;
+using System.Collections;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -231,12 +233,12 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (Gear.Props.TryGetValue(GearPropType.masterSpecial, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "Master Label", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "マスターラベル", GearGraphics.EquipDetailFont, new Point(261, picH), ((SolidBrush)GearGraphics.BlueBrush).Color, TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
             else if (Gear.Props.TryGetValue(GearPropType.BTSLabel, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "BTS Label", GearGraphics.EquipDetailFont, new Point(70, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "BTSラベル", GearGraphics.EquipDetailFont, new Point(70, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
             else if (Gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
@@ -480,6 +482,19 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "成長経験値 : 1 / 29 ( 3% )", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
             }
+            else if (Gear.ItemID / 1000 == 1714)
+            {
+                TextRenderer.DrawText(g, "成長レベル: 1", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                TextRenderer.DrawText(g, "成長経験値 : 1 / 29 ( 3% )", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                TextRenderer.DrawText(g, "経験値獲得量 : +10%", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.WhiteBrush).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                TextRenderer.DrawText(g, "メル獲得量 : +5%", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.WhiteBrush).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                TextRenderer.DrawText(g, "アイテムドロップ率 : +5%", GearGraphics.EquipDetailFont, new Point(12, picH), ((SolidBrush)GearGraphics.WhiteBrush).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+            }
 
             if (Gear.Props.TryGetValue(GearPropType.@sealed, out value))
             {
@@ -647,7 +662,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //星星锤子
-            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar() > 0)
+            if (hasTuc && Gear.Hammer > -1 || Gear.GetMaxStar() > 0)
             {
                 if (Gear.Hammer == 2)
                 {
@@ -676,7 +691,7 @@ namespace WzComparerR2.CharaSimControl
                     }
                 }
                 picH += 0;
-                if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade))
+                if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade) && !Gear.GetBooleanValue(GearPropType.blockGoldHammer))
                 {
                     if (Gear.Hammer < 2)
                     {
@@ -1015,7 +1030,7 @@ namespace WzComparerR2.CharaSimControl
                 if (medalResNode != null)
                 {
                     //GearGraphics.DrawNameTag(g, medalResNode, sr.Name, bitmap.Width, ref picH);2 juni
-                    GearGraphics.DrawNameTag(g, medalResNode, sr.Name.Replace("의 훈장", ""), bitmap.Width, ref picH);
+                    GearGraphics.DrawNameTag(g, medalResNode, sr.Name.Replace("의 훈장", "").Replace("の勲章", ""), bitmap.Width, ref picH);
                     picH += 4;
                 }
                 if (!string.IsNullOrEmpty(sr.Desc))
@@ -1047,7 +1062,14 @@ namespace WzComparerR2.CharaSimControl
                     string exclusiveEquip;
                     if (!string.IsNullOrEmpty(kv.Value.Info))
                     {
-                        exclusiveEquip = "#c" + kv.Value.Info + "は重複着用できません。#";
+                        if (kv.Value.Info.EndsWith("。") || kv.Value.Info.EndsWith("."))
+                        {
+                            exclusiveEquip = "#c" + kv.Value.Info + "#";
+                        }
+                        else
+                        {
+                            exclusiveEquip = "#c" + kv.Value.Info + "は重複着用できません。#";
+                        }
                     }
                     else
                     {
@@ -1389,7 +1411,7 @@ namespace WzComparerR2.CharaSimControl
             }
             if ((Gear.ItemID / 10000 >= 161 && Gear.ItemID / 10000 <= 165) || (Gear.ItemID / 10000 >= 194 && Gear.ItemID / 10000 <= 197))
             {
-                tags.Add("フュージョンアンビルを使用できません");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
+                tags.Add("神秘のカナトコ使用不可");//Unable to use anvil > change when GMS adds this line to mechanic, dragon gears
             }
 
             return tags;
@@ -1521,13 +1543,26 @@ namespace WzComparerR2.CharaSimControl
         {
             int value;
             string extraReq;
-            if (Gear.type == GearType.fan)
+            // Temporarily change, will be removed later
+            Wz_Node reqSpecJobs = PluginManager.FindWz("Character/Shield/" + Gear.ItemID.ToString("d8") + ".img/info/reqSpecJobs");
+            if (reqSpecJobs != null)
+            {
+                extraReq = "";
+                foreach (Wz_Node jobCode in reqSpecJobs.Nodes)
+                {
+                    int jobCodeValue;
+                    if (Int32.TryParse(jobCode.Value.ToString(), out jobCodeValue))
+                    {
+
+                        extraReq = extraReq + ItemStringHelper.GetReqSpecJobMultipleString(jobCodeValue);
+                    }
+                }
+                char[] NewLine = { '\r', '\n' };
+                extraReq = extraReq.TrimEnd('､').TrimEnd(NewLine) + "着用可能";
+            }
+            else if (Gear.type == GearType.fan)
             {
                 extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob2, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
-            }
-            else if (Gear.type == GearType.shield)
-            {
-                extraReq = (Gear.Props.TryGetValue(GearPropType.reqJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             }
             else
             {

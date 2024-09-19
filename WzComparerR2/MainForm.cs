@@ -779,6 +779,14 @@ namespace WzComparerR2
                 if (wz.IsKMST1125WzFormat(wzFilePath))
                 {
                     wz.LoadKMST1125DataWz(wzFilePath);
+                    string packsDir = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(wzFilePath)), "Packs");
+                    if (Directory.Exists(packsDir))
+                    {
+                        foreach (var msFile in Directory.GetFiles(packsDir, "*.ms"))
+                        {
+                            wz.LoadMsFile(msFile);
+                        }
+                    }
                 }
                 else
                 {
@@ -1269,8 +1277,8 @@ namespace WzComparerR2
                     preLoadSound(sound, selectedNode.Text);
                     textBoxX1.Text = "dataLength: " + sound.DataLength + " bytes\r\n" +
                         "offset: " + sound.Offset + "\r\n" +
-                        "time: " + sound.Ms + " ms\r\n" +
-                        "headerLength: " + (sound.Header == null ? 0 : sound.Header.Length) + " bytes\r\n" +
+                        "duration: " + sound.Ms + " ms\r\n" +
+                        "channels: " + sound.Channels + "\r\n" +
                         "freq: " + sound.Frequency + " Hz\r\n" +
                         "type: " + sound.SoundType.ToString();
                     break;
@@ -1386,7 +1394,7 @@ namespace WzComparerR2
                 {
                     foreach (var wzf in wzs.wz_files)
                     {
-                        if (wzf.Type == wzType)
+                        if (wzf.Type == wzType && wzf.OwnerWzFile == null)
                         {
                             allWzFile.Add(wzf.Node);
                         }
@@ -1800,7 +1808,7 @@ namespace WzComparerR2
                 try
                 {
                     fs = new FileStream(dlg.FileName, FileMode.Create, FileAccess.Write);
-                    FileStream fsWz = img.WzFile.FileStream;
+                    Stream fsWz = img.WzFile.FileStream;
                     fsWz.Seek(img.Offset, SeekOrigin.Begin);
                     byte[] buffer = new byte[2048];
                     int count, size = img.Size;
@@ -2243,8 +2251,40 @@ namespace WzComparerR2
                 }
             }
             FrmPatcher patcher = new FrmPatcher();
+            var config = WcR2Config.Default;
+            var defaultEnc = config?.WzEncoding?.Value ?? 0;
+            if (defaultEnc != 0)
+            {
+                patcher.PatcherNoticeEncoding = Encoding.GetEncoding(defaultEnc);
+            }
             patcher.Owner = this;
             patcher.Show();
+        }
+
+        private void buttonInstallGame_Click(object sender, EventArgs e)
+        {
+            #if NET6_0_OR_GREATER
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = "ngm://launch/ -mode:install -game:'16785939@bb01'",
+            });
+            #else
+            Process.Start("ngm://launch/ -mode:install -game:'16785939@bb01'");
+            #endif
+        }
+
+        private void buttonGameStart_Click(object sender, EventArgs e)
+        {
+            #if NET6_0_OR_GREATER
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = "ngm://launch/ -mode:launch -game:'16785939@bb01'",
+            });
+            #else
+            Process.Start("ngm://launch/ -mode:launch -game:'16785939@bb01'");
+            #endif
         }
         #endregion
 
@@ -2262,7 +2302,7 @@ namespace WzComparerR2
             switch (sound.SoundType)
             {
                 case Wz_SoundType.Mp3: soundName += ".mp3"; break;
-                case Wz_SoundType.WavRaw: soundName += ".wav"; break;
+                case Wz_SoundType.Pcm: soundName += ".wav"; break;
             }
             soundPlayer.PlayingSoundName = soundName;
             labelItemSoundTitle.Tooltip = soundName;
@@ -2458,7 +2498,7 @@ namespace WzComparerR2
                     switch (wzSound.SoundType)
                     {
                         case Wz_SoundType.Mp3: dlg.FileName += ".mp3"; break;
-                        case Wz_SoundType.WavRaw: dlg.FileName += ".wav"; break;
+                        case Wz_SoundType.Pcm: dlg.FileName += ".pcm"; break;
                     }
                 }
                 dlg.Filter = "すべてのファイル (*.*)|*.*";

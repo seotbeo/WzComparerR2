@@ -480,7 +480,7 @@ namespace WzComparerR2
                 }
             }
 
-            var dialogResult = ProgressDialog.Show(this.FindForm(), "Exporting...", "Saving animation...", true, false, RenderJob);
+            var dialogResult = ProgressDialog.Show(this.FindForm(), "エクスポート中", "アニメーションを保存", true, false, RenderJob);
             return dialogResult == DialogResult.OK;
         }
 

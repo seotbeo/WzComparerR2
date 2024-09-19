@@ -66,7 +66,7 @@ namespace WzComparerR2
             }
             else
             {
-                string nodeTxt = "<font color=\"#808080\">No available plugins</font>";
+                string nodeTxt = "<font color=\"#808080\">利用可能なプラグインはありません。</font>";
                 Node node = new Node(nodeTxt);
                 this.advTree1.Nodes.Add(node);
             }
