@@ -619,7 +619,7 @@ namespace WzComparerR2.CharaSim
                 case 1: return "ﾋｰﾛｰ､ﾊﾟﾗﾃﾞｨﾝ､";
                 case 2: return "ｱｰｸﾒｲｼﾞ(氷･雷)､ｱｰｸﾒｲｼﾞ(火･毒)､ﾋﾞｼｮｯﾌﾟ\r\n";
                 case 4: return "シャドー､";
-                case 11: return "ｿｳﾙﾏｽﾀ､";
+                case 11: return "ｿｳﾙﾏｽﾀｰ､";
                 case 12: return "ﾌﾚｲﾑｳｨｻﾞｰﾄﾞ､";
                 case 22: return "ｴｳﾞｧﾝ､";
                 case 32: return "ﾊﾞﾄﾙﾒｲｼﾞ､";
