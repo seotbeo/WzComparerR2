@@ -2255,9 +2255,10 @@ namespace WzComparerR2
                 DialogResult PatcherPromptResult = MessageBoxEx.Show("このゲームパッチャーは、JMSのV427アップデート以降は動作しません。\r\n" +
                 "JMSを更新するには、「ゲームをダウンロード」をクリックして、\r\n" +
                 "プロンプトが表示されたらゲームをインストールした場所を選択し、\r\n" +
-                "「ゲームスタート」ボタンをクリックしてゲームを更新してプレイしてください。\r\n\r\n" +
-                "「Yes」をクリックすると、この通知は再度表示されなくなります。", "注意", MessageBoxButtons.YesNo);
-                if (PatcherPromptResult == System.Windows.Forms.DialogResult.Yes)
+                "「ゲームスタート」ボタンをクリックしてゲームを更新してプレイしてください。\r\n" +
+                "JMS以外の公式キノコゲームクライアントにパッチを適用する場合は、この通知を無視しても問題ありません。\r\n\r\n" +
+                "「OK」をクリックすると、この通知は再度表示されなくなります。", "注意", MessageBoxButtons.OKCancel);
+                if (PatcherPromptResult == System.Windows.Forms.DialogResult.OK)
                 {
                     ConfigManager.Reload();
                     WcR2Config.Default.NoPatcherPrompt = true;
