@@ -2250,6 +2250,20 @@ namespace WzComparerR2
                     return;
                 }
             }
+            if (!WcR2Config.Default.NoPatcherPrompt)
+            {
+                DialogResult PatcherPromptResult = MessageBoxEx.Show("このゲームパッチャーは、JMSのV427アップデート以降は動作しません。\r\n" +
+                "JMSを更新するには、「ゲームをダウンロード」をクリックして、\r\n" +
+                "プロンプトが表示されたらゲームをインストールした場所を選択し、\r\n" +
+                "「ゲームスタート」ボタンをクリックしてゲームを更新してプレイしてください。\r\n\r\n" +
+                "「Yes」をクリックすると、この通知は再度表示されなくなります。", "注意", MessageBoxButtons.YesNo);
+                if (PatcherPromptResult == System.Windows.Forms.DialogResult.Yes)
+                {
+                    ConfigManager.Reload();
+                    WcR2Config.Default.NoPatcherPrompt = true;
+                    ConfigManager.Save();
+                }
+            }
             FrmPatcher patcher = new FrmPatcher();
             var config = WcR2Config.Default;
             var defaultEnc = config?.WzEncoding?.Value ?? 0;
@@ -2525,11 +2539,11 @@ namespace WzComparerR2
                                 }
                             }
                         }
-                        this.labelItemStatus.Text = "Saved";
+                        this.labelItemStatus.Text = "ファイルを保存しました";
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "エラー");
+                        MessageBoxEx.Show("保存に失敗しました\r\n" + ex.ToString(), "エラー");
                     }
                 }
             }
@@ -2561,11 +2575,11 @@ namespace WzComparerR2
                                 }
                             }
                         }
-                        this.labelItemStatus.Text = "Saved";
+                        this.labelItemStatus.Text = "ファイルを保存しました";
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxEx.Show("Failed to save\r\n" + ex.ToString(), "エラー");
+                        MessageBoxEx.Show("保存に失敗しました\r\n" + ex.ToString(), "エラー");
                     }
                 }
             }
@@ -2576,14 +2590,14 @@ namespace WzComparerR2
             Wz_Uol uol = advTree3.SelectedNode?.AsWzNode()?.Value as Wz_Uol;
             if (uol == null)
             {
-                labelItemStatus.Text = "You have not selected an UOL node.";
+                labelItemStatus.Text = "UOLノードが選択されていません。";
                 return;
             }
 
             Node uolNode = handleUol(advTree3.SelectedNode, uol.Uol);
             if (uolNode == null)
             {
-                labelItemStatus.Text = "The targeted UOL node was not found.";
+                labelItemStatus.Text = "対象のUOLノードが見つかりませんでした。";
                 return;
             }
             else
@@ -2809,7 +2823,7 @@ namespace WzComparerR2
             Wz_File wzf = selectedNode.GetNodeWzFile();
             if (wzf == null)
             {
-                labelItemStatus.Text = "The WZ file where the node belongs to has not been found.";
+                labelItemStatus.Text = "ノードが属するWZファイルが見つかりません。";
                 return;
             }
 
@@ -3221,7 +3235,7 @@ namespace WzComparerR2
             if (compareThread != null)
             {
                 compareThread.Suspend();
-                if (DialogResult.Yes == MessageBoxEx.Show("比較が進行中です。 中絶しますか?", "Notice", MessageBoxButtons.YesNoCancel))
+                if (DialogResult.Yes == MessageBoxEx.Show("比較が進行中です。 中絶しますか?", "注意", MessageBoxButtons.YesNoCancel))
                 {
                     compareThread.Resume();
                     compareThread.Interrupt();

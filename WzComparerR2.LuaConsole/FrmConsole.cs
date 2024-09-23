@@ -177,7 +177,7 @@ env:WriteLine(string format, object[] args)");
         {
             if (e.CloseReason == CloseReason.UserClosing && this.isRunning)
             {
-                if (DialogResult.Yes == MessageBoxEx.Show("There is a work in progress.\r\nAre you sure you want to quit?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Information))
+                if (DialogResult.Yes == MessageBoxEx.Show("進行中の作業があります。\r\n本当に終了してもよろしいですか?", "お知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information))
                 {
                     e.Cancel = false;
                 }

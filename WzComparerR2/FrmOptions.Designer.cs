@@ -336,7 +336,7 @@
             this.superTabItem2.AttachedControl = this.superTabControlPanel2;
             this.superTabItem2.GlobalItem = false;
             this.superTabItem2.Name = "superTabItem2";
-            this.superTabItem2.Text = "NX OpenAPI";
+            this.superTabItem2.Text = "API機能";
             // 
             // superTabControlPanel3
             // 

@@ -17,6 +17,7 @@ namespace WzComparerR2.Config
             this.MainStyleColor = Color.DimGray;
             this.SortWzOnOpened = true;
             this.AutoDetectExtFiles = true;
+            this.NoPatcherPrompt = false;
         }
 
         /// <summary>
@@ -119,6 +120,15 @@ namespace WzComparerR2.Config
             set { this["autoDetectExtFiles"] = value; }
         }
 
+        /// <summary>
+        /// 获取或设置一个值，指示是否不再提示游戏更新器通知。
+        /// </summary>
+        [ConfigurationProperty("noPatcherPrompt")]
+        public ConfigItem<bool> NoPatcherPrompt
+        {
+            get { return (ConfigItem<bool>)this["noPatcherPrompt"]; }
+            set { this["noPatcherPrompt"] = value; }
+        }
         /// <summary>
         /// 获取或设置一个值，指示读取wz是否跳过img检测。
         /// </summary>
