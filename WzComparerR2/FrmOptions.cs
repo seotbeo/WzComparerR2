@@ -100,7 +100,7 @@ namespace WzComparerR2
             string respText;
             var req = WebRequest.Create(Program.NxAPIBaseURL + "/maplestory/v1/character/list") as HttpWebRequest;
             req.Timeout = 15000;
-            req.Headers.Add("Accept", "application/json");
+            req.Accept = "application/json";
             req.Headers.Add("x-nxopen-api-key", txtAPIkey.Text);
             try
             {
