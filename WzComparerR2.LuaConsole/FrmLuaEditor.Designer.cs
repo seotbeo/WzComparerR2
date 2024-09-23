@@ -46,7 +46,7 @@
             this.Controls.Add(this.textEditorControl1);
             this.DoubleBuffered = true;
             this.Name = "FrmLuaEditor";
-            this.Text = "Untitled";
+            this.Text = "無題";
             this.ResumeLayout(false);
 
         }
