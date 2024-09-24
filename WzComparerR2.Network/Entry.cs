@@ -132,12 +132,12 @@ namespace WzComparerR2.Network
                         var sb = new StringBuilder();
                         lock (this.session.Users)
                         {
-                            sb.AppendFormat("Users Online: {0}", this.session.Users.Count);
+                            sb.AppendFormat("オンラインユーザー: {0}", this.session.Users.Count);
                             var time = DateTime.UtcNow;
                             foreach (var user in this.session.Users)
                             {
                                 var loginTime = time - this.session.LocalTimeOffset - user.LoginTimeUTC;
-                                sb.AppendLine().AppendFormat("  {0}, online for {1} minutes.", user.NickName, (int)loginTime.TotalMinutes);
+                                sb.AppendLine().AppendFormat("  ユーザー[{0}]は{1}分間オンラインです。", user.NickName, (int)loginTime.TotalMinutes);
                             }
                         }
                         Log.Info(sb.ToString());
@@ -160,6 +160,15 @@ namespace WzComparerR2.Network
                             }
                         }
                         break;
+
+                    case "/help":
+                        var sbHelp = new StringBuilder();
+                        sbHelp.AppendFormat("ネットワークロガー コマンドの使用方法\r\n");
+                        sbHelp.AppendFormat("/users : オンラインのユーザーを一覧表示します。\r\n");
+                        sbHelp.AppendFormat("/name [名前] : ユーザー名を指定の名前に変更します。\r\n");
+                        sbHelp.AppendFormat("/help : このヘルプを表示します。");
+                        Log.Info(sbHelp.ToString());
+                        break;
                 }
             }
             else
@@ -175,7 +184,7 @@ namespace WzComparerR2.Network
                 }
                 else
                 {
-                    Log.Warn("Command failed: Not connected to the server.");
+                    Log.Warn("コマンドが失敗しました: サーバーに接続されていません。");
                 }
             }
         }
@@ -278,7 +287,7 @@ namespace WzComparerR2.Network
         {
             this.session.LocalTimeOffset = DateTime.UtcNow - pack.CurrentTimeUTC;
 
-            Log.Info("Server version: {0} - Time: {1:yyyy-MM-dd HH:mm:ss}, {2:%d\\d\\ h\\h\\ m\\m\\ s\\s} elapsed - {3} user(s) online.",
+            Log.Info("サーバーバージョン: {0} - 日時: {1:yyyy年 MM月 dd日 HH:mm:ss}, {2:%d\\d\\ h\\h\\ m\\m\\ s\\s} 経過 - {3}人のユーザーがオンラインです。",
                 pack.Version,
                 pack.CurrentTimeUTC.ToLocalTime(),
                 pack.CurrentTimeUTC - pack.StartTimeUTC,
@@ -287,7 +296,7 @@ namespace WzComparerR2.Network
 
         private void OnPackReceived(PackLoginResp pack)
         {
-            Log.Info("You have successfully logged in.");
+            Log.Info("ログインに成功しました。");
             this.session.SID = pack.SessionID;
 
             //获取在线列表
@@ -311,7 +320,7 @@ namespace WzComparerR2.Network
 
         private void OnPackReceived(PackGetAllUsersResp pack)
         {
-            Log.Info("{0} user(s) online.", pack.Users.Count);
+            Log.Info("オンラインのユーザーは{0}人。", pack.Users.Count);
             lock (this.session.Users)
             {
                 this.session.Users.Clear();
@@ -327,11 +336,11 @@ namespace WzComparerR2.Network
             switch (pack.Type)
             {
                 case MessageType.Normal:
-                    Log.Info("(Notice) {0}", pack.Message);
+                    Log.Info("(お知らせ) {0}", pack.Message);
                     break;
 
                 case MessageType.Error:
-                    Log.Error("(ServerError) {0}", pack.Message);
+                    Log.Error("(サーバーエラー) {0}", pack.Message);
                     break;
             }
         }
@@ -350,7 +359,7 @@ namespace WzComparerR2.Network
                 {
                     case UserUpdateReason.Online:
                         this.session.Users.Add(pack.UserInfo);
-                        Log.Info("[{0}] is online.", pack.UserInfo.NickName);
+                        Log.Info("[{0}]はオンラインです。", pack.UserInfo.NickName);
                         break;
 
                     case UserUpdateReason.Offline:
@@ -358,7 +367,7 @@ namespace WzComparerR2.Network
                         {
                             var oldUser = this.session.Users[idx];
                             this.session.Users.RemoveAt(idx);
-                            Log.Info("[{0}] is offline.", oldUser.NickName);
+                            Log.Info("[{0}]はオフラインです。", oldUser.NickName);
                         }
                         break;
 
@@ -367,12 +376,12 @@ namespace WzComparerR2.Network
                         {
                             var oldUser = this.session.Users[idx];
                             this.session.Users[idx] = pack.UserInfo;
-                            Log.Info("[{0}] changed its name to [{1}].", oldUser.NickName, pack.UserInfo.NickName);
+                            Log.Info("[{0}]は名前を[{1}]に変更します。", oldUser.NickName, pack.UserInfo.NickName);
                         }
                         else
                         {
                             this.session.Users.Add(pack.UserInfo);
-                            Log.Info("[{0}] is online.", pack.UserInfo.NickName);
+                            Log.Info("[{0}]はオンラインです。", pack.UserInfo.NickName);
                         }
 
                         break;

@@ -62,7 +62,7 @@ namespace WzComparerR2.Network
             var reConnTask = Task.Run(async () =>
             {
                 await Task.Delay(delay);
-                Log.Debug("Begin reconnect.");
+                Log.Debug("再接続を開始します。");
                 await Connect();
             });
         }
@@ -86,18 +86,18 @@ namespace WzComparerR2.Network
                 SendTimeout = 10000,
             };
 
-            Log.Debug("Connecting...");
+            Log.Debug("接続中...");
             while (true)
             {
                 try
                 {
                     await this.client.ConnectAsync(this.Host, this.Port);
-                    Log.Info("Connected.");
+                    Log.Info("接続しました。");
                     break;
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Failed to connect: {0}", ex.Message);
+                    Log.Error("接続に失敗しました: {0}", ex.Message);
                     var e = new ErrorEventArgs(ex);
                     this.ConnectFailed?.Invoke(this, e);
                     if (AutoReconnect)
@@ -121,7 +121,7 @@ namespace WzComparerR2.Network
 
         private async Task BeginRead(Stream ns)
         {
-            Log.Debug("Reading loop...");
+            Log.Debug("ループを読み取り中...");
             var readBuffer = new RingBufferStream();
             ICryptoTransform transform = null;
 
@@ -133,7 +133,7 @@ namespace WzComparerR2.Network
                 while (true)
                 {
                     int count = await ns.ReadAsync(buffer, 0, buffer.Length);
-                    Log.Debug("Read {0} bytes.", count);
+                    Log.Debug("{0} バイトを読み取りました。", count);
                     if (count <= 0)
                         break;
                     readBuffer.Append(buffer, 0, count);
@@ -171,7 +171,7 @@ namespace WzComparerR2.Network
                             if (readBuffer.Length >= packLen)
                             {
                                 var pack = DecodePack(br.ReadBytes(packLen));
-                                Log.Debug("Read pack: {0}.", pack);
+                                Log.Debug("パックを読み取りました: {0}", pack);
 
                                 if (pack != null)
                                 {

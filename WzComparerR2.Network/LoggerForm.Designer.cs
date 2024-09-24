@@ -127,9 +127,9 @@
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX1.Location = new System.Drawing.Point(7, 5);
             this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(25, 16);
+            this.labelX1.Size = new System.Drawing.Size(42, 16);
             this.labelX1.TabIndex = 2;
-            this.labelX1.Text = "Cmd";
+            this.labelX1.Text = "コマンド";
             // 
             // textBoxX1
             // 
@@ -140,10 +140,10 @@
             // 
             this.textBoxX1.Border.Class = "TextBoxBorder";
             this.textBoxX1.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.textBoxX1.Location = new System.Drawing.Point(38, 2);
+            this.textBoxX1.Location = new System.Drawing.Point(55, 5);
             this.textBoxX1.Name = "textBoxX1";
             this.textBoxX1.PreventEnterBeep = true;
-            this.textBoxX1.Size = new System.Drawing.Size(237, 21);
+            this.textBoxX1.Size = new System.Drawing.Size(220, 21);
             this.textBoxX1.TabIndex = 1;
             this.textBoxX1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxX1_KeyDown);
             // 
