@@ -80,8 +80,8 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incPADr: return "攻撃力: " + sign + value + "%";
                 case GearPropType.incMAD: return "魔力: " + sign + value;
                 case GearPropType.incMADr: return "魔力: " + sign + value + "%";
-                case GearPropType.incPDD: return "防御力: " + sign + value;
-                case GearPropType.incPDDr: return "防御力: " + sign + value + "%";
+                case GearPropType.incPDD: return "防御力 : " + sign + value;
+                case GearPropType.incPDDr: return "防御力 : " + sign + value + "%";
                 //case GearPropType.incMDD: return "MAGIC DEF. : " + sign + value;
                 //case GearPropType.incMDDr: return "MAGIC DEF. : " + sign + value + "%";
                 //case GearPropType.incACC: return "ACCURACY : " + sign + value;
@@ -130,12 +130,12 @@ namespace WzComparerR2.CharaSim
                     }
                 //case GearPropType.noPotential: return value == 0 ? null : "This item cannot gain Potential.";
                 case GearPropType.fixedPotential: return value == 0 ? null : "潜在能力再設定不可";
-                case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を\n\r得ることができます。";
+                case GearPropType.superiorEqp: return value == 0 ? null : "アイテム強化の成功時にさらに高い効果を\r\n得ることができます。";
                 case GearPropType.nActivatedSocket: return value == 0 ? null : "#cこのアイテムにはネビュライトを取り付けることができます。#";
                 case GearPropType.jokerToSetItem: return value == 0 ? null : " #c3つ以上着用しているすべてのセットアイテムに含まわるラッキーアイテム！(ただし、2つ以上のラッキーアイテム着用をのすると1つの効果のみ適用)#";//\n\r#cThis lucky...
                 case GearPropType.plusToSetItem: return value == 0 ? null : "#c装備すると、アイテムセットは2つ装備したものとしてカウントされます。#";
                 case GearPropType.abilityTimeLimited: return value == 0 ? null : "期間限定能力値";
-                case GearPropType.blockGoldHammer: return value == 0 ? null : "ビシアスのハンマーは使用できません。";
+                case GearPropType.blockGoldHammer: return value == 0 ? null : "ビシアスのハンマー使用不可";
                 case GearPropType.colorvar: return value == 0 ? null : "#cThis item can be dyed using a Dye.#";
                 case GearPropType.cantRepair: return value == 0 ? null : "Cannot be repaired";
                 case GearPropType.noLookChange: return value == 0 ? null : "神秘のカナトコ使用不可";
@@ -153,7 +153,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incAUT: return "AUT : " + sign + value;
 
                 case GearPropType.Etuc: return "エクセプショナル強化かできます。 (最大\n\r: " + value + "回)";
-                case GearPropType.CuttableCount: return "はさみ使用可能回数 : " + value + "回";
+                case GearPropType.CuttableCount: return "はさみ使用可能回数：" + value + "回";
                 default: return null;
             }
         }

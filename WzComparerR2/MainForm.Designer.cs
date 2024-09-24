@@ -1190,7 +1190,7 @@
             // textBoxItemSearchString
             // 
             this.textBoxItemSearchString.Name = "textBoxItemSearchString";
-            this.textBoxItemSearchString.TextBoxWidth = 110;
+            this.textBoxItemSearchString.TextBoxWidth = 115;
             this.textBoxItemSearchString.WatermarkColor = System.Drawing.SystemColors.GrayText;
             this.textBoxItemSearchString.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxItemSearchString_KeyDown);
             // 
@@ -1378,7 +1378,7 @@
             // 
             this.textBoxItemSearchWz.MaxLength = 50;
             this.textBoxItemSearchWz.Name = "textBoxItemSearchWz";
-            this.textBoxItemSearchWz.TextBoxWidth = 98;
+            this.textBoxItemSearchWz.TextBoxWidth = 115;
             this.textBoxItemSearchWz.WatermarkColor = System.Drawing.SystemColors.GrayText;
             this.textBoxItemSearchWz.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxItemSearchWz_KeyDown);
             // 
@@ -1697,13 +1697,13 @@
             this.btnItemOpenWz.ButtonStyle = DevComponents.DotNetBar.eButtonStyle.ImageAndText;
             this.btnItemOpenWz.Name = "btnItemOpenWz";
             this.btnItemOpenWz.SubItemsExpandWidth = 24;
-            this.btnItemOpenWz.Text = "WZファイルを開く...";
+            this.btnItemOpenWz.Text = "WZファイルを開く(&O)...";
             this.btnItemOpenWz.Click += new System.EventHandler(this.btnItemOpenWz_Click);
             // 
             // btnItemOpenImg
             // 
             this.btnItemOpenImg.Name = "btnItemOpenImg";
-            this.btnItemOpenImg.Text = "IMGファイルを開く...";
+            this.btnItemOpenImg.Text = "IMGファイルを開く(&M)...";
             this.btnItemOpenImg.Click += new System.EventHandler(this.btnItemOpenImg_Click);
             // 
             // buttonItemClose
@@ -1711,13 +1711,13 @@
             this.buttonItemClose.ButtonStyle = DevComponents.DotNetBar.eButtonStyle.ImageAndText;
             this.buttonItemClose.Name = "buttonItemClose";
             this.buttonItemClose.SubItemsExpandWidth = 24;
-            this.buttonItemClose.Text = "閉じる";
+            this.buttonItemClose.Text = "閉じる(&C)";
             this.buttonItemClose.Click += new System.EventHandler(this.buttonItemClose_Click);
             // 
             // buttonItemCloseAll
             // 
             this.buttonItemCloseAll.Name = "buttonItemCloseAll";
-            this.buttonItemCloseAll.Text = "すべてのファイルを閉じる";
+            this.buttonItemCloseAll.Text = "すべてのファイルを閉じる(&L)";
             this.buttonItemCloseAll.Click += new System.EventHandler(this.buttonItemCloseAll_Click);
             // 
             // galleryContainerRecent
@@ -1775,7 +1775,7 @@
             this.btnItemOptions.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnItemOptions.Name = "btnItemOptions";
             this.btnItemOptions.SubItemsExpandWidth = 24;
-            this.btnItemOptions.Text = "設定";
+            this.btnItemOptions.Text = "設定(&I)";
             this.btnItemOptions.Click += new System.EventHandler(this.btnItemOptions_Click);
             // 
             // buttonItem13
@@ -1785,7 +1785,7 @@
             this.buttonItem13.Enabled = false;
             this.buttonItem13.Name = "buttonItem13";
             this.buttonItem13.SubItemsExpandWidth = 24;
-            this.buttonItem13.Text = "終了";
+            this.buttonItem13.Text = "終了(&X)";
             // 
             // styleManager1
             // 

@@ -671,7 +671,12 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (Gear.Props.TryGetValue(GearPropType.superiorEqp, out value) && value > 0) //极真
                 {
-                    GearGraphics.DrawPlainText(g, ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value), GearGraphics.ItemDetailFont, ((SolidBrush)GearGraphics.JMSGreenBrush).Color, 12, 256, ref picH, 30);//GMS - Superior green line change 
+                    //GearGraphics.DrawPlainText(g, ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value), GearGraphics.ItemDetailFont, ((SolidBrush)GearGraphics.JMSGreenBrush).Color, 12, 256, ref picH, 30);//GMS - Superior green line change 
+                    string[] superiorDescLines = ItemStringHelper.GetGearPropString(GearPropType.superiorEqp, value).Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    foreach (string line in superiorDescLines)
+                    {
+                        GearGraphics.DrawPlainText(g, line, GearGraphics.ItemDetailFont, ((SolidBrush)GearGraphics.JMSGreenBrush).Color, 12, 256, ref picH, 16);
+                    }
                 }
 
                 if (!Gear.GetBooleanValue(GearPropType.exceptUpgrade))
@@ -965,7 +970,7 @@ namespace WzComparerR2.CharaSimControl
 
                 if (!string.IsNullOrEmpty(incline))
                 {
-                    desc.Add("#c装着時1回に限り" + incline.Substring(2) + "の経験値を獲得できます。(1日獲得期間の最大値を超えると、獲得できません)");
+                    desc.Add("#c 装着時1回に限り" + incline.Substring(2) + "の経験値を獲得できます。(1日獲得制限の最大値を超えると、獲得できません)");
                 }
 
                 if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))
@@ -1350,10 +1355,6 @@ namespace WzComparerR2.CharaSimControl
             {
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.tradeBlock, value));
             }
-            if (Gear.Props.TryGetValue(GearPropType.onlyEquip, out value) && value != 0)
-            {
-                tags.Add(ItemStringHelper.GetGearPropString(GearPropType.onlyEquip, value));
-            }
             if (Gear.Props.TryGetValue(GearPropType.abilityTimeLimited, out value) && value != 0)
             {
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.abilityTimeLimited, value));
@@ -1371,6 +1372,10 @@ namespace WzComparerR2.CharaSimControl
                     if (!tags.Contains(tradeBlock))
                         tags.Add(tradeBlock);
                 }
+            }
+            if (Gear.Props.TryGetValue(GearPropType.onlyEquip, out value) && value != 0)
+            {
+                tags.Add(ItemStringHelper.GetGearPropString(GearPropType.onlyEquip, value));
             }
             if (Gear.Props.TryGetValue(GearPropType.accountSharable, out value) && value != 0)
             {
