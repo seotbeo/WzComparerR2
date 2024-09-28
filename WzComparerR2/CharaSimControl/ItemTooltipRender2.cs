@@ -346,7 +346,15 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //SizeF titleSize = TextRenderer.MeasureText(g, sr.Name.Replace(Environment.NewLine, ""), GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
-            SizeF titleSize = TextRenderer.MeasureText(g, itemName, GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
+            SizeF titleSize;
+            if (IsKoreanStringPresent(itemName))
+            {
+                titleSize = TextRenderer.MeasureText(g, itemName, GearGraphics.KMSItemNameFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
+            }
+            else
+            {
+                titleSize = TextRenderer.MeasureText(g, itemName, GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
+            }
             titleSize.Width += 9 * 2;//9 was 12
             if (titleSize.Width > 290)
             {
@@ -372,7 +380,14 @@ namespace WzComparerR2.CharaSimControl
             //绘制标题
             bool hasPart2 = false;
             format.Alignment = StringAlignment.Center;
-            g.DrawString(sr.Name, GearGraphics.ItemNameFont2, Brushes.White, tooltip.Width / 2, picH, format);
+            if (IsKoreanStringPresent(sr.Name))
+            {
+                g.DrawString(sr.Name, GearGraphics.KMSItemNameFont, Brushes.White, tooltip.Width / 2, picH, format);
+            }
+            else
+            {
+                g.DrawString(sr.Name, GearGraphics.ItemNameFont2, Brushes.White, tooltip.Width / 2, picH, format);
+            }
             picH += 22;
 
             if (Item.Props.TryGetValue(ItemPropType.wonderGrade, out value) && value > 0)
@@ -666,7 +681,14 @@ namespace WzComparerR2.CharaSimControl
             }
             if (!string.IsNullOrEmpty(desc))
             {
-                GearGraphics.DrawString(g, desc, GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                if (IsKoreanStringPresent(desc))
+                {
+                    GearGraphics.DrawString(g, desc, GearGraphics.KMSItemDetailFont, 100, right, ref picH, 16);
+                }
+                else
+                {
+                    GearGraphics.DrawString(g, desc, GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                }
             }
             if (!string.IsNullOrEmpty(sr.AutoDesc))
             {
@@ -796,7 +818,14 @@ namespace WzComparerR2.CharaSimControl
                 if (!string.IsNullOrEmpty(descLeftAlign))
                 {
                     picH += 12;
-                    GearGraphics.DrawString(g, descLeftAlign, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
+                    if (IsKoreanStringPresent(descLeftAlign))
+                    {
+                        GearGraphics.DrawString(g, descLeftAlign, GearGraphics.KMSItemDetailFont, 14, right, ref picH, 16);
+                    }
+                    else
+                    {
+                        GearGraphics.DrawString(g, descLeftAlign, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
+                    }
                 }
                 if (item.CoreSpecs.Count > 0)
                 {
@@ -1211,7 +1240,10 @@ namespace WzComparerR2.CharaSimControl
             }
             return level;
         }
-
+        private bool IsKoreanStringPresent(string checkString)
+        {
+            return checkString.Any(c => (c >= '\uAC00' && c <= '\uD7A3'));
+        }
         private bool TryGetNickResource(int nickTag, out Wz_Node resNode)
         {
             resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/nick/" + nickTag);

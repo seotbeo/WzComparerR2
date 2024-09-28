@@ -195,8 +195,17 @@ namespace WzComparerR2.CharaSimControl
             }
 
             format.Alignment = StringAlignment.Center;
-            g.DrawString(gearName, GearGraphics.ItemNameFont2,
-                GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0), 130, picH, format);
+            if (IsKoreanStringPresent(gearName))
+            {
+                g.DrawString(gearName, GearGraphics.KMSItemNameFont,
+                    GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0), 130, picH, format);
+            }
+            else
+            {
+                g.DrawString(gearName, GearGraphics.ItemNameFont2,
+                    GearGraphics.GetGearNameBrush(Gear.diff, Gear.ScrollUp > 0), 130, picH, format);
+            }
+
             picH += 23;
 
             //装备rank
@@ -238,7 +247,7 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (Gear.Props.TryGetValue(GearPropType.BTSLabel, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "BTSラベル", GearGraphics.EquipDetailFont, new Point(70, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, "BTSラベル", GearGraphics.EquipDetailFont, new Point(261, picH), Color.FromArgb(187, 102, 238), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
             else if (Gear.Props.TryGetValue(GearPropType.BLACKPINKLabel, out value) && value > 0)
@@ -1040,8 +1049,14 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (!string.IsNullOrEmpty(sr.Desc))
                 {
-                    //GearGraphics.DrawString(g, sr.Desc, GearGraphics.EquipDetailFont2, 13, 223, ref picH, 15, ((SolidBrush)GearGraphics.OrangeBrush2).Color);
-                    GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
+                    if (IsKoreanStringPresent(sr.Desc))
+                    {
+                        GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.KMSItemDetailFont, orange2FontColorTable, 10, 243, ref picH, 15);
+                    }
+                    else
+                    {
+                        GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
+                    }
                 }
                 if (!string.IsNullOrEmpty(levelDesc))
                 {
@@ -1049,7 +1064,15 @@ namespace WzComparerR2.CharaSimControl
                 }
                 foreach (string str in desc)
                 {
-                    GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
+                    if (IsKoreanStringPresent(str))
+                    {
+                        GearGraphics.DrawString(g, str, GearGraphics.KMSItemDetailFont, orange2FontColorTable, 10, 243, ref picH, 15);
+                    }
+                    else
+                    {
+                        GearGraphics.DrawString(g, str, GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
+                    }
+                    
                 }
                 picH += 5;
             }
@@ -1780,7 +1803,10 @@ namespace WzComparerR2.CharaSimControl
             resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/medal/" + medalTag);
             return resNode != null;
         }
-
+        private bool IsKoreanStringPresent(string checkString)
+        {
+            return checkString.Any(c => (c >= '\uAC00' && c <= '\uD7A3'));
+        }
         private enum NumberType
         {
             Can,
