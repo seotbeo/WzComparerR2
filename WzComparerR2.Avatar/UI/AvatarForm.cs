@@ -141,6 +141,27 @@ namespace WzComparerR2.Avatar.UI
                                 this.ResumeUpdateDisplay();
                             }
                         }
+                        else // 의자 아이템, 아이템 코드나 bodyRelMove과 sitAction 속성 유무로 결정
+                        {
+                            Wz_Vector brm = itemNode.FindNodeByPath("info\\bodyRelMove").GetValueEx<Wz_Vector>(null);
+                            bool isSitActionExists = itemNode.FindNodeByPath("info\\sitAction").GetValueEx<string>(null) != null;
+                            if (itemID / 10000 == 301 || itemID / 1000 == 5204 || brm != null || isSitActionExists)
+                            {
+                                bool fb = false;
+                                if (brm == null)
+                                {
+                                    fb = false;
+                                    brm = new Wz_Vector(0, 0);
+                                }
+                                else if (isSitActionExists)
+                                {
+                                    fb = true;
+                                }
+                                this.SuspendUpdateDisplay();
+                                LoadChairPart(itemNode, BitmapOrigin.CreateFromNode(itemNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), itemID, brm, fb);
+                                this.ResumeUpdateDisplay();
+                            }
+                        }
                     }
                     break;
             }
@@ -222,6 +243,20 @@ namespace WzComparerR2.Avatar.UI
                 UpdateDisplay();
             }
         }
+        private void LoadChairPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, Wz_Vector brm, bool forceAct) // 의자 아이템 패널 표시
+        {
+            if (!this.inited && !this.AvatarInit() && imgNode == null)
+            {
+                return;
+            }
+            AvatarPart part = this.avatar.AddChairPart(imgNode, forceIcon, forceID, brm, forceAct);
+            if (part != null)
+            {
+                OnNewPartAdded(part);
+                FillAvatarParts();
+                UpdateDisplay();
+            }
+        }
 
         private void OnNewPartAdded(AvatarPart part)
         {
@@ -261,10 +296,20 @@ namespace WzComparerR2.Avatar.UI
             }
             else if (part == avatar.Taming) //同步座驾动作
             {
-                this.avatar.LoadTamingActions();
-                FillTamingAction();
-                SetTamingDefaultBodyAction();
-                SetTamingDefault();
+                if (part.bodyRelMove == null)
+                {
+                    this.avatar.LoadTamingActions();
+                    FillTamingAction();
+                    SetTamingDefaultBodyAction();
+                    SetTamingDefault();
+                }
+                else // 의자 아이템의 경우 taming과 분리
+                {
+                    this.avatar.LoadChairActions();
+                    FillTamingAction();
+                    SetChairDefaultBodyAction();
+                    SetChairDefault();
+                }
             }
             else if (part == avatar.Weapon) //同步武器类型
             {
@@ -437,7 +482,10 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
         }
-
+        private void SelectEmotionByIndex(int emotionIdx)
+        {
+            cmbEmotion.SelectedIndex = emotionIdx + 1;
+        }
         #region 同步界面
         private void FillBodyAction()
         {
@@ -511,7 +559,11 @@ namespace WzComparerR2.Avatar.UI
             }
             SelectBodyAction(actionName);
         }
-
+        private void SetChairDefaultBodyAction() // 의자 아이템의 기본 캐릭터 동작 = sit 또는 sitAction으로 설정된 값
+        {
+            string actionName = this.avatar.Taming.Node.FindNodeByPath("info\\sitAction").GetValueEx<string>("sit");
+            SelectBodyAction(actionName);
+        }
         private void SetTamingDefault()
         {
             if (this.avatar.Taming != null)
@@ -533,7 +585,19 @@ namespace WzComparerR2.Avatar.UI
                 }
             }
         }
-
+        private void SetChairDefault() // 의자 아이템의 기본 캐릭터 동작 = sit 또는 sitAction으로 설정된 값, 기본 표정
+        {
+            if (this.avatar.Taming != null)
+            {
+                string forceAction = this.avatar.Taming.Node.FindNodeByPath("info\\sitAction").GetValueEx<string>("sit");
+                if (forceAction != null)
+                {
+                    this.SelectBodyAction(forceAction);
+                }
+                int forceEmotion = this.avatar.Taming.Node.FindNodeByPath("info\\sitEmotion").GetValueEx<int>(-1);
+                this.SelectEmotionByIndex(forceEmotion);
+            }
+        }
         /// <summary>
         /// 更新当前显示部件列表。
         /// </summary>
@@ -1047,7 +1111,12 @@ namespace WzComparerR2.Avatar.UI
             avatar.ShowHairShade = chkHairShade.Checked;
             UpdateDisplay();
         }
-
+        private void chkApplyBRM_CheckedChanged(object sender, EventArgs e)
+        {
+            avatar.ApplyBRM = chkApplyBRM.Checked;
+            this.avatarContainer1.ClearAllCache();
+            UpdateDisplay();
+        }
         private void timer1_Tick(object sender, EventArgs e)
         {
             this.animator.Elapse(timer1.Interval);
