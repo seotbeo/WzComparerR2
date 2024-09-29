@@ -47,7 +47,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Font SetItemPropFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
         public static readonly Font ItemReqLevelFont = new Font("MS Gothic", 11f, GraphicsUnit.Pixel);
         public static readonly Font KMSItemNameFont = new Font("Dotum", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
-        public static readonly Font KMSItemDetailFont = new Font("Dotum", 11f, GraphicsUnit.Pixel);
+        public static readonly Font KMSItemDetailFont = new Font("Dotum", 12f, GraphicsUnit.Pixel);
 
         public static Font ItemNameFont2 { get; private set; }
         public static Font ItemDetailFont2 { get; private set; }
