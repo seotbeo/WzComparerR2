@@ -26,7 +26,7 @@ namespace WzComparerR2.WzLib
         {
             // calc snow key for entry
             uint keyHash = 0x811C9DC5;
-            foreach (var c in (this.WzFile as Ms_File)?.Header.KeySalt)
+            foreach(var c in (this.WzFile as Ms_File)?.Header.KeySalt)
             {
                 keyHash = (keyHash ^ c) * 0x1000193;
 
@@ -64,7 +64,7 @@ namespace WzComparerR2.WzLib
             {
                 cs.ReadExactly(span);
             }
-
+            
             var ms = new MemoryStream(buffer);
             return ms;
         }

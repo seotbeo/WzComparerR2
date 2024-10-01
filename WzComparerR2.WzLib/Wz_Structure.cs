@@ -276,6 +276,7 @@ namespace WzComparerR2.WzLib
                 }
             }
         }
+
         public void LoadMsFile(string fileName)
         {
             Ms_File file = null;

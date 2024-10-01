@@ -13,7 +13,7 @@ namespace WzComparerR2.WzLib.Cryptography
     {
         public Snow2CryptoTransform(ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, bool encrypting)
         {
-            if (key == null)
+            if (key == null) 
                 throw new ArgumentNullException(nameof(key));
             if (key.Length != 16 && iv.Length != 32)
                 throw new ArgumentOutOfRangeException(nameof(key), "Key size must be 16 or 32 bytes.");

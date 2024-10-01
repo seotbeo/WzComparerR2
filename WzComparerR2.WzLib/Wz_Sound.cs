@@ -158,6 +158,7 @@ namespace WzComparerR2.WzLib
             }
             return null;
         }
+
         public void CopyTo(byte[] buffer, int offset)
         {
             if (buffer.Length - offset < this.DataLength)

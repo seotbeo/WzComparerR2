@@ -156,7 +156,7 @@ namespace WzComparerR2.WzLib
             }
             this.Header.DataStartPosition = dataStartPos;
             // recalculate startPos
-            foreach (var entry in this.Entries)
+            foreach(var entry in this.Entries)
             {
                 entry.StartPos = dataStartPos + entry.StartPos * 1024;
             }

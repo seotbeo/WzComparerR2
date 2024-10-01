@@ -6,7 +6,7 @@ namespace WzComparerR2.WzLib.Utilities
 {
     internal class SimpleWzStringPool : IWzStringPool
     {
-        public SimpleWzStringPool()
+        public SimpleWzStringPool() 
         {
             this.stringTable = new Dictionary<long, string>();
             this.asciiStringTable = new Dictionary<long, string>();
@@ -65,7 +65,7 @@ namespace WzComparerR2.WzLib.Utilities
 
         private static bool IsAsciiString(ReadOnlySpan<char> chars)
         {
-            for (int i = 0; i < chars.Length; i++)
+            for(int i = 0; i < chars.Length; i++)
             {
                 if ((uint)(chars[i] - 0x20) >= 0x60)
                 {

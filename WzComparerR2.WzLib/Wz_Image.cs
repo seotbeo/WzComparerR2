@@ -96,6 +96,7 @@ namespace WzComparerR2.WzLib
                     }
                     this.chec = true;
                 }
+
                 if (!this.checEnc)
                 {
                     if (!this.IsLuaImage)
@@ -280,7 +281,7 @@ namespace WzComparerR2.WzLib
                     mediaType.FixedSizeSamples = reader.ReadByte() != 0;
                     mediaType.TemporalCompression = reader.ReadByte() != 0;
                     mediaType.FormatType = new Guid(reader.ReadBytes(16));
-                    switch (soundDecl)
+                    switch(soundDecl)
                     {
                         case 2:
                             int fmtExLen = reader.ReadCompressedInt32();

@@ -110,7 +110,6 @@ namespace WzComparerR2.Common
                     break;
 
                 case SkeletonLoadType.Binary when skelNode.Value is Wz_Sound wzSound && wzSound.SoundType == Wz_SoundType.Binary:
-
                 case SkeletonLoadType.Binary when skelNode.Value is Wz_RawData wzRawData:
                     var blob = skelNode.Value as IMapleStoryBlob;
                     var data = new byte[blob.Length];
