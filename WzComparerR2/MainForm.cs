@@ -2591,11 +2591,11 @@ namespace WzComparerR2
                     }
                 }
             }
-            else if (item is Wz_Sound wzSound)
+            else if (item is IMapleStoryBlob blob)
             {
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = advTree3.SelectedNode.Text;
-                if (!dlg.FileName.Contains("."))
+                if (!dlg.FileName.Contains(".") && blob is Wz_Sound wzSound)
                 {
                     switch (wzSound.SoundType)
                     {
@@ -2608,60 +2608,12 @@ namespace WzComparerR2
                 {
                     try
                     {
+                        byte[] data = new byte[blob.Length];
+                        blob.CopyTo(data, 0);
                         using (var f = File.Create(dlg.FileName))
                         {
-                            wzSound.WzFile.FileStream.Seek(wzSound.Offset, SeekOrigin.Begin);
-                            byte[] buffer = new byte[4096];
-                            int bytes = wzSound.DataLength;
-                            while (bytes > 0)
-                            {
-                                int count = wzSound.WzFile.FileStream.Read(buffer, 0, Math.Min(buffer.Length, bytes));
-                                if (count > 0)
-                                {
-                                    f.Write(buffer, 0, count);
-                                    bytes -= count;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        this.labelItemStatus.Text = "오디오 저장 완료";
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBoxEx.Show("오디오 저장 실패\r\n" + ex.ToString(), "오류");
-                    }
-                }
-            }
-            else if (item is Wz_RawData rawData)
-            {
-                SaveFileDialog dlg = new SaveFileDialog();
-                dlg.FileName = advTree3.SelectedNode.Text;
-                dlg.Filter = "모든 파일 (*.*)|*.*";
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        using (var f = File.Create(dlg.FileName))
-                        {
-                            rawData.WzFile.FileStream.Seek(rawData.Offset, SeekOrigin.Begin);
-                            byte[] buffer = new byte[4096];
-                            int bytes = rawData.Length;
-                            while (bytes > 0)
-                            {
-                                int count = rawData.WzFile.FileStream.Read(buffer, 0, Math.Min(buffer.Length, bytes));
-                                if (count > 0)
-                                {
-                                    f.Write(buffer, 0, count);
-                                    bytes -= count;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
+                            f.Write(data, 0, data.Length);
+                            f.Flush();
                         }
                         this.labelItemStatus.Text = "파일 저장 완료";
                     }
