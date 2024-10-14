@@ -97,7 +97,7 @@ namespace WzComparerR2.CharaSimControl
                                 if (gear != null)
                                 {
                                     gear.Props[GearPropType.timeLimited] = 0;
-                                    int tuc, tucCnt;
+                                    long tuc, tucCnt;
                                     if (Item.Props.TryGetValue(ItemPropType.addTooltip_tuc, out tuc) && Item.Props.TryGetValue(ItemPropType.addTooltip_tucCnt, out tucCnt))
                                     {
                                         Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item);
@@ -109,7 +109,7 @@ namespace WzComparerR2.CharaSimControl
                                                 Wz_Node infoNode = node1.FindNodeByPath(imgClass, true);
                                                 if (infoNode != null)
                                                 {
-                                                    gear.Upgrade(infoNode, tucCnt);
+                                                    gear.Upgrade(infoNode, (int)tucCnt);
 
                                                     break;
                                                 }
@@ -176,16 +176,16 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            int value;
+            long value;
             if (this.item.Props.TryGetValue(ItemPropType.dressUpgrade, out value))
             {
-                int itemID = value;
-                AppendGearOrItem(itemID);
+                long itemID = value;
+                AppendGearOrItem((int)itemID);
             }
             if (this.item.Props.TryGetValue(ItemPropType.tamingMob, out value))
             {
-                int itemID = value;
-                AppendGearOrItem(itemID);
+                long itemID = value;
+                AppendGearOrItem((int)itemID);
             }
 
             if (this.item.AddTooltips.Count > 0)
@@ -325,6 +325,7 @@ namespace WzComparerR2.CharaSimControl
         {
             StringFormat format = (StringFormat)StringFormat.GenericDefault.Clone();
             long value;
+            int intvalue;
 
             //物品标题
             StringResult sr;
@@ -573,11 +574,10 @@ namespace WzComparerR2.CharaSimControl
             {
                 if (item.Props.TryGetValue(ItemPropType.wonderGrade, out value) && value > 0)
                 {
-                    int setID;
-                    if (item.Props.TryGetValue(ItemPropType.setItemID, out setID))
+                    if (item.Props.TryGetValue(ItemPropType.setItemID, out long setID))
                     {
                         SetItem setItem;
-                        if (CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
+                        if (CharaSimLoader.LoadedSetItems.TryGetValue((int)setID, out setItem))
                         {
                             string wonderGradeString = null;
                             string setItemName = setItem.SetItemName;
@@ -773,7 +773,7 @@ namespace WzComparerR2.CharaSimControl
                 && this.Item.Props.TryGetValue(ItemPropType.nickTag, out value)
                 && this.TryGetNickResource(value, out nickResNode);
             string descLeftAlign = sr["desc_leftalign"];
-            int minLev = 0, maxLev = 0;
+            long minLev = 0, maxLev = 0;
             bool willDrawExp = item.Props.TryGetValue(ItemPropType.exp_minLev, out minLev) && item.Props.TryGetValue(ItemPropType.exp_maxLev, out maxLev);
 
             if (!string.IsNullOrEmpty(descLeftAlign) || item.CoreSpecs.Count > 0 || item.Sample.Bitmap != null || item.SamplePath != null || willDrawNickTag || willDrawExp)
@@ -794,6 +794,7 @@ namespace WzComparerR2.CharaSimControl
                     foreach (KeyValuePair<ItemCoreSpecType, Wz_Node> p in item.CoreSpecs)
                     {
                         string coreSpec;
+                        intvalue = 0;
                         switch (p.Key)
                         {
                             case ItemCoreSpecType.Ctrl_addMob:
@@ -805,12 +806,12 @@ namespace WzComparerR2.CharaSimControl
                                 }
                                 foreach (Wz_Node addMobNode in p.Value.Nodes)
                                 {
-                                    if (int.TryParse(addMobNode.Text, out value))
+                                    if (int.TryParse(addMobNode.Text, out intvalue))
                                     {
                                         break;
                                     }
                                 }
-                                coreSpec = ItemStringHelper.GetItemCoreSpecString(ItemCoreSpecType.Ctrl_addMob, value, srMob.Name);
+                                coreSpec = ItemStringHelper.GetItemCoreSpecString(ItemCoreSpecType.Ctrl_addMob, intvalue, srMob.Name);
                                 break;
 
                             default:
@@ -886,7 +887,7 @@ namespace WzComparerR2.CharaSimControl
                 {
                     long totalExp = 0;
 
-                    for (int i = minLev; i < maxLev; i++)
+                    for (int i = (int)minLev; i < (int)maxLev; i++)
                         totalExp += Character.ExpToNextLevel(i);
 
                     g.DrawLine(Pens.White, 6, picH, tooltip.Width - 7, picH);
