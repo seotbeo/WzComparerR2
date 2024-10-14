@@ -1199,7 +1199,7 @@ namespace WzComparerR2.CharaSimControl
             return level;
         }
 
-        private bool TryGetNickResource(int long nickTag, out Wz_Node resNode)
+        private bool TryGetNickResource(long nickTag, out Wz_Node resNode)
         {
             resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/nick/" + nickTag);
             return resNode != null;
