@@ -234,8 +234,13 @@ namespace WzComparerR2.MapRender
                     string path = $@"Map\Back\_Canvas\{item.BS}.img\back\{item.No}";
                     string path2 = $@"Map\Back\{item.BS}.img\back\{item.No}";
 
-                    var kNode = PluginManager.FindWz(path) ?? PluginManager.FindWz(path2);
-                    var png = kNode.GetValue<Wz_Png>();
+                    var bNode = PluginManager.FindWz(path) ?? PluginManager.FindWz(path2);
+                    if (bNode == null)
+                    {
+                        (item.IsFront ? this.Scene.Front : this.Scene.Back).Slots.Add(item);
+                        continue;
+                    }
+                    var png = bNode.GetValue<Wz_Png>();
                     var width = png.Width;
                     var height = png.Height;
                     var block_size = 4096;
