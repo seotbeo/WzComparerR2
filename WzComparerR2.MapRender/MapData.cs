@@ -229,7 +229,39 @@ namespace WzComparerR2.MapRender
                 item.Name = $"back_{node.Text}";
                 item.Index = int.Parse(node.Text);
 
-                (item.IsFront ? this.Scene.Front : this.Scene.Back).Slots.Add(item);
+                if (item.Ani == 0)
+                {
+                    string path = $@"Map\Back\_Canvas\{item.BS}.img\back\{item.No}";
+                    string path2 = $@"Map\Back\{item.BS}.img\back\{item.No}";
+
+                    var kNode = PluginManager.FindWz(path) ?? PluginManager.FindWz(path2);
+                    var png = kNode.GetValue<Wz_Png>();
+                    var width = png.Width;
+                    var height = png.Height;
+                    var block_size = 4096;
+
+                    if (width > block_size || height > block_size)
+                    {
+
+                        var countx = (width / block_size) + 1;
+                        var county = (height / block_size) + 1;
+
+                        for (int i = 0; i < countx; i++)
+                        {
+                            for (int j = 0; j < county; j++)
+                            {
+                                var newItem = BackItem.LoadFromNode(node, i + 1, j + 1);
+                                newItem.Name = $"back_{node.Text}";
+                                newItem.Index = int.Parse(node.Text);
+                                newItem.X += block_size * i;
+                                newItem.Y += block_size * j;
+                                (newItem.IsFront ? this.Scene.Front : this.Scene.Back).Slots.Add(newItem);
+                            }
+                        }
+                    }
+                    else (item.IsFront ? this.Scene.Front : this.Scene.Back).Slots.Add(item);
+                }
+                else (item.IsFront ? this.Scene.Front : this.Scene.Back).Slots.Add(item);
             }
         }
 
@@ -666,7 +698,7 @@ namespace WzComparerR2.MapRender
                 default: throw new Exception($"Unknown back ani value: {back.Ani}.");
             }
             string path = $@"Map\Back\{back.BS}.img\{aniDir}\{back.No}";
-            var aniItem = resLoader.LoadAnimationData(path);
+            var aniItem = resLoader.LoadAnimationData(path, back.Xc, back.Yc);
 
             back.View = new BackItem.ItemView()
             {

@@ -19,6 +19,9 @@ namespace WzComparerR2.MapRender.Patches2
         public int Rx { get; set; }
         public int Ry { get; set; }
         public int Alpha { get; set; }
+        public int Xc { get; set; }
+        public int Yc { get; set; }
+        public bool Splited { get; set; }
         public TileMode TileMode { get; set; }
         public int ScreenMode { get; set; }
         public bool Flip { get; set; }
@@ -28,7 +31,7 @@ namespace WzComparerR2.MapRender.Patches2
         
         public ItemView View { get; set; }
 
-        public static BackItem LoadFromNode(Wz_Node node)
+        public static BackItem LoadFromNode(Wz_Node node, int x = 0, int y = 0)
         {
             var item = new BackItem()
             {
@@ -36,7 +39,7 @@ namespace WzComparerR2.MapRender.Patches2
                 Ani = node.Nodes["ani"].GetValueEx<int>(0),
                 No = node.Nodes["no"].GetValueEx<string>(null),
                 SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
-               
+
                 X = node.Nodes["x"].GetValueEx(0),
                 Y = node.Nodes["y"].GetValueEx(0),
                 Cx = node.Nodes["cx"].GetValueEx(0),
@@ -49,6 +52,10 @@ namespace WzComparerR2.MapRender.Patches2
                 ScreenMode = node.Nodes["screenMode"].GetValueEx(0),
                 Flip = node.Nodes["f"].GetValueEx(false),
                 IsFront = node.Nodes["front"].GetValueEx(false),
+
+                Xc = 0,
+                Yc = 0,
+                Splited = false
             };
             string backTags = node.Nodes["backTags"].GetValueEx<string>(null);
             if (!string.IsNullOrWhiteSpace(backTags))
@@ -63,6 +70,16 @@ namespace WzComparerR2.MapRender.Patches2
                 {
                     item.Quest.Add(Tuple.Create(questID, 1));
                 }
+            }
+            if (x > 0)
+            {
+                item.Xc = x;
+                item.Splited = true;
+            }
+            if (y > 0)
+            {
+                item.Yc = y;
+                item.Splited = true;
             }
             return item;
         }

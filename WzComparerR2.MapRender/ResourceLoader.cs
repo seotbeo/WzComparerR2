@@ -42,12 +42,12 @@ namespace WzComparerR2.MapRender
             return Load<T>(null, assetName);
         }
 
-        public virtual T Load<T>(Wz_Node node)
+        public virtual T Load<T>(Wz_Node node, int x = 0, int y = 0)
         {
-            return Load<T>(node, null);
+            return Load<T>(node, null, x, y);
         }
 
-        private T Load<T>(Wz_Node node = null, string assetName = null)
+        private T Load<T>(Wz_Node node = null, string assetName = null, int x = 0, int y = 0)
         {
             if (node == null && assetName == null)
                 throw new ArgumentNullException();
@@ -55,9 +55,10 @@ namespace WzComparerR2.MapRender
             assetName = assetName ?? node.FullPathToFile;
 
             ResourceHolder holder;
-            if (!loadedItems.TryGetValue(assetName, out holder))
+            var loadedAssetName = x <= 0 && y <= 0 ? assetName : assetName + "_" + x + "_" + y;
+            if (!loadedItems.TryGetValue(loadedAssetName, out holder))
             {
-                var res = InnerLoad(node ?? PluginManager.FindWz(assetName), typeof(T));
+                var res = InnerLoad(node ?? PluginManager.FindWz(assetName), typeof(T), x, y);
                 if (res == null)
                 {
                     return default(T);
@@ -65,7 +66,7 @@ namespace WzComparerR2.MapRender
 
                 holder = new ResourceHolder();
                 holder.Resource = res;
-                loadedItems[assetName] = holder;
+                loadedItems[loadedAssetName] = holder;
             }
 
             //结算计数器
@@ -78,26 +79,27 @@ namespace WzComparerR2.MapRender
             return (T)holder.Resource;
         }
 
-        public object LoadAnimationData(Wz_Node node)
+        public object LoadAnimationData(Wz_Node node, int x = 0, int y = 0)
         {
             object aniData;
             string assetName = node.FullPathToFile;
-            if (!loadedAnimationData.TryGetValue(assetName, out aniData))
+            var loadedAssetName = x <= 0 && y <= 0 ? assetName : assetName + "_" + x + "_" + y;
+            if (!loadedAnimationData.TryGetValue(loadedAssetName, out aniData))
             {
-                aniData = InnerLoadAnimationData(node);
+                aniData = InnerLoadAnimationData(node, x, y);
                 if (aniData == null)
                 {
                     return null;
                 }
-                loadedAnimationData[assetName] = aniData;
+                loadedAnimationData[loadedAssetName] = aniData;
             }
             return aniData;
         }
 
-        public object LoadAnimationData(string assetName)
+        public object LoadAnimationData(string assetName, int x = 0, int y = 0)
         {
             var node = PluginManager.FindWz(assetName);
-            return node != null ? LoadAnimationData(node) : null;
+            return node != null ? LoadAnimationData(node, x, y) : null;
         }
 
         public object LoadParticleDesc(Wz_Node node)
@@ -276,14 +278,14 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private object InnerLoad(Wz_Node node, Type assetType)
+        private object InnerLoad(Wz_Node node, Type assetType, int x = 0, int y = 0)
         {
             if (assetType == typeof(TextureAtlas)) //回头再说
             {
                 var png = node.GetValue<Wz_Png>();
                 if (png != null)
                 {
-                    return new TextureAtlas(png.ToTexture(this.GraphicsDevice));
+                    return new TextureAtlas(png.ToTexture(this.GraphicsDevice, x, y));
                 }
             }
             else if (assetType == typeof(Texture2D))
@@ -305,7 +307,7 @@ namespace WzComparerR2.MapRender
             return null;
         }
 
-        private object InnerLoadAnimationData(Wz_Node node)
+        private object InnerLoadAnimationData(Wz_Node node, int x = 0, int y = 0)
         {
             if (node != null && (node = node.ResolveUol()) != null)
             {
@@ -314,7 +316,7 @@ namespace WzComparerR2.MapRender
                 if (node.Value is Wz_Png) //单帧动画
                 {
                     var aniData = new FrameAnimationData();
-                    var frame = LoadFrame(node);
+                    var frame = LoadFrame(node, x, y);
                     aniData.Frames.Add(frame);
                     return aniData;
                 }
@@ -353,7 +355,7 @@ namespace WzComparerR2.MapRender
             return null;
         }
 
-        private Frame LoadFrame(Wz_Node node)
+        private Frame LoadFrame(Wz_Node node, int x = 0, int y = 0)
         {
             //处理uol
             while (node?.Value is Wz_Uol uol)
@@ -367,7 +369,7 @@ namespace WzComparerR2.MapRender
             //寻找link
             var linkNode = node.GetLinkedSourceNode(PluginManager.FindWz);
             //加载资源
-            var atlas = Load<TextureAtlas>(linkNode);
+            var atlas = Load<TextureAtlas>(linkNode, x, y);
             //读取其他信息
             var frame = new Frame()
             {
@@ -475,7 +477,7 @@ namespace WzComparerR2.MapRender
                     var linkNode = frameNode.GetLinkedSourceNode(PluginManager.FindWz);
                     // workaround for KMST 1172, skeleton atlas and other obj may link to the same png node.
                     // TODO: add options to always load into a standalone texture, disable dynamic atlas on this resource, 
-                    texture = BaseLoader.Load<TextureAtlas>(linkNode).Texture;
+                    texture = BaseLoader.Load<TextureAtlas>(linkNode, 0, 0).Texture;
                     return true;
                 }
 
