@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using WzComparerR2.WzLib;
 using WzComparerR2.CharaSim;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.Avatar
 {
@@ -20,6 +21,7 @@ namespace WzComparerR2.Avatar
             this.TamingActions = new List<string>();
             this.Parts = new AvatarPart[18];
             this.EarType = 0;
+            this.CapType = "";
             this.WeaponIndex = 0;
         }
 
@@ -39,6 +41,7 @@ namespace WzComparerR2.Avatar
         public int WeaponIndex { get; set; }
         public int WeaponType { get; set; }
         public int EarType { get; set; }
+        public string CapType { get; set; }
 
         public bool LoadZ()
         {
@@ -735,6 +738,28 @@ namespace WzComparerR2.Avatar
                     }
                     if (linkNode.Value is Wz_Png)
                     {
+                        string defaultCapType = "default";
+                        string capType = (this.Cap?.Visible ?? false) ? this.CapType : defaultCapType;
+
+                        bool hideBackHair = false; // not sure when backHair and backHairBelowCap be shown
+                        bool hideBackHairBelowCap = capType == defaultCapType ? true : false; // for default, we apply hairCover
+                        if (capType.Contains("H1"))
+                        {
+                            if (capType.Contains("Hf"))
+                            {
+                                if (capType.Contains("H3"))
+                                {
+                                    hideBackHair = true;
+                                    if (capType.Contains("H6"))
+                                    {
+                                        hideBackHairBelowCap = true;
+                                    }
+                                }
+                                else hideBackHairBelowCap = true;
+                            }
+                            else hideBackHair = true;
+                        } // note: there is an in-game issue that when vslot is "Cp" or "CpH5", backHair and backHairBelowCap are shown overlapped together, but we follow this.
+
                         //过滤纹理
                         switch (childNode.Text)
                         {
@@ -742,12 +767,15 @@ namespace WzComparerR2.Avatar
                             case "ear": if (this.EarType != 1) continue; break;
                             case "lefEar": if (this.EarType != 2) continue; break;
                             case "highlefEar": if (this.EarType != 3) continue; break;
-                            case "hairOverHead":
-                            case "backHairOverCape":
-                            case "backHair": if (HairCover) continue; break;
-                            case "hair":
-                            case "backHairBelowCap": if (!HairCover) continue; break;
-                            case "hairShade": if (!ShowHairShade) continue; break;
+                            case "hairOverHead": if (capType.Contains("H1")) continue; break;
+                            case "hair": if (capType.Contains("H2")) continue; break;
+                            case "hairBelowBody": if (capType.Contains("Hb")) continue; break;
+                            case "backHair": if (hideBackHair) continue; break;
+                            case "backHairBelowCap": if (hideBackHairBelowCap) continue; break;
+                            case "backHairBelowCapWide": if (capType.Contains("H4")) continue; break;
+                            case "backHairBelowCapNarrow": if (capType.Contains("H5")) continue; break;
+                            case "backHairOverCape": if (capType.Contains("Hc")) continue; break;
+                            case "hairShade": if (capType.Contains("Hs")) continue; break;
                             default:
                                 if (childNode.Text.StartsWith("weapon"))
                                 {
@@ -763,6 +791,22 @@ namespace WzComparerR2.Avatar
                                     }
                                 }
                                 break;
+                        }
+
+                        if (capType.Contains("A")) // hide accessories
+                        {
+                            var itemNode = childNode;
+                            for (int i = 0; i < Regex.Matches(childNode.FullPath, @"(.*?\\)").Count; i++)
+                            {
+                                itemNode = itemNode.ParentNode;
+                            }
+                            var islotNode = itemNode.Nodes["info"]?.Nodes["islot"];
+                            if (islotNode != null)
+                            {
+                                string islot = islotNode.GetValue<string>("");
+                                if ("AfAyAeAs".Contains(islot) &&
+                                    this.CapType.Contains(islot)) continue;
+                            }
                         }
 
                         //读取纹理

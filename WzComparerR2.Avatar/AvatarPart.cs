@@ -28,6 +28,7 @@ namespace WzComparerR2.Avatar
 
         public Wz_Node Node { get; private set; }
         public string ISlot { get; private set; }
+        public string VSlot { get; private set; }
         public BitmapOrigin Icon { get; private set; }
         public bool Visible { get; set; }
         public int? ID { get; private set; }
@@ -86,6 +87,10 @@ namespace WzComparerR2.Avatar
                 {
                     case "islot":
                         this.ISlot = node.GetValue<string>();
+                        break;
+
+                    case "vslot":
+                        this.VSlot = node.GetValue<string>();
                         break;
 
                     case "icon":
