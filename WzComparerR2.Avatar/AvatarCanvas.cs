@@ -772,8 +772,8 @@ namespace WzComparerR2.Avatar
                             case "hairBelowBody": if (capType.Contains("Hb")) continue; break;
                             case "backHair": if (hideBackHair) continue; break;
                             case "backHairBelowCap": if (hideBackHairBelowCap) continue; break;
-                            case "backHairBelowCapWide": if (capType.Contains("H4")) continue; break;
-                            case "backHairBelowCapNarrow": if (capType.Contains("H5")) continue; break;
+                            case "backHairBelowCapWide": if (capType.Contains("H4") || capType == defaultCapType) continue; break;
+                            case "backHairBelowCapNarrow": if (capType.Contains("H5") || capType == defaultCapType) continue; break;
                             case "backHairOverCape": if (capType.Contains("Hc")) continue; break;
                             case "hairShade": if (capType.Contains("Hs")) continue; break;
                             default:
