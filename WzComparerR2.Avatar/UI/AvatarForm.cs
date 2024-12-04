@@ -27,6 +27,7 @@ namespace WzComparerR2.Avatar.UI
             InitializeComponent();
             this.avatar = new AvatarCanvas();
             this.animator = new Animator();
+            this.panelDockContainer2.Controls.Remove(this.chkHairShade); // disable chkHairShade
             btnReset_Click(btnReset, EventArgs.Empty);
             FillWeaponIdx();
             FillEarSelection();

@@ -741,6 +741,7 @@ namespace WzComparerR2.Avatar
                         string defaultCapType = "default";
                         string capType = (this.Cap?.Visible ?? false) ? this.CapType : defaultCapType;
 
+                        bool hideHairOverHead = false;
                         bool hideBackHair = false; // not sure when backHair and backHairBelowCap be shown
                         bool hideBackHairBelowCap = capType == defaultCapType ? true : false; // for default, we apply hairCover
                         if (capType.Contains("H1"))
@@ -760,6 +761,13 @@ namespace WzComparerR2.Avatar
                             else hideBackHair = true;
                         } // note: there is an in-game issue that when vslot is "Cp" or "CpH5", backHair and backHairBelowCap are shown overlapped together, but we follow this.
 
+                        if (capType == defaultCapType && this.HairCover) // for anyone who wants to set hairCover state, when no cap is visible.
+                        {
+                            hideHairOverHead = true;
+                            hideBackHair = true;
+                            hideBackHairBelowCap = false;
+                        }
+
                         //过滤纹理
                         switch (childNode.Text)
                         {
@@ -767,7 +775,7 @@ namespace WzComparerR2.Avatar
                             case "ear": if (this.EarType != 1) continue; break;
                             case "lefEar": if (this.EarType != 2) continue; break;
                             case "highlefEar": if (this.EarType != 3) continue; break;
-                            case "hairOverHead": if (capType.Contains("H1")) continue; break;
+                            case "hairOverHead": if (capType.Contains("H1") || hideHairOverHead) continue; break;
                             case "hair": if (capType.Contains("H2")) continue; break;
                             case "hairBelowBody": if (capType.Contains("Hb")) continue; break;
                             case "backHair": if (hideBackHair) continue; break;
