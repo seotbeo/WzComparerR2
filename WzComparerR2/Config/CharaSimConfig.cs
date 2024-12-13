@@ -58,5 +58,19 @@ namespace WzComparerR2.Config
         {
             get { return (CharaSimNpcConfig)this["npc"]; }
         }
+
+        [ConfigurationProperty("PreferredStringCopyMethod")]
+        public ConfigItem<int> PreferredStringCopyMethod
+        {
+            get { return (ConfigItem<int>)this["PreferredStringCopyMethod"]; }
+            set { this["PreferredStringCopyMethod"] = value; }
+        }
+
+        [ConfigurationProperty("CopyParsedSkillString")]
+        public ConfigItem<bool> CopyParsedSkillString
+        {
+            get { return (ConfigItem<bool>)this["CopyParsedSkillString"]; }
+            set { this["CopyParsedSkillString"] = value; }
+        }
     }
 }

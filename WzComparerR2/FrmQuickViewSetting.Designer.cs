@@ -71,12 +71,23 @@
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
+            this.checkBoxX11 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.checkBoxX12 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.checkBoxX13 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.checkBoxX14 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.checkBoxX15 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.labelX4 = new DevComponents.DotNetBar.LabelX();
+            this.cmbPreferredStringCopyMethod = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.chkCopyParsedSkillString = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.superTabControlPanel5 = new DevComponents.DotNetBar.SuperTabControlPanel();
+            this.superTabItem5 = new DevComponents.DotNetBar.SuperTabItem();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
             this.superTabControlPanel2.SuspendLayout();
             this.superTabControlPanel3.SuspendLayout();
             this.superTabControlPanel4.SuspendLayout();
+            this.superTabControlPanel5.SuspendLayout();
             this.panelEx1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -102,6 +113,7 @@
             this.superTabControl1.Controls.Add(this.superTabControlPanel2);
             this.superTabControl1.Controls.Add(this.superTabControlPanel3);
             this.superTabControl1.Controls.Add(this.superTabControlPanel4);
+            this.superTabControl1.Controls.Add(this.superTabControlPanel5);
             this.superTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControl1.Location = new System.Drawing.Point(0, 0);
             this.superTabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -117,7 +129,8 @@
             this.superTabItem1,
             this.superTabItem2,
             this.superTabItem3,
-            this.superTabItem4});
+            this.superTabItem4,
+            this.superTabItem5});
             this.superTabControl1.Text = "superTabControl1";
             // 
             // superTabControlPanel1
@@ -617,6 +630,69 @@
             this.panelEx1.Style.GradientAngle = 90;
             this.panelEx1.TabIndex = 1;
             // 
+            // superTabControlPanel5
+            // 
+            this.superTabControlPanel5.Controls.Add(this.chkCopyParsedSkillString);
+            this.superTabControlPanel5.Controls.Add(this.labelX4);
+            this.superTabControlPanel5.Controls.Add(this.cmbPreferredStringCopyMethod);
+            this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.superTabControlPanel5.Location = new System.Drawing.Point(62, 0);
+            this.superTabControlPanel5.Name = "superTabControlPanel5";
+            this.superTabControlPanel5.Size = new System.Drawing.Size(242, 211);
+            this.superTabControlPanel5.TabIndex = 0;
+            this.superTabControlPanel5.TabItem = this.superTabItem5;
+            this.superTabControlPanel5.Visible = false;
+            // 
+            // superTabItem5
+            // 
+            this.superTabItem5.AttachedControl = this.superTabControlPanel5;
+            this.superTabItem5.GlobalItem = false;
+            this.superTabItem5.Name = "superTabItem5";
+            this.superTabItem5.Text = "Misc.";
+            // 
+            // chkCopyParsedSkillString
+            // 
+            this.chkCopyParsedSkillString.AutoSize = true;
+            this.chkCopyParsedSkillString.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkCopyParsedSkillString.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkCopyParsedSkillString.Location = new System.Drawing.Point(13, 12);
+            this.chkCopyParsedSkillString.Name = "chkCopyParsedSkillString";
+            this.chkCopyParsedSkillString.Size = new System.Drawing.Size(124, 16);
+            this.chkCopyParsedSkillString.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkCopyParsedSkillString.TabIndex = 3;
+            this.chkCopyParsedSkillString.Text = "Parse Skill String before copying";
+            // 
+            // labelX4
+            // 
+            this.labelX4.AutoSize = true;
+            this.labelX4.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX4.Location = new System.Drawing.Point(13, 36);
+            this.labelX4.Name = "labelX4";
+            this.labelX4.Size = new System.Drawing.Size(87, 16);
+            this.labelX4.TabIndex = 3;
+            this.labelX4.Text = "Copy Method";
+            // 
+            // cmbPreferredStringCopyMethod
+            // 
+            this.cmbPreferredStringCopyMethod.DisplayMember = "Text";
+            this.cmbPreferredStringCopyMethod.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPreferredStringCopyMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPreferredStringCopyMethod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbPreferredStringCopyMethod.FormattingEnabled = true;
+            this.cmbPreferredStringCopyMethod.ItemHeight = 13;
+            this.cmbPreferredStringCopyMethod.Location = new System.Drawing.Point(94, 34);
+            this.cmbPreferredStringCopyMethod.Name = "cmbPreferredStringCopyMethod";
+            this.cmbPreferredStringCopyMethod.Size = new System.Drawing.Size(140, 19);
+            this.cmbPreferredStringCopyMethod.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.cmbPreferredStringCopyMethod.TabIndex = 2;
+            // 
             // buttonX2
             // 
             this.buttonX2.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
@@ -667,6 +743,8 @@
             this.superTabControlPanel3.PerformLayout();
             this.superTabControlPanel4.ResumeLayout(false);
             this.superTabControlPanel4.PerformLayout();
+            this.superTabControlPanel5.ResumeLayout(false);
+            this.superTabControlPanel5.PerformLayout();
             this.panelEx1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -706,6 +784,8 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX4;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel4;
         private DevComponents.DotNetBar.SuperTabItem superTabItem4;
+        private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel5;
+        private DevComponents.DotNetBar.SuperTabItem superTabItem5;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX6;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX7;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX9;
@@ -717,5 +797,9 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX14;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX15;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX16;
+        private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX21;
+        private DevComponents.DotNetBar.LabelX labelX4;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx cmbPreferredStringCopyMethod;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkCopyParsedSkillString;
     }
 }

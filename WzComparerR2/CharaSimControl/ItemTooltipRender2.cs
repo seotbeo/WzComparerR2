@@ -330,6 +330,7 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap RenderItem(out int picH)
         {
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
             StringFormat format = (StringFormat)StringFormat.GenericDefault.Clone();
             long value;
             int intvalue;
@@ -351,6 +352,11 @@ namespace WzComparerR2.CharaSimControl
             // calculate image width
             const int DefualtWidth = 290;
             int tooltipWidth = DefualtWidth;
+
+            if (isTranslateRequired)
+            {
+                itemName = Translator.MergeString(itemName, Translator.TranslateString(itemName, true), 0, false, true);
+            }
 
             if (int.TryParse(sr["fixWidth"], out int fixWidth) && fixWidth > 0)
             {
@@ -662,11 +668,25 @@ namespace WzComparerR2.CharaSimControl
             }
             if (!string.IsNullOrEmpty(desc))
             {
-                GearGraphics.DrawString(g, desc, GearGraphics.ItemDetailFont2, 100, right, ref picH, 16);
+                string renderDesc = desc;
+
+                if (isTranslateRequired)
+                {
+                    renderDesc = Translator.MergeString(renderDesc, Translator.TranslateString(desc), 2);
+                }
+
+                GearGraphics.DrawString(g, renderDesc, GearGraphics.ItemDetailFont2, 100, right, ref picH, 16);
             }
             if (!string.IsNullOrEmpty(sr.AutoDesc))
             {
-                GearGraphics.DrawString(g, sr.AutoDesc, GearGraphics.ItemDetailFont2, 100, right, ref picH, 16);
+                string renderAutoDesc = sr.AutoDesc;
+
+                if (isTranslateRequired)
+                {
+                    renderAutoDesc = Translator.MergeString(renderAutoDesc, Translator.TranslateString(sr.AutoDesc), 2);
+                }
+
+                GearGraphics.DrawString(g, renderAutoDesc, GearGraphics.ItemDetailFont2, 100, right, ref picH, 16);
             }
             if (item.Props.TryGetValue(ItemPropType.tradeAvailable, out value) && value > 0)
             {
@@ -792,7 +812,15 @@ namespace WzComparerR2.CharaSimControl
                 if (!string.IsNullOrEmpty(descLeftAlign))
                 {
                     picH += 12;
-                    GearGraphics.DrawString(g, descLeftAlign, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
+
+                    string renderDescLeftAlign = descLeftAlign;
+
+                    if (isTranslateRequired)
+                    {
+                        renderDescLeftAlign = Translator.MergeString(renderDescLeftAlign, Translator.TranslateString(descLeftAlign), 2);
+                    }
+
+                    GearGraphics.DrawString(g, renderDescLeftAlign, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
                 }
                 if (item.CoreSpecs.Count > 0)
                 {

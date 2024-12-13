@@ -647,8 +647,8 @@ namespace WzComparerR2.Comparer
                 }
 
                 var skillTypeTextInfo = g.MeasureString(skillType, GearGraphics.ItemDetailFont2);
-                int picH = 13;
-                GearGraphics.DrawPlainText(g, skillType, skillTypeFont, Color.FromArgb(255, 255, 255), 2, (int)Math.Ceiling(skillTypeTextInfo.Width) + 2, ref picH, 10);
+                int picH = 0;
+                GearGraphics.DrawPlainText(g, skillType, skillTypeFont, Color.FromArgb(255, 255, 255), 80, (int)Math.Ceiling(skillTypeTextInfo.Width) + 80, ref picH, 10);
 
                 string imageName = Path.Combine(skillTooltipPath, "스킬_" + skillID + '[' + (ItemStringHelper.GetJobName(int.Parse(skillID) / 10000) ?? "기타") + "]_" + skillType + ".png");
                 if (!File.Exists(imageName))

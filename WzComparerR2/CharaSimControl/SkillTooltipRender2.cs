@@ -8,6 +8,7 @@ using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.WzLib;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -37,6 +38,7 @@ namespace WzComparerR2.CharaSimControl
         public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
+        public string ParsedHdesc { get; set; }
 
         public override Bitmap Render()
         {
@@ -149,9 +151,34 @@ namespace WzComparerR2.CharaSimControl
                 sr.Name = "(null)";
             }
 
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
+            bool isNewLineRequired = false;
+            string translatedSkillName = "";
+            string renderName = sr.Name;
+
+            if (isTranslateRequired)
+            {
+                translatedSkillName = Translator.TranslateString(sr.Name, true);
+                SizeF titleSize;
+                titleSize = TextRenderer.MeasureText(g, translatedSkillName + " (" + sr.Name + ")", GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
+                if (titleSize.Width > (int)(0.96 * region.Width))
+                {
+                    isNewLineRequired = true;
+                }
+            }
+
             //绘制技能名称
+            if (isTranslateRequired)
+            {
+                renderName = Translator.MergeString(renderName, translatedSkillName, isNewLineRequired ? 1 : 0, false, true);
+                if (translatedSkillName.Contains(Environment.NewLine))
+                {
+                    picH += 30;
+                }
+            }
+
             format.Alignment = StringAlignment.Center;
-            TextRenderer.DrawText(g, sr.Name, GearGraphics.ItemNameFont2, new Point(bitmap.Width, 10), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
+            TextRenderer.DrawText(g, renderName, GearGraphics.ItemNameFont2, new Point(bitmap.Width, 10), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
 
             //绘制图标
             if (Skill.Icon.Bitmap != null)
@@ -179,8 +206,15 @@ namespace WzComparerR2.CharaSimControl
             if (sr.Desc != null)
             {
                 string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, SummaryParams.Default);
+                string renderHdesc = hdesc;
+
+                if (isTranslateRequired)
+                {
+                    renderHdesc = Translator.MergeString(renderHdesc, Translator.TranslateString(hdesc), 2);
+                }
+
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
-                GearGraphics.DrawString(g, hdesc, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+                GearGraphics.DrawString(g, renderHdesc, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.TimeLimited)
             {
@@ -260,13 +294,26 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (hStr != null)
                 {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    ParsedHdesc = hStr;
+                    string renderHStr = hStr;
+
+                    if (isTranslateRequired)
+                    {
+                        renderHStr = Translator.MergeString(renderHStr, Translator.TranslateString(hStr), 2);
+                    }
+
+                    GearGraphics.DrawString(g, renderHStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
             }
 
             if (Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, new SkillSummaryOptions
+                {
+                    ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                    ConvertPerM = this.DisplayPermyriadAsPercent,
+                    IgnoreEvalError = this.IgnoreEvalError,
+                });
                 GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
                 {
@@ -274,7 +321,14 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (hStr != null)
                 {
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    string renderHStr = hStr;
+
+                    if (isTranslateRequired)
+                    {
+                        renderHStr = Translator.MergeString(renderHStr, Translator.TranslateString(hStr), 2);
+                    }
+
+                    GearGraphics.DrawString(g, renderHStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
             }
             picH += 3;

@@ -38,6 +38,7 @@ namespace WzComparerR2.CharaSimControl
 
             Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bmp);
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
 
             //预绘制
             List<TextBlock> titleBlocks = new List<TextBlock>();
@@ -255,12 +256,20 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetMobName(int mobID)
         {
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
             StringResult sr;
             if (this.StringLinker == null || !this.StringLinker.StringMob.TryGetValue(mobID, out sr))
             {
                 return null;
             }
-            return sr.Name;
+            if (isTranslateRequired)
+            {
+                return Translator.MergeString(sr.Name, Translator.TranslateString(sr.Name, true), 0, false, true);
+            }
+            else
+            {
+                return sr.Name;
+            }
         }
 
         private string GetElemAttrString(MobElemAttr elemAttr)

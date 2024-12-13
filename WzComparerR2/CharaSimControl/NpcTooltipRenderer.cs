@@ -183,22 +183,38 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetNpcName(int npcID)
         {
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
             StringResult sr;
             if (this.StringLinker == null || !this.StringLinker.StringNpc.TryGetValue(npcID, out sr))
             {
                 return null;
             }
-            return sr.Name;
+            if (isTranslateRequired)
+            {
+                return Translator.MergeString(sr.Name, Translator.TranslateString(sr.Name, true), 0, false, true);
+            }
+            else
+            {
+                return sr.Name;
+            }
         }
 
         private string GetMapName(int mapID)
         {
+            bool isTranslateRequired = Translator.IsTranslateEnabled;
             StringResult sr;
             if (this.StringLinker == null || !this.StringLinker.StringMap.TryGetValue(mapID, out sr))
             {
                 return null;
             }
-            return sr.Name;
+            if (isTranslateRequired)
+            {
+                return Translator.MergeString(sr.Name, Translator.TranslateString(sr.Name, true), 0, false, true);
+            }
+            else
+            {
+                return sr.Name;
+            }
         }
     }
 }

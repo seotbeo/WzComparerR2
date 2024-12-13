@@ -206,6 +206,8 @@ namespace WzComparerR2
             UpdateCharaSimSettings();
             //wz加载配置
             UpdateWzLoadingSettings();
+            //Translator Configuration Load
+            UpdateTranslateSettings();
 
             //杂项配置
             labelItemAutoSaveFolder.Text = ImageHandlerConfig.Default.AutoSavePictureFolder;
@@ -223,6 +225,8 @@ namespace WzComparerR2
         {
             var Setting = CharaSimConfig.Default;
             this.buttonItemAutoQuickView.Checked = Setting.AutoQuickView;
+            tooltipQuickView.PreferredStringCopyMethod = Setting.PreferredStringCopyMethod;
+            tooltipQuickView.CopyParsedSkillString = Setting.CopyParsedSkillString;
             tooltipQuickView.SkillRender.ShowProperties = Setting.Skill.ShowProperties;
             tooltipQuickView.SkillRender.ShowObjectID = Setting.Skill.ShowID;
             tooltipQuickView.SkillRender.ShowDelay = Setting.Skill.ShowDelay;
@@ -260,6 +264,20 @@ namespace WzComparerR2
             Wz_Structure.DefaultAutoDetectExtFiles = config.AutoDetectExtFiles;
             Wz_Structure.DefaultImgCheckDisabled = config.ImgCheckDisabled;
             Wz_Structure.DefaultWzVersionVerifyMode = config.WzVersionVerifyMode;
+        }
+
+        void UpdateTranslateSettings()
+        {
+            var config = WcR2Config.Default;
+            Translator.DefaultDesiredLanguage = config.DesiredLanguage;
+            Translator.DefaultMozhiBackend = config.MozhiBackend;
+            Translator.DefaultPreferredTranslateEngine = config.PreferredTranslateEngine;
+            Translator.DefaultTranslateAPIKey = config.NxSecretKey;
+            Translator.DefaultPreferredLayout = config.PreferredLayout;
+            Translator.IsTranslateEnabled = (config.PreferredLayout > 0);
+            Translator.DefaultDetectCurrency = config.DetectCurrency;
+            Translator.DefaultDesiredCurrency = config.DesiredCurrency;
+            Translator.ExchangeTable = null;
         }
 
         void CharaSimLoader_WzFileFinding(object sender, FindWzEventArgs e)
@@ -2993,6 +3011,8 @@ namespace WzComparerR2
 
             object obj = null;
             string fileName = null;
+
+            StringResult sr = new StringResult();
             switch (wzf.Type)
             {
                 case Wz_Type.Character:
@@ -3003,9 +3023,15 @@ namespace WzComparerR2
                     CharaSimLoader.LoadCommoditiesIfEmpty();
                     var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = gear;
+                    if (stringLinker == null || !stringLinker.StringEqp.TryGetValue(gear.ItemID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "Unknown Equip";
+                    }
                     if (gear != null)
                     {
-                        fileName = gear.ItemID + ".png";
+                        fileName = "eqp_" + gear.ItemID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                        tooltipQuickView.NodeID = gear.ItemID;
                     }
                     break;
                 case Wz_Type.Item:
@@ -3015,9 +3041,15 @@ namespace WzComparerR2
                     {
                         var item = Item.CreateFromNode(itemNode, PluginManager.FindWz);
                         obj = item;
+                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "Unknown Item";
+                        }
                         if (item != null)
                         {
-                            fileName = item.ItemID + ".png";
+                            fileName = "item_" + item.ItemID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                            tooltipQuickView.NodeID = item.ItemID;
                         }
                     }
                     else if (Regex.IsMatch(itemNode.FullPathToFile, @"^Item\\Pet\\\d{7}.img"))
@@ -3030,9 +3062,15 @@ namespace WzComparerR2
                             return;
                         var item = Item.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = item;
+                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "Unknown Pet";
+                        }
                         if (item != null)
                         {
-                            fileName = item.ItemID + ".png";
+                            fileName = "pet_" + item.ItemID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                            tooltipQuickView.NodeID = item.ItemID;
                         }
                     }
 
@@ -3044,14 +3082,25 @@ namespace WzComparerR2
                     {
                         Recipe recipe = Recipe.CreateFromNode(skillNode);
                         obj = recipe;
+                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(recipe.RecipeID, out sr))
+                        {
+                            sr = new StringResultSkill();
+                            sr.Name = "Unknown Recipe";
+                        }
                         if (recipe != null)
                         {
-                            fileName = "recipe_" + recipe.RecipeID + ".png";
+                            fileName = "recipe_" + recipe.RecipeID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                            tooltipQuickView.NodeID = recipe.RecipeID;
                         }
                     }
                     else if (Regex.IsMatch(skillNode.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\\d+$"))
                     {
                         Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
+                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(skill.SkillID, out sr))
+                        {
+                            sr = new StringResultSkill();
+                            sr.Name = "Unknown Skill";
+                        }
                         if (skill != null)
                         {
                             switch (this.skillDefaultLevel)
@@ -3062,7 +3111,8 @@ namespace WzComparerR2
                                 case DefaultLevel.LevelMaxWithCO: skill.Level = skill.MaxLevel + 2; break;
                             }
                             obj = skill;
-                            fileName = "skill_" + skill.SkillID + ".png";
+                            fileName = "skill_" + skill.SkillID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                            tooltipQuickView.NodeID = skill.SkillID;
                         }
                     }
                     break;
@@ -3072,9 +3122,15 @@ namespace WzComparerR2
                         return;
                     var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = mob;
+                    if (stringLinker == null || !stringLinker.StringMob.TryGetValue(mob.ID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "Unknown Mob";
+                    }
                     if (mob != null)
                     {
-                        fileName = mob.ID + ".png";
+                        fileName = "mob_" + mob.ID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                        tooltipQuickView.NodeID = mob.ID;
                     }
                     break;
 
@@ -3083,9 +3139,15 @@ namespace WzComparerR2
                         return;
                     var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = npc;
+                    if (stringLinker == null || !stringLinker.StringNpc.TryGetValue(npc.ID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "Unknown NPC";
+                    }
                     if (npc != null)
                     {
-                        fileName = npc.ID + ".png";
+                        fileName = "npc_" + npc.ID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                        tooltipQuickView.NodeID = npc.ID;
                     }
                     break;
 
@@ -3098,9 +3160,15 @@ namespace WzComparerR2
                         if (!CharaSimLoader.LoadedSetItems.TryGetValue(Convert.ToInt32(selectedNode.Text), out setItem))
                             return;
                         obj = setItem;
+                        if (stringLinker == null || !stringLinker.StringSetItem.TryGetValue(setItem.SetItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "Unknown Set";
+                        }
                         if (setItem != null)
                         {
-                            fileName = setItem.SetItemID + ".png";
+                            fileName = "set_" + setItem.SetItemID + "_" + RemoveInvalidFileNameChars(sr.Name) + ".png";
+                            tooltipQuickView.NodeID = setItem.SetItemID;
                         }
                     }
                     break;
@@ -3109,6 +3177,12 @@ namespace WzComparerR2
             {
                 tooltipQuickView.TargetItem = obj;
                 tooltipQuickView.ImageFileName = fileName;
+                tooltipQuickView.NodeName = sr.Name;
+                tooltipQuickView.Desc = sr.Desc;
+                tooltipQuickView.Pdesc = sr.Pdesc;
+                tooltipQuickView.AutoDesc = sr.AutoDesc;
+                tooltipQuickView.Hdesc = sr["h"];
+                tooltipQuickView.DescLeftAlign = sr["desc_leftalign"];
                 tooltipQuickView.Refresh();
                 tooltipQuickView.HideOnHover = false;
                 tooltipQuickView.Show();
@@ -3621,7 +3695,15 @@ namespace WzComparerR2
                 frm.Save(WcR2Config.Default);
                 ConfigManager.Save();
                 UpdateWzLoadingSettings();
+                UpdateTranslateSettings();
             }
+        }
+
+        private static string RemoveInvalidFileNameChars(string fileName)
+        {
+            string invalidChars = new string(System.IO.Path.GetInvalidFileNameChars());
+            string regexPattern = $"[{Regex.Escape(invalidChars)}]";
+            return Regex.Replace(fileName, regexPattern, "_");
         }
     }
 
