@@ -343,7 +343,7 @@ namespace WzComparerR2.CharaSim
             switch (sourceLanguage)
             {
                 case "zh-CN":
-                    irlPrice = pointValue / 100.00 * 0.98; break; // CMS: 0.98 CNY per 100 points
+                    irlPrice = pointValue / 100.00 * 1; break; // CMS: 1 CNY per 100 points
                 case "en":
                     irlPrice = pointValue / 1000.00; break; // GMS: $1 per 1,000 points
                 default:
