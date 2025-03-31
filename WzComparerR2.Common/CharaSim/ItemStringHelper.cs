@@ -372,6 +372,8 @@ namespace WzComparerR2.CharaSim
                 case GearType.chakram: return "차크람";
                 case GearType.hexSeeker: return "헥스시커";
 
+                case GearType.jewel: return "쥬얼";
+
                 default: return null;
             }
         }

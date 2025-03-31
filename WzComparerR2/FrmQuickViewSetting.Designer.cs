@@ -55,6 +55,7 @@
             this.superTabItem1 = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel2 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.checkBoxX11 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.checkBoxX17 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX6 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX4 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX3 = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -71,16 +72,15 @@
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
-            this.checkBoxX11 = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.checkBoxX12 = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.checkBoxX13 = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.checkBoxX14 = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.checkBoxX15 = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.labelX4 = new DevComponents.DotNetBar.LabelX();
             this.cmbPreferredStringCopyMethod = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.chkCopyParsedSkillString = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.superTabControlPanel5 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.superTabItem5 = new DevComponents.DotNetBar.SuperTabItem();
+            this.labelX4 = new DevComponents.DotNetBar.LabelX();
+            this.labelX5 = new DevComponents.DotNetBar.LabelX();
+            this.labelX6 = new DevComponents.DotNetBar.LabelX();
+            this.comboBoxEx3 = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.comboBoxEx4 = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
@@ -405,6 +405,7 @@
             // superTabControlPanel2
             // 
             this.superTabControlPanel2.Controls.Add(this.checkBoxX11);
+            this.superTabControlPanel2.Controls.Add(this.checkBoxX17);
             this.superTabControlPanel2.Controls.Add(this.checkBoxX6);
             this.superTabControlPanel2.Controls.Add(this.checkBoxX4);
             this.superTabControlPanel2.Controls.Add(this.checkBoxX3);
@@ -432,6 +433,22 @@
             this.checkBoxX11.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX11.TabIndex = 4;
             this.checkBoxX11.Text = "훈장 미리보기";
+            // 
+            // checkBoxX17
+            // 
+            this.checkBoxX17.AutoSize = true;
+            this.checkBoxX17.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX17.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX17.Location = new System.Drawing.Point(15, 108);
+            this.checkBoxX17.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX17.Name = "checkBoxX17";
+            this.checkBoxX17.Size = new System.Drawing.Size(120, 18);
+            this.checkBoxX17.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX17.TabIndex = 4;
+            this.checkBoxX17.Text = "최대 스타포스 25성";
             // 
             // checkBoxX6
             // 
@@ -494,6 +511,10 @@
             this.superTabControlPanel3.Controls.Add(this.checkBoxX9);
             this.superTabControlPanel3.Controls.Add(this.checkBoxX8);
             this.superTabControlPanel3.Controls.Add(this.checkBoxX5);
+            this.superTabControlPanel3.Controls.Add(this.labelX4);
+            this.superTabControlPanel3.Controls.Add(this.labelX5);
+            this.superTabControlPanel3.Controls.Add(this.comboBoxEx3);
+            this.superTabControlPanel3.Controls.Add(this.comboBoxEx4);
             this.superTabControlPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel3.Location = new System.Drawing.Point(72, 0);
             this.superTabControlPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -518,6 +539,66 @@
             this.checkBoxX12.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX12.TabIndex = 5;
             this.checkBoxX12.Text = "칭호 미리보기";
+            // 
+            // labelX4
+            // 
+            this.labelX4.AutoSize = true;
+            this.labelX4.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX4.Location = new System.Drawing.Point(15, 108);
+            this.labelX4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX4.Name = "labelX4";
+            this.labelX4.Size = new System.Drawing.Size(89, 18);
+            this.labelX4.TabIndex = 6;
+            this.labelX4.Text = "미리보기 헤어 색상";
+            // 
+            // labelX5
+            // 
+            this.labelX5.AutoSize = true;
+            this.labelX5.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX5.Location = new System.Drawing.Point(15, 132);
+            this.labelX5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX5.Name = "labelX5";
+            this.labelX5.Size = new System.Drawing.Size(89, 18);
+            this.labelX5.TabIndex = 8;
+            this.labelX5.Text = "미리보기 성형 색상";
+            // 
+            // comboBoxEx3
+            // 
+            this.comboBoxEx3.DisplayMember = "Text";
+            this.comboBoxEx3.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxEx3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxEx3.FormattingEnabled = true;
+            this.comboBoxEx3.ItemHeight = 15;
+            this.comboBoxEx3.Location = new System.Drawing.Point(140, 106);
+            this.comboBoxEx3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboBoxEx3.Name = "comboBoxEx3";
+            this.comboBoxEx3.Size = new System.Drawing.Size(104, 21);
+            this.comboBoxEx3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.comboBoxEx3.TabIndex = 7;
+            // 
+            // comboBoxEx4
+            // 
+            this.comboBoxEx4.DisplayMember = "Text";
+            this.comboBoxEx4.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxEx4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxEx4.FormattingEnabled = true;
+            this.comboBoxEx4.ItemHeight = 15;
+            this.comboBoxEx4.Location = new System.Drawing.Point(140, 130);
+            this.comboBoxEx4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboBoxEx4.Name = "comboBoxEx4";
+            this.comboBoxEx4.Size = new System.Drawing.Size(104, 21);
+            this.comboBoxEx4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.comboBoxEx4.TabIndex = 9;
             // 
             // checkBoxX9
             // 
@@ -633,7 +714,7 @@
             // superTabControlPanel5
             // 
             this.superTabControlPanel5.Controls.Add(this.chkCopyParsedSkillString);
-            this.superTabControlPanel5.Controls.Add(this.labelX4);
+            this.superTabControlPanel5.Controls.Add(this.labelX6);
             this.superTabControlPanel5.Controls.Add(this.cmbPreferredStringCopyMethod);
             this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel5.Location = new System.Drawing.Point(62, 0);
@@ -648,7 +729,7 @@
             this.superTabItem5.AttachedControl = this.superTabControlPanel5;
             this.superTabItem5.GlobalItem = false;
             this.superTabItem5.Name = "superTabItem5";
-            this.superTabItem5.Text = "Misc.";
+            this.superTabItem5.Text = "기타";
             // 
             // chkCopyParsedSkillString
             // 
@@ -665,19 +746,19 @@
             this.chkCopyParsedSkillString.TabIndex = 3;
             this.chkCopyParsedSkillString.Text = "Parse Skill String before copying";
             // 
-            // labelX4
+            // labelX6
             // 
-            this.labelX4.AutoSize = true;
-            this.labelX4.BackColor = System.Drawing.Color.Transparent;
+            this.labelX6.AutoSize = true;
+            this.labelX6.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(13, 36);
-            this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(87, 16);
-            this.labelX4.TabIndex = 3;
-            this.labelX4.Text = "Copy Method";
+            this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX6.Location = new System.Drawing.Point(13, 36);
+            this.labelX6.Name = "labelX6";
+            this.labelX6.Size = new System.Drawing.Size(87, 16);
+            this.labelX6.TabIndex = 3;
+            this.labelX6.Text = "텍스트 복사 방식";
             // 
             // cmbPreferredStringCopyMethod
             // 
@@ -798,8 +879,13 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX15;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX16;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX21;
-        private DevComponents.DotNetBar.LabelX labelX4;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbPreferredStringCopyMethod;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkCopyParsedSkillString;
+        private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX17;
+        private DevComponents.DotNetBar.LabelX labelX4;
+        private DevComponents.DotNetBar.LabelX labelX5;
+        private DevComponents.DotNetBar.LabelX labelX6;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxEx3;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxEx4;
     }
 }

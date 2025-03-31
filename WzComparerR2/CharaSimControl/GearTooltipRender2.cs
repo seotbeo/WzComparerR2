@@ -52,6 +52,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowSpeed { get; set; }
         public bool ShowLevelOrSealed { get; set; }
         public bool ShowMedalTag { get; set; } = true;
+        public bool MaxStar25 { get; set; } = false;
         public bool IsCombineProperties { get; set; } = true;
 
         public TooltipRender SetItemRender { get; set; }
@@ -565,6 +566,18 @@ namespace WzComparerR2.CharaSimControl
                 picH += 15;
                 TextRenderer.DrawText(g, "성장치 : 1 / 29 ( 3% )", GearGraphics.EquipDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
+            }
+            else if (Gear.ItemID / 1000 == 1714)
+            {
+                TextRenderer.DrawText(g, "성장 레벨 : 1", GearGraphics.EquipDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                TextRenderer.DrawText(g, "성장치 : 1 / 29 ( 3% )", GearGraphics.EquipDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
+                picH += 15;
+                foreach (var prop in new[] {"경험치 획득량 : +10%", "메소 획득량 : +5%", "아이템 드롭률 : +5%" })
+                {
+                    TextRenderer.DrawText(g, prop, GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
+                    picH += 15;
+                }
             }
 
             if (Gear.Props.TryGetValue(GearPropType.@sealed, out value))
@@ -1384,16 +1397,20 @@ namespace WzComparerR2.CharaSimControl
                 genesisBitmap = new Bitmap(261, DefaultPicHeight);
                 Graphics g = Graphics.FromImage(genesisBitmap);
                 picHeight = 13;
+
+                Gear.Props.TryGetValue(GearPropType.reqLevel, out var equipLevel);
+                int destinySkill = 1241 * (equipLevel == 250 ? 1 : 0);
+
                 foreach (var skillID in new[] { 80002632, 80002633 })
                 {
                     string skillName;
-                    if (this.StringLinker?.StringSkill.TryGetValue(skillID, out var sr) ?? false && sr.Name != null)
+                    if (this.StringLinker?.StringSkill.TryGetValue(skillID + destinySkill, out var sr) ?? false && sr.Name != null)
                     {
                         skillName = sr.Name;
                     }
                     else
                     {
-                        skillName = skillID.ToString();
+                        skillName = (skillID + destinySkill).ToString();
                     }
                     g.DrawString($"<{skillName}> 사용 가능", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 10, picHeight);
                     picHeight += 16;
@@ -1730,6 +1747,11 @@ namespace WzComparerR2.CharaSimControl
             int maxStar = Math.Max(Gear.GetMaxStar(), Gear.Star);
             if (maxStar > 0)
             {
+                if (maxStar == 30 && this.MaxStar25)
+                {
+                    maxStar -= 5;
+                }
+
                 for (int i = 0; i < maxStar; i += 15)
                 {
                     int starLine = Math.Min(maxStar - i, 15);

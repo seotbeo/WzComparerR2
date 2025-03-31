@@ -18,7 +18,10 @@ namespace WzComparerR2.AvatarCommon
             this.LoadInfo();
             this.LoadMixNodes();
             this.MixColor = this.BaseColor;
-            this.forceAction = false;
+            this.ForceAction = false;
+            this.GroupCount = 0;
+            this.GroupTamingID = new List<int>();
+            this.GroupBodyRelMove = new List<Wz_Vector>();
         }
 
         public AvatarPart(Wz_Node node, BitmapOrigin forceIcon, int forceID, bool isSkill) : this (node)
@@ -29,6 +32,10 @@ namespace WzComparerR2.AvatarCommon
         }
 
         public Wz_Node Node { get; private set; }
+        public Wz_Node GroupActionNode { get; set; }
+        public int GroupCount { get; set; }
+        public List<int> GroupTamingID { get; set; }
+        public List<Wz_Vector> GroupBodyRelMove { get; set; }
         public string ISlot { get; private set; }
         public string VSlot { get; private set; }
         public BitmapOrigin Icon { get; private set; }
@@ -36,8 +43,8 @@ namespace WzComparerR2.AvatarCommon
         public bool EffectVisible { get; set; }
         public int? ID { get; private set; }
         public bool IsSkill { get; private set; }
-        public Wz_Vector bodyRelMove { get; set; }
-        public bool forceAction { get; set; }
+        public Wz_Vector BodyRelMove { get; set; }
+        public bool ForceAction { get; set; }
         public Wz_Node[] MixNodes { get; set; }
         public int BaseColor
         {
@@ -58,7 +65,7 @@ namespace WzComparerR2.AvatarCommon
         public int MixColor { get; set; }
         public int MixOpacity { get; set; }
         public bool IsMixing { get { return BaseColor != -1 && BaseColor != MixColor && MixOpacity > 0; } }
-        public Wz_Node effectNode { get; set; }
+        public Wz_Node EffectNode { get; set; }
 
         private void LoadInfo()
         {
@@ -83,7 +90,7 @@ namespace WzComparerR2.AvatarCommon
                 {
                     Icon = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(@"Item\Install\0380.img\03801577\info\icon"), PluginBase.PluginManager.FindWz);
                 }
-                this.effectNode = PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID + "/effect");
+                this.EffectNode = PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID + "/effect");
             }
 
             Wz_Node infoNode = this.Node.FindNodeByPath("info");
@@ -107,6 +114,38 @@ namespace WzComparerR2.AvatarCommon
                     case "icon":
                         this.Icon = BitmapOrigin.CreateFromNode(node, PluginBase.PluginManager.FindWz);
                         break;
+                }
+            }
+        }
+
+        public void LoadChairEffectNode()
+        {
+            this.EffectNode = (this.ID / 10000 == 301) ? PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID) : this.EffectNode;
+        }
+
+        public void LoadEffectEffectNode()
+        {
+            this.EffectNode = this.Node;
+        }
+
+        public void LoadGroupTaming()
+        {
+            if (this.GroupActionNode != null)
+            {
+                this.GroupBodyRelMove.Clear();
+                for (int i = 0; i <= Convert.ToInt32(this.GroupCount); i++)
+                {
+                    var groupNode = this.GroupActionNode.FindNodeByPath(i.ToString());
+                    if (groupNode != null)
+                    {
+                        int tamingMobID = groupNode.FindNodeByPath("tamingMobM")?.GetValueEx<int>(0)
+                        ?? groupNode.FindNodeByPath("tamingMobF")?.GetValueEx<int>(0)
+                        ?? groupNode.FindNodeByPath("tamingMob")?.GetValueEx<int>(0) ?? 0;
+                        var brm = groupNode.FindNodeByPath("bodyRelMove").GetValueEx<Wz_Vector>(null);
+
+                        this.GroupTamingID.Add(tamingMobID);
+                        this.GroupBodyRelMove.Add(brm);
+                    }
                 }
             }
         }

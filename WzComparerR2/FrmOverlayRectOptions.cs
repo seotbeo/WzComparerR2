@@ -9,6 +9,7 @@ using DevComponents.Editors;
 using Microsoft.Xna.Framework;
 using WzComparerR2.Controls;
 using WzComparerR2.Config;
+using System.Drawing;
 
 namespace WzComparerR2
 {
@@ -22,6 +23,10 @@ namespace WzComparerR2
         public FrmOverlayRectOptions(int s, int e, ImageHandlerConfig config)
         {
             InitializeComponent();
+#if NET6_0_OR_GREATER
+            // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
+            this.Font = new Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+#endif
             this.txtLeft.Value = 0;
             this.txtRight.Value = 0;
             this.txtTop.Value = 0;
@@ -34,10 +39,10 @@ namespace WzComparerR2
             this.colorPickerButton1.SelectedColor = config.OverlayRectColor;
         }
 
-        public void GetValues(out Point lt, out Point rb, out int start, out int end, ImageHandlerConfig config)
+        public void GetValues(out Microsoft.Xna.Framework.Point lt, out Microsoft.Xna.Framework.Point rb, out int start, out int end, ImageHandlerConfig config)
         {
-            lt = new Point(this.txtLeft.ValueObject as int? ?? 0, this.txtTop.ValueObject as int? ?? 0);
-            rb = new Point(this.txtRight.ValueObject as int? ?? 0, this.txtBottom.ValueObject as int? ?? 0);
+            lt = new Microsoft.Xna.Framework.Point(this.txtLeft.ValueObject as int? ?? 0, this.txtTop.ValueObject as int? ?? 0);
+            rb = new Microsoft.Xna.Framework.Point(this.txtRight.ValueObject as int? ?? 0, this.txtBottom.ValueObject as int? ?? 0);
             var s = this.txtStart.ValueObject as int? ?? 0;
             var e = this.txtEnd.ValueObject as int? ?? 0;
             start = s;

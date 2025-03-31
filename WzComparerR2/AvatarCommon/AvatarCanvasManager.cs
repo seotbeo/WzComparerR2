@@ -21,9 +21,13 @@ namespace WzComparerR2.AvatarCommon
             this.canvas.LoadZ();
             this.canvas.LoadActions();
             this.canvas.LoadEmotions();
+            this.CosmeticHairColor = 0;
+            this.CosmeticFaceColor = 0;
         }
 
         private AvatarCanvas canvas;
+        private int CosmeticHairColor;
+        private int CosmeticFaceColor;
 
         public void AddBodyFromSkin3(int skin)
         {
@@ -56,11 +60,11 @@ namespace WzComparerR2.AvatarCommon
             {
                 if ((id + 9) / 10 == id / 10)
                 {
-                    hairColor = 7;
+                    hairColor = this.CosmeticHairColor;
                 }
                 if ((id + 900) / 1000 == id / 1000)
                 {
-                    faceColor = 100;
+                    faceColor = this.CosmeticFaceColor;
                 }
             }
 
@@ -70,6 +74,12 @@ namespace WzComparerR2.AvatarCommon
             {
                 this.canvas.AddPart(gearNode);
             }
+        }
+
+        public void SetCosmeticColor(int hairColor, int faceColor)
+        {
+            this.CosmeticHairColor = hairColor;
+            this.CosmeticFaceColor = faceColor * 100;
         }
 
         public void SetEarType(int type)

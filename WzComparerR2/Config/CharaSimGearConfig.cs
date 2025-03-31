@@ -35,5 +35,12 @@ namespace WzComparerR2.Config
             get { return (bool)this["showMedalTag"]; }
             set { this["showMedalTag"] = value; }
         }
+
+        [ConfigurationProperty("maxStar25", DefaultValue = false)]
+        public bool MaxStar25
+        {
+            get { return (bool)this["maxStar25"]; }
+            set { this["maxStar25"] = value; }
+        }
     }
 }

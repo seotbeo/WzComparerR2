@@ -129,8 +129,7 @@
             this.ImageFixedSize = new System.Drawing.Size(32, 32);
             this.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.btnItemShow,
-            this.btnItemDel,
-            this.chkShowEffect,});
+            this.btnItemDel,});
             this.SubItemsExpandWidth = 16;
 
         }

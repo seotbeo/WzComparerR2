@@ -134,10 +134,10 @@ namespace WzComparerR2.CharaSim
         private static readonly int[][] starData = new int[][] {
             new[]{ 0, 5, 3 }, 
             new[]{ 95, 8, 5 }, 
-            new[]{ 110, 10, 8 }, 
-            new[]{ 120, 15, 10 }, 
-            new[]{ 130, 20, 12 }, 
-            new[]{ 140, 25, 15 }, 
+            new[]{ 108, 10, 8 }, 
+            new[]{ 118, 15, 10 }, 
+            new[]{ 128, 20, 12 }, 
+            new[]{ 138, 30, 15 }, 
         };
 
         public override object Clone()
@@ -462,6 +462,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.emblem:
                 case GearType.powerSource:
                 case GearType.bit:
+                case GearType.jewel:
                 case (GearType)3: //发型
                     return 2;
             }

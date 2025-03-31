@@ -15,6 +15,8 @@ namespace WzComparerR2.Avatar.UI
         public AvatarPartButtonItem(int ID, int? mixColor, int? mixOpacity)
         {
             InitializeComponent();
+            this.chkShowEffect.Name += ID.ToString();
+            this.SubItems.Add(this.chkShowEffect);
             GearType type = Gear.GetGearType(ID);
             if (Gear.IsFace(type) || Gear.IsHair(type))
             {

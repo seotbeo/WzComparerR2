@@ -199,3 +199,6 @@ FakesAssemblies/
 OldVer/
 !References/x86/
 !References/x64/
+
+# Ignore automatically generated BuildInfo.cs
+WzComparerR2/BuildInfo.cs

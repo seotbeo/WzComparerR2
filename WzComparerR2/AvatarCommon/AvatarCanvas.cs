@@ -19,16 +19,17 @@ namespace WzComparerR2.AvatarCommon
             this.Actions = new List<Action>();
             this.Emotions = new List<string>();
             this.TamingActions = new List<string>();
-            this.EffectActions = new List<string>[18];
-            this.EffectVisibles = Enumerable.Repeat(true, 18).ToList();
-            for (int i = 0; i < this.EffectActions.Length; i++)
+            this.EffectActions = new List<string>[LayerSlotLength];
+            this.EffectVisibles = Enumerable.Repeat(true, LayerSlotLength).ToList();
+            for (int i = 0; i < LayerSlotLength; i++)
             {
                 this.EffectActions[i] = new List<string>();
             }
-            this.Parts = new AvatarPart[18];
+            this.Parts = new AvatarPart[PartLength];
             this.EarType = 0;
             this.CapType = "";
             this.WeaponIndex = 0;
+            this.GroupChair = "0";
         }
 
         public List<string> ZMap { get; private set; }
@@ -51,6 +52,16 @@ namespace WzComparerR2.AvatarCommon
         public int WeaponType { get; set; }
         public int EarType { get; set; }
         public string CapType { get; set; }
+        public string GroupChair { get; set; }
+
+        public const int PartLength = 20;
+        public const int LayerSlotLength = PartLength + 4;
+        public const int IndexChairLayer1 = 18;
+        public const int IndexChairLayer2 = PartLength + 0;
+        public const int IndexChairEffectLayer1 = PartLength + 1;
+        public const int IndexChairEffectLayer2 = PartLength + 2;
+        public const int IndexEffectLayer1 = 19;
+        public const int IndexEffectLayer2 = PartLength + 3;
 
         public bool LoadZ()
         {
@@ -182,46 +193,78 @@ namespace WzComparerR2.AvatarCommon
             return true;
         }
 
-        public bool LoadChairActions() // 의자 아이템의 행동 이름
+        public void LoadAllEffects()
         {
-            this.TamingActions.Clear();
-
-            Wz_Node tamingNode = this.Taming == null ? null : this.Taming.Node;
-
-            if (tamingNode == null)
+            for (int i = 0; i < PartLength; i++)
             {
-                return false;
+                LoadEffects(i);
+            }
+        }
+        
+        public void LoadEffects(int i)
+        {
+            this.EffectActions[i].Clear();
+
+            if (i == IndexChairLayer1) // chair
+            {
+                this.EffectActions[IndexChairLayer2].Clear();
+                var chairNode = this.Parts[i]?.Node;
+                Load2LayerEffectActions(chairNode, new[] { "effect", "effect2" }, new[] { IndexChairLayer1, IndexChairLayer2 }, true);
             }
 
-            this.TamingActions.Add("effect");
+            var effNode = this.Parts[i]?.EffectNode;
+            if (effNode == null)
+            {
+                return;
+            }
 
-            return true;
+            if (i == IndexChairLayer1) // chair effect
+            {
+                this.EffectActions[IndexChairEffectLayer2].Clear();
+                Load2LayerEffectActions(effNode, new[] { "0", "1" }, new[] { IndexChairEffectLayer1, IndexChairEffectLayer2 });
+                return;
+            }
+            else if (i == IndexEffectLayer1) // effect
+            {
+                this.EffectActions[IndexEffectLayer2].Clear();
+                Load2LayerEffectActions(effNode, new[] { "effect", "effect2" }, new[] { IndexEffectLayer1, IndexEffectLayer2 });
+                return;
+            }
+
+            foreach (var childnode in effNode.Nodes)
+            {
+                if (childnode.Nodes.Count > 0 || childnode.Value is Wz_Uol)
+                {
+                    this.EffectActions[i].Add(childnode.Text);
+                }
+            }
+            return;
         }
 
-        public bool LoadEffects()
+        public void Load2LayerEffectActions(Wz_Node effNode, string[] dir, int[] index, bool action = false)
         {
-            bool suc = false;
-            for (int i = 0; i < this.EffectActions.Length; i++)
+            for (int i = 0; i < 2; i++)
             {
-                this.EffectActions[i].Clear();
+                var eff = effNode?.FindNodeByPath(dir[i]);
+                var cnt = eff?.Nodes?.Count(item => item.Value is not Wz_Png) ?? 0;
 
-                var effNode = this.Parts[i]?.effectNode;
-                if (effNode == null)
+                if (cnt > 0)
                 {
-                    continue;
-                }
-
-                foreach (var childnode in effNode.Nodes)
-                {
-                    if (childnode.Nodes.Count > 0 || childnode.Value is Wz_Uol)
+                    if (action)
                     {
-                        this.EffectActions[i].Add(childnode.Text);
+                        this.EffectActions[index[i]].Add(dir[i]);
+                        continue;
+                    }
+
+                    foreach (var childnode in eff?.Nodes ?? Enumerable.Empty<Wz_Node>())
+                    {
+                        if (childnode.Nodes.Count > 0 || childnode.Value is Wz_Uol)
+                        {
+                            this.EffectActions[index[i]].Add(childnode.Text);
+                        }
                     }
                 }
-                suc = true;
-                continue;
             }
-            return suc;
         }
 
         public List<int> GetCashWeaponTypes()
@@ -358,7 +401,19 @@ namespace WzComparerR2.AvatarCommon
             return part;
         }
 
-        public AvatarPart AddTamingPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, bool isSkill)
+        /// <summary>
+        /// TamingMob 아이템을 삭제합니다.
+        /// </summary>
+        public void RemoveTamingPart()
+        {
+            this.Taming = null;
+        }
+
+        /// <summary>
+        /// TamingMob 아이템을 추가합니다.
+        /// </summary>
+        /// <returns>추가된 AvatarPart.</returns>
+        public AvatarPart AddTamingPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, bool isSkill, Wz_Vector brm = null)
         {
             Wz_Node infoNode = imgNode.FindNodeByPath("info");
             if (infoNode == null)
@@ -366,13 +421,26 @@ namespace WzComparerR2.AvatarCommon
                 return null;
             }
             AvatarPart part = new AvatarPart(imgNode, forceIcon, forceID, isSkill);
+            part.GroupBodyRelMove.Add(brm);
 
             this.Taming = part;
 
             return part;
         }
 
-        public AvatarPart AddChairPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, Wz_Vector brm, bool forceAct)  // 의자 아이템 패널 표시 설정
+        /// <summary>
+        /// 의자 아이템을 삭제합니다.
+        /// </summary>
+        public void RemoveChairPart()
+        {
+            this.Chair = null;
+        }
+
+        /// <summary>
+        /// 의자 아이템을 추가합니다.
+        /// </summary>
+        /// <returns>추가된 AvatarPart.</returns>
+        public AvatarPart AddChairPart(Wz_Node imgNode, BitmapOrigin forceIcon, int forceID, Wz_Vector brm, bool forceAct)
         {
             Wz_Node infoNode = imgNode.FindNodeByPath("info");
             if (infoNode == null)
@@ -380,10 +448,104 @@ namespace WzComparerR2.AvatarCommon
                 return null;
             }
             AvatarPart part = new AvatarPart(imgNode, forceIcon, forceID, false);
-            part.forceAction = forceAct;
-            part.bodyRelMove = brm;
-            
-            this.Taming = part;
+            part.ForceAction = forceAct;
+            part.GroupBodyRelMove.Add(brm);
+            part.LoadChairEffectNode();
+            this.Chair = part;
+
+            part.GroupActionNode = GetGroupNode(imgNode);
+            part.GroupCount = CheckGroupChairCount(part.GroupActionNode);
+            part.LoadGroupTaming();
+
+            return part;
+        }
+
+        /// <summary>
+        /// 의자 아이템이 다인 의자인지 확인합니다.
+        /// </summary>
+        /// <returns>다인 의자의 정보가 담긴 Wz_Node. (sit 또는 mainUser)</returns>
+        private Wz_Node GetGroupNode(Wz_Node chairNode)
+        {
+            foreach (var child in chairNode.FindNodeByPath("info").Nodes ?? Enumerable.Empty<Wz_Node>())
+            {
+                if (Regex.Match(child.Text, "group", RegexOptions.IgnoreCase).Success)
+                {
+                    foreach (var groupNode in child.Nodes ?? Enumerable.Empty<Wz_Node>())
+                    {
+                        foreach (var dir in new[] { "sit", "mainUser" })
+                        {
+                            if (groupNode.Text.Contains(dir))
+                            {
+                                return groupNode;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 다인 의자의 최대 인원 수를 찾습니다.
+        /// </summary>
+        private int CheckGroupChairCount(Wz_Node groupNode)
+        {
+            return groupNode?.Nodes?.Count ?? 0;
+        }
+
+        /// <summary>
+        /// 다인 의자의 인원 수를 변경하고, 이에 따라서 Taming Part 또는 Chair Part의 속성을 수정합니다.
+        /// </summary>
+        public AvatarPart GroupChairChanged(string value)
+        {
+            this.GroupChair = value;
+
+            if (this.Chair?.GroupActionNode != null)
+            {
+                var index = Convert.ToInt32(this.GroupChair);
+                int tamingMobID;
+                Wz_Vector brm;
+                try
+                {
+                    tamingMobID = this.Chair.GroupTamingID[index];
+                    brm = this.Chair.GroupBodyRelMove[index];
+                }
+                catch
+                {
+                    tamingMobID = 0;
+                    brm = null;
+                }
+
+                if (tamingMobID != 0)
+                {
+                    var tamingMobNode = PluginBase.PluginManager.FindWz(string.Format(@"Character\TamingMob\{0:D8}.img", tamingMobID));
+                    if (tamingMobNode != null)
+                    {
+                        return AddTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(tamingMobNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), tamingMobID, false, brm);
+                    }
+                }
+                else
+                {
+                    this.Chair.GroupBodyRelMove.Add(brm);
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 이펙트 아이템을 추가합니다.
+        /// </summary>
+        /// <returns>추가된 AvatarPart.</returns>
+        public AvatarPart AddEffectPart(Wz_Node imgNode)
+        {
+            Wz_Node infoNode = imgNode.FindNodeByPath("info");
+            if (infoNode == null)
+            {
+                return null;
+            }
+            AvatarPart part = new AvatarPart(imgNode);
+            part.LoadEffectEffectNode();
+            this.Effect = part;
 
             return part;
         }
@@ -528,14 +690,6 @@ namespace WzComparerR2.AvatarCommon
             List<ActionFrame> frames = new List<ActionFrame>();
             if (this.Taming != null)
             {
-                if (action == "effect") // 의자 아이템
-                {
-                    if ((this.Taming.Node.FindNodeByPath(action)?.Nodes.Count ?? 0) < this.Taming.Node.FindNodeByPath("effect2")?.Nodes.Count)
-                    {
-                        action = "effect2";
-                    }
-                }
-
                 var actionNode = this.Taming.Node.FindNodeByPath(action);
                 frames.AddRange(LoadStandardFrames(actionNode, action));
             }
@@ -544,14 +698,6 @@ namespace WzComparerR2.AvatarCommon
 
         private ActionFrame GetTamingFrame(string action, int frameIndex)
         {
-            if (action == "effect") // 의자 아이템
-            {
-                if ((this.Taming.Node.FindNodeByPath(action)?.Nodes.Count ?? 0) < this.Taming.Node.FindNodeByPath("effect2")?.Nodes.Count)
-                {
-                    action = "effect2";
-                }
-            }
-
             var actionNode = this.Taming?.Node?.Nodes[action]?.ResolveUol();
 
             var frameNode = actionNode?.Nodes[frameIndex.ToString()];
@@ -566,26 +712,71 @@ namespace WzComparerR2.AvatarCommon
             return null;
         }
 
-        public ActionFrame[] GetEffectFrames(string action, int index)
+        /// <summary>
+        /// 주어진 partIndex에 해당하는 Part에 대해서, action과 일치하는 이펙트 프레임들을 찾습니다.
+        /// </summary>
+        public ActionFrame[] GetEffectFrames(string action, int partIndex)
         {
             List<ActionFrame> frames = new List<ActionFrame>();
-            if (this.Parts[index] != null)
+            Wz_Node effNode = null;
+            string forceAction = action;
+            switch (partIndex)
             {
-                if (this.Parts[index].effectNode != null)
-                {
-                    // if action dosent exist, find "default" action
-                    var actionNode = this.Parts[index].effectNode.FindNodeByPath(action) ?? this.Parts[index].effectNode.FindNodeByPath("default");
-                    frames.AddRange(LoadStandardFrames(actionNode, action));
-                }
+                case IndexChairLayer1:
+                    effNode = this.Chair?.Node;
+                    partIndex = IndexChairLayer1;
+                    forceAction = "effect";
+                    break;
+                case IndexChairLayer2:
+                    effNode = this.Chair?.Node;
+                    partIndex = IndexChairLayer1;
+                    forceAction = "effect2";
+                    break;
+                case IndexChairEffectLayer1:
+                    effNode = this.Chair?.EffectNode?.FindNodeByPath("0");
+                    partIndex = IndexChairLayer1;
+                    forceAction = this.GroupChair;
+                    break;
+                case IndexChairEffectLayer2:
+                    effNode = this.Chair?.EffectNode?.FindNodeByPath("1");
+                    partIndex = IndexChairLayer1;
+                    forceAction = this.GroupChair;
+                    break;
+                case IndexEffectLayer1:
+                    effNode = this.Effect?.EffectNode?.FindNodeByPath("effect");
+                    partIndex = IndexEffectLayer1;
+                    break;
+                case IndexEffectLayer2:
+                    effNode = this.Effect?.EffectNode?.FindNodeByPath("effect2");
+                    partIndex = IndexEffectLayer1;
+                    break;
+                default:
+                    effNode = this.Parts[partIndex]?.EffectNode;
+                    break;
+            }
+
+            if (effNode != null)
+            {
+                // if action dosent exist, find "default" action
+                Wz_Node actionNode = effNode.FindNodeByPath(forceAction) ?? effNode.FindNodeByPath("default");
+                frames.AddRange(LoadStandardFrames(actionNode, forceAction));
             }
             return frames.ToArray();
         }
 
-        private ActionFrame GetEffectFrame(string action, int frameIndex, int partIndex)
+        /// <summary>
+        /// 주어진 partIndex에 해당하는 Part에 대해서, action과 일치하는 이펙트 프레임 리스트의 frameIndex번째 프레임을 찾습니다.
+        /// <br/> effNode로 Part의 EffectNode에 해당하는 부분을 직접 지정합니다.
+        /// </summary>
+        private ActionFrame GetEffectFrame(string action, int frameIndex, int partIndex, Wz_Node effNode)
         {
-            // if action dosent exist, find "default" action
-            var actionNode = this.Parts[partIndex]?.effectNode?.Nodes[action]?.ResolveUol() ?? this.Parts[partIndex]?.effectNode?.FindNodeByPath("default")?.ResolveUol();
+            if (effNode == null)
+            {
+                return null;
+            }
 
+            // if action dosent exist, find "default" action
+            Wz_Node actionNode = effNode.Nodes[action]?.ResolveUol() ?? effNode.FindNodeByPath("default")?.ResolveUol();
             var frameNode = actionNode?.Nodes[frameIndex.ToString()];
             if (frameNode != null)
             {
@@ -673,7 +864,7 @@ namespace WzComparerR2.AvatarCommon
         public Bone CreateFrame(int bodyFrame, int faceFrame, int tamingFrame, int[] effectFrames)
         {
             ActionFrame bodyAction = null, faceAction = null, tamingAction = null;
-            ActionFrame[] effectActions = new ActionFrame[this.Parts.Length];
+            ActionFrame[] effectActions = new ActionFrame[LayerSlotLength];
             string actionName = this.ActionName,
                 emotionName = this.EmotionName,
                 tamingActionName = this.TamingActionName;
@@ -731,13 +922,37 @@ namespace WzComparerR2.AvatarCommon
 
             if (effectFrames != null)
             {
-                for (int i = 0; i < effectFrames.Length; i++)
+                for (int i = 0; i < LayerSlotLength; i++)
                 {
                     if (!string.IsNullOrEmpty(actionName))
                     {
                         if (effectFrames[i] > -1)
                         {
-                            ActionFrame effectAction = GetEffectFrame(actionName, effectFrames[i], i);
+                            ActionFrame effectAction = null;
+                            switch (i)
+                            {
+                                case IndexChairLayer1:
+                                    effectAction = GetEffectFrame("effect", effectFrames[i], i, this.Chair?.Node);
+                                    break;
+                                case IndexChairLayer2:
+                                    effectAction = GetEffectFrame("effect2", effectFrames[i], i, this.Chair?.Node);
+                                    break;
+                                case IndexChairEffectLayer1:
+                                    effectAction = GetEffectFrame(this.GroupChair, effectFrames[i], i, this.Chair?.EffectNode?.FindNodeByPath("0"));
+                                    break;
+                                case IndexChairEffectLayer2:
+                                    effectAction = GetEffectFrame(this.GroupChair, effectFrames[i], i, this.Chair?.EffectNode?.FindNodeByPath("1"));
+                                    break;
+                                case IndexEffectLayer1:
+                                    effectAction = GetEffectFrame(actionName, effectFrames[i], i, this.Effect?.EffectNode?.FindNodeByPath("effect"));
+                                    break;
+                                case IndexEffectLayer2:
+                                    effectAction = GetEffectFrame(actionName, effectFrames[i], i, this.Effect?.EffectNode?.FindNodeByPath("effect2"));
+                                    break;
+                                default:
+                                    effectAction = GetEffectFrame(actionName, effectFrames[i], i, this.Parts[i]?.EffectNode);
+                                    break;
+                            }
                             effectActions[i] = effectAction;
                         }
                     }
@@ -758,11 +973,43 @@ namespace WzComparerR2.AvatarCommon
             Tuple<Wz_Node, Wz_Node, int>[] playerNodes = LinkPlayerParts(bodyAction, faceAction);
             Tuple<Wz_Node, Wz_Node, int>[] tamingNodes = LinkTamingParts(tamingAction);
             List<Tuple<Wz_Node, Wz_Node, int>> effectNodes = []; // find effect nodes
-            for (int i = 0; i < effectActions.Length; i++)
+            List<Tuple<Wz_Node, Wz_Node, int>> chairEffectNodes = []; // find chair effect nodes
+            List<Tuple<Wz_Node, Wz_Node, int>> chairNodes = []; // find chair nodes
+            List<Tuple<Wz_Node, Wz_Node, int>> groupTamingNodes = []; // find group taming nodes
+            for (int i = 0; i < PartLength; i++)
             {
-                if (effectActions[i] != null)
+                if (this.Parts[i] != null)
                 {
-                    effectNodes.AddRange(LinkEffectParts(effectActions[i], this.Parts[i]));
+                    List<Tuple<Wz_Node, Wz_Node, int>> tmpNode = null;
+                    switch (i)
+                    {
+                        case IndexChairLayer1:
+                            tmpNode = LinkEffectParts(effectActions[i], this.Chair.Node, this.Chair.Visible);
+                            chairNodes.AddRange(tmpNode);
+                            tmpNode = LinkEffectParts(effectActions[IndexChairLayer2], this.Chair.Node, this.Chair.Visible);
+                            chairNodes.AddRange(tmpNode);
+
+                            tmpNode = LinkEffectParts(effectActions[IndexChairEffectLayer1], this.Chair.EffectNode?.FindNodeByPath("0"), this.Chair.Visible && this.Chair.EffectVisible);
+                            chairEffectNodes.AddRange(tmpNode);
+                            tmpNode = LinkEffectParts(effectActions[IndexChairEffectLayer2], this.Chair.EffectNode?.FindNodeByPath("1"), this.Chair.Visible && this.Chair.EffectVisible);
+                            chairEffectNodes.AddRange(tmpNode);
+
+                            tmpNode = LinkGroupTamingParts(tamingAction);
+                            groupTamingNodes.AddRange(tmpNode);
+                            break;
+
+                        case IndexEffectLayer1:
+                            tmpNode = LinkEffectParts(effectActions[i], this.Effect.EffectNode?.FindNodeByPath("effect"), this.Effect.Visible && this.Effect.EffectVisible);
+                            effectNodes.AddRange(tmpNode);
+                            tmpNode = LinkEffectParts(effectActions[IndexEffectLayer2], this.Effect.EffectNode?.FindNodeByPath("effect2"), this.Effect.Visible && this.Effect.EffectVisible);
+                            effectNodes.AddRange(tmpNode);
+                            break;
+
+                        default:
+                            tmpNode = LinkEffectParts(effectActions[i], this.Parts[i].EffectNode, this.Parts[i].Visible && this.Parts[i].EffectVisible);
+                            effectNodes.AddRange(tmpNode);
+                            break;
+                    }
                 }
             }
 
@@ -770,18 +1017,22 @@ namespace WzComparerR2.AvatarCommon
             Bone bodyRoot = new Bone("@root");
             bodyRoot.Position = Point.Empty;
             CreateBone(bodyRoot, playerNodes, bodyAction?.Face);
-            if (effectNodes != null) // add effects to body bone
+            if (effectNodes.Count > 0) // add effects to body bone
             {
-                CreateBone(bodyRoot, effectNodes.ToArray(), bodyAction?.Face, true);
+                CreateBone(bodyRoot, effectNodes.ToArray(), effectNode: true);
             }
             SetBonePoperty(bodyRoot, BoneGroup.Character, bodyAction);
 
-            if (tamingNodes != null && tamingNodes.Length > 0)
+            if ((tamingNodes != null && tamingNodes.Length > 0) || chairEffectNodes.Count > 0 || chairNodes.Count > 0)
             {
                 //骑宠骨骼
                 Bone tamingRoot = new Bone("@root2");
                 tamingRoot.Position = Point.Empty;
-                CreateBone(tamingRoot, tamingNodes);
+                bool groupTamingExists = this.Chair?.GroupTamingID.Count > 0;
+                if (groupTamingNodes.Count > 0) CreateBone(tamingRoot, groupTamingNodes.ToArray(), groupTamingNode: true);
+                if (tamingNodes != null) CreateBone(tamingRoot, tamingNodes);
+                if (chairNodes.Count > 0) CreateBone(tamingRoot, chairNodes.ToArray(), effectNode: false, chairNode: true, groupTamingExists: groupTamingExists);
+                if (chairEffectNodes.Count > 0) CreateBone(tamingRoot, chairEffectNodes.ToArray(), effectNode: true, chairNode: true, groupTamingExists: groupTamingExists);
 
                 //建立虚拟身体骨骼
                 Bone newRoot = new Bone("@rootAll");
@@ -841,7 +1092,7 @@ namespace WzComparerR2.AvatarCommon
             }
         }
 
-        private void CreateBone(Bone root, Tuple<Wz_Node, Wz_Node, int>[] frameNodes, bool? bodyFace = null, bool effectNode = false)
+        private void CreateBone(Bone root, Tuple<Wz_Node, Wz_Node, int>[] frameNodes, bool? bodyFace = null, bool groupTamingNode = false, bool effectNode = false, bool chairNode = false, bool groupTamingExists = false)
         {
             bool face = true;
 
@@ -862,85 +1113,76 @@ namespace WzComparerR2.AvatarCommon
                 {
                     string frameIdx = linkPartNode.Text;
 
-                    // for item effects
-                    if (effectNode)
-                    {
-                        Skin skin = new Skin();
-                        skin.Name = frameIdx;
+                    Skin skin = new Skin();
+                    skin.Name = frameIdx;
+                    skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
+                    string pos = linkPartNode.ParentNode.FindNodeByPath("pos")?.GetValueEx<string>(null) ?? "0";
+                    skin.Offset = new Point(0, 0);
 
-                        skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
+                    if (skin.Image.Bitmap != null)
+                    {
                         skin.ZIndex = linkPartNode.ParentNode.FindNodeByPath("z")?.GetValueEx<int?>(null) ?? -2;
-
-                        string pos = linkPartNode.ParentNode.FindNodeByPath("pos")?.GetValueEx<string>(null);
-
-                        if (skin.Image.Bitmap != null)
+                        var index = Convert.ToInt32(this.GroupChair);
+                        Wz_Vector brm = null;
+                        try
                         {
-                            if (pos == "1") // effect combined with character
-                            {
-                                Bone parentBone = null;
-                                Point mapOrigin = new Point(4, 20);
-
-                                parentBone = AppendBone(root, null, skin, "neck", mapOrigin);
-                            }
-                            else // effect offset fixed as background
-                            {
-                                root.Skins.Add(skin);
-                            }
+                            brm = this.Chair?.GroupBodyRelMove[index];
                         }
-                        continue;
-                    }
-
-                    // 의자 아이템 이미지 로드
-                    Wz_Node gpNode = linkPartNode.ParentNode.ParentNode;
-                    List<string> actionList = new List<string> { "effect", "effect2" };
-
-                    foreach (string action in actionList)
-                    {
-                        Wz_Node eff = gpNode?.Nodes[action]?.Nodes[frameIdx];
-                        Skin skin = new Skin();
-                        skin.Name = frameIdx;
-
-                        if (eff != null)
+                        catch
                         {
-                            skin.Image = BitmapOrigin.CreateFromNode(eff, PluginBase.PluginManager.FindWz);
                         }
-                        else skin.Image = BitmapOrigin.CreateFromNode(gpNode?.Nodes[action]?.Nodes["0"], PluginBase.PluginManager.FindWz);
 
-                        skin.ZIndex = gpNode?.Nodes[action]?.FindNodeByPath("z")?.GetValueEx<int?>(null) ?? 0;
-
-                        if (this.Taming.bodyRelMove != null)
+                        if (brm != null)
                         {
-                            skin.Offset = new Point(0, 0);
+                            bool finalApplyBrm = false;
 
-                            bool applyb = false;
-                            string pos = gpNode?.Nodes[action]?.FindNodeByPath("pos")?.GetValueEx<string>(null);
-                            if (pos == "1" && !this.Taming.forceAction)
+                            if ((pos == "3" || this.Chair.ForceAction || groupTamingExists) && !effectNode)
                             {
-                                skin.Offset += (Size)new Point(-5, -48);
-                            }
-                            else if (pos == "3" || this.Taming.forceAction)
-                            {
-                                applyb = true;
+                                pos = "3";
+                                finalApplyBrm = !groupTamingExists;
                             }
 
                             if (this.ApplyBRM)
                             {
-                                applyb = !applyb;
+                                finalApplyBrm = !finalApplyBrm;
                             }
 
-                            if (applyb)
+                            if (finalApplyBrm)
                             {
-                                skin.Offset += (Size)new Point(-this.Taming.bodyRelMove.X, -this.Taming.bodyRelMove.Y);
+                                skin.Offset += (Size)new Point(-brm.X, -brm.Y);
                             }
                         }
 
-                        if (skin.Image.Bitmap != null)
+                        Bone parentBone = null;
+                        Point mapOrigin = new Point(0, 0);
+                        string map = "";
+                        if (pos == "1") // effect combined with character
+                        {
+                            map = "brow";
+                        }
+                        else if (pos == "2")
+                        {
+                            map = "neck";
+                        }
+                        else if (pos == "3") // effect offset fixed as background
+                        {
+                            map = "";
+                        }
+                        else if (pos == "4")
+                        {
+                            map = "navel";
+                        }
+                        
+                        if (string.IsNullOrEmpty(map))
                         {
                             root.Skins.Add(skin);
                         }
+                        else
+                        {
+                            parentBone = AppendBone(root, null, skin, map, mapOrigin);
+                        }
                     }
-
-                    return;
+                    continue;
                 }
 
                 foreach (Wz_Node childNode in linkPartNode.Nodes) //分析部件
@@ -1085,6 +1327,12 @@ namespace WzComparerR2.AvatarCommon
                             {
                                 skin.Z = zNode.GetValue<string>();
                             }
+                        }
+
+                        if (groupTamingNode)
+                        {
+                            root.Skins.Add(skin);
+                            continue;
                         }
 
                         //读取骨骼
@@ -1536,14 +1784,39 @@ namespace WzComparerR2.AvatarCommon
             return partNode.Select(node => Tuple.Create(node, (Wz_Node)null, 100)).ToArray();
         }
 
-        private List<Tuple<Wz_Node, Wz_Node, int>> LinkEffectParts(ActionFrame aFrame, AvatarPart parent) // find effect nodes
+        private List<Tuple<Wz_Node, Wz_Node, int>> LinkGroupTamingParts(ActionFrame tamingAction)
         {
             List<Wz_Node> partNode = new List<Wz_Node>();
 
             //链接马
-            if (parent != null && parent.Visible && parent.EffectVisible && aFrame != null)
+            if (this.Taming != null && this.Taming.Visible && tamingAction != null)
             {
-                partNode.Add(FindActionFrameNode(parent.effectNode, aFrame, true));
+                if (this.Chair?.GroupActionNode != null)
+                {
+                    for (int i = 0; i < Convert.ToInt32(this.GroupChair); i++)
+                    {
+                        if (i < this.Chair.GroupTamingID.Count)
+                        {
+                            var tamingNode = PluginBase.PluginManager.FindWz(string.Format(@"Character\TamingMob\{0:D8}.img", this.Chair.GroupTamingID[i]));
+                            partNode.Add(FindActionFrameNode(tamingNode, tamingAction));
+                        }
+                    }
+                }
+            }
+
+            partNode.RemoveAll(node => node == null);
+
+            return partNode.Select(node => Tuple.Create(node, (Wz_Node)null, 100)).ToList();
+        }
+
+        private List<Tuple<Wz_Node, Wz_Node, int>> LinkEffectParts(ActionFrame aFrame, Wz_Node effNode, bool visible) // find effect nodes
+        {
+            List<Wz_Node> partNode = new List<Wz_Node>();
+
+            //链接马
+            if (visible && aFrame != null)
+            {
+                partNode.Add(FindActionFrameNode(effNode, aFrame, true));
             }
 
             partNode.RemoveAll(node => node == null);
@@ -1894,6 +2167,23 @@ namespace WzComparerR2.AvatarCommon
             set { this.Parts[17] = value; }
         }
 
+        /// <summary>
+        /// Chair
+        /// </summary>
+        public AvatarPart Chair
+        {
+            get { return this.Parts[18]; }
+            set { this.Parts[18] = value; }
+        }
+
+        /// <summary>
+        /// Effect
+        /// </summary>
+        public AvatarPart Effect
+        {
+            get { return this.Parts[19]; }
+            set { this.Parts[19] = value; }
+        }
         #endregion
 
         #region statics
