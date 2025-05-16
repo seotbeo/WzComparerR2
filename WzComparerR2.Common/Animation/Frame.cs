@@ -46,6 +46,8 @@ namespace WzComparerR2.Animation
         public int A0 { get; set; }
         public int A1 { get; set; }
         public bool Blend { get; set; }
+        public Point LT { get; set; }
+        public Point RB { get; set; }
 
         public Rectangle Rectangle
         {
@@ -102,6 +104,12 @@ namespace WzComparerR2.Animation
                     {
                         case "origin":
                             frame.Origin = (propNode.Value as Wz_Vector).ToPoint();
+                            break;
+                        case "lt":
+                            frame.LT = (propNode.Value as Wz_Vector).ToPoint();
+                            break;
+                        case "rb":
+                            frame.RB = (propNode.Value as Wz_Vector).ToPoint();
                             break;
                         case "delay":
                             frame.Delay = propNode.GetValue<int>();

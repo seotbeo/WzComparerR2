@@ -439,7 +439,9 @@ namespace WzComparerR2.MapRender
                 Z = node.Nodes["z"].GetValueEx(0),
                 Delay = node.Nodes["delay"].GetValueEx(120),
                 Blend = node.Nodes["blend"].GetValueEx(0) != 0,
-                Origin = (node.Nodes["origin"]?.Value as Wz_Vector)?.ToPoint() ?? Point.Zero
+                Origin = (node.Nodes["origin"]?.Value as Wz_Vector)?.ToPoint() ?? Point.Zero,
+                LT = (node.Nodes["lt"]?.Value as Wz_Vector)?.ToPoint() ?? Point.Zero,
+                RB = (node.Nodes["rb"]?.Value as Wz_Vector)?.ToPoint() ?? Point.Zero,
             };
             frame.A0 = node.Nodes["a0"].GetValueEx(255);
             frame.A1 = node.Nodes["a1"].GetValueEx(frame.A0);

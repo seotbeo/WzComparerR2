@@ -105,6 +105,10 @@ namespace WzComparerR2.MapRender
             {
                 this.DrawItem(lineList);
             }
+            else if (mesh.RenderObject is RectMesh rect)
+            {
+                this.DrawItem(rect);
+            }
             else if (mesh.RenderObject is ParticleSystem particle)
             {
                 this.DrawItem(mesh, particle);
@@ -324,6 +328,25 @@ namespace WzComparerR2.MapRender
                     {
                         sprite.DrawLine(vertices[i], vertices[i + 1], lineList.Thickness, lineList.Color);
                     }
+                }
+            }
+        }
+
+        private void DrawItem(RectMesh rect)
+        {
+            if (rect != null)
+            {
+                if (this.D2DEnabled)
+                {
+                    Prepare(ItemType.D2DObject);
+                    this.d2dRender.DrawRectangle(rect.Rect, rect.Color);
+                    this.d2dRender.FillRectangle(rect.Rect, rect.FillColor);
+                }
+                else
+                {
+                    Prepare(ItemType.Sprite);
+                    sprite.DrawRectangle(rect.Rect, rect.Color);
+                    sprite.FillRectangle(rect.Rect, rect.FillColor);
                 }
             }
         }

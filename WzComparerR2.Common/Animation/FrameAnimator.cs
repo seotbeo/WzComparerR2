@@ -95,6 +95,8 @@ namespace WzComparerR2.Animation
             this.CurrentFrame.AtlasRect = frame.AtlasRect;
             this.CurrentFrame.Z = frame.Z;
             this.CurrentFrame.Origin = frame.Origin;
+            this.CurrentFrame.LT = frame.LT;
+            this.CurrentFrame.RB = frame.RB;
             this.CurrentFrame.A0 = (int)MathHelper.Lerp(frame.A0, frame.A1, progress);
             this.CurrentFrame.Blend = frame.Blend;
         }

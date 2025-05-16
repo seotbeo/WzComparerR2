@@ -76,6 +76,8 @@ namespace WzComparerR2.MapRender
 
         public bool SpringPortalPathVisible { get; set; }
 
+        public bool ObstacleAreaVisible { get; set; }
+
         public bool PortalVisible
         {
             get { return IsVisible(RenderObjectType.Portal); }

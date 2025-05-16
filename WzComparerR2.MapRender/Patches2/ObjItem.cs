@@ -22,6 +22,7 @@ namespace WzComparerR2.MapRender.Patches2
         public int MoveP { get; set; }
         public bool Flip { get; set; }
         public bool Light { get; set; }
+        public bool Obstacle { get; set; }
         public string SpineAni { get; set; }
         public List<QuestInfo> Quest { get; private set; } = new List<QuestInfo>();
         public List<QuestExInfo> Questex { get; private set; } = new List<QuestExInfo>();
@@ -96,14 +97,19 @@ namespace WzComparerR2.MapRender.Patches2
                 }
             }
 
-            string path = $@"Map\Obj\{item.OS}.img\{item.L0}\{item.L1}\{item.L2}\0";
-            var obj_node = PluginManager.FindWz(path);
-            if (obj_node != null)
+            string path = $@"Map\Obj\{item.OS}.img\{item.L0}\{item.L1}\{item.L2}";
+            var top_obj_node = PluginManager.FindWz(path);
+            if (top_obj_node != null)
             {
-                item.MoveType = obj_node.Nodes["moveType"].GetValueEx(0);
-                item.MoveW = obj_node.Nodes["moveW"].GetValueEx(0);
-                item.MoveH = obj_node.Nodes["moveH"].GetValueEx(0);
-                item.MoveP = obj_node.Nodes["moveP"].GetValueEx(5000);
+                var obj_node = top_obj_node.FindNodeByPath("0");
+                if (obj_node != null)
+                {
+                    item.MoveType = obj_node.Nodes["moveType"].GetValueEx(0);
+                    item.MoveW = obj_node.Nodes["moveW"].GetValueEx(0);
+                    item.MoveH = obj_node.Nodes["moveH"].GetValueEx(0);
+                    item.MoveP = obj_node.Nodes["moveP"].GetValueEx(5000);
+                }
+                item.Obstacle = top_obj_node.Nodes["obstacle"].GetValueEx(false);
             }
 
             return item;

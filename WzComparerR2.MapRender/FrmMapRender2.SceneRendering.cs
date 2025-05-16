@@ -490,13 +490,11 @@ namespace WzComparerR2.MapRender
             if (patchVisibility.SpringPortalPathVisible)
             {
                 var lines = new List<Point>();
-                var portalList = this.mapData.Scene.Fly.Portal.Slots.OfType<PortalItem>();
+                var portalList = this.mapData.Scene.Fly.Portal.Slots.OfType<PortalItem>().Where(p => p.IsSpring);
                 var arrowScaler = 15;
                 var barScaler = 0;
                 foreach (var item in portalList)
                 {
-                    if (!item.IsSpring) continue;
-
                     var angle = Math.Atan2(item.VerticalImpact, item.HorizontalImpact);
                     var sin = Math.Sin(angle);
                     var cos = Math.Cos(angle);
@@ -522,6 +520,43 @@ namespace WzComparerR2.MapRender
                 {
                     var meshItem = this.batcher.MeshPop();
                     meshItem.RenderObject = new LineListMesh(lines.ToArray(), color, 1);
+                    this.batcher.Draw(meshItem);
+                    this.batcher.MeshPush(meshItem);
+                }
+            }
+
+            if (patchVisibility.ObstacleAreaVisible)
+            {
+                var rectList = new List<Rectangle>();
+                var objList = this?.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.OfType<ObjItem>()).Where(o => o.Obstacle);
+                foreach (var obj in objList)
+                {
+                    var lt = (obj.View.Animator as FrameAnimator).CurrentFrame.LT;
+                    var rb = (obj.View.Animator as FrameAnimator).CurrentFrame.RB;
+
+                    if (lt != Point.Zero || rb != Point.Zero)
+                    {
+                        var x = obj.X;
+                        var y = obj.Y;
+                        var rect = new Rectangle(x + lt.X, y + lt.Y, rb.X - lt.X, rb.Y - lt.Y);
+
+                        if (obj.Flip)
+                        {
+                            rect.X = 2 * x - rect.X - rect.Width;
+                        }
+                        if (obj.MoveW != 0 || obj.MoveH != 0)
+                        {
+                            rect.Offset(GetMovingObjPos(obj));
+                        }
+
+                        rectList.Add(rect);
+                    }
+                }
+
+                foreach (var rect in rectList)
+                {
+                    var meshItem = this.batcher.MeshPop();
+                    meshItem.RenderObject = new RectMesh(rect, color, 1);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
                 }
@@ -992,26 +1027,7 @@ namespace WzComparerR2.MapRender
 
             if (obj.MoveW != 0 || obj.MoveH != 0)
             {
-                double movingX = 0;
-                double movingY = 0;
-                double time = obj.View.Time / Math.PI / 1000 * 4 / obj.MoveP * 5000;
-                switch (obj.MoveType)
-                {
-                    case 0: // none
-                        break;
-                    case 1:
-                    case 2: // line
-                        movingX = obj.MoveW * Math.Cos(time);
-                        movingY = obj.MoveH * Math.Cos(time);
-                        break;
-                    case 3: // circle
-                        movingX = obj.MoveW * Math.Cos(time);
-                        movingY = obj.MoveH * Math.Sin(time);
-                        break;
-                    default:
-                        break;
-                }
-                mesh.Position += new Vector2((float)movingX, (float)movingY);
+                mesh.Position += GetMovingObjPos(obj);
             }
 
             return mesh;
@@ -1167,6 +1183,30 @@ namespace WzComparerR2.MapRender
             }
 
             return null;
+        }
+
+        private Vector2 GetMovingObjPos(ObjItem obj)
+        {
+            double movingX = 0;
+            double movingY = 0;
+            double time = obj.View.Time / Math.PI / 1000 * 4 / obj.MoveP * 5000;
+            switch (obj.MoveType)
+            {
+                case 0: // none
+                    break;
+                case 1:
+                case 2: // line
+                    movingX = obj.MoveW * Math.Cos(time);
+                    movingY = obj.MoveH * Math.Cos(time);
+                    break;
+                case 3: // circle
+                    movingX = obj.MoveW * Math.Cos(time);
+                    movingY = obj.MoveH * Math.Sin(time);
+                    break;
+                default:
+                    break;
+            }
+            return new Vector2((float)movingX, (float)movingY);
         }
     }
 }
