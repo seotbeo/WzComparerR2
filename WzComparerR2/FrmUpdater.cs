@@ -182,18 +182,19 @@ namespace WzComparerR2
              Process.Start(new ProcessStartInfo
              {
                  UseShellExecute = true,
-                 FileName = "https://github.com/seotbeo/WzComparerR2/releases",
+                 FileName = "https://github.com/seotbeo/WzComparerR2/releases/latest",
              });
 #else
-            Process.Start("https://github.com/seotbeo/WzComparerR2/releases");
+            Process.Start("https://github.com/seotbeo/WzComparerR2/releases/latest");
 #endif
-            
+
             this.lblUpdateContent.Text = "업데이트 릴리즈로 이동합니다.";
 
             return;
+            /*
             buttonX1.Enabled = false;
             // string selectedURL = "";
-            updateSession = new UpdaterSession();
+            updateSession = new UpdaterSession();*/
             /*switch (Environment.Version.Major)
             {
                 default:
@@ -207,7 +208,7 @@ namespace WzComparerR2
                     selectedURL = net80url;
                     break;
             }*/
-            Task.Run(() => this.DownloadUpdateAsync(fileurl, updateSession, updateSession.CancellationToken));
+            //Task.Run(() => this.DownloadUpdateAsync(fileurl, updateSession, updateSession.CancellationToken));
         }
 
         private void RunProgram(string url, string path, int dotNetVersion)
