@@ -491,6 +491,12 @@ namespace WzComparerR2.CharaSimControl
 
         public static void DrawNameTag(Graphics g, Wz_Node resNode, string tagName, int picW, ref int picH)
         {
+            DrawNameTag(g, resNode, tagName, picW, out Rectangle rectResult, ref picH);
+        }
+
+        public static void DrawNameTag(Graphics g, Wz_Node resNode, string tagName, int picW, out Rectangle rectResult, ref int picH)
+        {
+            rectResult = new Rectangle();
             if (g == null || resNode == null)
                 return;
 
@@ -547,11 +553,17 @@ namespace WzComparerR2.CharaSimControl
                 int left = center - nameWidth / 2;
                 int right = left + nameWidth;
 
+                rectResult.X = left;
+                rectResult.Width = nameWidth;
+
                 //开始绘制背景
                 picH -= offsetY;
                 if (wce[0].Bitmap != null)
                 {
                     g.DrawImage(wce[0].Bitmap, left - wce[0].Origin.X, picH - wce[0].Origin.Y);
+
+                    rectResult.X -= wce[0].Origin.X;
+                    rectResult.Width += wce[0].Origin.X;
                 }
                 if (wce[1].Bitmap != null) //不用拉伸 用纹理平铺 看运气
                 {
@@ -564,6 +576,8 @@ namespace WzComparerR2.CharaSimControl
                 if (wce[2].Bitmap != null)
                 {
                     g.DrawImage(wce[2].Bitmap, right - wce[2].Origin.X, picH - wce[2].Origin.Y);
+
+                    rectResult.Width += (wce[2].Bitmap.Width - wce[2].Origin.X);
                 }
 
                 //绘制文字
@@ -600,19 +614,34 @@ namespace WzComparerR2.CharaSimControl
                         // offsetX with bg for better alignment
                         g.DrawString(tagName, font, brush, nameLeft - wce[1].Origin.X, picH + (aniNameTag ? -5 : 0), fmt);
                     }
+
+                    rectResult.X = left - wce[1].Origin.X - ani0.Origin.X;
+                    rectResult.Width = ani0.Bitmap.Width;
                 }
                 else
                 {
                     // draw ani0 only
                     g.DrawImage(ani0.Bitmap, left - ani0.Origin.X, picH - ani0.Origin.Y);
+
+                    rectResult.X = left - ani0.Origin.X;
+                    rectResult.Width = ani0.Bitmap.Width;
                 }
             }
 
             picH += height;
+
+            rectResult.Height = height - offsetY;
+            rectResult.Y = picH - rectResult.Height;
         }
 
         public static void DrawChatBalloon(Graphics g, Wz_Node resNode, string tagName, int picW, ref int picH)
         {
+            DrawChatBalloon(g, resNode, tagName, picW, out Rectangle rectResult, ref picH);
+        }
+
+        public static void DrawChatBalloon(Graphics g, Wz_Node resNode, string tagName, int picW, out Rectangle rectResult, ref int picH)
+        {
+            rectResult = new Rectangle();
             if (g == null || resNode == null)
                 return;
 
@@ -690,6 +719,11 @@ namespace WzComparerR2.CharaSimControl
             int left = center - middleWidth / 2;
             int right = left + middleWidth;
 
+            List<int> rectLeftPlus = new List<int>();
+            List<int> rectRightPlus = new List<int>();
+            rectResult.X = left;
+            rectResult.Width = middleWidth;
+
             //开始绘制背景
             picH -= offsetY;
 
@@ -697,6 +731,9 @@ namespace WzComparerR2.CharaSimControl
             if (wce[0].Bitmap != null) // nw
             {
                 g.DrawImage(wce[0].Bitmap, left - wce[0].Origin.X, picH - wce[0].Origin.Y);
+
+                rectResult.X = Math.Min(rectResult.X, left - wce[0].Origin.X);
+                rectLeftPlus.Add(wce[0].Origin.X);
             }
             if (wce[1].Bitmap != null) // n
             {
@@ -731,6 +768,8 @@ namespace WzComparerR2.CharaSimControl
             if (wce[3].Bitmap != null) // ne
             {
                 g.DrawImage(wce[3].Bitmap, right - wce[3].Origin.X, picH - wce[3].Origin.Y);
+
+                rectRightPlus.Add(wce[3].Bitmap.Width - wce[3].Origin.X);
             }
 
             // 중단
@@ -739,6 +778,9 @@ namespace WzComparerR2.CharaSimControl
                 if (wce[4].Bitmap != null) // w
                 {
                     g.DrawImage(wce[4].Bitmap, left - wce[4].Origin.X, picH - wce[4].Origin.Y);
+
+                    rectResult.X = Math.Min(rectResult.X, left - wce[4].Origin.X);
+                    rectLeftPlus.Add(wce[4].Origin.X);
                 }
                 if (wce[5].Bitmap != null) // c
                 {
@@ -750,6 +792,8 @@ namespace WzComparerR2.CharaSimControl
                 if (wce[6].Bitmap != null) // e
                 {
                     g.DrawImage(wce[6].Bitmap, right - wce[6].Origin.X, picH - wce[6].Origin.Y);
+
+                    rectRightPlus.Add(wce[6].Bitmap.Width - wce[6].Origin.X);
                 }
                 picH += dy;
             }
@@ -758,6 +802,9 @@ namespace WzComparerR2.CharaSimControl
             if (wce[7].Bitmap != null) // sw
             {
                 g.DrawImage(wce[7].Bitmap, left - wce[7].Origin.X, picH - wce[7].Origin.Y);
+
+                rectResult.X = Math.Min(rectResult.X, left - wce[7].Origin.X);
+                rectLeftPlus.Add(wce[7].Origin.X);
             }
             if (wce[8].Bitmap != null) // s
             {
@@ -792,6 +839,8 @@ namespace WzComparerR2.CharaSimControl
             if (wce[10].Bitmap != null) // se
             {
                 g.DrawImage(wce[10].Bitmap, right - wce[10].Origin.X, picH - wce[10].Origin.Y);
+
+                rectRightPlus.Add(wce[10].Bitmap.Width - wce[10].Origin.X);
             }
 
             // 텍스트 입력
@@ -804,6 +853,10 @@ namespace WzComparerR2.CharaSimControl
             }
 
             picH += height;
+
+            rectResult.Width += rectLeftPlus.DefaultIfEmpty(0).Max() + rectRightPlus.DefaultIfEmpty(0).Max();
+            rectResult.Height = dy * line + height - offsetY;
+            rectResult.Y = picH - rectResult.Height;
         }
 
         [DllImport("user32.dll")]

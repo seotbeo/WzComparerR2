@@ -15,8 +15,8 @@ namespace WzComparerR2.CharaSimControl
         public AfrmTooltip()
         {
             this.menu = new ContextMenuStrip();
-            this.menu.Items.Add(new ToolStripMenuItem("복사(&C)", null, tsmiCopy_Click));
-            this.menu.Items.Add(new ToolStripMenuItem("저장(&S)", null, tsmiSave_Click));
+            this.InitMenu();
+            this.SaveSample = new ToolStripMenuItem("샘플 저장(&R)", null, tsmiSaveSample_Click);
             this.ContextMenuStrip = this.menu;
 
             this.Size = new Size(1, 1);
@@ -65,6 +65,8 @@ namespace WzComparerR2.CharaSimControl
         public string ImageFileName { get; set; }
         public bool Enable22AniStyle { get; set; }
 
+        private ToolStripMenuItem SaveSample {  get; set; }
+
         public bool ShowID
         {
             get { return this.showID; }
@@ -87,6 +89,7 @@ namespace WzComparerR2.CharaSimControl
 
         public override void Refresh()
         {
+            this.InitMenu();
             this.PreRender();
             if (this.Bitmap != null)
             {
@@ -94,6 +97,44 @@ namespace WzComparerR2.CharaSimControl
                 this.CaptionRectangle = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
                 base.Refresh();
             }
+
+            if (this.item != null)
+            {
+                if (this.item is Gear)
+                {
+                    if (Enable22AniStyle)
+                    {
+                        if (this.GearRender22.HasSamples())
+                        {
+                            this.SaveSample.Tag = new Dictionary<string, object>
+                            {
+                                ["type"] = "gear",
+                                ["renderer"] = this.GearRender22
+                            };
+                            this.menu.Items.Add(this.SaveSample);
+                        }
+                    }
+                }
+                else if (this.item is Item)
+                {
+                    if (this.ItemRender.HasSamples())
+                    {
+                        this.SaveSample.Tag = new Dictionary<string, object>
+                        {
+                            ["type"] = "item",
+                            ["renderer"] = this.ItemRender
+                        };
+                        this.menu.Items.Add(this.SaveSample);
+                    }
+                }
+            }
+        }
+
+        private void InitMenu()
+        {
+            this.menu.Items.Clear();
+            this.menu.Items.Add(new ToolStripMenuItem("복사(&C)", null, tsmiCopy_Click));
+            this.menu.Items.Add(new ToolStripMenuItem("저장(&S)", null, tsmiSave_Click));
         }
 
         public void PreRender()
@@ -322,6 +363,46 @@ namespace WzComparerR2.CharaSimControl
                         this.Bitmap.Save(dlg.FileName, System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
+            }
+        }
+
+        void tsmiSaveSample_Click(object sender, EventArgs e)
+        {
+            if (this.Bitmap != null && this.item != null)
+            {
+                Bitmap bitmap;
+                var tag = (Dictionary<string, object>)(sender as ToolStripMenuItem).Tag;
+                switch (tag["type"])
+                {
+                    case "gear":
+                        if (this.Enable22AniStyle)
+                        {
+                            bitmap = (tag["renderer"] as GearTooltipRender22).GetSampleBitmap();
+                        }
+                        else return;
+                        break;
+
+                    case "item":
+                        bitmap = (tag["renderer"] as ItemTooltipRender2).GetSampleBitmap();
+                        break;
+
+                    default:
+                        return;
+                }
+
+                if (bitmap == null) return;
+
+                using (SaveFileDialog dlg = new SaveFileDialog())
+                {
+                    dlg.Filter = "PNG (*.png)|*.png|*.*|*.*";
+                    dlg.FileName = this.ImageFileName.Replace(@".png", @"_Sample.png");
+
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        bitmap.Save(dlg.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
+                bitmap.Dispose();
             }
         }
 

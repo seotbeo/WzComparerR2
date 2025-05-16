@@ -59,6 +59,13 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowLevelOrSealed { get; set; }
         public bool MaxStar25 { get; set; } = false;
         public bool IsCombineProperties { get; set; } = true;
+        private bool WillDrawMedal {  get; set; }
+        private bool WillDrawChatBalloon { get; set; }
+        private bool WillDrawNameTag { get; set; }
+        private Wz_Node MedalResNode { get; set; }
+        private Wz_Node ChatBalloonResNode { get; set; }
+        private Wz_Node NameTagResNode { get; set; }
+        private Bitmap AvatarSample { get; set; }
 
         public TooltipRender SetItemRender { get; set; }
         private List<int> linePos;
@@ -70,6 +77,7 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
 
+            InitSampleResources();
             int[] picH = new int[4];
             linePos = new List<int>();
             Bitmap left = RenderBase(out picH[0]);
@@ -582,6 +590,8 @@ namespace WzComparerR2.CharaSimControl
                     TextRenderer.DrawText(g, "등급 : " + value, GearGraphics.EquipMDMoris9Font, new Point(15, picH), Color.White, TextFormatFlags.NoPadding);
                     picH += 12;
                 }
+
+                this.AvatarSample = new Bitmap(appearance.Bitmap);
             }
 
             // 세트 아이템
@@ -923,18 +933,7 @@ namespace WzComparerR2.CharaSimControl
             }
             // 샘플 미리보기
             //判断是否绘制徽章
-            Wz_Node medalResNode = null;
-            Wz_Node chatBalloonResNode = null;
-            Wz_Node nameTagResNode = null;
-            bool willDrawMedalTag = this.Gear.Sample.Bitmap == null
-                && this.Gear.Props.TryGetValue(GearPropType.medalTag, out value)
-                && this.TryGetMedalResource(value, 0, out medalResNode);
-            bool willDrawChatBalloon = this.Gear.Props.TryGetValue(GearPropType.chatBalloon, out value)
-                && this.TryGetMedalResource(value, 1, out chatBalloonResNode);
-            bool willDrawNameTag = this.Gear.Props.TryGetValue(GearPropType.nameTag, out value)
-                && this.TryGetMedalResource(value, 2, out nameTagResNode);
-
-            if (Gear.Sample.Bitmap != null || willDrawMedalTag || willDrawChatBalloon || willDrawNameTag)
+            if (Gear.Sample.Bitmap != null || this.WillDrawMedal || this.WillDrawChatBalloon || this.WillDrawNameTag)
             {
                 AddLines(0, 7, ref picH, condition: secondLineNeeded);
                 secondLineNeeded = false;
@@ -942,14 +941,14 @@ namespace WzComparerR2.CharaSimControl
                 hasThirdContents = true;
                 hasDescPart = true;
 
-                if (willDrawChatBalloon)
+                if (this.ChatBalloonResNode != null)
                 {
-                    GearGraphics.DrawChatBalloon(g, chatBalloonResNode, "MAPLESTORY", bitmap.Width, ref picH);
+                    GearGraphics.DrawChatBalloon(g, this.ChatBalloonResNode, "MAPLESTORY", bitmap.Width, ref picH);
                     picH += 4;
                 }
-                else if (willDrawNameTag)
+                else if (this.NameTagResNode != null)
                 {
-                    GearGraphics.DrawNameTag(g, nameTagResNode, "MAPLESTORY", bitmap.Width, ref picH);
+                    GearGraphics.DrawNameTag(g, this.NameTagResNode, "MAPLESTORY", bitmap.Width, ref picH);
                     picH += 4;
                 }
                 else if (Gear.Sample.Bitmap != null)
@@ -958,9 +957,9 @@ namespace WzComparerR2.CharaSimControl
                     picH += Gear.Sample.Bitmap.Height;
                     picH += 4;
                 }
-                else if (medalResNode != null)
+                else if (this.MedalResNode != null)
                 {
-                    GearGraphics.DrawNameTag(g, medalResNode, sr.Name.Replace("의 훈장", ""), bitmap.Width, ref picH);
+                    GearGraphics.DrawNameTag(g, this.MedalResNode, sr.Name.Replace("의 훈장", ""), bitmap.Width, ref picH);
                     picH += 4;
                 }
                 picH += 6;
@@ -2057,6 +2056,88 @@ namespace WzComparerR2.CharaSimControl
                     break;
             }
             return resNode != null;
+        }
+
+        private void InitSampleResources()
+        {
+            Wz_Node _medalResNode = null;
+            Wz_Node _chatBalloonResNode = null;
+            Wz_Node _nameTagResNode = null;
+
+            this.MedalResNode = null;
+            this.ChatBalloonResNode = null;
+            this.NameTagResNode = null;
+            if (this.AvatarSample != null)
+            {
+                this.AvatarSample.Dispose();
+            }
+
+            int value;
+            this.WillDrawMedal = this.Gear.Props.TryGetValue(GearPropType.medalTag, out value)
+                && this.TryGetMedalResource(value, 0, out _medalResNode);
+
+            this.WillDrawChatBalloon = this.Gear.Props.TryGetValue(GearPropType.chatBalloon, out value)
+                && this.TryGetMedalResource(value, 1, out _chatBalloonResNode);
+
+            this.WillDrawNameTag = this.Gear.Props.TryGetValue(GearPropType.nameTag, out value)
+                && this.TryGetMedalResource(value, 2, out _nameTagResNode);
+
+            this.MedalResNode = _medalResNode;
+            this.ChatBalloonResNode = _chatBalloonResNode;
+            this.NameTagResNode = _nameTagResNode;
+        }
+
+        public bool HasSamples()
+        {
+            return this.Gear.Sample.Bitmap != null || this.MedalResNode != null || this.ChatBalloonResNode != null || this.NameTagResNode != null || this.AvatarSample != null;
+        }
+
+        public Bitmap GetSampleBitmap()
+        {
+            if (this.WillDrawMedal || this.WillDrawChatBalloon || this.WillDrawNameTag)
+            {
+                Rectangle rect = new Rectangle();
+                int block = 300;
+                using Bitmap tempBitmap = new Bitmap(block, block);
+                using Graphics tempG = Graphics.FromImage(tempBitmap);
+                tempG.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+                int h = block / 2;
+                if (this.MedalResNode != null)
+                {
+                    StringResult sr;
+                    if (StringLinker == null || !StringLinker.StringEqp.TryGetValue(Gear.ItemID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "(null)";
+                    }
+                    GearGraphics.DrawNameTag(tempG, this.MedalResNode, sr.Name.Replace("의 훈장", ""), tempBitmap.Width, out rect, ref h);
+                }
+                else if (this.NameTagResNode != null)
+                {
+                    GearGraphics.DrawNameTag(tempG, this.NameTagResNode, "MAPLESTORY", tempBitmap.Width, out rect, ref h);
+                }
+                else if (this.ChatBalloonResNode != null)
+                {
+                    GearGraphics.DrawChatBalloon(tempG, this.ChatBalloonResNode, "MAPLESTORY", tempBitmap.Width, out rect, ref h);
+                }
+
+                Bitmap resBitmap = new Bitmap(rect.Width, rect.Height);
+                using Graphics g = Graphics.FromImage(resBitmap);
+                g.DrawImage(tempBitmap, 0, 0, rect, GraphicsUnit.Pixel);
+
+                return resBitmap;
+            }
+            else if (this.Gear.Sample.Bitmap != null)
+            {
+                return new Bitmap(this.Gear.Sample.Bitmap);
+            }
+            else if (this.AvatarSample != null)
+            {
+                return new Bitmap(this.AvatarSample);
+            }
+
+            return null;
         }
 
         private enum NumberType
