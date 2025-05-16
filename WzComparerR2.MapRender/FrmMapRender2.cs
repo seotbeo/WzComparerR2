@@ -150,6 +150,8 @@ namespace WzComparerR2.MapRender
         bool isUnloaded;
         bool isExiting;
 
+        bool CamaraChangedEffState = true;
+
         protected override void Initialize()
         {
 
@@ -447,10 +449,15 @@ namespace WzComparerR2.MapRender
                 this.attachedEvent.Add(EventDisposable(mouseBtnEv, _ev => this.ui.MouseUp -= _ev));
 
                 //更新事件
-                EventHandler ev = (o, e) =>
+                EventHandler ev = async (o, e) =>
                 {
                     this.renderEnv.Camera.Center += direction1 + direction2 * ((boostMoveFlag != 0) ? 3 : 1);
                     keyboardMoveSlowDown();
+                    if (this.CamaraChangedEffState)
+                    {
+                        this.CamaraChangedEffState = false;
+                        await SetCameraChangedEffect(this.renderEnv.Camera.Center);
+                    }
                 };
                 this.ui.InputUpdated += ev;
                 this.attachedEvent.Add(EventDisposable(ev, _ev => this.ui.InputUpdated -= _ev));

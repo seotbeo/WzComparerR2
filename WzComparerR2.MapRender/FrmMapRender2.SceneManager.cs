@@ -10,6 +10,7 @@ using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.MapRender.UI;
 using Microsoft.Xna.Framework;
 using IE = System.Collections.IEnumerator;
+using WzComparerR2.Rendering;
 
 namespace WzComparerR2.MapRender
 {
@@ -565,6 +566,70 @@ namespace WzComparerR2.MapRender
             }
             this.renderEnv.Camera.Center = cameraTo;
             this.renderEnv.Camera.AdjustToWorldRect();
+        }
+
+        private async Task SetCameraChangedEffect(Vector2 pos)
+        {
+            if (this.mapData.ID / 100 == 9932670)
+            {
+                var bgmRegionsInfo = PluginManager.FindWz($@"Etc\MinigameClient.img\DimensionTower\fieldList\{this.mapData.ID}\bgmRegions");
+                if (bgmRegionsInfo != null)
+                {
+                    var regionNode = bgmRegionsInfo.Nodes.FirstOrDefault(n =>
+                    {
+                        var lt = n.FindNodeByPath("lt").GetValueEx<Wz_Vector>(new Wz_Vector(0, 0)).ToPoint();
+                        var rb = n.FindNodeByPath("rb").GetValueEx<Wz_Vector>(new Wz_Vector(0, 0)).ToPoint();
+
+                        if (pos.X >= lt.X && pos.X <= rb.X && pos.Y >= lt.Y && pos.Y <= rb.Y)
+                        {
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    string bgm;
+                    if (regionNode != null)
+                    {
+                        bgm = regionNode.FindNodeByPath("bgm").GetValueEx<string>("Bgm00/Silence");
+                    }
+                    else
+                    {
+                        bgm = "Bgm00/Silence";
+                    }
+
+                    if (!string.IsNullOrEmpty(bgm))
+                    {
+                        bool willSwitchBgm = this.mapData.Bgm != bgm;
+                        this.mapData.Bgm = bgm;
+                        Music newBgm = LoadBgm(this.mapData);
+                        if (newBgm != null)
+                        {
+                            Task bgmTask = null;
+                            if (willSwitchBgm && this.bgm != null) //准备切换
+                            {
+                                bgmTask = FadeOut(this.bgm, 500);
+                            }
+
+                            if (bgmTask != null)
+                            {
+                                await bgmTask;
+                            }
+
+                            this.bgm = newBgm;
+                            if (willSwitchBgm && this.bgm != null)
+                            {
+                                bgmTask = FadeIn(this.bgm, 500);
+                            }
+
+                            if (bgmTask != null)
+                            {
+                                await bgmTask;
+                            }
+                        }
+                    }
+                }
+            }
+            this.CamaraChangedEffState = true;
         }
 
         private void SceneUpdate()
