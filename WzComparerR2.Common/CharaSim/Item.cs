@@ -73,7 +73,7 @@ namespace WzComparerR2.CharaSim
                 }
             }
 
-            Wz_Node infoNode = node.FindNodeByPath("info");
+            Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
             if (infoNode != null)
             {
                 foreach (Wz_Node subNode in infoNode.Nodes)

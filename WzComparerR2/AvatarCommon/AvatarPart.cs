@@ -95,7 +95,7 @@ namespace WzComparerR2.AvatarCommon
                 this.EffectNode = PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID + "/effect");
             }
 
-            Wz_Node infoNode = this.Node.FindNodeByPath("info");
+            Wz_Node infoNode = this.Node.FindNodeByPath("info").ResolveUol();
             if (infoNode == null)
             {
                 return;

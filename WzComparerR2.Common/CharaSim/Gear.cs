@@ -803,7 +803,7 @@ namespace WzComparerR2.CharaSim
             Gear gear = new Gear();
             gear.ItemID = gearID;
             gear.type = Gear.GetGearType(gear.ItemID);
-            Wz_Node infoNode = node.FindNodeByPath("info");
+            Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
 
             if (infoNode != null)
             {

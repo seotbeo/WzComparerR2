@@ -44,7 +44,7 @@ namespace WzComparerR2.CharaSim
 
             Npc npcInfo = new Npc();
             npcInfo.ID = npcID;
-            Wz_Node infoNode = node.FindNodeByPath("info");
+            Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
 
             //加载基础属性
             if (infoNode != null)

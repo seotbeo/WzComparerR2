@@ -81,7 +81,7 @@ namespace WzComparerR2.CharaSim
 
             Mob mobInfo = new Mob();
             mobInfo.ID = mobID;
-            Wz_Node infoNode = node.FindNodeByPath("info");
+            Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
             //加载基础属性
             if (infoNode != null)
             {
