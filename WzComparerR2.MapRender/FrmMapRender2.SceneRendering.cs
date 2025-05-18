@@ -214,6 +214,8 @@ namespace WzComparerR2.MapRender
             var mouse = this.renderEnv.Input.MousePosition;
             var mousePos = this.renderEnv.Camera.CameraToWorld(mouse);
             sb.AppendFormat("{0},{1}", mousePos.X, mousePos.Y);
+            
+            sb.AppendFormat(" Time: [{0:f3}]", cm.GameTime.TotalGameTime.TotalMilliseconds / 1000);
             this.ui.TopBar.Text = sb.ToString();
         }
 
@@ -538,16 +540,18 @@ namespace WzComparerR2.MapRender
                     {
                         var x = obj.X;
                         var y = obj.Y;
-                        var rect = new Rectangle(x + lt.X, y + lt.Y, rb.X - lt.X, rb.Y - lt.Y);
+                        Vector2 move = Vector2.Zero;
+                        Rectangle rect = new Rectangle(x + lt.X, y + lt.Y, rb.X - lt.X, rb.Y - lt.Y);
 
+                        if (obj.MoveW != 0 || obj.MoveH != 0)
+                        {
+                            move = GetMovingObjPos(obj);
+                        }
                         if (obj.Flip)
                         {
                             rect.X = 2 * x - rect.X - rect.Width;
                         }
-                        if (obj.MoveW != 0 || obj.MoveH != 0)
-                        {
-                            rect.Offset(GetMovingObjPos(obj));
-                        }
+                        rect.Offset(move);
 
                         rectList.Add(rect);
                     }
@@ -1021,7 +1025,6 @@ namespace WzComparerR2.MapRender
             var mesh = batcher.MeshPop();
             mesh.RenderObject = renderObj;
             mesh.Position = new Vector2(obj.X, obj.Y);
-            mesh.FlipX = obj.Flip;
             mesh.Z0 = obj.Z;
             mesh.Z1 = obj.Index;
 
@@ -1029,6 +1032,7 @@ namespace WzComparerR2.MapRender
             {
                 mesh.Position += GetMovingObjPos(obj);
             }
+            mesh.FlipX = obj.Flip;
 
             return mesh;
         }
@@ -1189,20 +1193,47 @@ namespace WzComparerR2.MapRender
         {
             double movingX = 0;
             double movingY = 0;
-            double time = obj.View.Time / Math.PI / 1000 * 4 / obj.MoveP * 5000;
+            double time = obj.View.Time;
             switch (obj.MoveType)
             {
-                case 0: // none
-                    break;
                 case 1:
                 case 2: // line
+                    time *= Math.PI * 2 / (obj.MoveP + obj.MoveDelay);
                     movingX = obj.MoveW * Math.Cos(time);
                     movingY = obj.MoveH * Math.Cos(time);
                     break;
                 case 3: // circle
+                    time *= Math.PI * 2 / (obj.MoveP + obj.MoveDelay);
                     movingX = obj.MoveW * Math.Cos(time);
                     movingY = obj.MoveH * Math.Sin(time);
                     break;
+
+                case 6:
+                case 7:
+                case 8:
+                    int sign = -1;
+                    double freq = (double)(obj.MoveP + obj.MoveDelay) * 2;
+                    time = time % freq;
+                    if (time >= freq / 2)
+                    {
+                        time -= freq / 2;
+                        if (obj.MoveType == 8)
+                            obj.Flip = !obj.FlipReal;
+
+                        if (obj.MoveType != 6)
+                            sign = +1;
+                    }
+                    else
+                    {
+                        if (obj.MoveType == 8)
+                            obj.Flip = obj.FlipReal;
+                    }
+
+                    movingX = (Math.Min(1, Math.Max(-1, (time - obj.MoveDelay) * -2 / obj.MoveP + 1)) * sign + 1) / 2 * obj.MoveW;
+                    movingY = (Math.Min(1, Math.Max(-1, (time - obj.MoveDelay) * -2 / obj.MoveP + 1)) * sign + 1) / 2 * obj.MoveH;
+
+                    break;
+
                 default:
                     break;
             }
