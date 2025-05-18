@@ -21,7 +21,6 @@ namespace WzComparerR2.MapRender.Patches2
         public int MoveH { get; set; }
         public int MoveP { get; set; }
         public int MoveDelay { get; set; }
-        public bool FlipReal { get; set; }
         public bool Flip { get; set; }
         public bool Light { get; set; }
         public bool Obstacle { get; set; }
@@ -48,9 +47,9 @@ namespace WzComparerR2.MapRender.Patches2
                 MoveW = 0,
                 MoveH = 0,
                 MoveP = 5000,
+                MoveDelay = 0,
 
                 Flip = node.Nodes["f"].GetValueEx(false),
-                FlipReal = node.Nodes["f"].GetValueEx(false),
                 Light = node.Nodes["light"].GetValueEx<int>(0) != 0,
                 SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
             };
@@ -130,6 +129,11 @@ namespace WzComparerR2.MapRender.Patches2
             /// 动画资源。
             /// </summary>
             public object Animator { get; set; }
+
+            /// <summary>
+            /// Flip state of item.
+            /// </summary>
+            public bool Flip { get; set; }
         }
     }
 }
