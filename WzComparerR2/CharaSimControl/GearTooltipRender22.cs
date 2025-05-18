@@ -153,13 +153,21 @@ namespace WzComparerR2.CharaSimControl
 
         private void DrawBG(Graphics g, string tag, int startX, int endY, int target)
         {
-            int startY = 30;
+            int[] startYList = [res[$"top{tag}"].Image.Height];
+            int startY = startYList[target];
 
-            g.DrawImage(res[$"top{tag}"].Image, startX, 0);
             for (int i = 0; i < linePos.Count; i += 2)
             {
                 if (linePos[i] == target)
                 {
+                    if (startY == startYList[target])
+                    {
+                        if (linePos[i + 1] < startY)
+                            g.DrawImage(res[$"top{tag}"].Image, startX, 0, res[$"top{tag}"].Image.Width, linePos[i + 1]);
+                        else
+                            g.DrawImage(res[$"top{tag}"].Image, startX, 0);
+                    }
+
                     FillRect(g, res[$"mid{tag}"], startX, startY, linePos[i + 1]);
                     g.DrawImage(res[$"line{tag}"].Image, startX, linePos[i + 1]);
                     startY = linePos[i + 1] + 3;
@@ -1108,6 +1116,11 @@ namespace WzComparerR2.CharaSimControl
             Gear.Props.TryGetValue(GearPropType.tuc, out tuc);
             if (!Gear.Cash && Gear.IsEnhanceable(Gear.type))
             {
+                if (secondLineNeeded)
+                {
+                    secondLineNeeded = false;
+                    picH += 4;
+                }
                 hasThirdContents = true;
 
                 string text = "";

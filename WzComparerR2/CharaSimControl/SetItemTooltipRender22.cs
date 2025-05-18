@@ -11,7 +11,6 @@ using WzComparerR2.WzLib;
 using WzComparerR2.Common;
 using System.Text.RegularExpressions;
 using WzComparerR2.CharaSim;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -87,13 +86,21 @@ namespace WzComparerR2.CharaSimControl
 
         private void DrawBG(Graphics g, int startX, int endY, int target)
         {
-            int startY = 30;
+            int[] startYList = [res[$"top"].Image.Height];
+            int startY = startYList[target];
 
-            g.DrawImage(res[$"top"].Image, startX, 0);
             for (int i = 0; i < linePos.Count; i += 2)
             {
                 if (linePos[i] == target)
                 {
+                    if (startY == startYList[target])
+                    {
+                        if (linePos[i + 1] < startY)
+                            g.DrawImage(res[$"top"].Image, startX, 0, res[$"top"].Image.Width, linePos[i + 1]);
+                        else
+                            g.DrawImage(res[$"top"].Image, startX, 0);
+                    }
+
                     FillRect(g, res[$"mid"], startX, startY, linePos[i + 1]);
                     g.DrawImage(res[$"line"].Image, startX, linePos[i + 1]);
                     startY = linePos[i + 1] + 3;
