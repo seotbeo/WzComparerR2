@@ -294,7 +294,7 @@ namespace WzComparerR2.OpenAPI
 
         public byte GetWeaponMotionType()
         {
-            return (byte)GetValue("weaponMotion");
+            return (byte)GetValue("weaponMotionType");
         }
 
         public string GetWeaponMotionTypeString()
