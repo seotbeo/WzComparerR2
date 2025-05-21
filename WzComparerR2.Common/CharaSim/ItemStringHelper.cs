@@ -1386,5 +1386,71 @@ namespace WzComparerR2.CharaSim
 
             return sb.Length > 0 ? sb.ToString() : "0";
         }
+
+        public static string GetMobSkillName(int id)
+        {
+            switch (id)
+            {
+                case 100: return "물리 공격력 증가";
+                case 101: return "마법 공격력 증가";
+                case 102: return "물리 방어력 증가";
+                case 103: return "마법 방어력 증가";
+                case 105: return "HP 흡수";
+
+                case 110: return "주변 물리 공격력 증가";
+                case 111: return "주변 마법 공격력 증가";
+                case 112: return "주변 물리 방어력 증가";
+                case 113: return "주변 마법 방어력 증가";
+                case 114: return "HP 회복";
+                case 115: return "이동속도 증가";
+
+                case 120: return "봉인";
+                case 121: return "빗나감";
+                case 122: return "허약";
+                case 123: return "기절";
+                case 124: return "저주";
+                case 125: return "중독";
+                case 126: return "슬로우";
+                case 127: return "버프 해제";
+                case 128: return "유혹";
+                case 129: return "추방";
+
+                case 131: return "범위 지속 데미지";
+                case 132: return "혼란";
+                case 133: return "언데드";
+                case 134: return "물약 봉인";
+                case 135: return "멈추지 않는";
+                case 136: return "암흑";
+                case 137: return "프로즌";
+                case 138: return "잠재능력 무효";
+
+                case 140: return "물리 공격 무시";
+                case 141: return "마법 공격 무시";
+                case 142: return "하드 스킨";
+                case 143: return "물리 공격 반사";
+                case 144: return "마법 공격 반사";
+                case 145: return "공격 반사";
+                case 146: return "무적";
+
+                case 150: return "물리 공격력 증가";
+                case 151: return "마법 공격력 증가";
+                case 152: return "물리 방어력 증가";
+                case 153: return "마법 방어력 증가";
+                case 154: return "명중률 증가";
+                case 155: return "회피율 증가";
+                case 156: return "이동속도 증가";
+
+                case 170: return "텔레포트";
+                case 171: return "폭발";
+                case 172: return "변이";
+                case 173: return "에어본";
+                case 174: return "석화";
+
+                case 200: return "소환";
+                case 201: return "소환";
+
+                default: return null;
+            }
+        }
     }
 }

@@ -24,6 +24,12 @@ namespace WzComparerR2.MapRender.Patches2
         public bool Flip { get; set; }
         public bool Light { get; set; }
         public bool Obstacle { get; set; }
+        public int Damage { get; set; }
+        public int Dir { get; set; }
+        public int Angle { get; set; }
+        public int Impact { get; set; }
+        public int Disease { get; set; }
+        public int DiseaseLevel { get; set; }
         public string SpineAni { get; set; }
         public List<QuestInfo> Quest { get; private set; } = new List<QuestInfo>();
         public List<QuestExInfo> Questex { get; private set; } = new List<QuestExInfo>();
@@ -52,6 +58,14 @@ namespace WzComparerR2.MapRender.Patches2
                 Flip = node.Nodes["f"].GetValueEx(false),
                 Light = node.Nodes["light"].GetValueEx<int>(0) != 0,
                 SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
+
+                Obstacle = false,
+                Damage = 0,
+                Dir = 0,
+                Angle = 0,
+                Impact = 0,
+                Disease = 0,
+                DiseaseLevel = 0,
             };
 
             string objTags = node.Nodes["tags"].GetValueEx<string>(null);
@@ -113,6 +127,12 @@ namespace WzComparerR2.MapRender.Patches2
                     item.MoveDelay = obj_node.Nodes["moveDelay"].GetValueEx(0);
                 }
                 item.Obstacle = top_obj_node.Nodes["obstacle"].GetValueEx(false);
+                item.Damage = top_obj_node.Nodes["damage"].GetValueEx(0);
+                item.Dir = top_obj_node.Nodes["dir"].GetValueEx(0);
+                item.Angle = top_obj_node.Nodes["angle"].GetValueEx(0);
+                item.Impact = top_obj_node.Nodes["impact"].GetValueEx(0);
+                item.Disease = top_obj_node.Nodes["disease"].GetValueEx(0);
+                item.DiseaseLevel = top_obj_node.Nodes["level"].GetValueEx(0);
             }
 
             return item;
