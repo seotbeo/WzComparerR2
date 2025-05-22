@@ -12,6 +12,7 @@ using EmptyKeys.UserInterface.Themes;
 using EmptyKeys.UserInterface.Data;
 using Res = CharaSimResource.Resource;
 using MRes = WzComparerR2.MapRender.Properties.Resources;
+using WzComparerR2.Config;
 
 namespace WzComparerR2.MapRender.UI
 {
@@ -174,7 +175,20 @@ namespace WzComparerR2.MapRender.UI
 
             var tooltipBrush = new NinePatchBrush()
             {
-                Resource = new EKNineFormResource()
+                Resource = CharaSimConfig.Default.Misc.Enable22AniStyle ?
+                new EKNineFormResource()
+                {
+                    NW = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_nw)),
+                    N = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_n)),
+                    NE = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_ne)),
+                    W = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_w)),
+                    C = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_c)),
+                    E = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_e)),
+                    SW = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_sw)),
+                    S = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_s)),
+                    SE = assetManager.LoadTexture(null, nameof(Res.UIToolTipNew_img_Item_Common_frame_flexible_se)),
+                } :
+                new EKNineFormResource()
                 {
                     NW = assetManager.LoadTexture(null, nameof(Res.UIToolTip_img_Item_Frame2_nw)),
                     N = assetManager.LoadTexture(null, nameof(Res.UIToolTip_img_Item_Frame2_n)),

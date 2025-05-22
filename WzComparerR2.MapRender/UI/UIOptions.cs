@@ -24,6 +24,7 @@ namespace WzComparerR2.MapRender.UI
 
         public event EventHandler OK;
         public event EventHandler Cancel;
+        public event EventHandler ResetSCRect;
 
         protected override void InitializeComponents()
         {
@@ -66,6 +67,10 @@ namespace WzComparerR2.MapRender.UI
             tab4.Header = "월드맵";
             tab4.Content = GetTabContent4();
 
+            TabItem tabSC = new TabItem();
+            tabSC.Header = "스크린샷";
+            tabSC.Content = GetTabContentSC();
+
             TabItem tab5 = new TabItem();
             tab5.Header = "도움말";
             tab5.Content = GetTabContent5();
@@ -74,7 +79,7 @@ namespace WzComparerR2.MapRender.UI
             tabControl.Resources.Add(typeof(TabItem), GetTabItemStyle());
             tabControl.Margin = new Thickness(5, 0, 5, 0);
             tabControl.TabStripPlacement = Dock.Left;
-            tabControl.ItemsSource = new[] { tab1, tab2, tab3, tab4, tab5 };
+            tabControl.ItemsSource = new[] { tab1, tab2, tab3, tab4, tabSC, tab5 };
             grid.Children.Add(tabControl);
             Grid.SetRow(tabControl, 1);
             Grid.SetColumn(tabControl, 0);
@@ -115,8 +120,8 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetRow(footer, 3);
             Grid.SetColumn(footer, 0);
 
-            this.Width = 300;
-            this.Height = 240;
+            this.Width = 400;
+            this.Height = 300;
             this.SetResourceReference(BackgroundProperty, MapRenderResourceKey.TooltipBrush);
             base.InitializeComponents();
         }
@@ -129,6 +134,12 @@ namespace WzComparerR2.MapRender.UI
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Cancel?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void BtnSCReset_Click(object sender, RoutedEventArgs e)
+        {
+            this.ResetSCRect?.Invoke(this, EventArgs.Empty);
+            return;
         }
 
         private UIElement GetTabContent1()
@@ -144,8 +155,8 @@ namespace WzComparerR2.MapRender.UI
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            //grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            //grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.ColumnDefinitions.Add(new ColumnDefinition());
 
@@ -160,6 +171,7 @@ namespace WzComparerR2.MapRender.UI
             CheckBox chk1 = new CheckBox();
             chk1.Content = "백그라운드에서 음소거";
             chk1.Margin = new Thickness(18, 0, 0, 0);
+            chk1.Background = Brushes.Gray;
             chk1.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.MuteOnLeaveFocus)));
             Grid.SetRow(chk1, 1);
             Grid.SetColumn(chk1, 0);
@@ -226,6 +238,7 @@ namespace WzComparerR2.MapRender.UI
             CheckBox chk2 = new CheckBox();
             chk2.Content = "맵 범위 이내로 제한";
             chk2.Margin = new Thickness(18, 0, 0, 0);
+            chk2.Background = Brushes.Gray;
             chk2.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.ClipMapRegion)));
             Grid.SetRow(chk2, 5);
             Grid.SetColumn(chk2, 0);
@@ -243,6 +256,7 @@ namespace WzComparerR2.MapRender.UI
             CheckBox chk3 = new CheckBox();
             chk3.Content = "D2D 사용";
             chk3.Margin = new Thickness(18, 0, 0, 0);
+            chk3.Background = Brushes.Gray;
             chk3.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.UseD2dRenderer)));
             Grid.SetRow(chk3, 7);
             Grid.SetColumn(chk3, 0);
@@ -252,6 +266,7 @@ namespace WzComparerR2.MapRender.UI
             CheckBox chk4 = new CheckBox();
             chk4.Content = "NPC 이름 표시";
             chk4.Margin = new Thickness(18, 0, 0, 0);
+            chk4.Background = Brushes.Gray;
             chk4.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.NpcNameVisible)));
             Grid.SetRow(chk4, 8);
             Grid.SetColumn(chk4, 0);
@@ -261,13 +276,14 @@ namespace WzComparerR2.MapRender.UI
             CheckBox chk5 = new CheckBox();
             chk5.Content = "몬스터 이름 표시";
             chk5.Margin = new Thickness(18, 0, 0, 0);
+            chk5.Background = Brushes.Gray;
             chk5.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.MobNameVisible)));
             Grid.SetRow(chk5, 9);
             Grid.SetColumn(chk5, 0);
             Grid.SetColumnSpan(chk5, 2);
             grid.Children.Add(chk5);
 
-            TextBlock lbl6 = new TextBlock();
+            /*TextBlock lbl6 = new TextBlock();
             lbl6.VerticalAlignment = VerticalAlignment.Center;
             lbl6.Text = "스크린샷";
             lbl6.Foreground = Brushes.Yellow;
@@ -302,10 +318,11 @@ namespace WzComparerR2.MapRender.UI
             img1.Width = 20;
             img1.Height = 20;
             img1.Margin = new Thickness(2);
-            img1.SetBinding(Canvas.BackgroundProperty, new Binding(nameof(UIOptionsDataModel.ScreenshotBackgroundColor)) {
+            img1.SetBinding(Canvas.BackgroundProperty, new Binding(nameof(UIOptionsDataModel.ScreenshotBackgroundColor))
+            {
                 Converter = UIHelper.CreateConverter((string s) => ColorWConverter.TryParse(s, out var color) ? new SolidColorBrush(color) : null)
             });
-            pnl2.Children.Add(img1);
+            pnl2.Children.Add(img1);*/
 
             ScrollViewer viewer = new ScrollViewer();
             viewer.Content = grid;
@@ -321,6 +338,7 @@ namespace WzComparerR2.MapRender.UI
 
             CheckBox chk1 = new CheckBox();
             chk1.Content = "상태 표시줄 표시";
+            chk1.Background = Brushes.Gray;
             chk1.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.TopBarVisible)));
             Grid.SetRow(chk1, 0);
             Grid.SetColumn(chk1, 0);
@@ -339,6 +357,7 @@ namespace WzComparerR2.MapRender.UI
 
             CheckBox chk1 = new CheckBox();
             chk1.Content = "시야 범위 표시";
+            chk1.Background = Brushes.Gray;
             chk1.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.Minimap_CameraRegionVisible)));
             Grid.SetRow(chk1, 0);
             Grid.SetColumn(chk1, 0);
@@ -357,6 +376,7 @@ namespace WzComparerR2.MapRender.UI
 
             CheckBox chk1 = new CheckBox();
             chk1.Content = "img 이름을 월드맵 이름으로 사용";
+            chk1.Background = Brushes.Gray;
             chk1.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.WorldMap_UseImageNameAsInfoName)));
             Grid.SetRow(chk1, 0);
             Grid.SetColumn(chk1, 0);
@@ -364,6 +384,157 @@ namespace WzComparerR2.MapRender.UI
             grid.Children.Add(chk1);
 
             return grid;
+        }
+
+        private UIElement GetTabContentSC()
+        {
+            Grid grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            TextBlock lblSCRect = new TextBlock();
+            lblSCRect.VerticalAlignment = VerticalAlignment.Center;
+            lblSCRect.Text = "범위";
+            lblSCRect.Foreground = Brushes.Yellow;
+            Grid.SetRow(lblSCRect, 0);
+            Grid.SetColumn(lblSCRect, 0);
+            grid.Children.Add(lblSCRect);
+
+            TextBlock lblSCLeft = new TextBlock();
+            lblSCLeft.HorizontalAlignment = HorizontalAlignment.Center;
+            lblSCLeft.VerticalAlignment = VerticalAlignment.Center;
+            lblSCLeft.Text = "좌";
+            Grid.SetRow(lblSCLeft, 3);
+            Grid.SetColumn(lblSCLeft, 0);
+            grid.Children.Add(lblSCLeft);
+
+            TextBlock lblSCTop = new TextBlock();
+            lblSCTop.HorizontalAlignment = HorizontalAlignment.Center;
+            lblSCTop.VerticalAlignment = VerticalAlignment.Center;
+            lblSCTop.Text = "상";
+            Grid.SetRow(lblSCTop, 1);
+            Grid.SetColumn(lblSCTop, 1);
+            grid.Children.Add(lblSCTop);
+
+            TextBlock lblSCRight = new TextBlock();
+            lblSCRight.HorizontalAlignment = HorizontalAlignment.Center;
+            lblSCRight.VerticalAlignment = VerticalAlignment.Center;
+            lblSCRight.Text = "우";
+            Grid.SetRow(lblSCRight, 3);
+            Grid.SetColumn(lblSCRight, 2);
+            grid.Children.Add(lblSCRight);
+
+            TextBlock lblSCBottom = new TextBlock();
+            lblSCBottom.HorizontalAlignment = HorizontalAlignment.Center;
+            lblSCBottom.VerticalAlignment = VerticalAlignment.Center;
+            lblSCBottom.Text = "하";
+            Grid.SetRow(lblSCBottom, 5);
+            Grid.SetColumn(lblSCBottom, 1);
+            grid.Children.Add(lblSCBottom);
+
+            TextBox tbSCLeft = new TextBox();
+            tbSCLeft.Width = 60;
+            tbSCLeft.HorizontalAlignment = HorizontalAlignment.Center;
+            tbSCLeft.VerticalAlignment = VerticalAlignment.Center;
+            tbSCLeft.MaxLength = 5;
+            tbSCLeft.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScLeft)));
+            Grid.SetRow(tbSCLeft, 4);
+            Grid.SetColumn(tbSCLeft, 0);
+            grid.Children.Add(tbSCLeft);
+
+            TextBox tbSCTop = new TextBox();
+            tbSCTop.Width = 60;
+            tbSCTop.HorizontalAlignment = HorizontalAlignment.Center;
+            tbSCTop.VerticalAlignment = VerticalAlignment.Center;
+            tbSCTop.MaxLength = 5;
+            tbSCTop.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScTop)));
+            Grid.SetRow(tbSCTop, 2);
+            Grid.SetColumn(tbSCTop, 1);
+            grid.Children.Add(tbSCTop);
+
+            TextBox tbSCRight = new TextBox();
+            tbSCRight.Width = 60;
+            tbSCRight.HorizontalAlignment = HorizontalAlignment.Center;
+            tbSCRight.VerticalAlignment = VerticalAlignment.Center;
+            tbSCRight.MaxLength = 5;
+            tbSCRight.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScRight)));
+            Grid.SetRow(tbSCRight, 4);
+            Grid.SetColumn(tbSCRight, 2);
+
+            TextBox tbSCBottom = new TextBox();
+            tbSCBottom.Width = 60;
+            tbSCBottom.HorizontalAlignment = HorizontalAlignment.Center;
+            tbSCBottom.VerticalAlignment = VerticalAlignment.Center;
+            tbSCBottom.MaxLength = 5;
+            tbSCBottom.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScBottom)));
+            Grid.SetRow(tbSCBottom, 6);
+            Grid.SetColumn(tbSCBottom, 1);
+            grid.Children.Add(tbSCBottom);
+            grid.Children.Add(tbSCRight);
+
+            Button btnSCReset = new Button();
+            btnSCReset.Width = 60;
+            btnSCReset.Height = 20;
+            btnSCReset.Margin = new Thickness(5);
+            btnSCReset.Content = "초기화";
+            btnSCReset.Click += BtnSCReset_Click;
+            Grid.SetRow(btnSCReset, 6);
+            Grid.SetColumn(btnSCReset, 3);
+            grid.Children.Add(btnSCReset);
+
+            /***************/
+
+            TextBlock lbl6 = new TextBlock();
+            lbl6.VerticalAlignment = VerticalAlignment.Center;
+            lbl6.Text = "배경색(ARGB)";
+            lbl6.Foreground = Brushes.Yellow;
+            Grid.SetRow(lbl6, 7);
+            Grid.SetColumn(lbl6, 0);
+            Grid.SetColumnSpan(lbl6, 4);
+            grid.Children.Add(lbl6);
+
+            StackPanel pnl2 = new StackPanel();
+            pnl2.Orientation = Orientation.Horizontal;
+            Grid.SetRow(pnl2, 8);
+            Grid.SetColumn(pnl2, 0);
+            Grid.SetColumnSpan(pnl2, 4);
+            grid.Children.Add(pnl2);
+
+            TextBox tb1 = new TextBox();
+            tb1.Width = 60;
+            tb1.HorizontalAlignment = HorizontalAlignment.Center;
+            tb1.VerticalAlignment = VerticalAlignment.Center;
+            tb1.MaxLength = 8;
+            tb1.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScreenshotBackgroundColor)));
+            pnl2.Children.Add(tb1);
+
+            Canvas img1 = new Canvas();
+            img1.Width = 20;
+            img1.Height = 20;
+            img1.Margin = new Thickness(2);
+            img1.SetBinding(Canvas.BackgroundProperty, new Binding(nameof(UIOptionsDataModel.ScreenshotBackgroundColor))
+            {
+                Converter = UIHelper.CreateConverter((string s) => ColorWConverter.TryParse(s, out var color) ? new SolidColorBrush(color) : null)
+            });
+            pnl2.Children.Add(img1);
+
+            /**************/
+
+            ScrollViewer viewer = new ScrollViewer();
+            viewer.Content = grid;
+            return viewer;
         }
 
         private UIElement GetTabContent5()
@@ -383,6 +554,7 @@ namespace WzComparerR2.MapRender.UI
                  "` 채팅창",
                  "Alt+Enter 해상도 변경",
                  "ScrollLock 스크린샷",
+                 "Ctrl+S 현재 화면만 캡쳐",
             };
 
             foreach (var tip in tips)
@@ -443,6 +615,10 @@ namespace WzComparerR2.MapRender.UI
         private bool _minimap_cameraRegionVisible;
         private bool _worldmap_useImageNameAsInfoName;
         private string _screenshotBackgroundColor;
+        private string _scLeft;
+        private string _scTop;
+        private string _scRight;
+        private string _scBottom;
 
         public bool MuteOnLeaveFocus
         {
@@ -508,6 +684,30 @@ namespace WzComparerR2.MapRender.UI
         {
             get { return this._worldmap_useImageNameAsInfoName; }
             set { base.SetProperty(ref this._worldmap_useImageNameAsInfoName, value); }
+        }
+
+        public string ScLeft
+        {
+            get { return this._scLeft; }
+            set { base.SetProperty(ref this._scLeft, value); }
+        }
+
+        public string ScTop
+        {
+            get { return this._scTop; }
+            set { base.SetProperty(ref this._scTop, value); }
+        }
+
+        public string ScBottom
+        {
+            get { return this._scBottom; }
+            set { base.SetProperty(ref this._scBottom, value); }
+        }
+
+        public string ScRight
+        {
+            get { return this._scRight; }
+            set { base.SetProperty(ref this._scRight, value); }
         }
     }
 }

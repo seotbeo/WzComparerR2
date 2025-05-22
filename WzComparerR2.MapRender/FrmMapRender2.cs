@@ -131,6 +131,7 @@ namespace WzComparerR2.MapRender
         PatchVisibility patchVisibility;
 
         bool prepareCapture;
+        bool captureViewPortOnly;
         Task captureTask;
         Resolution resolution;
         float opacity;
@@ -151,6 +152,7 @@ namespace WzComparerR2.MapRender
         bool isExiting;
 
         bool CamaraChangedEffState = true;
+        Rectangle ForceSCRect = new Rectangle();
 
         protected override void Initialize()
         {
@@ -216,6 +218,7 @@ namespace WzComparerR2.MapRender
                     uiWnd.DataContext = new UIOptionsDataModel();
                     uiWnd.OK += UIOption_OK;
                     uiWnd.Cancel += UIOption_Cancel;
+                    uiWnd.ResetSCRect += UIOption_ResetSCRect;
                     uiWnd.Visible += UiWnd_Visible;
                     uiWnd.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
                     this.ui.Windows.Add(uiWnd);
@@ -228,7 +231,8 @@ namespace WzComparerR2.MapRender
             }), KeyCode.Escape, ModifierKeys.None));
 
             //截图
-            this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => { if (CanCapture()) prepareCapture = true; }), KeyCode.Scroll, ModifierKeys.None));
+            this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => { if (CanCapture()) prepareCapture = true; captureViewPortOnly = false; }), KeyCode.Scroll, ModifierKeys.None));
+            this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => { if (CanCapture()) prepareCapture = true; captureViewPortOnly = true; }), KeyCode.S, ModifierKeys.Control));
 
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => { renderEnv.Camera.AdjustRectEnabled = !renderEnv.Camera.AdjustRectEnabled; }), KeyCode.U, ModifierKeys.Control));
 
@@ -505,6 +509,14 @@ namespace WzComparerR2.MapRender
         {
             var wnd = sender as UIOptions;
             wnd.Hide();
+        }
+        
+        private void UIOption_ResetSCRect(object sender, EventArgs e)
+        {
+            this.ForceSCRect = new Rectangle();
+            var wnd = sender as UIOptions;
+            var data = wnd.DataContext as UIOptionsDataModel;
+            LoadSCRectOptionData(data);
         }
 
         private void UiWnd_Visible(object sender, RoutedEventArgs e)
@@ -1020,7 +1032,33 @@ namespace WzComparerR2.MapRender
             var maxTextureWidth = 4096;
             var maxTextureHeight = 4096;
 
-            Rectangle oldRect = this.renderEnv.Camera.WorldRect;
+            Rectangle originalWorldRect = this.renderEnv.Camera.WorldRect;
+            Rectangle oldRect = originalWorldRect;
+            // 보이는 화면만 캡쳐
+            if (captureViewPortOnly)
+            {
+                oldRect = new Rectangle((int)this.renderEnv.Camera.Center.X - this.renderEnv.Camera.Width / 2, (int)this.renderEnv.Camera.Center.Y - this.renderEnv.Camera.Height / 2,
+                    this.renderEnv.Camera.Width, this.renderEnv.Camera.Height);
+            }
+            else
+            {
+                // 해상도 기준으로 스크린샷 최소 크기 조절
+                if (oldRect.Width < this.renderEnv.Camera.Width)
+                {
+                    oldRect.X -= (this.renderEnv.Camera.Width - oldRect.Width) / 2;
+                    oldRect.Width = this.renderEnv.Camera.Width;
+                }
+                if (oldRect.Height < this.renderEnv.Camera.Height)
+                {
+                    oldRect.Y -= (this.renderEnv.Camera.Height - oldRect.Height) / 2;
+                    oldRect.Height = this.renderEnv.Camera.Height;
+                }
+                // 스크린샷 커스텀 범위
+                if (!(this.ForceSCRect.IsEmpty || this.ForceSCRect.Width == 0 || this.ForceSCRect.Height == 0))
+                {
+                    oldRect = this.ForceSCRect;
+                }
+            }
             int width = Math.Min(oldRect.Width, maxTextureWidth);
             int height = Math.Min(oldRect.Height, maxTextureHeight);
             this.renderEnv.Camera.UseWorldRect = true;
@@ -1091,7 +1129,8 @@ namespace WzComparerR2.MapRender
             pngEffect?.Dispose();
             target2d.Dispose();
 
-            this.renderEnv.Camera.WorldRect = oldRect;
+            //this.renderEnv.Camera.WorldRect = oldRect;
+            this.renderEnv.Camera.WorldRect = originalWorldRect;
             this.renderEnv.Camera.UseWorldRect = false;
 
             GraphicsDevice.SetRenderTargets(oldTarget);
@@ -1206,6 +1245,7 @@ namespace WzComparerR2.MapRender
             model.ScreenshotBackgroundColor = config.ScreenshotBackgroundColor;
             model.Minimap_CameraRegionVisible = this.ui.Minimap.CameraRegionVisible;
             model.WorldMap_UseImageNameAsInfoName = this.ui.WorldMap.UseImageNameAsInfoName;
+            LoadSCRectOptionData(model);
         }
 
         private void SaveOptionData(UIOptionsDataModel model)
@@ -1224,6 +1264,28 @@ namespace WzComparerR2.MapRender
             config.Minimap_CameraRegionVisible = model.Minimap_CameraRegionVisible;
             config.WorldMap_UseImageNameAsInfoName = model.WorldMap_UseImageNameAsInfoName;
             WzComparerR2.Config.ConfigManager.Save();
+
+            if (int.TryParse(model.ScLeft, out int left) && int.TryParse(model.ScTop, out int top)
+                && int.TryParse(model.ScRight, out int right) && int.TryParse(model.ScBottom, out int bottom))
+                this.ForceSCRect = new Rectangle(left, top, Math.Max(0, right - left), Math.Max(0, bottom - top));
+        }
+
+        private void LoadSCRectOptionData(UIOptionsDataModel model)
+        {
+            if (this.ForceSCRect.IsEmpty)
+            {
+                model.ScLeft = this.renderEnv.Camera.WorldRect.Left.ToString();
+                model.ScTop = this.renderEnv.Camera.WorldRect.Top.ToString();
+                model.ScRight = this.renderEnv.Camera.WorldRect.Right.ToString();
+                model.ScBottom = this.renderEnv.Camera.WorldRect.Bottom.ToString();
+            }
+            else
+            {
+                model.ScLeft = this.ForceSCRect.Left.ToString();
+                model.ScTop = this.ForceSCRect.Top.ToString();
+                model.ScRight = this.ForceSCRect.Right.ToString();
+                model.ScBottom = this.ForceSCRect.Bottom.ToString();
+            }
         }
         #endregion
 
