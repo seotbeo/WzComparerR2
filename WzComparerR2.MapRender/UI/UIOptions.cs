@@ -448,7 +448,7 @@ namespace WzComparerR2.MapRender.UI
             tbSCLeft.Width = 60;
             tbSCLeft.HorizontalAlignment = HorizontalAlignment.Center;
             tbSCLeft.VerticalAlignment = VerticalAlignment.Center;
-            tbSCLeft.MaxLength = 5;
+            tbSCLeft.MaxLength = 6;
             tbSCLeft.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScLeft)));
             Grid.SetRow(tbSCLeft, 4);
             Grid.SetColumn(tbSCLeft, 0);
@@ -458,7 +458,7 @@ namespace WzComparerR2.MapRender.UI
             tbSCTop.Width = 60;
             tbSCTop.HorizontalAlignment = HorizontalAlignment.Center;
             tbSCTop.VerticalAlignment = VerticalAlignment.Center;
-            tbSCTop.MaxLength = 5;
+            tbSCTop.MaxLength = 6;
             tbSCTop.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScTop)));
             Grid.SetRow(tbSCTop, 2);
             Grid.SetColumn(tbSCTop, 1);
@@ -468,7 +468,7 @@ namespace WzComparerR2.MapRender.UI
             tbSCRight.Width = 60;
             tbSCRight.HorizontalAlignment = HorizontalAlignment.Center;
             tbSCRight.VerticalAlignment = VerticalAlignment.Center;
-            tbSCRight.MaxLength = 5;
+            tbSCRight.MaxLength = 6;
             tbSCRight.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScRight)));
             Grid.SetRow(tbSCRight, 4);
             Grid.SetColumn(tbSCRight, 2);
@@ -477,7 +477,7 @@ namespace WzComparerR2.MapRender.UI
             tbSCBottom.Width = 60;
             tbSCBottom.HorizontalAlignment = HorizontalAlignment.Center;
             tbSCBottom.VerticalAlignment = VerticalAlignment.Center;
-            tbSCBottom.MaxLength = 5;
+            tbSCBottom.MaxLength = 6;
             tbSCBottom.SetBinding(TextBox.TextProperty, new Binding(nameof(UIOptionsDataModel.ScBottom)));
             Grid.SetRow(tbSCBottom, 6);
             Grid.SetColumn(tbSCBottom, 1);
