@@ -1198,7 +1198,7 @@ namespace WzComparerR2.MapRender
 
                 this.cm.StartCoroutine(cm.Post((v) =>
                 {
-                    v.ui.ChatBox.AppendTextHelp($"스크린샷을 저장했습니다: {v.outputFileName}");
+                    v.ui.ChatBox.AppendTextHelp($"스크린샷을 저장했습니다: {v.outputFileName} ({mapWidth}×{mapHeight})");
                 }, new
                 {
                     this.ui,
