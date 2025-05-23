@@ -18,6 +18,7 @@ using WzComparerR2.PluginBase;
 using WzComparerR2.Config;
 using WzComparerR2.Controls;
 using WzComparerR2.AvatarCommon;
+using System.IO;
 
 #if NET6_0_OR_GREATER
 using WzComparerR2.OpenAPI;
@@ -1896,6 +1897,12 @@ namespace WzComparerR2.Avatar.UI
                 }
 
                 //string outputFileName = dlg.FileName;
+                string framesDirName = Path.Combine(Path.GetDirectoryName(outputFileName), Path.GetFileNameWithoutExtension(outputFileName) + ".frames");
+                if (config.SavePngFramesEnabled && !Directory.Exists(framesDirName))
+                {
+                    Directory.CreateDirectory(framesDirName);
+                }
+
                 var actPlaying = new[] { bodyPlaying, emoPlaying, tamingPlaying };
                 var actFrames = new[] { cmbBodyFrame, cmbEmotionFrame, cmbTamingFrame }
                     .Select((cmb, i) =>
@@ -2123,6 +2130,7 @@ namespace WzComparerR2.Avatar.UI
 
                 using var bgBrush = CreateBackgroundBrush();
                 encoder.Init(outputFileName, clientRect.Width, clientRect.Height);
+                int currentFrame = 1;
                 foreach (IGifFrame gifFrame in gifLayer.Frames)
                 {
                     using (var bmp = new Bitmap(clientRect.Width, clientRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
@@ -2135,6 +2143,11 @@ namespace WzComparerR2.Avatar.UI
                                 g.FillRectangle(bgBrush, 0, 0, bmp.Width, bmp.Height);
                             }
                             gifFrame.Draw(g, clientRect);
+                        }
+                        if (config.SavePngFramesEnabled)
+                        {
+                            bmp.Save(Path.Combine(framesDirName, currentFrame.ToString().PadLeft(3, '0') + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                            currentFrame++;
                         }
                         encoder.AppendFrame(bmp, Math.Max(cap.MinFrameDelay, gifFrame.Delay));
                     }
