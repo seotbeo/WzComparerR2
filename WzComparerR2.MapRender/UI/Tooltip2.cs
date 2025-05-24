@@ -417,6 +417,7 @@ namespace WzComparerR2.MapRender.UI
             var spot = item.Spot;
             if (spot != null)
             {
+                if (spot.MapNo.Count == 0) return new TooltipContent();
                 //计算属性要求 获取怪物列表和npc列表
                 int spotBarrier = 0, spotBarrierArc = 0, spotBarrierAut = 0;
                 var mobNames = new List<string>();
