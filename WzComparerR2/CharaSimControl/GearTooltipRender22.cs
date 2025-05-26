@@ -614,7 +614,7 @@ namespace WzComparerR2.CharaSimControl
                     AddLines(0, 7, ref picH, condition: secondLineNeeded);
                     secondLineNeeded = false;
                     hasThirdContents = true;
-                    hasOptionPart = true;
+                    //hasOptionPart = true;
 
                     g.DrawImage(Resource.UIToolTipNew_img_Item_Equip_textIcon_set_guide, 16, picH - 2);
                     GearGraphics.DrawString(g, $"#$g{text}#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 100, 308, ref picH, 16, alignment: Text.TextAlignment.Left);
@@ -664,7 +664,7 @@ namespace WzComparerR2.CharaSimControl
                     AddLines(0, 7, ref picH, condition: secondLineNeeded);
                     secondLineNeeded = false;
                     hasThirdContents = true;
-                    hasOptionPart = true;
+                    //hasOptionPart = true;
 
                     TextRenderer.DrawText(g, "사용 가능 스킬", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.Equip22BrushGray).Color, TextFormatFlags.NoPadding);
                     GearGraphics.DrawString(g, $"#$g{text}#".Replace("#c", ""), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 100, 308, ref picH, 16, alignment: Text.TextAlignment.Left);
@@ -678,7 +678,7 @@ namespace WzComparerR2.CharaSimControl
                 if (Gear.Props.TryGetValue(GearPropType.level, out value) && !Gear.FixLevel)
                 {
                     bool max = (Gear.Levels != null && value >= Gear.Levels.Count);
-                    string expString = Gear.Levels != null && Gear.Levels.First().Point != 0 ? ": 0/" + Gear.Levels.First().Point : ": 0%";
+                    string expString = Gear.Levels != null && Gear.Levels.First().Point != 0 ? ": 0 / " + Gear.Levels.First().Point : ": 0%";
                     textList.Add($"#$gLv : {(max ? "MAX" : value.ToString())}  EXP {(max ? ": MAX" : expString)}#");
                 }
                 else if ((GearType)Gear.type == GearType.arcaneSymbol)
