@@ -57,7 +57,7 @@ namespace WzComparerR2.Config
             set { this["displayPermyriadAsPercent"] = value; }
         }
 
-        [ConfigurationProperty("ignoreEvalError", DefaultValue = false)]
+        [ConfigurationProperty("ignoreEvalError", DefaultValue = true)]
         public bool IgnoreEvalError
         {
             get { return (bool)this["ignoreEvalError"]; }
