@@ -7,6 +7,7 @@ using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
 using WzComparerR2.Controls;
 using WzComparerR2.WzLib;
+using WzComparerR2.Config;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -287,6 +288,38 @@ namespace WzComparerR2.CharaSimControl
         private void frmEquip_DragDrop(object sender, DragEventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+        public void UpdateSettings(CharaSimConfig Setting)
+        {
+            tooltip.SkillRender.ShowProperties = false;
+            tooltip.SkillRender.ShowObjectID = false;
+            tooltip.SkillRender.ShowDelay = false;
+            tooltip.SkillRender.ShowArea = false;
+            tooltip.SkillRender.DisplayCooltimeMSAsSec = Setting.Skill.DisplayCooltimeMSAsSec;
+            tooltip.SkillRender.DisplayPermyriadAsPercent = Setting.Skill.DisplayPermyriadAsPercent;
+            tooltip.SkillRender.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
+
+            tooltip.GearRender.ShowObjectID = false;
+            tooltip.GearRender.ShowSpeed = Setting.Gear.ShowWeaponSpeed;
+            tooltip.GearRender.ShowLevelOrSealed = false;
+            tooltip.GearRender.MaxStar25 = Setting.Gear.MaxStar25;
+            tooltip.GearRender22.ShowObjectID = false;
+            tooltip.GearRender22.ShowSpeed = true;
+            tooltip.GearRender22.ShowLevelOrSealed = false;
+            tooltip.GearRender22.MaxStar25 = Setting.Gear.MaxStar25;
+
+            tooltip.ItemRender.ShowObjectID = false;
+            tooltip.ItemRender.LinkRecipeInfo = false;
+            tooltip.ItemRender.LinkRecipeItem = Setting.Item.LinkRecipeItem;
+            tooltip.ItemRender.ShowLevelOrSealed = false;
+            tooltip.ItemRender.ShowNickTag = false;
+            tooltip.ItemRender.CosmeticHairColor = Setting.Item.CosmeticHairColor;
+            tooltip.ItemRender.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
+
+            tooltip.RecipeRender.ShowObjectID = false;
+
+            tooltip.Enable22AniStyle = Setting.Misc.Enable22AniStyle;
         }
     }
 }

@@ -41,6 +41,7 @@ namespace WzComparerR2.CharaSimControl
         private ContextMenuStrip menu;
         private bool showMenu;
         private bool showID;
+        private bool enable22AniStyle;
 
         public Object TargetItem
         {
@@ -63,7 +64,6 @@ namespace WzComparerR2.CharaSimControl
         public SetItemTooltipRender22 SetItemRender22 { get; private set; }
 
         public string ImageFileName { get; set; }
-        public bool Enable22AniStyle { get; set; }
 
         private ToolStripMenuItem SaveSample {  get; set; }
 
@@ -85,6 +85,18 @@ namespace WzComparerR2.CharaSimControl
         {
             get { return showMenu; }
             set { showMenu = value; }
+        }
+
+        public bool Enable22AniStyle
+        {
+            get { return enable22AniStyle; }
+            set
+            {
+                this.enable22AniStyle = value;
+                this.SkillRender.Enable22AniStyle = value;
+                this.ItemRender.Enable22AniStyle = value;
+                this.RecipeRender.Enable22AniStyle = value;
+            }
         }
 
         public override void Refresh()
