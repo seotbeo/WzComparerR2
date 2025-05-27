@@ -192,6 +192,17 @@ namespace WzComparerR2.Rendering
             }
         }
 
+        public void DrawThickRectangle(Rectangle rectangle, Color color, int thickness)
+        {
+            if (!rectangle.IsEmpty)
+            {
+                this.Draw(singlePixel, new Rectangle(rectangle.Left, rectangle.Top, rectangle.Width, thickness), color);
+                this.Draw(singlePixel, new Rectangle(rectangle.Left, rectangle.Top, thickness, rectangle.Height), color);
+                this.Draw(singlePixel, new Rectangle(rectangle.Left, rectangle.Bottom - thickness, rectangle.Width, thickness), color);
+                this.Draw(singlePixel, new Rectangle(rectangle.Right - thickness, rectangle.Top, thickness, rectangle.Height), color);
+            }
+        }
+
         public void DrawLine(Point point1, Point point2, int width, Color color)
         {
             if (point1 != point2)

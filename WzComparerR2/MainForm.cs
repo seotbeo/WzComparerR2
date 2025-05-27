@@ -802,11 +802,11 @@ namespace WzComparerR2
             }
         }
 
-        private void buttonOverlayRect_Click(object sender, EventArgs e)
+        private void buttonHitboxOverlay_Click(object sender, EventArgs e)
         {
             if (this.pictureBoxEx1.ShowOverlayAni)
             {
-                this.pictureBoxEx1.AddOverlayRect();
+                this.pictureBoxEx1.AddHitboxOverlay();
             }
         }
         

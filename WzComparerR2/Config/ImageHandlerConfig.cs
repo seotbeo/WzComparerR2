@@ -17,6 +17,7 @@ namespace WzComparerR2.Config
             MinMixedAlpha = 0;
             MinDelay = 30;
             OverlayRectColor = Color.Cyan;
+            OverlayRectAlpha = 60;
         }
 
         [ConfigurationProperty("autoSavePictureFolder")]
@@ -101,6 +102,13 @@ namespace WzComparerR2.Config
         {
             get { return (ConfigItem<Color>)this["overlayRectColor"]; }
             set { this["overlayRectColor"] = value; }
+        }
+
+        [ConfigurationProperty("overlayRectAlpha")]
+        public ConfigItem<int> OverlayRectAlpha
+        {
+            get { return (ConfigItem<int>)this["overlayRectAlpha"]; }
+            set { this["overlayRectAlpha"] = value; }
         }
 
         [ConfigurationProperty("ffmpegBinPath")]

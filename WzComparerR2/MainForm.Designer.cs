@@ -178,7 +178,7 @@
             this.itemContainer44 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemGifSetting = new DevComponents.DotNetBar.ButtonItem();
             this.buttonDisableOverlayAni = new DevComponents.DotNetBar.ButtonItem();
-            this.buttonOverlayRect = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonHitboxOverlay = new DevComponents.DotNetBar.ButtonItem();
             this.buttonLoadMultiFrameAniList = new DevComponents.DotNetBar.ButtonItem();
             this.buttonOverlayExtractGifEx = new DevComponents.DotNetBar.ButtonItem();
             this.textBoxX1 = new DevComponents.DotNetBar.Controls.TextBoxX();
@@ -2107,7 +2107,7 @@
             this.itemContainer44.Name = "itemContainer44";
             this.itemContainer44.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.buttonDisableOverlayAni,
-            this.buttonOverlayRect,
+            this.buttonHitboxOverlay,
             this.buttonOverlayExtractGifEx,
             this.buttonLoadMultiFrameAniList});
             // 
@@ -2121,12 +2121,12 @@
             this.buttonDisableOverlayAni.Text = "중첩 비활성화";
             this.buttonDisableOverlayAni.Click += new System.EventHandler(this.buttonDisableOverlayAni_Click);
             // 
-            // buttonOverlayRect
+            // buttonHitboxOverlay
             // 
-            this.buttonOverlayRect.Name = "buttonOverlayRect";
-            this.buttonOverlayRect.Text = "범위 사각형 추가";
-            this.buttonOverlayRect.Tooltip = "입력한 범위에 대한 반투명 사각형을 그립니다.";
-            this.buttonOverlayRect.Click += new System.EventHandler(this.buttonOverlayRect_Click);
+            this.buttonHitboxOverlay.Name = "buttonHitboxOverlay";
+            this.buttonHitboxOverlay.Text = "범위 그리기";
+            this.buttonHitboxOverlay.Tooltip = "입력한 범위에 대한 반투명 도형을 그립니다.";
+            this.buttonHitboxOverlay.Click += new System.EventHandler(this.buttonHitboxOverlay_Click);
             // 
             // buttonItemExtractGifEx
             //
@@ -3297,7 +3297,7 @@
         private DevComponents.DotNetBar.ItemContainer itemContainer44;
         private DevComponents.DotNetBar.ButtonItem buttonItemGifSetting;
         private DevComponents.DotNetBar.ButtonItem buttonDisableOverlayAni;
-        private DevComponents.DotNetBar.ButtonItem buttonOverlayRect; 
+        private DevComponents.DotNetBar.ButtonItem buttonHitboxOverlay; 
         private DevComponents.DotNetBar.ButtonItem buttonLoadMultiFrameAniList;
         private DevComponents.DotNetBar.ButtonItem buttonOverlayExtractGifEx;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
