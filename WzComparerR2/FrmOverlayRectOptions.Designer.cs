@@ -481,7 +481,7 @@ namespace WzComparerR2
             this.Name = "FrmOverlayRectOptions";
             this.Padding = new System.Windows.Forms.Padding(9, 8, 9, 8);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "범위 사각형 설정";
+            this.Text = "범위 그리기 설정";
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRight)).EndInit();
