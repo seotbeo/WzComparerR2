@@ -25,6 +25,7 @@ namespace WzComparerR2.MapRender.UI
         public event EventHandler OK;
         public event EventHandler Cancel;
         public event EventHandler ResetSCRect;
+        public event EventHandler ChkForceClickEvent;
 
         protected override void InitializeComponents()
         {
@@ -139,6 +140,12 @@ namespace WzComparerR2.MapRender.UI
         private void BtnSCReset_Click(object sender, RoutedEventArgs e)
         {
             this.ResetSCRect?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        private void ChkForce_Click(object sender, RoutedEventArgs e)
+        {
+            this.ChkForceClickEvent?.Invoke(this, EventArgs.Empty);
             return;
         }
 
@@ -398,6 +405,7 @@ namespace WzComparerR2.MapRender.UI
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Pixel) });
@@ -494,20 +502,30 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetColumn(btnSCReset, 3);
             grid.Children.Add(btnSCReset);
 
+            CheckBox chkForce = new CheckBox();
+            chkForce.Content = "최소 크기를 현재 해상도로 맞춤";
+            chkForce.Background = Brushes.Gray;
+            chkForce.Click += ChkForce_Click;
+            chkForce.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.ForceCaptureWithResolution)));
+            Grid.SetRow(chkForce, 7);
+            Grid.SetColumn(chkForce, 0);
+            Grid.SetColumnSpan(chkForce, 4);
+            grid.Children.Add(chkForce);
+
             /***************/
 
             TextBlock lbl6 = new TextBlock();
             lbl6.VerticalAlignment = VerticalAlignment.Center;
             lbl6.Text = "배경색(ARGB)";
             lbl6.Foreground = Brushes.Yellow;
-            Grid.SetRow(lbl6, 7);
+            Grid.SetRow(lbl6, 8);
             Grid.SetColumn(lbl6, 0);
             Grid.SetColumnSpan(lbl6, 4);
             grid.Children.Add(lbl6);
 
             StackPanel pnl2 = new StackPanel();
             pnl2.Orientation = Orientation.Horizontal;
-            Grid.SetRow(pnl2, 8);
+            Grid.SetRow(pnl2, 9);
             Grid.SetColumn(pnl2, 0);
             Grid.SetColumnSpan(pnl2, 4);
             grid.Children.Add(pnl2);
@@ -554,6 +572,7 @@ namespace WzComparerR2.MapRender.UI
                  "` 채팅창",
                  "Alt+Enter 해상도 변경",
                  "ScrollLock 스크린샷",
+                 "S 캡쳐 범위 표시",
                  "Ctrl+S 현재 화면만 캡쳐",
             };
 
@@ -614,6 +633,7 @@ namespace WzComparerR2.MapRender.UI
         private bool _topBarVisible;
         private bool _minimap_cameraRegionVisible;
         private bool _worldmap_useImageNameAsInfoName;
+        private bool _forceCaptureWithResolution;
         private string _screenshotBackgroundColor;
         private string _scLeft;
         private string _scTop;
@@ -686,6 +706,12 @@ namespace WzComparerR2.MapRender.UI
             set { base.SetProperty(ref this._worldmap_useImageNameAsInfoName, value); }
         }
 
+        public bool ForceCaptureWithResolution
+        {
+            get { return this._forceCaptureWithResolution; }
+            set { base.SetProperty(ref this._forceCaptureWithResolution, value); }
+        }
+        
         public string ScLeft
         {
             get { return this._scLeft; }

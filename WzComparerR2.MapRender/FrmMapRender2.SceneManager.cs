@@ -295,7 +295,7 @@ namespace WzComparerR2.MapRender
 
             //同步UI
             this.renderEnv.Camera.WorldRect = mapData.VRect;
-            this.ForceSCRect = new Rectangle();
+            ResetCaptureRect();
 
             this.ui.MirrorFrame.Visibility = mapData.ID / 10000000 == 32 ? EmptyKeys.UserInterface.Visibility.Visible : EmptyKeys.UserInterface.Visibility.Collapsed;
 

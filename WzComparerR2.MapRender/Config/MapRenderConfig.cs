@@ -80,5 +80,12 @@ namespace WzComparerR2.MapRender.Config
             get { return (ConfigItem<string>)this["screenshotBackgroundColor"]; }
             set { this["screenshotBackgroundColor"] = value; }
         }
+
+        [ConfigurationProperty("forceCaptureWithResolution")]
+        public ConfigItem<bool> ForceCaptureWithResolution
+        {
+            get { return (ConfigItem<bool>)this["forceCaptureWithResolution"]; }
+            set { this["forceCaptureWithResolution"] = value; }
+        }
     }
 }

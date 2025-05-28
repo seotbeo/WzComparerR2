@@ -567,6 +567,29 @@ namespace WzComparerR2.MapRender
             }
         }
 
+        private void DrawCaptureRect(GameTime gameTime)
+        {
+            if (patchVisibility.CaptureRectVisible)
+            {
+                var origin = this.renderEnv.Camera.Origin.ToPoint();
+                this.batcher.Begin(Matrix.CreateTranslation(new Vector3(-origin.X, -origin.Y, 0)));
+
+                Rectangle rect = this.renderEnv.Camera.WorldRect;
+                if (!this.CaptureRect.IsEmpty)
+                {
+                    rect = this.CaptureRect;
+                }
+                if (!rect.IsEmpty)
+                {
+                    var meshItem = this.batcher.MeshPop();
+                    meshItem.RenderObject = new RectMesh(rect, new Color(204, 204, 204), 5);
+                    this.batcher.Draw(meshItem);
+                    this.batcher.MeshPush(meshItem);
+                }
+                this.batcher.End();
+            }
+        }
+
         private void DrawName(SceneItem item)
         {
             StringResult sr = null;

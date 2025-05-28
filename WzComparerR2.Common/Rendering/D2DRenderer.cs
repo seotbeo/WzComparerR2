@@ -76,8 +76,13 @@ namespace WzComparerR2.Rendering
 
         public void DrawRectangle(Rectangle rectangle, Color color)
         {
+            DrawRectangle(rectangle, color, 1);
+        }
+
+        public void DrawRectangle(Rectangle rectangle, Color color, int thickness)
+        {
             var rt = this.context.D2DRenderTarget;
-            rt.DrawRectangle(rectangle.XnaToDxRect(), this.context.GetBrush(color));
+            rt.DrawRectangle(rectangle.XnaToDxRect(), this.context.GetBrush(color), thickness, null);
         }
 
         public void FillRectangle(Rectangle rectangle, Color color)

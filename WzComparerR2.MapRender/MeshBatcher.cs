@@ -339,13 +339,14 @@ namespace WzComparerR2.MapRender
                 if (this.D2DEnabled)
                 {
                     Prepare(ItemType.D2DObject);
-                    this.d2dRender.DrawRectangle(rect.Rect, rect.Color);
+                    this.d2dRender.DrawRectangle(rect.Rect, rect.Color, rect.Thickness);
                     this.d2dRender.FillRectangle(rect.Rect, rect.FillColor);
                 }
                 else
                 {
                     Prepare(ItemType.Sprite);
-                    sprite.DrawRectangle(rect.Rect, rect.Color);
+                    if (rect.Thickness == 1) sprite.DrawRectangle(rect.Rect, rect.Color);
+                    else sprite.DrawThickRectangle(rect.Rect, rect.Color, rect.Thickness);
                     sprite.FillRectangle(rect.Rect, rect.FillColor);
                 }
             }
