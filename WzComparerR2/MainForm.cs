@@ -3596,6 +3596,8 @@ namespace WzComparerR2
                     comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                     comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
                     comparer.EnableDarkMode = chkEnableDarkMode.Checked;
+                    comparer.OutputGearTooltip = chkOutputGearTooltip.Checked;
+                    comparer.OutputItemTooltip = chkOutputItemTooltip.Checked;
                     comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);

@@ -23,6 +23,7 @@ namespace WzComparerR2.CharaSim
         public string ConsumableFrom { get; set; }
         public string EndUseDate { get; set; }
         public string SamplePath { get; set; }
+        public ItemType type { get; set; }
 
         public List<GearLevelInfo> Levels { get; internal set; }
 
@@ -52,7 +53,26 @@ namespace WzComparerR2.CharaSim
             return this.Props.TryGetValue(type, out long value) && value != 0;
         }
 
-        public static Item CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static ItemType GetItemType(int code)
+        {
+            switch (code / 1000000)
+            {
+                case 2:
+                    return ItemType.Consume;
+                case 3:
+                    return ItemType.Install;
+                case 4:
+                    return ItemType.Etc;
+                case 5:
+                    if (code / 10000 != 500)
+                        return ItemType.Cash;
+                    return ItemType.Pet;
+                default:
+                    return ItemType.Unknown;
+            }
+        }
+
+        public static Item CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             Item item = new Item();
             int value;
@@ -83,21 +103,21 @@ namespace WzComparerR2.CharaSim
                         case "icon":
                             if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
-                                item.Icon = BitmapOrigin.CreateFromNode(subNode, findNode);
+                                item.Icon = BitmapOrigin.CreateFromNode(subNode, findNode, wzf);
                             }
                             break;
 
                         case "iconRaw":
                             if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
-                                item.IconRaw = BitmapOrigin.CreateFromNode(subNode, findNode);
+                                item.IconRaw = BitmapOrigin.CreateFromNode(subNode, findNode, wzf);
                             }
                             break;
 
                         case "sample":
                             if (subNode.Value is Wz_Uol || subNode.Value is Wz_Png)
                             {
-                                item.Sample = BitmapOrigin.CreateFromNode(subNode, findNode);
+                                item.Sample = BitmapOrigin.CreateFromNode(subNode, findNode, wzf);
                             }
                             break;
 
@@ -287,7 +307,7 @@ namespace WzComparerR2.CharaSim
                             item.Recipes.Add(subNode.GetValue<int>());
                         }
                     }
-                    else if(Enum.TryParse(subNode.Text, out ItemSpecType type))
+                    else if (Enum.TryParse(subNode.Text, out ItemSpecType type))
                     {
                         try
                         {
@@ -324,5 +344,14 @@ namespace WzComparerR2.CharaSim
             return item;
         }
 
+        public enum ItemType
+        {
+            Unknown = 0,
+            Consume = 200,
+            Install = 300,
+            Etc = 400,
+            Pet = 500,
+            Cash = 501,
+        }
     }
 }

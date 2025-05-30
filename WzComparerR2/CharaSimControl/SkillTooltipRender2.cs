@@ -34,7 +34,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
-        public Dictionary<string, List<string>> DiffSkillTags { get; set; } = new Dictionary<string, List<string>>();
+        public Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
         public Wz_Node wzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }

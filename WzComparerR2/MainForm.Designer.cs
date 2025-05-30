@@ -214,6 +214,8 @@
             this.chkResolvePngLink = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkEnableDarkMode = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
+            this.chkOutputGearTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkOutputItemTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputSkillTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputRemovedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAddedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -2435,6 +2437,8 @@
             // 
             this.superTabControlPanel2.Controls.Add(this.chkHashPngFileName);
             this.superTabControlPanel2.Controls.Add(this.chkEnableDarkMode);
+            this.superTabControlPanel2.Controls.Add(this.chkOutputGearTooltip);
+            this.superTabControlPanel2.Controls.Add(this.chkOutputItemTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputSkillTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkResolvePngLink);
             this.superTabControlPanel2.Controls.Add(this.chkOutputRemovedImg);
@@ -2458,12 +2462,13 @@
             // 
             // 
             this.chkResolvePngLink.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkResolvePngLink.Location = new System.Drawing.Point(318, 34);
+            this.chkResolvePngLink.Checked = true;
+            this.chkResolvePngLink.Location = new System.Drawing.Point(484, 34);
             this.chkResolvePngLink.Name = "chkResolvePngLink";
-            this.chkResolvePngLink.Size = new System.Drawing.Size(107, 23);
+            this.chkResolvePngLink.Size = new System.Drawing.Size(140, 23);
             this.chkResolvePngLink.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("ResolvePngLink", "", "对比报告中是否智能解析对比被Link的图片\r\n这会过滤掉无用的变更内容", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 90)));
-            this.chkResolvePngLink.TabIndex = 9;
+            this.superTooltip1.SetSuperTooltip(this.chkResolvePngLink, new DevComponents.DotNetBar.SuperTooltipInfo("ResolvePngLink", "", "링크된 이미지에 대해서 불필요한 비교 결과를 제외합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 90)));
+            this.chkResolvePngLink.TabIndex = 6;
             this.chkResolvePngLink.Text = "PNG 링크 따라가기";
             // 
             // chkEnableDarkMode
@@ -2472,26 +2477,68 @@
             // 
             // 
             this.chkEnableDarkMode.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkEnableDarkMode.Location = new System.Drawing.Point(280, 61);
+            this.chkEnableDarkMode.Location = new System.Drawing.Point(314, 61);
             this.chkEnableDarkMode.Name = "chkEnableDarkMode";
-            this.chkEnableDarkMode.Size = new System.Drawing.Size(115, 23);
+            this.chkEnableDarkMode.Size = new System.Drawing.Size(140, 23);
             this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("EnableDarkMode", "", "将比对结果以暗黑模式 HTML 输出", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("EnableDarkMode", "", "비교 결과 HTML을 다크 모드로 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkEnableDarkMode.TabIndex = 9;
             this.chkEnableDarkMode.Text = "다크 모드 활성화";
             // 
+            // chkHashPngFileName
             // 
-            // chkSaveSkillTooltip
+            // 
+            // 
+            // 
+            this.chkHashPngFileName.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkHashPngFileName.Location = new System.Drawing.Point(484, 61);
+            this.chkHashPngFileName.Name = "chkHashPngFileName";
+            this.chkHashPngFileName.Size = new System.Drawing.Size(140, 23);
+            this.chkHashPngFileName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkHashPngFileName, new DevComponents.DotNetBar.SuperTooltipInfo("HashPngFileName", "", "MD5 체크섬 값으로 PNG 파일 이름을 지정합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkHashPngFileName.TabIndex = 10;
+            this.chkHashPngFileName.Text = "PNG 파일명 해시";
+            // 
+            // chkOutputGearTooltip
+            // 
+            // 
+            // 
+            // 
+            this.chkOutputGearTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputGearTooltip.Location = new System.Drawing.Point(34, 89);
+            this.chkOutputGearTooltip.Name = "chkOutputGearTooltip";
+            this.chkOutputGearTooltip.Size = new System.Drawing.Size(140, 23);
+            this.chkOutputGearTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputGearTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputGearTooltip", "", "변경된 장비의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputGearTooltip.TabIndex = 11;
+            this.chkOutputGearTooltip.Text = "장비 툴팁 저장";
+            // 
+            // chkOutputItemTooltip
+            // 
+            // 
+            // 
+            // 
+            this.chkOutputItemTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputItemTooltip.Location = new System.Drawing.Point(174, 89);
+            this.chkOutputItemTooltip.Name = "chkOutputItemTooltip";
+            this.chkOutputItemTooltip.Size = new System.Drawing.Size(140, 23);
+            this.chkOutputItemTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputItemTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputItemTooltip", "", "변경된 아이템의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputItemTooltip.TabIndex = 11;
+            this.chkOutputItemTooltip.Text = "아이템 툴팁 저장";
+            // 
+            // chkOutputSkillTooltip
             // 
             // 
             // 
             // 
             this.chkOutputSkillTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputSkillTooltip.Location = new System.Drawing.Point(430, 34);
-            this.chkOutputSkillTooltip.Name = "chkSaveSkillTooltip";
-            this.chkOutputSkillTooltip.Size = new System.Drawing.Size(135, 23);
+            this.chkOutputSkillTooltip.Location = new System.Drawing.Point(314, 89);
+            this.chkOutputSkillTooltip.Name = "chkOutputSkillTooltip";
+            this.chkOutputSkillTooltip.Size = new System.Drawing.Size(140, 23);
             this.chkOutputSkillTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkOutputSkillTooltip.TabIndex = 11;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputSkillTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputSkillTooltip", "", "변경된 스킬의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputSkillTooltip.TabIndex = 12;
             this.chkOutputSkillTooltip.Text = "스킬 툴팁 저장";
             // 
             // chkOutputRemovedImg
@@ -2500,11 +2547,12 @@
             // 
             // 
             this.chkOutputRemovedImg.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputRemovedImg.Location = new System.Drawing.Point(152, 61);
+            this.chkOutputRemovedImg.Checked = true;
+            this.chkOutputRemovedImg.Location = new System.Drawing.Point(174, 61);
             this.chkOutputRemovedImg.Name = "chkOutputRemovedImg";
-            this.chkOutputRemovedImg.Size = new System.Drawing.Size(135, 23);
+            this.chkOutputRemovedImg.Size = new System.Drawing.Size(140, 23);
             this.chkOutputRemovedImg.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkOutputRemovedImg, new DevComponents.DotNetBar.SuperTooltipInfo("OutputRemovedImg", "", "对比报告中是否输出被整体移除的Image的完整结构", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.superTooltip1.SetSuperTooltip(this.chkOutputRemovedImg, new DevComponents.DotNetBar.SuperTooltipInfo("OutputRemovedImg", "", "비교 결과에 제거된 img의 전체 구조를 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkOutputRemovedImg.TabIndex = 8;
             this.chkOutputRemovedImg.Text = "제거된 img 출력";
             // 
@@ -2514,11 +2562,12 @@
             // 
             // 
             this.chkOutputAddedImg.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputAddedImg.Checked = true;
             this.chkOutputAddedImg.Location = new System.Drawing.Point(34, 61);
             this.chkOutputAddedImg.Name = "chkOutputAddedImg";
-            this.chkOutputAddedImg.Size = new System.Drawing.Size(135, 23);
+            this.chkOutputAddedImg.Size = new System.Drawing.Size(140, 23);
             this.chkOutputAddedImg.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkOutputAddedImg, new DevComponents.DotNetBar.SuperTooltipInfo("OutputAddedImg", "", "对比报告中是否输出新增Image的完整结构", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.superTooltip1.SetSuperTooltip(this.chkOutputAddedImg, new DevComponents.DotNetBar.SuperTooltipInfo("OutputAddedImg", "", "비교 결과에 추가된 img의 전체 구조를 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkOutputAddedImg.TabIndex = 7;
             this.chkOutputAddedImg.Text = "추가된 img 출력";
             // 
@@ -2533,7 +2582,7 @@
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(44, 16);
             this.labelX1.TabIndex = 6;
-            this.labelX1.Text = "PNG :";
+            this.labelX1.Text = "PNG 비교 방식 :";
             // 
             // chkOutputPng
             // 
@@ -2544,11 +2593,11 @@
             this.chkOutputPng.Checked = true;
             this.chkOutputPng.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOutputPng.CheckValue = "Y";
-            this.chkOutputPng.Location = new System.Drawing.Point(205, 34);
+            this.chkOutputPng.Location = new System.Drawing.Point(314, 34);
             this.chkOutputPng.Name = "chkOutputPng";
-            this.chkOutputPng.Size = new System.Drawing.Size(107, 23);
+            this.chkOutputPng.Size = new System.Drawing.Size(150, 23);
             this.chkOutputPng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("OutputPngFile", "", "对比报告中是否输出有差异的图片文件。", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.superTooltip1.SetSuperTooltip(this.chkOutputPng, new DevComponents.DotNetBar.SuperTooltipInfo("OutputPngFile", "", "비교 결과에 변경된 PNG, 오디오 파일을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkOutputPng.TabIndex = 5;
             this.chkOutputPng.Text = "PNG, 오디오 파일 출력";
             // 
@@ -2559,12 +2608,12 @@
             this.cmbComparePng.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbComparePng.FormattingEnabled = true;
             this.cmbComparePng.ItemHeight = 15;
-            this.cmbComparePng.Location = new System.Drawing.Point(83, 36);
+            this.cmbComparePng.Location = new System.Drawing.Point(150, 36);
             this.cmbComparePng.Name = "cmbComparePng";
-            this.cmbComparePng.Size = new System.Drawing.Size(120, 21);
+            this.cmbComparePng.Size = new System.Drawing.Size(150, 21);
             this.cmbComparePng.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PngComparison", "", "对于对比报告中图片的对比方式。\r\nSizeOnly - 仅对比图片大小，可能会遗漏。\r\nSizeAndDataLength - 同时对比图片大小和压缩流长度，可能" +
-            "会误判。\r\nPixel - 像素级对比，非常精确但可能略耗时。", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 130)));
+            this.superTooltip1.SetSuperTooltip(this.cmbComparePng, new DevComponents.DotNetBar.SuperTooltipInfo("PngComparison", "", "PNG의 비교 방식\r\nSizeOnly - 이미지 크기만 비교합니다. 일부 변경 내용이 누락될 수 있습니다.\r\nSizeAndDataLength - 이미지 크기와 압축 스트림 길이를 비교합니다. 잘못 판단될 수도 있습니다." +
+            "\r\nPixel - 이미지를 픽셀 단위로 비교합니다. 정확하지만 다소 시간이 걸릴 수 있습니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, true, new System.Drawing.Size(300, 150)));
             this.cmbComparePng.TabIndex = 4;
             // 
             // labelXComp2
@@ -2574,7 +2623,7 @@
             // 
             // 
             this.labelXComp2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelXComp2.Location = new System.Drawing.Point(3, 113);
+            this.labelXComp2.Location = new System.Drawing.Point(3, 142);
             this.labelXComp2.Name = "labelXComp2";
             this.labelXComp2.Size = new System.Drawing.Size(44, 16);
             this.labelXComp2.TabIndex = 3;
@@ -2588,7 +2637,7 @@
             // 
             // 
             this.labelXComp1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelXComp1.Location = new System.Drawing.Point(3, 91);
+            this.labelXComp1.Location = new System.Drawing.Point(3, 120);
             this.labelXComp1.Name = "labelXComp1";
             this.labelXComp1.Size = new System.Drawing.Size(31, 16);
             this.labelXComp1.TabIndex = 1;
@@ -3085,20 +3134,6 @@
             this.panelDockContainer2.Style.GradientAngle = 90;
             this.panelDockContainer2.TabIndex = 2;
             // 
-            // chkHashPngFileName
-            // 
-            // 
-            // 
-            // 
-            this.chkHashPngFileName.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkHashPngFileName.Location = new System.Drawing.Point(391, 61);
-            this.chkHashPngFileName.Name = "chkHashPngFileName";
-            this.chkHashPngFileName.Size = new System.Drawing.Size(115, 23);
-            this.chkHashPngFileName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkHashPngFileName, new DevComponents.DotNetBar.SuperTooltipInfo("HashPngFileName", "", "以 MD5 校验值输出 PNG 文件名称", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
-            this.chkHashPngFileName.TabIndex = 10;
-            this.chkHashPngFileName.Text = "PNG 파일명 해시";
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(750, 512);
@@ -3383,6 +3418,8 @@
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex2;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableDarkMode;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputGearTooltip;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputItemTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputSkillTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
