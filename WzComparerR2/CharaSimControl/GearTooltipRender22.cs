@@ -980,12 +980,14 @@ namespace WzComparerR2.CharaSimControl
                 hasThirdContents = true;
                 hasDescPart = true;
 
-                GearGraphics.DrawString(g, sr.Desc.Replace("#", " #").Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
+                //GearGraphics.DrawString(g, sr.Desc.Replace("#", " #").Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
+                GearGraphics.DrawString(g, sr.Desc.Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
             }
             // 값이 있는 설명
             if (!string.IsNullOrEmpty(Gear.EpicHs) && sr[Gear.EpicHs] != null)
             {
-                var text = sr[Gear.EpicHs].Replace("#", " #").Trim();
+                //var text = sr[Gear.EpicHs].Replace("#", " #").Trim();
+                var text = sr[Gear.EpicHs].Trim();
                 if (!string.IsNullOrEmpty(text))
                 {
                     AddLines(0, 7, ref picH, condition: secondLineNeeded);
