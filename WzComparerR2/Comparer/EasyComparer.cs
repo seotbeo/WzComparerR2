@@ -915,6 +915,10 @@ namespace WzComparerR2.Comparer
                 {
                     match = Regex.Match(node.FullPathToFile, @"^Skill\\_Canvas\\\d+.img\\skill\\(\d+)\\(icon)$"); // 스킬 아이콘 변경 체크
                 }
+                if (!match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)$"); // 추가/삭제 확인
+                }
             }
 
             if (match.Success)
@@ -946,8 +950,7 @@ namespace WzComparerR2.Comparer
 
             if (!match.Success)
             {
-                if (!change)
-                    match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\\d+.img\\(\d+)\\info\\.*"); // 변경점 중 툴팁 출력할 것들
+                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\\d+.img\\(\d+)$"); // 추가/삭제 확인
 
                 if (change && !match.Success)
                 {
@@ -978,8 +981,7 @@ namespace WzComparerR2.Comparer
 
             if (!match.Success)
             {
-                if (!change)
-                    match = Regex.Match(node.FullPathToFile, @"^Character\\.+?\\(\d+).img\\info\\.*"); // 변경점 중 툴팁 출력할 것들
+                match = Regex.Match(node.FullPathToFile, @"^Character\\.+?\\(\d+).img$"); // 추가/삭제 확인
 
                 if (change && !match.Success)
                 {
@@ -1006,7 +1008,7 @@ namespace WzComparerR2.Comparer
         {
             if (node == null) return;
 
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Map.img\\.+?\\(\d+).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Map.img\\.+?\\(\d+)\\(streetName|mapName).*");
 
             if (!match.Success)
             {
@@ -1016,9 +1018,9 @@ namespace WzComparerR2.Comparer
                 {
                     match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\miniMap\\(canvas)$"); // 아이콘 변경 체크
                 }
-                else if (!change && !match.Success)
+                if (!match.Success)
                 {
-                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\info\\.*");
+                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img$"); // 추가/삭제 확인
                 }
             }
 
