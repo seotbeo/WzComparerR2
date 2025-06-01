@@ -252,6 +252,8 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender.CosmeticHairColor = Setting.Item.CosmeticHairColor;
             tooltipQuickView.ItemRender.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
 
+            tooltipQuickView.MapRender.ShowMiniMap = Setting.Map.ShowMiniMap;
+
             tooltipQuickView.RecipeRender.ShowObjectID = Setting.Recipe.ShowID;
 
             tooltipQuickView.Enable22AniStyle = Setting.Misc.Enable22AniStyle;
@@ -3219,6 +3221,17 @@ namespace WzComparerR2
                             obj = skill;
                             fileName = "skill_" + skill.SkillID + ".png";
                         }
+                    }
+                    break;
+
+                case Wz_Type.Map:
+                    if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
+                        return;
+                    var map = Map.CreateFromNode(image.Node, PluginManager.FindWz);
+                    obj = map;
+                    if (map != null)
+                    {
+                        fileName = map.MapID + ".png";
                     }
                     break;
 

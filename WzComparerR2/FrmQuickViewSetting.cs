@@ -204,6 +204,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Map_ShowMiniMap
+        {
+            get { return chkShowMiniMap.Checked; }
+            set { chkShowMiniMap.Checked = value; }
+        }
+
+        [Link]
         public bool Misc_Enable22AniStyle
         {
             get { return chkEnable22AniStyle.Checked; }

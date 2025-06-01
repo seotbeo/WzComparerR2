@@ -31,6 +31,7 @@
             this.superTabControl1 = new DevComponents.DotNetBar.SuperTabControl();
             this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.chkEnable22AniStyle = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkShowMiniMap = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX16 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX15 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.checkBoxX14 = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -69,9 +70,11 @@
             this.superTabItem3 = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel4 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.superTabControlPanel5 = new DevComponents.DotNetBar.SuperTabControlPanel();
+            this.superTabControlPanel6 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.checkBoxX7 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.superTabItem4 = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabItem5 = new DevComponents.DotNetBar.SuperTabItem();
+            this.superTabItem6 = new DevComponents.DotNetBar.SuperTabItem();
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
@@ -86,6 +89,7 @@
             this.superTabControlPanel3.SuspendLayout();
             this.superTabControlPanel4.SuspendLayout();
             this.superTabControlPanel5.SuspendLayout();
+            this.superTabControlPanel6.SuspendLayout();
             this.panelEx1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -111,6 +115,7 @@
             this.superTabControl1.Controls.Add(this.superTabControlPanel2);
             this.superTabControl1.Controls.Add(this.superTabControlPanel3);
             this.superTabControl1.Controls.Add(this.superTabControlPanel4);
+            this.superTabControl1.Controls.Add(this.superTabControlPanel6);
             this.superTabControl1.Controls.Add(this.superTabControlPanel5);
             this.superTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControl1.Location = new System.Drawing.Point(0, 0);
@@ -128,6 +133,7 @@
             this.superTabItem2,
             this.superTabItem3,
             this.superTabItem4,
+            this.superTabItem6,
             this.superTabItem5});
             this.superTabControl1.Text = "superTabControl1";
             // 
@@ -709,6 +715,40 @@
             this.panelEx1.Style.GradientAngle = 90;
             this.panelEx1.TabIndex = 1;
             // 
+            // superTabControlPanel6
+            // 
+            this.superTabControlPanel6.Controls.Add(this.chkShowMiniMap);
+            this.superTabControlPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.superTabControlPanel6.Location = new System.Drawing.Point(62, 0);
+            this.superTabControlPanel6.Name = "superTabControlPanel6";
+            this.superTabControlPanel6.Size = new System.Drawing.Size(242, 211);
+            this.superTabControlPanel6.TabIndex = 0;
+            this.superTabControlPanel6.TabItem = this.superTabItem6;
+            this.superTabControlPanel6.Visible = false;
+            // 
+            // superTabItem6
+            // 
+            this.superTabItem6.AttachedControl = this.superTabControlPanel6;
+            this.superTabItem6.GlobalItem = false;
+            this.superTabItem6.Name = "superTabItem6";
+            this.superTabItem6.Text = "맵";
+            // 
+            // chkShowMiniMap
+            // 
+            this.chkShowMiniMap.AutoSize = true;
+            this.chkShowMiniMap.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowMiniMap.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowMiniMap.Location = new System.Drawing.Point(15, 12);
+            this.chkShowMiniMap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkShowMiniMap.Name = "chkShowMiniMap";
+            this.chkShowMiniMap.Size = new System.Drawing.Size(145, 16);
+            this.chkShowMiniMap.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowMiniMap.TabIndex = 4;
+            this.chkShowMiniMap.Text = "미니맵 보이기";
+            // 
             // superTabControlPanel5
             // 
             this.superTabControlPanel5.Controls.Add(this.chkEnable22AniStyle);
@@ -795,6 +835,8 @@
             this.superTabControlPanel4.PerformLayout();
             this.superTabControlPanel5.ResumeLayout(false);
             this.superTabControlPanel5.PerformLayout();
+            this.superTabControlPanel6.ResumeLayout(false);
+            this.superTabControlPanel6.PerformLayout();
             this.panelEx1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -834,8 +876,10 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX4;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel4;
         private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel5;
+        private DevComponents.DotNetBar.SuperTabControlPanel superTabControlPanel6;
         private DevComponents.DotNetBar.SuperTabItem superTabItem4;
         private DevComponents.DotNetBar.SuperTabItem superTabItem5;
+        private DevComponents.DotNetBar.SuperTabItem superTabItem6;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX6;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX7;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX9;
@@ -851,6 +895,7 @@
         private DevComponents.DotNetBar.LabelX labelCosmeticHairColor;
         private DevComponents.DotNetBar.LabelX labelCosmeticFaceColor;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkEnable22AniStyle;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkShowMiniMap;
         private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxEx3;
         private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxEx4;
     }
