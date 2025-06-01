@@ -616,7 +616,8 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowDelay = true;
                 tooltipRenderNewOld[i].ShowArea = true;
-                tooltipRenderNewOld[i].wzNode = WzNewOld[i];
+                tooltipRenderNewOld[i].SourceWzNode = WzNewOld[i];
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffSkillTags = this.DiffSkillTags;
                 tooltipRenderNewOld[i].IgnoreEvalError = true;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
@@ -674,6 +675,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowLevelOrSealed = true;
                 tooltipRenderNewOld[i].ShowNickTag = true;
                 tooltipRenderNewOld[i].ShowNickTag = true;
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
                 tooltipRenderNewOld[i].CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
@@ -726,6 +728,7 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i] = new GearTooltipRender22();
                     tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                     tooltipRenderNewOld[i].ShowObjectID = true;
+                    tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowLevelOrSealed = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                 }
@@ -734,6 +737,7 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i] = new GearTooltipRender2();
                     tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                     tooltipRenderNewOld[i].ShowObjectID = true;
+                    tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowLevelOrSealed = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                 }
@@ -792,7 +796,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowMiniMap = true;
-                tooltipRenderNewOld[i].sourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
             }
 
             foreach (var mapID in OutputMapTooltipIDs)

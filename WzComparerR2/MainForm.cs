@@ -383,6 +383,7 @@ namespace WzComparerR2
             }
             //寻找失败
             e.WzNode = null;
+            e.WzFile = null;
         }
 
         #region 界面主题配置

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using WzComparerR2.Common;
+using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -23,6 +24,7 @@ namespace WzComparerR2.CharaSimControl
         public StringLinker StringLinker { get; set; }
 
         public bool ShowObjectID { get; set; }
+        public Wz_File SourceWzFile { get; set; }
 
         public abstract Bitmap Render();
 

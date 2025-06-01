@@ -145,9 +145,9 @@ namespace WzComparerR2.CharaSim
             return potential;
         }
 
-        public static Potential LoadFromWz(int optID, int optLevel, GlobalFindNodeFunction findNode)
+        public static Potential LoadFromWz(int optID, int optLevel, GlobalFindNodeFunction2 findNode, Wz_File wzf = null)
         {
-            Wz_Node itemWz = findNode("Item\\ItemOption.img");
+            Wz_Node itemWz = findNode("Item\\ItemOption.img", wzf);
             if (itemWz == null)
                 return null;
 

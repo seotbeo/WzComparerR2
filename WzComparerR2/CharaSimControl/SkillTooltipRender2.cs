@@ -35,7 +35,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
         public Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
-        public Wz_Node wzNode { get; set; } = null;
+        public Wz_Node SourceWzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
 
@@ -61,14 +61,14 @@ namespace WzComparerR2.CharaSimControl
             int vehicleID = Skill.VehicleID;
             if (vehicleID == 0)
             {
-                vehicleID = PluginBase.PluginManager.FindWz(string.Format(@"Skill\RidingSkillInfo.img\{0:D7}\vehicleID", Skill.SkillID)).GetValueEx<int>(0);
+                vehicleID = PluginBase.PluginManager.FindWz(string.Format(@"Skill\RidingSkillInfo.img\{0:D7}\vehicleID", Skill.SkillID), this.SourceWzFile).GetValueEx<int>(0);
             }
             if (vehicleID != 0)
             {
-                Wz_Node imgNode = PluginBase.PluginManager.FindWz(string.Format(@"Character\TamingMob\{0:D8}.img", vehicleID));
+                Wz_Node imgNode = PluginBase.PluginManager.FindWz(string.Format(@"Character\TamingMob\{0:D8}.img", vehicleID), this.SourceWzFile);
                 if (imgNode != null)
                 {
-                    Gear gear = Gear.CreateFromNode(imgNode, path => PluginBase.PluginManager.FindWz(path));
+                    Gear gear = Gear.CreateFromNode(imgNode, path => PluginBase.PluginManager.FindWz(path), this.SourceWzFile);
                     if (gear != null)
                     {
                         ridingGearBmp = RenderLinkRidingGear(gear);
@@ -288,10 +288,10 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawPlainText(g, "[콤비네이션 스킬]", GearGraphics.ItemDetailFont, Color.FromArgb(119, 204, 255), region.LevelDescLeft, region.TextRight, ref picH, 16);
                 picH += 4;
                 BitmapOrigin icon = new BitmapOrigin();
-                Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AddAttackToolTipDescSkill / 10000, Skill.AddAttackToolTipDescSkill));
+                Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AddAttackToolTipDescSkill / 10000, Skill.AddAttackToolTipDescSkill), this.SourceWzFile);
                 if (skillNode != null)
                 {
-                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz);
+                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     icon = skill.Icon;
                 }
                 if (icon.Bitmap != null)
@@ -321,10 +321,10 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawPlainText(g, "[어시스트 스킬]", GearGraphics.ItemDetailFont, GearGraphics.SkillSummaryOrangeTextColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 picH += 4;
                 BitmapOrigin icon = new BitmapOrigin();
-                Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AssistSkillLink / 10000, Skill.AssistSkillLink));
+                Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AssistSkillLink / 10000, Skill.AssistSkillLink), this.SourceWzFile);
                 if (skillNode != null)
                 {
-                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz);
+                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     icon = skill.Icon;
                 }
                 if (icon.Bitmap != null)
@@ -385,7 +385,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 foreach (string action in Skill.Action)
                 {
-                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action, this.wzNode) + " ms#");
+                    skillDescEx.Add("#c[딜레이] " + action + ": " + CharaSimLoader.GetActionDelay(action, this.SourceWzNode) + " ms#");
                 }
             }
 

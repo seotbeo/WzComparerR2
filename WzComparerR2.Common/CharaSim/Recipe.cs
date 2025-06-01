@@ -35,7 +35,7 @@ namespace WzComparerR2.CharaSim
         {
             Recipe recipe = new Recipe();
             int recipeID;
-            if (!Int32.TryParse(node.Text, out recipeID))
+            if (!Int32.TryParse(node?.Text, out recipeID))
                 return null;
             recipe.RecipeID = recipeID;
 

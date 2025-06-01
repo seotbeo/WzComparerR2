@@ -26,6 +26,8 @@ namespace WzComparerR2.CharaSim
 
         public static Map CreateFromNode(Wz_Node node, GlobalFindNodeFunction2 findNode, Wz_File wzf = null)
         {
+            if (node == null) return null;
+
             Map map = new Map();
             int mapID;
             Match m = Regex.Match(node.Text, @"^(\d{9})\.img$");

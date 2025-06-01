@@ -17,7 +17,7 @@ namespace WzComparerR2.CharaSim
         public int onlyCash;
         public List<int> SN;
 
-        public static CashPackage CreateFromNode(Wz_Node itemNode, Wz_Node cashPackageNode, GlobalFindNodeFunction findNode)
+        public static CashPackage CreateFromNode(Wz_Node itemNode, Wz_Node cashPackageNode, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             CashPackage cashPackage = new CashPackage();
             int value;
@@ -47,7 +47,7 @@ namespace WzComparerR2.CharaSim
                         }
                         if (pngNode.Value is Wz_Png)
                         {
-                            cashPackage.Icon = BitmapOrigin.CreateFromNode(pngNode, findNode);
+                            cashPackage.Icon = BitmapOrigin.CreateFromNode(pngNode, findNode, wzf);
                         }
 
                         break;

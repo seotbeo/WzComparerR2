@@ -36,6 +36,7 @@ namespace WzComparerR2.CharaSimControl
 
         public GearTooltipRender22()
         {
+            this.sourceWzFile = null;
         }
 
         private CharacterStatus charStat;
@@ -66,6 +67,7 @@ namespace WzComparerR2.CharaSimControl
         private Wz_Node ChatBalloonResNode { get; set; }
         private Wz_Node NameTagResNode { get; set; }
         private Bitmap AvatarSample { get; set; }
+        public Wz_File sourceWzFile { get; set; }
 
         public TooltipRender SetItemRender { get; set; }
         private List<int> linePos;
@@ -514,7 +516,7 @@ namespace WzComparerR2.CharaSimControl
                 picH -= 2;
                 TextRenderer.DrawText(g, "외형 :", GearGraphics.EquipMDMoris9Font, new Point(15, picH + 2), Color.White, TextFormatFlags.NoPadding);
 
-                Wz_Node android = PluginBase.PluginManager.FindWz(string.Format("Etc/Android/{0:D4}.img", value));
+                Wz_Node android = PluginBase.PluginManager.FindWz(string.Format("Etc/Android/{0:D4}.img", value), this.sourceWzFile);
                 Wz_Node costume = android?.Nodes["costume"];
                 Wz_Node basic = android?.Nodes["basic"];
 
@@ -530,7 +532,7 @@ namespace WzComparerR2.CharaSimControl
                 {
                     if (morphID != 0)
                     {
-                        appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(string.Format("Morph/{0:D4}.img/stand/0", morphID)), PluginBase.PluginManager.FindWz);
+                        appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(string.Format("Morph/{0:D4}.img/stand/0", morphID), this.sourceWzFile), PluginBase.PluginManager.FindWz, this.sourceWzFile);
                     }
                     else
                     {
@@ -927,7 +929,7 @@ namespace WzComparerR2.CharaSimControl
             if (Gear.Props.TryGetValue(GearPropType.ringOptionSkill, out ringOpt)
                 && Gear.Props.TryGetValue(GearPropType.ringOptionSkillLv, out ringOptLv))
             {
-                var opt = Potential.LoadFromWz(ringOpt, ringOptLv, PluginBase.PluginManager.FindWz);
+                var opt = Potential.LoadFromWz(ringOpt, ringOptLv, PluginBase.PluginManager.FindWz, this.sourceWzFile);
                 if (opt != null)
                 {
                     AddLines(0, 7, ref picH, condition: secondLineNeeded);
@@ -1027,7 +1029,7 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawString(g, "펫 장비 능력치 이전 주문서를 사용할 수 없는 아이템입니다.", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
             }
             // 캐시 이펙트
-            if (Gear.Cash && Gear.type != GearType.pickaxe && !Gear.IsCashWeapon(Gear.type) && Gear.type != GearType.shovel && PluginBase.PluginManager.FindWz(string.Format("Effect/ItemEff.img/{0}/effect", Gear.ItemID)) != null)
+            if (Gear.Cash && Gear.type != GearType.pickaxe && !Gear.IsCashWeapon(Gear.type) && Gear.type != GearType.shovel && PluginBase.PluginManager.FindWz(string.Format("Effect/ItemEff.img/{0}/effect", Gear.ItemID), this.sourceWzFile) != null)
             {
                 AddLines(0, 7, ref picH, condition: secondLineNeeded);
                 secondLineNeeded = false;
@@ -2052,13 +2054,13 @@ namespace WzComparerR2.CharaSimControl
             switch (type)
             {
                 case 0:
-                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/medal/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/medal/" + medalTag, this.sourceWzFile);
                     break;
                 case 1:
-                    resNode = PluginBase.PluginManager.FindWz("UI/ChatBalloon.img/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/ChatBalloon.img/" + medalTag, this.sourceWzFile);
                     break;
                 case 2:
-                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/" + medalTag, this.sourceWzFile);
                     break;
                 default:
                     resNode = null;

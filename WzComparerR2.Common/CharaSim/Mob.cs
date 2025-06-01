@@ -72,6 +72,8 @@ namespace WzComparerR2.CharaSim
 
         public static Mob CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
         {
+            if (node == null) return null;
+
             int mobID;
             Match m = Regex.Match(node.Text, @"^(\d{7})\.img$");
             if (!(m.Success && Int32.TryParse(m.Result("$1"), out mobID)))

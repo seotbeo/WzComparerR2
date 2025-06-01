@@ -82,9 +82,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.item.ItemID / 10000 == 910)
             {
-                Wz_Node itemNode = PluginBase.PluginManager.FindWz(string.Format(@"Item\Special\{0:D4}.img\{1}", this.item.ItemID / 10000, this.item.ItemID));
-                Wz_Node cashPackageNode = PluginBase.PluginManager.FindWz(string.Format(@"Etc\CashPackage.img\{0}", this.item.ItemID));
-                CashPackage cashPackage = CashPackage.CreateFromNode(itemNode, cashPackageNode, PluginBase.PluginManager.FindWz);
+                Wz_Node itemNode = PluginBase.PluginManager.FindWz(string.Format(@"Item\Special\{0:D4}.img\{1}", this.item.ItemID / 10000, this.item.ItemID), this.SourceWzFile);
+                Wz_Node cashPackageNode = PluginBase.PluginManager.FindWz(string.Format(@"Etc\CashPackage.img\{0}", this.item.ItemID), this.SourceWzFile);
+                CashPackage cashPackage = CashPackage.CreateFromNode(itemNode, cashPackageNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                 return RenderCashPackage(cashPackage);
             }
 
@@ -93,7 +93,7 @@ namespace WzComparerR2.CharaSimControl
                 int itemIDClass = itemID / 1000000;
                 if (itemIDClass == 1) //通过ID寻找装备
                 {
-                    Wz_Node charaWz = PluginManager.FindWz(Wz_Type.Character);
+                    Wz_Node charaWz = PluginManager.FindWz(Wz_Type.Character, this.SourceWzFile);
                     if (charaWz != null)
                     {
                         string imgName = itemID.ToString("d8") + ".img";
@@ -102,14 +102,14 @@ namespace WzComparerR2.CharaSimControl
                             Wz_Node imgNode = node0.FindNodeByPath(imgName, true);
                             if (imgNode != null)
                             {
-                                Gear gear = Gear.CreateFromNode(imgNode, path => PluginManager.FindWz(path));
+                                Gear gear = Gear.CreateFromNode(imgNode, path => PluginManager.FindWz(path), this.SourceWzFile);
                                 if (gear != null)
                                 {
                                     gear.Props[GearPropType.timeLimited] = 0;
                                     long tuc, tucCnt;
                                     if (Item.Props.TryGetValue(ItemPropType.addTooltip_tuc, out tuc) && Item.Props.TryGetValue(ItemPropType.addTooltip_tucCnt, out tucCnt))
                                     {
-                                        Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item);
+                                        Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item, this.SourceWzFile);
                                         if (itemWz != null)
                                         {
                                             string imgClass = (tuc / 10000).ToString("d4") + ".img\\" + tuc.ToString("d8") + "\\info";
@@ -135,7 +135,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (itemIDClass >= 2 && itemIDClass <= 5) //通过ID寻找道具
                 {
-                    Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item);
+                    Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item, this.SourceWzFile);
                     if (itemWz != null)
                     {
                         string imgClass = (itemID / 10000).ToString("d4") + ".img\\" + itemID.ToString("d8");
@@ -144,7 +144,7 @@ namespace WzComparerR2.CharaSimControl
                             Wz_Node imgNode = node0.FindNodeByPath(imgClass, true);
                             if (imgNode != null)
                             {
-                                Item item = Item.CreateFromNode(imgNode, PluginManager.FindWz);
+                                Item item = Item.CreateFromNode(imgNode, PluginManager.FindWz, this.SourceWzFile);
                                 item.Props[ItemPropType.timeLimited] = 0;
                                 if (item != null)
                                 {
@@ -166,7 +166,7 @@ namespace WzComparerR2.CharaSimControl
                     int recipeSkillID = recipeID / 10000;
                     Recipe recipe = null;
                     //寻找配方
-                    Wz_Node recipeNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\Recipe_{0}.img\{1}", recipeSkillID, recipeID));
+                    Wz_Node recipeNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\Recipe_{0}.img\{1}", recipeSkillID, recipeID), this.SourceWzFile);
                     if (recipeNode != null)
                     {
                         recipe = Recipe.CreateFromNode(recipeNode);
@@ -743,9 +743,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (item.ItemID / 10000 == 500)
             {
-                Wz_Node petDialog = PluginManager.FindWz("String\\PetDialog.img\\" + item.ItemID);
+                Wz_Node petDialog = PluginManager.FindWz("String\\PetDialog.img\\" + item.ItemID, this.SourceWzFile);
                 Dictionary<string, int> commandLev = new Dictionary<string, int>();
-                foreach (Wz_Node commandNode in PluginManager.FindWz("Item\\Pet\\" + item.ItemID + ".img\\interact").Nodes)
+                foreach (Wz_Node commandNode in PluginManager.FindWz("Item\\Pet\\" + item.ItemID + ".img\\interact", this.SourceWzFile).Nodes)
                 {
                     foreach (string command in petDialog?.Nodes[commandNode.Nodes["command"].GetValue<string>()].GetValueEx<string>(null)?.Split('|') ?? Enumerable.Empty<string>())
                     {
@@ -860,10 +860,10 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (item.DamageSkinID != null)
                 {
-                    Wz_Node sampleNode = PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}\sample");
+                    Wz_Node sampleNode = PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}\sample", this.SourceWzFile);
                     if (sampleNode != null)
                     {
-                        BitmapOrigin sample = BitmapOrigin.CreateFromNode(sampleNode, PluginManager.FindWz);
+                        BitmapOrigin sample = BitmapOrigin.CreateFromNode(sampleNode, PluginManager.FindWz, this.SourceWzFile);
                         g.DrawImage(sample.Bitmap, (tooltip.Width - sample.Bitmap.Width) / 2, picH);
                         picH += sample.Bitmap.Height;
                         picH += 2;
@@ -908,11 +908,11 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (item.SamplePath != null)
                 {
-                    Wz_Node sampleNode = PluginManager.FindWz(item.SamplePath);
+                    Wz_Node sampleNode = PluginManager.FindWz(item.SamplePath, this.SourceWzFile);
                     // Workaround for KMST 1.2.1184
                     if (sampleNode == null && item.SamplePath.Contains("ChatEmoticon.img"))
                     {
-                        sampleNode = PluginManager.FindWz(item.SamplePath.Replace("ChatEmoticon.img/", "ChatEmoticon.img/Emoticon/"));
+                        sampleNode = PluginManager.FindWz(item.SamplePath.Replace("ChatEmoticon.img/", "ChatEmoticon.img/Emoticon/"), this.SourceWzFile);
                     }
 
                     if (sampleNode != null)
@@ -920,7 +920,7 @@ namespace WzComparerR2.CharaSimControl
                         if (sampleNode?.Text == "effect")
                         {
                             Wz_Node effectNode = sampleNode.Nodes["0"];
-                            BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz);
+                            BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz, this.SourceWzFile);
                             g.DrawImage(effect.Bitmap, 38 + (85 - effect.Bitmap.Width - 1) / 2, picH - 8 + (62 - effect.Bitmap.Height - 1) / 2);
                             picH += 73;
                         }
@@ -935,7 +935,7 @@ namespace WzComparerR2.CharaSimControl
                                     break;
                                 }
 
-                                BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz);
+                                BitmapOrigin effect = BitmapOrigin.CreateFromNode(effectNode, PluginManager.FindWz, this.SourceWzFile);
                                 if (sampleW + 87 >= tooltip.Width)
                                 {
                                     picH += 62;
@@ -982,7 +982,7 @@ namespace WzComparerR2.CharaSimControl
                     picH += 16;
 
                     string cantAccountSharable = null;
-                    Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item);
+                    Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item, this.SourceWzFile);
                     if (itemWz != null)
                     {
                         string imgClass = (item.ItemID / 10000).ToString("d4") + ".img\\" + item.ItemID.ToString("d8");
@@ -1308,7 +1308,7 @@ namespace WzComparerR2.CharaSimControl
 
         private bool TryGetNickResource(long nickTag, out Wz_Node resNode)
         {
-            resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/nick/" + nickTag);
+            resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/nick/" + nickTag, this.SourceWzFile);
             return resNode != null;
         }
 
