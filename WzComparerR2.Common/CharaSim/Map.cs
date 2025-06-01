@@ -16,6 +16,9 @@ namespace WzComparerR2.CharaSim
 
         public int MapID { get; set; }
         public int? Link { get; set; }
+        public int Barrier { get; set; }
+        public int BarrierArc { get; set; }
+        public int BarrierAut { get; set; }
         public string MapMark { get; set; }
         public Wz_Node MiniMapNode { get; set; }
         public List<int> Mobs { get; set; }
@@ -40,7 +43,10 @@ namespace WzComparerR2.CharaSim
                     switch (propNode.Text)
                     {
                         case "mapMark": map.MapMark = propNode.GetValueEx<string>(null); break;
-                        case "link": map.Link = propNode.GetValueEx<int>(0); break;
+                        case "link": map.Link = propNode.GetValueEx<int?>(null); break;
+                        case "barrier": map.Barrier = propNode.GetValueEx<int>(0); break;
+                        case "barrierArc": map.BarrierArc = propNode.GetValueEx<int>(0); break;
+                        case "barrierAut": map.BarrierAut = propNode.GetValueEx<int>(0); break;
                     }
                 }
             }

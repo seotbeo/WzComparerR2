@@ -15,6 +15,8 @@ namespace WzComparerR2.Common
         public string Pdesc { get; set; }
         public string AutoDesc { get; set; }
         public string FullPath { get; set; }
+        public string StreetName { get; set; }
+        public string MapName { get; set; }
 
         private List<KeyValuePair<string, string>> allValues;
 
