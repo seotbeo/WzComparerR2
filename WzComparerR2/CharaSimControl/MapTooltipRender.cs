@@ -60,7 +60,7 @@ namespace WzComparerR2.CharaSimControl
                 titleBlocks.Add(block);
                 tw = Math.Max(block.Size.Width, tw);
 
-                block = PrepareText(g, "ID:" + Map.MapID, GearGraphics.ItemDetailFont, Brushes.White, tw + 4, picY);
+                block = PrepareText(g, $"ID:{Map.MapID}", GearGraphics.ItemDetailFont, Brushes.White, tw + 8, picY);
                 titleBlocks.Add(block);
             }
 
