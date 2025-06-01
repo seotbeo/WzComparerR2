@@ -129,7 +129,7 @@ namespace WzComparerR2.CharaSimControl
             Rectangle npcRect = Measure(npcBlocks);
 
             int width = 0;
-            width = Math.Max(miniMapRect.Width, Math.Max(markRect.Width + 5 + titleRect.Width, Math.Max(mobRect.Width, npcRect.Width)));
+            width = Math.Max(miniMapRect.Width, Math.Max(markRect.Width + 5 + titleRect.Width, Math.Max(mobRect.Width + 21, npcRect.Width + 21)));
             if (!markRect.IsEmpty)
                 titleRect.X = markRect.Width + 5;
             miniMapRect.X = (width - miniMapRect.Width) / 2;
