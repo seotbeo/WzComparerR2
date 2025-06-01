@@ -15,10 +15,12 @@ namespace WzComparerR2.CharaSimControl
     {
         public MapTooltipRenderer()
         {
+            this.sourceWzFile = null;
         }
 
         public Map Map { get; set; }
         public bool ShowMiniMap { get; set; }
+        public Wz_File sourceWzFile { get; set; }
 
         public override object TargetItem
         {
@@ -86,7 +88,7 @@ namespace WzComparerR2.CharaSimControl
                 foreach (var mob in Map.Mobs)
                 {
                     string mobName = GetMobName(mob);
-                    var mobLevel = PluginBase.PluginManager.FindWz(@$"Mob\{mob:D7}.img\info\level").GetValueEx<int?>(null);
+                    var mobLevel = PluginBase.PluginManager.FindWz(@$"Mob\{mob:D7}.img\info\level", this.sourceWzFile).GetValueEx<int?>(null);
                     var block = PrepareText(g, (mobName ?? "(null)") + ((mobLevel != null) ? $"(Lv.{mobLevel})" : ""), GearGraphics.ItemDetailFont, GearGraphics.BlockRedBrush, 0, picY);
                     mobBlocks.Add(block);
                     picY += 18;
@@ -108,7 +110,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap mapMark = null;
             if (!string.IsNullOrEmpty(Map.MapMark))
             {
-                var mapMarkNode = PluginBase.PluginManager.FindWz(@$"Map\MapHelper.img\mark\{Map.MapMark}");
+                var mapMarkNode = PluginBase.PluginManager.FindWz(@$"Map\MapHelper.img\mark\{Map.MapMark}", this.sourceWzFile);
                 if (mapMarkNode != null)
                 {
                     mapMark = BitmapOrigin.CreateFromNode(mapMarkNode, PluginBase.PluginManager.FindWz).Bitmap;
@@ -118,7 +120,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap miniMap = null;
             if (ShowMiniMap && Map.MiniMapNode != null)
             {
-                miniMap = BitmapOrigin.CreateFromNode(Map.MiniMapNode.FindNodeByPath("canvas"), PluginBase.PluginManager.FindWz).Bitmap;
+                miniMap = BitmapOrigin.CreateFromNode(Map.MiniMapNode.FindNodeByPath("canvas"), PluginBase.PluginManager.FindWz, this.sourceWzFile).Bitmap;
             }
 
             Rectangle barrierRect = barrierBlock?.Rectangle ?? new Rectangle();

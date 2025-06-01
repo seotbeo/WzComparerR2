@@ -28,6 +28,7 @@ namespace WzComparerR2.Comparer
         private StringLinker[] StringLinkerNewOld { get; set; } = new StringLinker[2];
         private SortedSet<int> OutputGearTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputItemTooltipIDs { get; set; } = new SortedSet<int>();
+        private SortedSet<int> OutputMapTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputSkillTooltipIDs { get; set; } = new SortedSet<int>();
         private Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
 
@@ -40,6 +41,7 @@ namespace WzComparerR2.Comparer
         public bool EnableDarkMode { get; set; }
         public bool OutputGearTooltip { get; set; }
         public bool OutputItemTooltip { get; set; }
+        public bool OutputMapTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
 
@@ -96,7 +98,7 @@ namespace WzComparerR2.Comparer
                 WzFileComparer comparer = new WzFileComparer();
                 comparer.IgnoreWzFile = true;
 
-                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip)
+                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip)
                 {
                     this.WzNewOld[0] = fileNew.Node;
                     this.WzNewOld[1] = fileOld.Node;
@@ -581,6 +583,15 @@ namespace WzComparerR2.Comparer
                     }
                     SaveGearTooltip(tooltipPath);
                 }
+                if (OutputMapTooltip && OutputMapTooltipIDs != null)
+                {
+                    string tooltipPath = Path.Combine(outputDir, "맵 툴팁");
+                    if (!Directory.Exists(tooltipPath))
+                    {
+                        Directory.CreateDirectory(tooltipPath);
+                    }
+                    SaveMapTooltip(tooltipPath);
+                }
 
                 for (var i = 0; i < 2; i++)
                 {
@@ -738,7 +749,7 @@ namespace WzComparerR2.Comparer
                 {
                     gearType = @"\" + gearType;
                 }
-                string nodePath = $@"\{gearID.ToString().PadLeft(8, '0')}.img";
+                string nodePath = $@"\{gearID:D8}.img";
                 int nullIdx = 0;
 
                 // 변경 전후 툴팁 이미지 생성
@@ -768,7 +779,52 @@ namespace WzComparerR2.Comparer
             OutputGearTooltipIDs.Clear();
         }
 
-        private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType)
+        // 변경된 맵 툴팁 출력
+        private void SaveMapTooltip(string tooltipPath)
+        {
+            MapTooltipRenderer[] tooltipRenderNewOld = new MapTooltipRenderer[2];
+            int count = 0;
+            int allCount = OutputMapTooltipIDs.Count;
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                tooltipRenderNewOld[i] = new MapTooltipRenderer();
+                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].ShowMiniMap = true;
+                tooltipRenderNewOld[i].sourceWzFile = WzFileNewOld[i];
+            }
+
+            foreach (var mapID in OutputMapTooltipIDs)
+            {
+                StateInfo = string.Format("{0}/{1} 맵: {2}", ++count, allCount, mapID);
+                StateDetail = "맵 변경점을 툴팁 이미지로 출력중...";
+
+                string nodePath = $@"\{mapID:D9}.img";
+                int nullIdx = 0;
+
+                // 변경 전후 툴팁 이미지 생성
+                for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                {
+                    Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+
+                    if (map != null)
+                    {
+                        tooltipRenderNewOld[i].Map = map;
+                    }
+                    else
+                    {
+                        nullIdx |= i + 1;
+                        tooltipRenderNewOld[i].Map = null;
+                    }
+                }
+
+                SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mapID, "맵", typePicH: 1);
+            }
+            OutputGearTooltipIDs.Clear();
+        }
+
+        private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType, int typePicH = 13)
         {
             // 툴팁 이미지 합치기
             Bitmap resultImage = null;
@@ -823,7 +879,7 @@ namespace WzComparerR2.Comparer
                 return;
             }
 
-            int picH = 13;
+            int picH = typePicH;
             GearGraphics.DrawPlainText(g, type, GearGraphics.EquipMDMoris9Font, Color.FromArgb(255, 255, 255), 2, 100, ref picH, 10);
 
             string add = tooltipType == "스킬" ? $"[{(ItemStringHelper.GetJobName(ID / 10000) ?? "기타")}]"
@@ -941,6 +997,46 @@ namespace WzComparerR2.Comparer
             }
         }
 
+        // 노드에서 맵 ID 얻기
+        private void GetMapID(Wz_Node node, bool change)
+        {
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Map.img\\.+?\\(\d+).*");
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\info\\(barrier|barrierArc|barrierAut).*"); // 변경점 중 툴팁 출력할 것들
+
+                if (change && !match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\miniMap\\(canvas)$"); // 아이콘 변경 체크
+                }
+                else if (!change && !match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\info\\.*");
+                }
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\MapObjectInfo.img\\(\d+)\\.*");
+            }
+
+            if (match.Success)
+            {
+                string itemID = match.Groups[1].ToString();
+
+                if (itemID != null)
+                {
+                    if (!OutputMapTooltipIDs.Contains(int.Parse(itemID)))
+                    {
+                        OutputMapTooltipIDs.Add(int.Parse(itemID));
+                    }
+                }
+            }
+        }
+
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
             StateDetail = "img 구조 분석중";
@@ -996,6 +1092,11 @@ namespace WzComparerR2.Comparer
                 {
                     GetGearID(diff.NodeNew, idx == 0 ? true : false);
                     GetGearID(diff.NodeOld, idx == 0 ? true : false);
+                }
+                if (OutputMapTooltip && (imgName.Contains("Etc") || imgName.Contains("Map") || imgName.Contains("String")))
+                {
+                    GetMapID(diff.NodeNew, idx == 0 ? true : false);
+                    GetMapID(diff.NodeOld, idx == 0 ? true : false);
                 }
             }
             StateDetail = "문서 출력중";
@@ -1054,6 +1155,10 @@ namespace WzComparerR2.Comparer
                     if (OutputGearTooltip && (imgName.Contains("Character") || imgName.Contains("String")))
                     {
                         GetGearID(node, idx == 0 ? true : false);
+                    }
+                    if (OutputMapTooltip && (imgName.Contains("Etc") || imgName.Contains("Map") || imgName.Contains("String")))
+                    {
+                        GetMapID(node, idx == 0 ? true : false);
                     }
 
                     if (node.Nodes.Count > 0)

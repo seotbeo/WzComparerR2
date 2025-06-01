@@ -3611,6 +3611,7 @@ namespace WzComparerR2
                     comparer.EnableDarkMode = chkEnableDarkMode.Checked;
                     comparer.OutputGearTooltip = chkOutputGearTooltip.Checked;
                     comparer.OutputItemTooltip = chkOutputItemTooltip.Checked;
+                    comparer.OutputMapTooltip = chkOutputMapTooltip.Checked;
                     comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);

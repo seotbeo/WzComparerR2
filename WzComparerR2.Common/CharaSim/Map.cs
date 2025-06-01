@@ -24,7 +24,7 @@ namespace WzComparerR2.CharaSim
         public List<int> Mobs { get; set; }
         public List<int> Npcs { get; set; }
 
-        public static Map CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static Map CreateFromNode(Wz_Node node, GlobalFindNodeFunction2 findNode, Wz_File wzf = null)
         {
             Map map = new Map();
             int mapID;
@@ -54,7 +54,7 @@ namespace WzComparerR2.CharaSim
             Wz_Node linkNode = null;
             if (map.Link != null && findNode != null)
             {
-                linkNode = findNode(string.Format(@$"Map\Map\Map{map.Link / 100000000}\{map.Link:d9}.img"));
+                linkNode = findNode(string.Format(@$"Map\Map\Map{map.Link / 100000000}\{map.Link:d9}.img"), wzf);
             }
             if (linkNode == null)
             {
@@ -64,7 +64,7 @@ namespace WzComparerR2.CharaSim
             Wz_Node miniMapNode = linkNode.FindNodeByPath("miniMap").ResolveUol();
             map.MiniMapNode = miniMapNode;
 
-            var mapInfo = findNode?.Invoke(string.Format($"Etc/MapObjectInfo.img/{map.MapID}"));
+            var mapInfo = findNode?.Invoke(string.Format($"Etc/MapObjectInfo.img/{map.MapID}"), wzf);
             if (mapInfo != null)
             {
                 var mobNode = mapInfo.Nodes["mob"];

@@ -216,6 +216,7 @@
             this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
             this.chkOutputGearTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputItemTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkOutputMapTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputSkillTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputRemovedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAddedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -2439,6 +2440,7 @@
             this.superTabControlPanel2.Controls.Add(this.chkEnableDarkMode);
             this.superTabControlPanel2.Controls.Add(this.chkOutputGearTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputItemTooltip);
+            this.superTabControlPanel2.Controls.Add(this.chkOutputMapTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputSkillTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkResolvePngLink);
             this.superTabControlPanel2.Controls.Add(this.chkOutputRemovedImg);
@@ -2527,18 +2529,32 @@
             this.chkOutputItemTooltip.TabIndex = 11;
             this.chkOutputItemTooltip.Text = "아이템 툴팁 저장";
             // 
+            // chkOutputMapTooltip
+            // 
+            // 
+            // 
+            // 
+            this.chkOutputMapTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputMapTooltip.Location = new System.Drawing.Point(314, 89);
+            this.chkOutputMapTooltip.Name = "chkOutputMapTooltip";
+            this.chkOutputMapTooltip.Size = new System.Drawing.Size(140, 23);
+            this.chkOutputMapTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputMapTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputSkillTooltip", "", "변경된 맵의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputMapTooltip.TabIndex = 12;
+            this.chkOutputMapTooltip.Text = "맵 툴팁 저장";
+            // 
             // chkOutputSkillTooltip
             // 
             // 
             // 
             // 
             this.chkOutputSkillTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkOutputSkillTooltip.Location = new System.Drawing.Point(314, 89);
+            this.chkOutputSkillTooltip.Location = new System.Drawing.Point(484, 89);
             this.chkOutputSkillTooltip.Name = "chkOutputSkillTooltip";
             this.chkOutputSkillTooltip.Size = new System.Drawing.Size(140, 23);
             this.chkOutputSkillTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.superTooltip1.SetSuperTooltip(this.chkOutputSkillTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputSkillTooltip", "", "변경된 스킬의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
-            this.chkOutputSkillTooltip.TabIndex = 12;
+            this.chkOutputSkillTooltip.TabIndex = 13;
             this.chkOutputSkillTooltip.Text = "스킬 툴팁 저장";
             // 
             // chkOutputRemovedImg
@@ -3420,6 +3436,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableDarkMode;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputGearTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputItemTooltip;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputMapTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputSkillTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
