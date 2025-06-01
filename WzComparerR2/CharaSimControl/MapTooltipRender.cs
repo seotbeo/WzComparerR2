@@ -67,7 +67,8 @@ namespace WzComparerR2.CharaSimControl
                 foreach (var mob in Map.Mobs)
                 {
                     string mobName = GetMobName(mob);
-                    var block = PrepareText(g, mobName ?? "(null)", GearGraphics.ItemDetailFont, GearGraphics.BlockRedBrush, 0, picY);
+                    var mobLevel = PluginBase.PluginManager.FindWz(@$"Mob\{mob:D7}.img\info\level").GetValueEx<int?>(null);
+                    var block = PrepareText(g, (mobName ?? "(null)") + ((mobLevel != null) ? $"(Lv.{mobLevel})" : ""), GearGraphics.ItemDetailFont, GearGraphics.BlockRedBrush, 0, picY);
                     mobBlocks.Add(block);
                     picY += 18;
                 }
