@@ -194,6 +194,8 @@ namespace WzComparerR2.CharaSim
         tucIgnoreForPotential,
         Etuc,
         CuttableCount,
+        illusionGrade,
+        
         //MSN专属属性
         blockUpgradeExtraOption,
         blockUpgradeStarforce,

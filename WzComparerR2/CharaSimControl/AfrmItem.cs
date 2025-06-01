@@ -542,6 +542,24 @@ namespace WzComparerR2.CharaSimControl
                     cashImg = Resource.CashShop_img_CashItem_label_11;
                     cashOrigin = new Point(cashImg.Width, cashImg.Height);
                 }
+                else if (gear.Props.TryGetValue(GearPropType.illusionGrade, out value) && value > 0)
+                {
+                    switch (value)
+                    {
+                        case 1:
+                            cashImg = Resource.CashShop_img_CashItem_label_12;
+                            cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                            break;
+                        case 2:
+                            cashImg = Resource.CashShop_img_CashItem_label_13;
+                            cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                            break;
+                        case 3:
+                            cashImg = Resource.CashShop_img_CashItem_label_14;
+                            cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                            break;
+                    }
+                }
                 if (cashImg == null) //default cashImg
                 {
                     cashImg = Resource.CashItem_0;
