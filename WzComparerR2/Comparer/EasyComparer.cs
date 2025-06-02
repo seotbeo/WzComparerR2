@@ -13,6 +13,7 @@ using WzComparerR2.CharaSimControl;
 using WzComparerR2.CharaSim;
 using System.Text.RegularExpressions;
 using WzComparerR2.Config;
+using DevComponents.DotNetBar;
 
 namespace WzComparerR2.Comparer
 {
@@ -30,6 +31,7 @@ namespace WzComparerR2.Comparer
         private SortedSet<int> OutputItemTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputMapTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputSkillTooltipIDs { get; set; } = new SortedSet<int>();
+        private List<int> ExceptionTooltipIDs { get; set; } = new List<int>();
         private Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
 
         public WzFileComparer Comparer { get; protected set; }
@@ -148,9 +150,6 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("<tr><th>파일명</th><th>신버전 용량</th><th>구버전 용량</th><th>변경</th><th>추가</th><th>제거</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
-                        string t = wzType.ToString();
-                        //if (t.Contains("Skill") || t.Contains("Quest") || t.Contains("Sound") || t.Contains("Character") || t.Contains("Effect") || t.Contains("Mob") || t.Contains("Npc")) continue;
-                        if (t.Contains("Skill") || t.Contains("Quest") || t.Contains("Sound") || t.Contains("Map") || t.Contains("Etc") || t.Contains("Item") || t.Contains("Effect") || t.Contains("Mob") || t.Contains("Npc")) continue;
                         var vNodeNew = dictNew[wzType];
                         var vNodeOld = dictOld[wzType];
                         var cmp = comparer.Compare(vNodeNew, vNodeOld);
@@ -567,6 +566,7 @@ namespace WzComparerR2.Comparer
                         Directory.CreateDirectory(tooltipPath);
                     }
                     SaveSkillTooltip(tooltipPath);
+                    HandleSaveTooltipException("스킬");
                 }
                 if (OutputItemTooltip && OutputItemTooltipIDs != null)
                 {
@@ -576,6 +576,7 @@ namespace WzComparerR2.Comparer
                         Directory.CreateDirectory(tooltipPath);
                     }
                     SaveItemTooltip(tooltipPath);
+                    HandleSaveTooltipException("아이템");
                 }
                 if (OutputGearTooltip && OutputGearTooltipIDs != null)
                 {
@@ -585,6 +586,7 @@ namespace WzComparerR2.Comparer
                         Directory.CreateDirectory(tooltipPath);
                     }
                     SaveGearTooltip(tooltipPath);
+                    HandleSaveTooltipException("장비");
                 }
                 if (OutputMapTooltip && OutputMapTooltipIDs != null)
                 {
@@ -594,6 +596,7 @@ namespace WzComparerR2.Comparer
                         Directory.CreateDirectory(tooltipPath);
                     }
                     SaveMapTooltip(tooltipPath);
+                    HandleSaveTooltipException("맵");
                 }
 
                 for (var i = 0; i < 2; i++)
@@ -628,34 +631,42 @@ namespace WzComparerR2.Comparer
 
             foreach (var skillID in OutputSkillTooltipIDs)
             {
-                StateInfo = string.Format("{0}/{1} 스킬: {2}", ++count, allCount, skillID);
-                StateDetail = "스킬 변경점을 툴팁 이미지로 출력중...";
-
-                string nodePath = skillID / 10000000 == 8 ? $@"\{(skillID / 100):D3}.img\skill\{skillID:D7}"
-                    : $@"\{(skillID / 10000):D3}.img\skill\{skillID:D7}";
-                int nullIdx = 0;
-
-                // 변경 전후 툴팁 이미지 생성
-                for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                try
                 {
-                    Skill skill = Skill.CreateFromNode(PluginManager.FindWz("Skill" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                        (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                        (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                        Skill.CreateFromNode(PluginManager.FindWz("Skill003" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i])));
-                    
-                    if (skill != null)
-                    {
-                        skill.Level = skill.MaxLevel;
-                        tooltipRenderNewOld[i].Skill = skill;
-                    }
-                    else
-                    {
-                        nullIdx |= i + 1;
-                        tooltipRenderNewOld[i].Skill = null;
-                    }
-                }
+                    StateInfo = string.Format("{0}/{1} 스킬: {2}", ++count, allCount, skillID);
+                    StateDetail = "스킬 변경점을 툴팁 이미지로 출력중...";
 
-                SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, skillID, "스킬");
+                    string nodePath = skillID / 10000000 == 8 ? $@"\{(skillID / 100):D3}.img\skill\{skillID:D7}"
+                        : $@"\{(skillID / 10000):D3}.img\skill\{skillID:D7}";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Skill skill = Skill.CreateFromNode(PluginManager.FindWz("Skill" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            Skill.CreateFromNode(PluginManager.FindWz("Skill003" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i])));
+
+                        if (skill != null)
+                        {
+                            skill.Level = skill.MaxLevel;
+                            tooltipRenderNewOld[i].Skill = skill;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            tooltipRenderNewOld[i].Skill = null;
+                        }
+                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, skillID, "스킬");
+                }
+                catch
+                {
+                    ExceptionTooltipIDs.Add(skillID);
+                    continue;
+                }
             }
             OutputSkillTooltipIDs.Clear();
             DiffSkillTags.Clear();
@@ -686,33 +697,41 @@ namespace WzComparerR2.Comparer
 
             foreach (var itemID in OutputItemTooltipIDs)
             {
-                StateInfo = string.Format("{0}/{1} 아이템: {2}", ++count, allCount, itemID);
-                StateDetail = "아이템 변경점을 툴팁 이미지로 출력중...";
-
-                string itemType = Item.GetItemType(itemID).ToString();
-                string nodePath = (itemID / 10000 == 500) ? $@"\{itemID:D7}.img"
-                    : (itemID / 1000 == 3015) ? $@"\{(itemID / 100):D6}.img\{itemID:D8}"
-                    : (itemID / 10000 == 301) ? $@"\{(itemID / 1000):D5}.img\{itemID:D8}"
-                    : $@"\{(itemID / 10000):D4}.img\{itemID:D8}";
-                int nullIdx = 0;
-
-                // 변경 전후 툴팁 이미지 생성
-                for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                try
                 {
-                    Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+                    StateInfo = string.Format("{0}/{1} 아이템: {2}", ++count, allCount, itemID);
+                    StateDetail = "아이템 변경점을 툴팁 이미지로 출력중...";
 
-                    if (item != null)
+                    string itemType = Item.GetItemType(itemID).ToString();
+                    string nodePath = (itemID / 10000 == 500) ? $@"\{itemID:D7}.img"
+                        : (itemID / 1000 == 3015) ? $@"\{(itemID / 100):D6}.img\{itemID:D8}"
+                        : (itemID / 10000 == 301) ? $@"\{(itemID / 1000):D5}.img\{itemID:D8}"
+                        : $@"\{(itemID / 10000):D4}.img\{itemID:D8}";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        tooltipRenderNewOld[i].Item = item;
+                        Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+
+                        if (item != null)
+                        {
+                            tooltipRenderNewOld[i].Item = item;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            tooltipRenderNewOld[i].Item = null;
+                        }
                     }
-                    else
-                    {
-                        nullIdx |= i + 1;
-                        tooltipRenderNewOld[i].Item = null;
-                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템");
                 }
-
-                SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템");
+                catch
+                {
+                    ExceptionTooltipIDs.Add(itemID);
+                    continue;
+                }
             }
             OutputItemTooltipIDs.Clear();
         }
@@ -750,65 +769,73 @@ namespace WzComparerR2.Comparer
 
             foreach (var gearID in OutputGearTooltipIDs)
             {
-                StateInfo = string.Format("{0}/{1} 장비: {2}", ++count, allCount, gearID);
-                StateDetail = "장비 변경점을 툴팁 이미지로 출력중...";
-
-                string nodePath = $@"{gearID:D8}.img";
-                int nullIdx = 0;
-
-                // 변경 전후 툴팁 이미지 생성
-                for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                try
                 {
-                    Gear gear = null;
-                    foreach (var category in CharaWzNodeNewOld[i]?.Nodes ?? Enumerable.Empty<Wz_Node>())
-                    {
-                        if (category.Text.ToLower().Contains("canvas")) continue;
+                    StateInfo = string.Format("{0}/{1} 장비: {2}", ++count, allCount, gearID);
+                    StateDetail = "장비 변경점을 툴팁 이미지로 출력중...";
 
-                        Wz_Node gearNode = null;
-                        if (category.Text.Contains(".img") && category.Text == nodePath)
+                    string nodePath = $@"{gearID:D8}.img";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Gear gear = null;
+                        foreach (var category in CharaWzNodeNewOld[i]?.Nodes ?? Enumerable.Empty<Wz_Node>())
                         {
-                            var img = category.GetValueEx<Wz_Image>(null);
-                            if (img != null)
+                            if (category.Text.ToLower().Contains("canvas")) continue;
+
+                            Wz_Node gearNode = null;
+                            if (category.Text.Contains(".img") && category.Text == nodePath)
                             {
-                                gearNode = img.TryExtract() ? img.Node : null;
+                                var img = category.GetValueEx<Wz_Image>(null);
+                                if (img != null)
+                                {
+                                    gearNode = img.TryExtract() ? img.Node : null;
+                                }
+
+                                gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
+                                break;
                             }
 
-                            gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
-                            break;
-                        }
-
-                        gearNode = category.FindNodeByPath(nodePath);
-                        if (gearNode != null)
-                        {
-                            var img = gearNode.GetValueEx<Wz_Image>(null);
-                            if (img != null)
+                            gearNode = category.FindNodeByPath(nodePath);
+                            if (gearNode != null)
                             {
-                                gearNode = img.TryExtract() ? img.Node : null;
-                            }
+                                var img = gearNode.GetValueEx<Wz_Image>(null);
+                                if (img != null)
+                                {
+                                    gearNode = img.TryExtract() ? img.Node : null;
+                                }
 
-                            gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
-                            break;
+                                gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
+                                break;
+                            }
+                        }
+
+                        if (gear != null)
+                        {
+                            if (tooltipRenderNewOld[i] is GearTooltipRender22)
+                                (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = gear;
+                            else
+                                (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = gear;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            if (tooltipRenderNewOld[i] is GearTooltipRender22)
+                                (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = null;
+                            else
+                                (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = null;
                         }
                     }
 
-                    if (gear != null)
-                    {
-                        if (tooltipRenderNewOld[i] is GearTooltipRender22)
-                            (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = gear;
-                        else
-                            (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = gear;
-                    }
-                    else
-                    {
-                        nullIdx |= i + 1;
-                        if (tooltipRenderNewOld[i] is GearTooltipRender22)
-                            (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = null;
-                        else
-                            (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = null;
-                    }
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, gearID, "장비");
                 }
-
-                SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, gearID, "장비");
+                catch
+                {
+                    ExceptionTooltipIDs.Add(gearID);
+                    continue;
+                }
             }
             OutputGearTooltipIDs.Clear();
         }
@@ -831,29 +858,37 @@ namespace WzComparerR2.Comparer
 
             foreach (var mapID in OutputMapTooltipIDs)
             {
-                StateInfo = string.Format("{0}/{1} 맵: {2}", ++count, allCount, mapID);
-                StateDetail = "맵 변경점을 툴팁 이미지로 출력중...";
-
-                string nodePath = $@"\{mapID:D9}.img";
-                int nullIdx = 0;
-
-                // 변경 전후 툴팁 이미지 생성
-                for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                try
                 {
-                    Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+                    StateInfo = string.Format("{0}/{1} 맵: {2}", ++count, allCount, mapID);
+                    StateDetail = "맵 변경점을 툴팁 이미지로 출력중...";
 
-                    if (map != null)
+                    string nodePath = $@"\{mapID:D9}.img";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        tooltipRenderNewOld[i].Map = map;
+                        Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+
+                        if (map != null)
+                        {
+                            tooltipRenderNewOld[i].Map = map;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            tooltipRenderNewOld[i].Map = null;
+                        }
                     }
-                    else
-                    {
-                        nullIdx |= i + 1;
-                        tooltipRenderNewOld[i].Map = null;
-                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mapID, "맵", typePicH: 1);
                 }
-
-                SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mapID, "맵", typePicH: 1);
+                catch
+                {
+                    ExceptionTooltipIDs.Add(mapID);
+                    continue;
+                }
             }
             OutputGearTooltipIDs.Clear();
         }
@@ -926,6 +961,15 @@ namespace WzComparerR2.Comparer
             }
             resultImage.Dispose();
             g.Dispose();
+        }
+
+        private void HandleSaveTooltipException(string type)
+        {
+            if (ExceptionTooltipIDs.Count > 0)
+            {
+                MessageBoxEx.Show($"{type} 툴팁 생성에 실패한 항목이 {ExceptionTooltipIDs.Count}개 있습니다.\r\n확인 버튼을 누르면 비교가 계속됩니다.\r\n\r\n실패 목록: {string.Join(", ", ExceptionTooltipIDs)}", "오류");
+                ExceptionTooltipIDs.Clear();
+            }
         }
 
         // 노드에서 스킬 ID 얻기
