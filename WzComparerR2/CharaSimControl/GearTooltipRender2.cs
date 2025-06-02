@@ -457,7 +457,7 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "외형 :", GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
                 //picH += 15;
 
-                Wz_Node android = PluginBase.PluginManager.FindWz(string.Format("Etc/Android/{0:D4}.img", value));
+                Wz_Node android = PluginBase.PluginManager.FindWz(string.Format("Etc/Android/{0:D4}.img", value), this.SourceWzFile);
                 Wz_Node costume = android?.Nodes["costume"];
                 Wz_Node basic = android?.Nodes["basic"];
 
@@ -473,20 +473,20 @@ namespace WzComparerR2.CharaSimControl
                 {
                     if (morphID != 0)
                     {
-                        appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(string.Format("Morph/{0:D4}.img/stand/0", morphID)), PluginBase.PluginManager.FindWz);
+                        appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(string.Format("Morph/{0:D4}.img/stand/0", morphID), this.SourceWzFile), PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     }
                     else
                     {
                         if (this.avatar == null)
                         {
-                            this.avatar = new AvatarCanvasManager();
+                            this.avatar = new AvatarCanvasManager(this.SourceWzFile);
                         }
 
                         var skin = costume?.Nodes["skin"]?.Nodes["0"].GetValueEx<int>(2015);
                         var hair = costume?.Nodes["hair"]?.Nodes["0"].GetValueEx<int>(30000);
                         var face = costume?.Nodes["face"]?.Nodes["0"].GetValueEx<int>(20000);
 
-                        this.avatar.AddBodyFromSkin4((int)skin);
+                        this.avatar.AddBodyFromSkin((int)skin);
                         this.avatar.AddGears([(int)hair, (int)face]);
 
                         if (basic != null)
@@ -697,7 +697,7 @@ namespace WzComparerR2.CharaSimControl
             if (Gear.Props.TryGetValue(GearPropType.ringOptionSkill, out ringOpt)
                 && Gear.Props.TryGetValue(GearPropType.ringOptionSkillLv, out ringOptLv))
             {
-                var opt = Potential.LoadFromWz(ringOpt, ringOptLv, PluginBase.PluginManager.FindWz);
+                var opt = Potential.LoadFromWz(ringOpt, ringOptLv, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                 if (opt != null)
                 {
                     TextRenderer.DrawText(g, opt.ConvertSummary(), GearGraphics.EquipDetailFont, new Point(13, picH), Color.White, TextFormatFlags.NoPadding);
@@ -1044,7 +1044,7 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            if (Gear.type != GearType.pickaxe && Gear.type != GearType.shovel && PluginBase.PluginManager.FindWz(string.Format("Effect/ItemEff.img/{0}/effect", Gear.ItemID)) != null)
+            if (Gear.type != GearType.pickaxe && Gear.type != GearType.shovel && PluginBase.PluginManager.FindWz(string.Format("Effect/ItemEff.img/{0}/effect", Gear.ItemID), this.SourceWzFile) != null)
             {
                 desc.Add(" #c캐릭터 정보창 등 일부 상황에서는 보이지 않는 아이템입니다.#");
             }
@@ -1870,13 +1870,13 @@ namespace WzComparerR2.CharaSimControl
             switch (type)
             {
                 case 0:
-                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/medal/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/medal/" + medalTag, this.SourceWzFile);
                     break;
                 case 1:
-                    resNode = PluginBase.PluginManager.FindWz("UI/ChatBalloon.img/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/ChatBalloon.img/" + medalTag, this.SourceWzFile);
                     break;
                 case 2:
-                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/" + medalTag);
+                    resNode = PluginBase.PluginManager.FindWz("UI/NameTag.img/" + medalTag, this.SourceWzFile);
                     break;
                 default:
                     resNode = null;

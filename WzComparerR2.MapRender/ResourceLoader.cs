@@ -388,7 +388,7 @@ namespace WzComparerR2.MapRender
                     {
                         case "skin":
                             var skin = component.GetValueEx<int>(0);
-                            avatar.AddBodyFromSkin3(skin);
+                            avatar.AddBodyFromSkin(skin);
                             break;
 
                         case "ear":

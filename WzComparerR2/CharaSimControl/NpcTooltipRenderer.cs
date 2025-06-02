@@ -96,7 +96,7 @@ namespace WzComparerR2.CharaSimControl
                     {
                         case "skin":
                             var skin = node.GetValueEx<int>(0);
-                            this.avatar.AddBodyFromSkin3(skin);
+                            this.avatar.AddBodyFromSkin(skin);
                             break;
 
                         case "ear":

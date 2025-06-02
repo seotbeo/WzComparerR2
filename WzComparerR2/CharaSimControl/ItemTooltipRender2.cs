@@ -875,18 +875,18 @@ namespace WzComparerR2.CharaSimControl
                 {
                     if (this.avatar == null)
                     {
-                        this.avatar = new AvatarCanvasManager();
+                        this.avatar = new AvatarCanvasManager(this.SourceWzFile);
                     }
 
                     this.avatar.SetCosmeticColor(this.CosmeticHairColor, this.CosmeticFaceColor);
 
                     if (value < 1000)
                     {
-                        this.avatar.AddBodyFromSkin3((int)value);
+                        this.avatar.AddBodyFromSkin((int)value);
                     }
                     else
                     {
-                        this.avatar.AddBodyFromSkin4(2015);
+                        this.avatar.AddBodyFromSkin(2015);
                         this.avatar.AddHairOrFace((int)value, true);
                     }
 

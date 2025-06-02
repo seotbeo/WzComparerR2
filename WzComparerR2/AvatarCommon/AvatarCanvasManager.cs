@@ -25,28 +25,23 @@ namespace WzComparerR2.AvatarCommon
             this.CosmeticFaceColor = 0;
         }
 
+        public AvatarCanvasManager(Wz_File sourceWzFile) : this()
+        {
+            this.SourceWzFile = sourceWzFile;
+        }
+
         private AvatarCanvas canvas;
         private int CosmeticHairColor;
         private int CosmeticFaceColor;
+        private Wz_File SourceWzFile;
 
-        public void AddBodyFromSkin3(int skin)
+        public void AddBodyFromSkin(int skin)
         {
-            var a = $@"Character\00002{skin:D3}.img";
-            Wz_Node bodyNode = PluginBase.PluginManager.FindWz($@"Character\00002{skin:D3}.img")
-                        ?? PluginBase.PluginManager.FindWz($@"Character\00002000.img");
-            Wz_Node headNode = PluginBase.PluginManager.FindWz($@"Character\00012{skin:D3}.img")
-                ?? PluginBase.PluginManager.FindWz($@"Character\00012000.img");
-
-            this.canvas.AddPart(bodyNode);
-            this.canvas.AddPart(headNode);
-        }
-
-        public void AddBodyFromSkin4(int skin)
-        {
-            Wz_Node bodyNode = PluginBase.PluginManager.FindWz($@"Character\0000{skin:D4}.img")
-                        ?? PluginBase.PluginManager.FindWz($@"Character\00002000.img");
-            Wz_Node headNode = PluginBase.PluginManager.FindWz($@"Character\0001{skin:D4}.img")
-                ?? PluginBase.PluginManager.FindWz($@"Character\00012000.img");
+            var skinID = (skin % 2000) + 2000;
+            Wz_Node bodyNode = PluginBase.PluginManager.FindWz($@"Character\0000{skinID:D4}.img", this.SourceWzFile)
+                        ?? PluginBase.PluginManager.FindWz($@"Character\00002000.img", this.SourceWzFile);
+            Wz_Node headNode = PluginBase.PluginManager.FindWz($@"Character\0001{skinID:D4}.img", this.SourceWzFile)
+                ?? PluginBase.PluginManager.FindWz($@"Character\00012000.img", this.SourceWzFile);
 
             this.canvas.AddPart(bodyNode);
             this.canvas.AddPart(headNode);
@@ -68,8 +63,8 @@ namespace WzComparerR2.AvatarCommon
                 }
             }
 
-            var gearNode = PluginManager.FindWz($@"Character\Hair\{id + hairColor:D8}.img") ??
-                PluginManager.FindWz($@"Character\Face\{id + faceColor:D8}.img");
+            var gearNode = PluginManager.FindWz($@"Character\Hair\{id + hairColor:D8}.img", this.SourceWzFile) ??
+                PluginManager.FindWz($@"Character\Face\{id + faceColor:D8}.img", this.SourceWzFile);
             if (gearNode != null)
             {
                 this.canvas.AddPart(gearNode);
@@ -140,7 +135,7 @@ namespace WzComparerR2.AvatarCommon
             string imgName = id.ToString("D8") + ".img";
             Wz_Node imgNode = null;
 
-            var characWz = PluginManager.FindWz(Wz_Type.Character);
+            var characWz = PluginManager.FindWz(Wz_Type.Character, this.SourceWzFile);
             foreach (var node1 in characWz.Nodes)
             {
                 if (node1.Text.Contains("_Canvas"))
@@ -190,7 +185,7 @@ namespace WzComparerR2.AvatarCommon
                 return 0;
             }
 
-            Wz_Node node = PluginBase.PluginManager.FindWz("Character\\00002000.img");
+            Wz_Node node = PluginBase.PluginManager.FindWz("Character\\00002000.img", this.SourceWzFile);
             node = node?.FindNodeByPath(action.Name);
             if (node == null)
             {
@@ -208,7 +203,7 @@ namespace WzComparerR2.AvatarCommon
                 return 0;
             }
 
-            Wz_Node node = PluginBase.PluginManager.FindWz("Character\\00002000.img");
+            Wz_Node node = PluginBase.PluginManager.FindWz("Character\\00002000.img", this.SourceWzFile);
             foreach (var path in new[] { action.Name, bodyFrame.ToString(), "delay" })
             {
                 node = node?.FindNodeByPath(path);
