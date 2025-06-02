@@ -242,16 +242,17 @@ namespace WzComparerR2.CharaSimControl
             titleRect.X = (width - titleRect.Width) / 2;
 
             //垂直居中
-            int height = Math.Max(imgRect.Height, Math.Max(textRect.Height, locRect.Height));
+            int height = Math.Max(imgRect.Height, textRect.Height);
             imgRect.Y = (height - imgRect.Height) / 2;
             textRect.Y = (height - textRect.Height) / 2;
+            height = Math.Max(height, locRect.Height);
             if (!titleRect.IsEmpty)
             {
                 height += titleRect.Height + 4;
                 imgRect.Y += titleRect.Bottom + 4;
                 textRect.Y += titleRect.Bottom + 4;
+                locRect.Y += titleRect.Bottom + 4;
             }
-            locRect.Y = textRect.Y;
 
             //绘制
             bmp = new Bitmap(width + 20, height + 20);
