@@ -725,7 +725,7 @@ namespace WzComparerR2.Comparer
                         }
                     }
 
-                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템");
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템", typePicH: 23);
                 }
                 catch
                 {
