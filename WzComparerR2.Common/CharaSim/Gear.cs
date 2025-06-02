@@ -643,77 +643,6 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static string GetGearDirName(int code)
-        {
-            GearType type = GetGearType(code);
-            switch (type)
-            {
-                case GearType.faceAccessory:
-                case GearType.eyeAccessory:
-                case GearType.earrings:
-                case GearType.pendant:
-                case GearType.belt:
-                case GearType.medal:
-                case GearType.shoulderPad:
-                case GearType.pocket:
-                case GearType.badge:
-                case GearType.emblem:
-                    return "Accessory";
-                case GearType.android:
-                case GearType.machineHeart:
-                    return "Android";
-                case GearType.arcaneSymbol:
-                    return "ArcaneForce";
-                case GearType.authenticSymbol:
-                case GearType.grandAuthenticSymbol:
-                    return "AuthenticForce";
-                case GearType.bit:
-                    return "Bits";
-                case GearType.cap:
-                    return "Cap";
-                case GearType.cape:
-                    return "Cape";
-                case GearType.coat:
-                    return "Coat";
-                case GearType.glove:
-                    return "Glove";
-                case GearType.jewel:
-                    return "Jewel";
-                case GearType.longcoat:
-                    return "Longcoat";
-                case GearType.pants:
-                    return "Pants";
-                case GearType.petEquip:
-                    return "PetEquip";
-                case GearType.ring:
-                    return "Ring";
-                case GearType.shield:
-                    return "Shield";
-                case GearType.shoes:
-                    return "Shoes";
-                case GearType.taming:
-                case GearType.saddle:
-                case GearType.taming2:
-                case GearType.tamingChair:
-                case GearType.taming3:
-                    return "TamingMob";
-                case GearType.totem:
-                    return "Totem";
-                default:
-                    if (IsFace(type))
-                        return "Face";
-                    if (IsHair(type))
-                        return "Hair";
-                    if (IsCashWeapon(type) || IsWeapon(type) || IsSubWeapon(type))
-                        return "Weapon";
-                    if (IsDragonGear(type))
-                        return "Dragon";
-                    if (IsMechanicGear(type))
-                        return "Mechanic";
-                    return "";
-            }
-        }
-
         public static bool SpecialCanPotential(GearType type)
         {
             switch (type)
@@ -865,6 +794,8 @@ namespace WzComparerR2.CharaSim
 
         public static Gear CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
+            if (node == null) return null;
+
             int gearID;
             Match m = Regex.Match(node.Text, @"^(\d{8})\.img$");
             if (!(m.Success && Int32.TryParse(m.Result("$1"), out gearID)))

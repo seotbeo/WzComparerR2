@@ -148,6 +148,9 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("<tr><th>파일명</th><th>신버전 용량</th><th>구버전 용량</th><th>변경</th><th>추가</th><th>제거</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
+                        string t = wzType.ToString();
+                        //if (t.Contains("Skill") || t.Contains("Quest") || t.Contains("Sound") || t.Contains("Character") || t.Contains("Effect") || t.Contains("Mob") || t.Contains("Npc")) continue;
+                        if (t.Contains("Skill") || t.Contains("Quest") || t.Contains("Sound") || t.Contains("Map") || t.Contains("Etc") || t.Contains("Item") || t.Contains("Effect") || t.Contains("Mob") || t.Contains("Npc")) continue;
                         var vNodeNew = dictNew[wzType];
                         var vNodeOld = dictOld[wzType];
                         var cmp = comparer.Compare(vNodeNew, vNodeOld);
@@ -687,9 +690,9 @@ namespace WzComparerR2.Comparer
                 StateDetail = "아이템 변경점을 툴팁 이미지로 출력중...";
 
                 string itemType = Item.GetItemType(itemID).ToString();
-                string nodePath = (itemID / 1000000 == 5) ? $@"\{itemID:D8}.img\"
-                    : (itemID / 100 == 3015) ? $@"\{(itemID / 100):D6}.img\{itemID:D8}"
-                    : (itemID / 1000 == 301) ? $@"\{(itemID / 1000):D5}.img\{itemID:D8}"
+                string nodePath = (itemID / 10000 == 500) ? $@"\{itemID:D7}.img"
+                    : (itemID / 1000 == 3015) ? $@"\{(itemID / 100):D6}.img\{itemID:D8}"
+                    : (itemID / 10000 == 301) ? $@"\{(itemID / 1000):D5}.img\{itemID:D8}"
                     : $@"\{(itemID / 10000):D4}.img\{itemID:D8}";
                 int nullIdx = 0;
 
@@ -718,6 +721,7 @@ namespace WzComparerR2.Comparer
         private void SaveGearTooltip(string tooltipPath)
         {
             TooltipRender[] tooltipRenderNewOld = new TooltipRender[2];
+            Wz_Node[] CharaWzNodeNewOld = new Wz_Node[2];
             int count = 0;
             int allCount = OutputGearTooltipIDs.Count;
 
@@ -741,6 +745,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowLevelOrSealed = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                 }
+                CharaWzNodeNewOld[i] = PluginManager.FindWz(Wz_Type.Character, WzFileNewOld[i]);
             }
 
             foreach (var gearID in OutputGearTooltipIDs)
@@ -748,18 +753,43 @@ namespace WzComparerR2.Comparer
                 StateInfo = string.Format("{0}/{1} 장비: {2}", ++count, allCount, gearID);
                 StateDetail = "장비 변경점을 툴팁 이미지로 출력중...";
 
-                string gearType = Gear.GetGearDirName(gearID);
-                if (!string.IsNullOrEmpty(gearType))
-                {
-                    gearType = @"\" + gearType;
-                }
-                string nodePath = $@"\{gearID:D8}.img";
+                string nodePath = $@"{gearID:D8}.img";
                 int nullIdx = 0;
 
                 // 변경 전후 툴팁 이미지 생성
                 for (int i = 0; i < 2; i++) // 0: New, 1: Old
                 {
-                    Gear gear = Gear.CreateFromNode(PluginManager.FindWz($@"Character{gearType}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+                    Gear gear = null;
+                    foreach (var category in CharaWzNodeNewOld[i]?.Nodes ?? Enumerable.Empty<Wz_Node>())
+                    {
+                        if (category.Text.ToLower().Contains("canvas")) continue;
+
+                        Wz_Node gearNode = null;
+                        if (category.Text.Contains(".img") && category.Text == nodePath)
+                        {
+                            var img = category.GetValueEx<Wz_Image>(null);
+                            if (img != null)
+                            {
+                                gearNode = img.TryExtract() ? img.Node : null;
+                            }
+
+                            gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
+                            break;
+                        }
+
+                        gearNode = category.FindNodeByPath(nodePath);
+                        if (gearNode != null)
+                        {
+                            var img = gearNode.GetValueEx<Wz_Image>(null);
+                            if (img != null)
+                            {
+                                gearNode = img.TryExtract() ? img.Node : null;
+                            }
+
+                            gear = Gear.CreateFromNode(gearNode, PluginManager.FindWz, WzFileNewOld[i]);
+                            break;
+                        }
+                    }
 
                     if (gear != null)
                     {
