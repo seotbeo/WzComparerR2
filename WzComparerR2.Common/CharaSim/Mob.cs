@@ -70,7 +70,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static Mob CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static Mob CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
         {
             if (node == null) return null;
 
@@ -153,7 +153,7 @@ namespace WzComparerR2.CharaSim
                 Wz_Node linkNode = null;
                 if (mobInfo.Link != null && findNode != null)
                 {
-                    linkNode = findNode(string.Format("Mob\\{0:d7}.img", mobInfo.Link));
+                    linkNode = findNode2(string.Format("Mob\\{0:d7}.img", mobInfo.Link), wzf);
                 }
                 if (linkNode == null)
                 {

@@ -34,7 +34,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IgnoreEvalError { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
-        public Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
+        public Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
         public Wz_Node SourceWzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
@@ -52,6 +52,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             CanvasRegion region = this.IsWideMode ? (this.Enable22AniStyle ? CanvasRegion._22AniWide : CanvasRegion.Wide) : (this.Enable22AniStyle ? CanvasRegion._22AniOriginal : CanvasRegion.Original);
+            doHighlight = doHighlight && this.DiffSkillTags.ContainsKey(Skill.SkillID);
 
             int picHeight;
             List<int> splitterH;
@@ -140,7 +141,6 @@ namespace WzComparerR2.CharaSimControl
 
             picH = 0;
             splitterH = new List<int>();
-            string skillIDstr = Skill.SkillID.ToString().PadLeft(7, '0');
 
             //获取文字
             StringResult sr;
@@ -204,7 +204,7 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.IsSequenceOn)
             {
                 string colortag = "#c";
-                if (doHighlight && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("isSequenceOn"))
+                if (doHighlight && DiffSkillTags[Skill.SkillID].Contains("isSequenceOn"))
                 {
                     colortag = "#$g";
                 }
@@ -213,7 +213,7 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.IsPetAutoBuff)
             {
                 string colortag = "#c";
-                if (doHighlight && DiffSkillTags.ContainsKey(skillIDstr) && DiffSkillTags[skillIDstr].Contains("isPetAutoBuff"))
+                if (doHighlight && DiffSkillTags[Skill.SkillID].Contains("isPetAutoBuff"))
                 {
                     colortag = "#$g";
                 }
@@ -253,7 +253,7 @@ namespace WzComparerR2.CharaSimControl
                         if (Skill.VSkillValue == 1) Skill.Level = 30;
                     }
                 }
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, skillIDstr, this.DiffSkillTags);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, Skill.SkillID, this.DiffSkillTags);
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
@@ -398,7 +398,7 @@ namespace WzComparerR2.CharaSimControl
                         continue;
                     }
                     string colortag = "";
-                    if (doHighlight && DiffSkillTags.ContainsKey(skillIDstr) && (DiffSkillTags[skillIDstr].Contains("lt" + kv.Key) || DiffSkillTags[skillIDstr].Contains("rb" + kv.Key)))
+                    if (doHighlight && (DiffSkillTags[Skill.SkillID].Contains("lt" + kv.Key) || DiffSkillTags[Skill.SkillID].Contains("rb" + kv.Key)))
                     {
                         colortag = "#$g";
                     }

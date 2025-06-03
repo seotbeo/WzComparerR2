@@ -30,9 +30,12 @@ namespace WzComparerR2.Comparer
         private SortedSet<int> OutputGearTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputItemTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputMapTooltipIDs { get; set; } = new SortedSet<int>();
+        private SortedSet<int> OutputMobTooltipIDs { get; set; } = new SortedSet<int>();
+        private SortedSet<int> OutputNpcTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputSkillTooltipIDs { get; set; } = new SortedSet<int>();
         private List<int> ExceptionTooltipIDs { get; set; } = new List<int>();
-        private Dictionary<string, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<string, HashSet<string>>();
+        private Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
+        private Dictionary<int, HashSet<string>> DiffMobTags { get; set; } = new Dictionary<int, HashSet<string>>();
 
         public WzFileComparer Comparer { get; protected set; }
         private string stateInfo;
@@ -44,6 +47,8 @@ namespace WzComparerR2.Comparer
         public bool OutputGearTooltip { get; set; }
         public bool OutputItemTooltip { get; set; }
         public bool OutputMapTooltip { get; set; }
+        public bool OutputMobTooltip { get; set; }
+        public bool OutputNpcTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
 
@@ -598,6 +603,26 @@ namespace WzComparerR2.Comparer
                     SaveMapTooltip(tooltipPath);
                     HandleSaveTooltipException("맵");
                 }
+                if (OutputMobTooltip && OutputMobTooltipIDs != null)
+                {
+                    string tooltipPath = Path.Combine(outputDir, "몬스터 툴팁");
+                    if (!Directory.Exists(tooltipPath))
+                    {
+                        Directory.CreateDirectory(tooltipPath);
+                    }
+                    SaveMobTooltip(tooltipPath);
+                    HandleSaveTooltipException("몬스터");
+                }
+                if (OutputNpcTooltip && OutputNpcTooltipIDs != null)
+                {
+                    string tooltipPath = Path.Combine(outputDir, "NPC 툴팁");
+                    if (!Directory.Exists(tooltipPath))
+                    {
+                        Directory.CreateDirectory(tooltipPath);
+                    }
+                    SaveNpcTooltip(tooltipPath);
+                    HandleSaveTooltipException("NPC");
+                }
 
                 for (var i = 0; i < 2; i++)
                 {
@@ -636,17 +661,17 @@ namespace WzComparerR2.Comparer
                     StateInfo = string.Format("{0}/{1} 스킬: {2}", ++count, allCount, skillID);
                     StateDetail = "스킬 변경점을 툴팁 이미지로 출력중...";
 
-                    string nodePath = skillID / 10000000 == 8 ? $@"\{(skillID / 100):D3}.img\skill\{skillID:D7}"
-                        : $@"\{(skillID / 10000):D3}.img\skill\{skillID:D7}";
+                    string nodePath = skillID / 10000000 == 8 ? $@"{(skillID / 100):D3}.img\skill\{skillID:D7}"
+                        : $@"{(skillID / 10000):D3}.img\skill\{skillID:D7}";
                     int nullIdx = 0;
 
                     // 변경 전후 툴팁 이미지 생성
                     for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        Skill skill = Skill.CreateFromNode(PluginManager.FindWz("Skill" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            (Skill.CreateFromNode(PluginManager.FindWz("Skill001" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            (Skill.CreateFromNode(PluginManager.FindWz("Skill002" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            Skill.CreateFromNode(PluginManager.FindWz("Skill003" + nodePath, WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i])));
+                        Skill skill = Skill.CreateFromNode(PluginManager.FindWz($@"Skill\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill001\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill002\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
+                            Skill.CreateFromNode(PluginManager.FindWz($@"Skill003\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i])));
 
                         if (skill != null)
                         {
@@ -703,16 +728,16 @@ namespace WzComparerR2.Comparer
                     StateDetail = "아이템 변경점을 툴팁 이미지로 출력중...";
 
                     string itemType = Item.GetItemType(itemID).ToString();
-                    string nodePath = (itemID / 10000 == 500) ? $@"\{itemID:D7}.img"
-                        : (itemID / 1000 == 3015) ? $@"\{(itemID / 100):D6}.img\{itemID:D8}"
-                        : (itemID / 10000 == 301) ? $@"\{(itemID / 1000):D5}.img\{itemID:D8}"
-                        : $@"\{(itemID / 10000):D4}.img\{itemID:D8}";
+                    string nodePath = (itemID / 10000 == 500) ? $@"{itemID:D7}.img"
+                        : (itemID / 1000 == 3015) ? $@"{(itemID / 100):D6}.img\{itemID:D8}"
+                        : (itemID / 10000 == 301) ? $@"{(itemID / 1000):D5}.img\{itemID:D8}"
+                        : $@"{(itemID / 10000):D4}.img\{itemID:D8}";
                     int nullIdx = 0;
 
                     // 변경 전후 툴팁 이미지 생성
                     for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+                        Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
 
                         if (item != null)
                         {
@@ -863,13 +888,13 @@ namespace WzComparerR2.Comparer
                     StateInfo = string.Format("{0}/{1} 맵: {2}", ++count, allCount, mapID);
                     StateDetail = "맵 변경점을 툴팁 이미지로 출력중...";
 
-                    string nodePath = $@"\{mapID:D9}.img";
+                    string nodePath = $@"{mapID:D9}.img";
                     int nullIdx = 0;
 
                     // 변경 전후 툴팁 이미지 생성
                     for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
+                        Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
 
                         if (map != null)
                         {
@@ -890,7 +915,113 @@ namespace WzComparerR2.Comparer
                     continue;
                 }
             }
-            OutputGearTooltipIDs.Clear();
+            OutputMapTooltipIDs.Clear();
+        }
+
+        // 변경된 몬스터 툴팁 출력
+        private void SaveMobTooltip(string tooltipPath)
+        {
+            MobTooltipRenderer[] tooltipRenderNewOld = new MobTooltipRenderer[2];
+            int count = 0;
+            int allCount = OutputMobTooltipIDs.Count;
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                tooltipRenderNewOld[i] = new MobTooltipRenderer();
+                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].DiffMobTags = this.DiffMobTags;
+            }
+
+            foreach (var mobID in OutputMobTooltipIDs)
+            {
+                try
+                {
+                    StateInfo = string.Format("{0}/{1} 몬스터: {2}", ++count, allCount, mobID);
+                    StateDetail = "몬스터 변경점을 툴팁 이미지로 출력중...";
+
+                    string nodePath = $@"{mobID:D7}.img";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]);
+
+                        if (mob != null)
+                        {
+                            tooltipRenderNewOld[i].MobInfo = mob;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            tooltipRenderNewOld[i].MobInfo = null;
+                        }
+                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mobID, "몬스터", typePicH: 3);
+                }
+                catch
+                {
+                    ExceptionTooltipIDs.Add(mobID);
+                    continue;
+                }
+            }
+            OutputMobTooltipIDs.Clear();
+            DiffMobTags.Clear();
+        }
+
+        // 변경된 NPC 툴팁 출력
+        private void SaveNpcTooltip(string tooltipPath)
+        {
+            NpcTooltipRenderer[] tooltipRenderNewOld = new NpcTooltipRenderer[2];
+            int count = 0;
+            int allCount = OutputNpcTooltipIDs.Count;
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                tooltipRenderNewOld[i] = new NpcTooltipRenderer();
+                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+            }
+
+            foreach (var npcID in OutputNpcTooltipIDs)
+            {
+                try
+                {
+                    StateInfo = string.Format("{0}/{1} NPC: {2}", ++count, allCount, npcID);
+                    StateDetail = "NPC 변경점을 툴팁 이미지로 출력중...";
+
+                    string nodePath = $@"{npcID:D7}.img";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Npc npc = Npc.CreateFromNode(PluginManager.FindWz($@"Npc\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]);
+
+                        if (npc != null)
+                        {
+                            tooltipRenderNewOld[i].NpcInfo = npc;
+                        }
+                        else
+                        {
+                            nullIdx |= i + 1;
+                            tooltipRenderNewOld[i].NpcInfo = null;
+                        }
+                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, npcID, "NPC", typePicH: 3);
+                }
+                catch
+                {
+                    ExceptionTooltipIDs.Add(npcID);
+                    continue;
+                }
+            }
+            OutputNpcTooltipIDs.Clear();
         }
 
         private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType, int typePicH = 13)
@@ -910,6 +1041,11 @@ namespace WzComparerR2.Comparer
                     {
                         ImageNew = (RenderNew as SkillTooltipRender2).Render(true);
                         ImageOld = (RenderOld as SkillTooltipRender2).Render(true);
+                    }
+                    else if (RenderNew is MobTooltipRenderer)
+                    {
+                        ImageNew = (RenderNew as MobTooltipRenderer).Render(true);
+                        ImageOld = (RenderOld as MobTooltipRenderer).Render(true);
                     }
                     else
                     {
@@ -977,22 +1113,26 @@ namespace WzComparerR2.Comparer
         {
             if (node == null) return;
 
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*"); // 스트링 확인
             string tag = null;
 
             if (!match.Success)
             {
-                tag = node.Text;
                 match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|isSequenceOn|BGM).*"); // 변경점 중 스킬 툴팁 출력할 것들
+                tag = node.Text;
+            }
 
-                if (change && !match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Skill\\_Canvas\\\d+.img\\skill\\(\d+)\\(icon)$"); // 스킬 아이콘 변경 체크
-                }
-                if (!match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)$"); // 추가/삭제 확인
-                }
+
+            if (change && !match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Skill\\_Canvas\\\d+.img\\skill\\(\d+)\\(icon)$"); // 스킬 아이콘 변경 체크
+                tag = null;
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)$"); // 추가/삭제 확인
+                tag = null;
             }
 
             if (match.Success)
@@ -1001,15 +1141,16 @@ namespace WzComparerR2.Comparer
 
                 if (skillID != null)
                 {
-                    if (!OutputSkillTooltipIDs.Contains(int.Parse(skillID)))
+                    var id = int.Parse(skillID);
+                    if (!OutputSkillTooltipIDs.Contains(id))
                     {
-                        OutputSkillTooltipIDs.Add(int.Parse(skillID));
-                        DiffSkillTags[skillID] = new HashSet<string>();
+                        OutputSkillTooltipIDs.Add(id);
+                        DiffSkillTags[id] = new HashSet<string>();
                     }
 
-                    if (tag != null && !DiffSkillTags[skillID].Contains(tag))
+                    if (tag != null && !DiffSkillTags[id].Contains(tag))
                     {
-                        DiffSkillTags[skillID].Add(tag);
+                        DiffSkillTags[id].Add(tag);
                     }
                 }
             }
@@ -1020,16 +1161,16 @@ namespace WzComparerR2.Comparer
         {
             if (node == null) return;
 
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\(?:Cash|Consume|Etc|Ins|Pet).img\\(?:.+?\\)?(\d+).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\(?:Cash|Consume|Etc|Ins|Pet).img\\(?:.+?\\)?(\d+).*"); // 스트링 확인
 
             if (!match.Success)
             {
                 match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\\d+.img\\(\d+)$"); // 추가/삭제 확인
+            }
 
-                if (change && !match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\_Canvas\\\d+.img\\(\d+)\\info\\(icon)$"); // 아이콘 변경 체크
-                }
+            if (change && !match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\_Canvas\\\d+.img\\(\d+)\\info\\(icon)$"); // 아이콘 변경 체크
             }
 
             if (match.Success)
@@ -1038,9 +1179,10 @@ namespace WzComparerR2.Comparer
 
                 if (itemID != null)
                 {
-                    if (!OutputItemTooltipIDs.Contains(int.Parse(itemID)))
+                    var id = int.Parse(itemID);
+                    if (!OutputItemTooltipIDs.Contains(id))
                     {
-                        OutputItemTooltipIDs.Add(int.Parse(itemID));
+                        OutputItemTooltipIDs.Add(id);
                     }
                 }
             }
@@ -1051,27 +1193,28 @@ namespace WzComparerR2.Comparer
         {
             if (node == null) return;
 
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Eqp.img\\Eqp\\(?:.+?\\)?(\d+).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Eqp.img\\Eqp\\(?:.+?\\)?(\d+).*"); // 스트링 확인
 
             if (!match.Success)
             {
                 match = Regex.Match(node.FullPathToFile, @"^Character\\.+?\\(\d+).img$"); // 추가/삭제 확인
+            }
 
-                if (change && !match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Character\\.+?\\_Canvas\\(\d+).img\\info\\(icon)$"); // 아이콘 변경 체크
-                }
+            if (change && !match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Character\\.+?\\_Canvas\\(\d+).img\\info\\(icon)$"); // 아이콘 변경 체크
             }
 
             if (match.Success)
             {
-                string itemID = match.Groups[1].ToString();
+                string gearID = match.Groups[1].ToString();
 
-                if (itemID != null)
+                if (gearID != null)
                 {
-                    if (!OutputGearTooltipIDs.Contains(int.Parse(itemID)))
+                    var id = int.Parse(gearID);
+                    if (!OutputGearTooltipIDs.Contains(id))
                     {
-                        OutputGearTooltipIDs.Add(int.Parse(itemID));
+                        OutputGearTooltipIDs.Add(id);
                     }
                 }
             }
@@ -1082,36 +1225,117 @@ namespace WzComparerR2.Comparer
         {
             if (node == null) return;
 
-            Match match = Regex.Match(node.FullPathToFile, @"^String\\Map.img\\.+?\\(\d+)\\(streetName|mapName).*");
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Map.img\\.+?\\(\d+)\\(streetName|mapName).*"); // 스트링 확인
 
             if (!match.Success)
             {
                 match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\info\\(barrier|barrierArc|barrierAut).*"); // 변경점 중 툴팁 출력할 것들
+            }
 
-                if (change && !match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img\\miniMap\\(canvas)$"); // 아이콘 변경 체크
-                }
-                if (!match.Success)
-                {
-                    match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img$"); // 추가/삭제 확인
-                }
+            if (change && !match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\_Canvas\\(\d+).img\\miniMap\\(canvas)$"); // 아이콘 변경 체크
             }
 
             if (!match.Success)
             {
-                match = Regex.Match(node.FullPathToFile, @"^Etc\\MapObjectInfo.img\\(\d+)\\.*");
+                match = Regex.Match(node.FullPathToFile, @"^Map\\Map\\Map\d\\(\d+).img$"); // 추가/삭제 확인
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\MapObjectInfo.img\\(\d+)\\.*"); // 위치 확인
             }
 
             if (match.Success)
             {
-                string itemID = match.Groups[1].ToString();
+                string mapID = match.Groups[1].ToString();
 
-                if (itemID != null)
+                if (mapID != null)
                 {
-                    if (!OutputMapTooltipIDs.Contains(int.Parse(itemID)))
+                    var id = int.Parse(mapID);
+                    if (!OutputMapTooltipIDs.Contains(id))
                     {
-                        OutputMapTooltipIDs.Add(int.Parse(itemID));
+                        OutputMapTooltipIDs.Add(id);
+                    }
+                }
+            }
+        }
+
+        // 노드에서 몬스터 ID 얻기
+        private void GetMobID(Wz_Node node, bool change)
+        {
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Mob.img\\(\d+)\\(name).*"); // 스트링 확인
+            string tag = null;
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Mob\\(\d+).img\\info\\(level|maxHP|PDRate|MDRate|boss|exp).*"); // 변경점 중 툴팁 출력할 것들
+                tag = node.Text;
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Mob\\(\d+).img$"); // 추가/삭제 확인
+                tag = null;
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\MobLocation.img\\(\d+)\\.*"); // 위치 확인
+                tag = null;
+            }
+
+            if (match.Success)
+            {
+                string mobID = match.Groups[1].ToString();
+
+                if (mobID != null)
+                {
+                    var id = int.Parse(mobID);
+                    if (!OutputMobTooltipIDs.Contains(id))
+                    {
+                        OutputMobTooltipIDs.Add(id);
+                        DiffMobTags[id] = new HashSet<string>();
+                    }
+
+                    if (tag != null && !DiffMobTags[id].Contains(tag))
+                    {
+                        DiffMobTags[id].Add(tag);
+                    }
+                }
+            }
+        }
+
+        // 노드에서 NPC ID 얻기
+        private void GetNpcID(Wz_Node node, bool change)
+        {
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^String\\Npc.img\\(\d+)\\(name).*"); // 스트링 확인
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Npc\\(\d+).img$"); // 추가/삭제 확인
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\NpcLocation.img\\(\d+)\\.*[^\\]$"); // 위치 확인
+            }
+
+            if (match.Success)
+            {
+                string npcID = match.Groups[1].ToString();
+
+                if (npcID != null)
+                {
+                    var id = int.Parse(npcID);
+                    if (!OutputNpcTooltipIDs.Contains(id))
+                    {
+                        OutputNpcTooltipIDs.Add(id);
                     }
                 }
             }
@@ -1178,6 +1402,16 @@ namespace WzComparerR2.Comparer
                     GetMapID(diff.NodeNew, idx == 0 ? true : false);
                     GetMapID(diff.NodeOld, idx == 0 ? true : false);
                 }
+                if (OutputMobTooltip && (imgName.Contains("Etc") || imgName.Contains("Mob") || imgName.Contains("String")))
+                {
+                    GetMobID(diff.NodeNew, idx == 0 ? true : false);
+                    GetMobID(diff.NodeOld, idx == 0 ? true : false);
+                }
+                if (OutputNpcTooltip && (imgName.Contains("Etc") || imgName.Contains("Npc") || imgName.Contains("String")))
+                {
+                    GetNpcID(diff.NodeNew, idx == 0 ? true : false);
+                    GetNpcID(diff.NodeOld, idx == 0 ? true : false);
+                }
             }
             StateDetail = "문서 출력중";
             bool noChange = diffList.Count <= 0;
@@ -1239,6 +1473,14 @@ namespace WzComparerR2.Comparer
                     if (OutputMapTooltip && (imgName.Contains("Etc") || imgName.Contains("Map") || imgName.Contains("String")))
                     {
                         GetMapID(node, idx == 0 ? true : false);
+                    }
+                    if (OutputMobTooltip && (imgName.Contains("Etc") || imgName.Contains("Mob") || imgName.Contains("String")))
+                    {
+                        GetMobID(node, idx == 0 ? true : false);
+                    }
+                    if (OutputNpcTooltip && (imgName.Contains("Etc") || imgName.Contains("Npc") || imgName.Contains("String")))
+                    {
+                        GetNpcID(node, idx == 0 ? true : false);
                     }
 
                     if (node.Nodes.Count > 0)

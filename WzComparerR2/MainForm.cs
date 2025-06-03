@@ -3239,7 +3239,7 @@ namespace WzComparerR2
                 case Wz_Type.Mob:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz);
+                    var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
                     obj = mob;
                     if (mob != null)
                     {
@@ -3250,7 +3250,7 @@ namespace WzComparerR2
                 case Wz_Type.Npc:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz);
+                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
                     obj = npc;
                     if (npc != null)
                     {
@@ -3613,6 +3613,8 @@ namespace WzComparerR2
                     comparer.OutputGearTooltip = chkOutputGearTooltip.Checked;
                     comparer.OutputItemTooltip = chkOutputItemTooltip.Checked;
                     comparer.OutputMapTooltip = chkOutputMapTooltip.Checked;
+                    comparer.OutputMobTooltip = chkOutputMobTooltip.Checked;
+                    comparer.OutputNpcTooltip = chkOutputNpcTooltip.Checked;
                     comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);

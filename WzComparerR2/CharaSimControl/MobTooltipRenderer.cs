@@ -28,8 +28,14 @@ namespace WzComparerR2.CharaSimControl
 
         public Mob MobInfo { get; set; }
         private AvatarCanvasManager avatar { get; set; }
+        public Dictionary<int, HashSet<string>> DiffMobTags { get; set; } = new Dictionary<int, HashSet<string>>();
 
         public override Bitmap Render()
+        {
+            return Render(false);
+        }
+
+        public Bitmap Render(bool doHighlight)
         {
             if (MobInfo == null)
             {
@@ -38,6 +44,7 @@ namespace WzComparerR2.CharaSimControl
 
             Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bmp);
+            doHighlight = doHighlight && this.DiffMobTags.ContainsKey(MobInfo.ID);
 
             //预绘制
             List<TextBlock> titleBlocks = new List<TextBlock>();
@@ -56,7 +63,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (MobInfo?.ID != null)
             {
-                var locNode = PluginBase.PluginManager.FindWz("Etc\\MobLocation.img\\" + MobInfo.ID.ToString());
+                var locNode = PluginBase.PluginManager.FindWz("Etc\\MobLocation.img\\" + MobInfo.ID.ToString(), this.SourceWzFile);
                 if (locNode != null)
                 {
                     foreach (var locMapNode in locNode.Nodes)
@@ -125,19 +132,45 @@ namespace WzComparerR2.CharaSimControl
                 picY += 16;
             }
 
-            propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("level"))
+                propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY));
+            else
+                propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
+
             string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : MobInfo.MaxHP.ToString("N0");
-            propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("maxHP"))
+                propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
+            else
+                propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : MobInfo.MaxMP.ToString("N0");
             propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, "물리공격력: " + MobInfo.PADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, "마법공격력: " + MobInfo.MADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDRate"))
+                propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
+            else
+                propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("MDRate"))
+                propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
+            else
+                propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, "명중치: " + MobInfo.Acc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, "회피치: " + MobInfo.Eva, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, "넉백: " + MobInfo.Pushed.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
-            propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("exp"))
+                propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
+            else
+                propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+
             propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             picY += 28;
 

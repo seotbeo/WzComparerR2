@@ -239,7 +239,7 @@ namespace WzComparerR2.CharaSim
             return GetSkillSummary(skill, skill.Level, sr, param);
         }
 
-        public static string GetSkillSummary(Skill skill, int level, StringResult sr, SummaryParams param, SkillSummaryOptions options = default, bool doHighlight = false, string skillID = null, Dictionary<string, HashSet<string>> DiffSkillTags = null)
+        public static string GetSkillSummary(Skill skill, int level, StringResult sr, SummaryParams param, SkillSummaryOptions options = default, bool doHighlight = false, int? skillID = null, Dictionary<int, HashSet<string>> DiffSkillTags = null)
         {
             if (skill == null || sr == null)
                 return null;
@@ -265,12 +265,9 @@ namespace WzComparerR2.CharaSim
 
                 if (doHighlight && DiffSkillTags != null && skillID != null)
                 {
-                    if (DiffSkillTags.ContainsKey(skillID))
+                    foreach (var tags in DiffSkillTags[(int)skillID])
                     {
-                        foreach (var tags in DiffSkillTags[skillID])
-                        {
-                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
-                        }
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
                     }
                 }
 
@@ -285,12 +282,9 @@ namespace WzComparerR2.CharaSim
 
                 if (doHighlight && DiffSkillTags != null && skillID != null)
                 {
-                    if (DiffSkillTags.ContainsKey(skillID))
+                    foreach (var tags in DiffSkillTags[(int)skillID])
                     {
-                        foreach (var tags in DiffSkillTags[skillID])
-                        {
-                            h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
-                        }
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
                     }
                 }
 

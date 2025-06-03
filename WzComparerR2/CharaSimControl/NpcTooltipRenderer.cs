@@ -55,7 +55,7 @@ namespace WzComparerR2.CharaSimControl
             propBlocks.Add(PrepareText(g, "등장위치 :", GearGraphics.ItemDetailFont, GearGraphics.GearNameBrushG, 0, 0));
             if (NpcInfo?.ID != null)
             {
-                var locNode = PluginBase.PluginManager.FindWz("Etc\\NpcLocation.img\\" + NpcInfo.ID.ToString());
+                var locNode = PluginBase.PluginManager.FindWz("Etc\\NpcLocation.img\\" + NpcInfo.ID.ToString(), this.SourceWzFile);
                 if (locNode != null)
                 {
                     foreach (var locMapNode in locNode.Nodes)

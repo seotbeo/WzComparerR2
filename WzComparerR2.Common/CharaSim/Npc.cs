@@ -33,7 +33,7 @@ namespace WzComparerR2.CharaSim
 
         //public LifeAnimateCollection Animates { get; private set; }
 
-        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
         {
             if (node == null) return null;
 
@@ -58,7 +58,7 @@ namespace WzComparerR2.CharaSim
                         case "shop": npcInfo.Shop = propNode.GetValueEx<int>(0) != 0; break;
                         case "link": npcInfo.Link = propNode.GetValueEx<int>(0); break;
                         case "component": npcInfo.Component = propNode; break;
-                        case "default": npcInfo.Default = BitmapOrigin.CreateFromNode(propNode, findNode); break;
+                        case "default": npcInfo.Default = BitmapOrigin.CreateFromNode(propNode, findNode, wzf); break;
                     }
                 }
             }
@@ -67,9 +67,9 @@ namespace WzComparerR2.CharaSim
             if (npcInfo.Default.Bitmap == null)
             {
                 Wz_Node linkNode = null;
-                if (npcInfo.Link != null && findNode != null)
+                if (npcInfo.Link != null && findNode2 != null)
                 {
-                    linkNode = findNode(string.Format("Npc\\{0:d7}.img", npcInfo.Link));
+                    linkNode = findNode2(string.Format("Npc\\{0:d7}.img", npcInfo.Link), wzf);
                 }
                 if (linkNode == null)
                 {
@@ -83,7 +83,7 @@ namespace WzComparerR2.CharaSim
                     var actNode = linkNode.FindNodeByPath(action + @"\0");
                     if (actNode != null)
                     {
-                        imageFrame = BitmapOrigin.CreateFromNode(actNode, findNode);
+                        imageFrame = BitmapOrigin.CreateFromNode(actNode, findNode, wzf);
                         if (imageFrame.Bitmap != null)
                         {
                             break;
