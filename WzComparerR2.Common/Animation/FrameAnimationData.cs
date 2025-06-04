@@ -223,6 +223,7 @@ namespace WzComparerR2.Animation
             {
                 // delayOffset 처리
                 int frontDelay = delayOffset;
+                int baseDisposeStart = 0;
                 while (frontDelay > 0)
                 {
                     if (baseData.Frames[baseCount].Delay > frontDelay)
@@ -233,6 +234,7 @@ namespace WzComparerR2.Animation
 
                         baseData.Frames[baseCount].Delay -= frontDelay;
                         frontDelay = 0;
+                        baseDisposeStart++;
                     }
                     else
                     {
@@ -244,6 +246,7 @@ namespace WzComparerR2.Animation
                         baseCount++;
                     }
                 }
+                baseDisposeStart += baseCount;
 
                 // 프레임 합성
                 int maxDelay = Math.Min(baseDelayAll, addDelayAll);
@@ -276,13 +279,21 @@ namespace WzComparerR2.Animation
                 }
 
                 // dispose textures which is not needed anymore
-                for (int i = 0; i < baseCount; i++)
+                for (int i = baseDisposeStart; i < baseCount; i++)
                 {
-                    baseData.Frames[i].Texture?.Dispose();
+                    var frameD = baseData.Frames[i];
+                    if (frameD.Texture != null && !frameD.Texture.IsDisposed)
+                    {
+                        frameD.Texture.Dispose();
+                    }
                 }
                 for (int i = 0; i < addCount; i++)
                 {
-                    addData.Frames[i].Texture?.Dispose();
+                    var frameD = addData.Frames[i];
+                    if (frameD.Texture != null && !frameD.Texture.IsDisposed)
+                    {
+                        frameD.Texture.Dispose();
+                    }
                 }
 
                 // 남은 프레임 붙여넣기
@@ -316,7 +327,7 @@ namespace WzComparerR2.Animation
             if (texture1 == null)
             {
                 newOrigin = new Point(frame2.Origin.X, frame2.Origin.Y);
-                return texture2;
+                return CopyTexture(graphicsDevice, texture2);
             }
 
             int dl = Math.Max(frame2.Origin.X - frame1.Origin.X, 0);
@@ -348,6 +359,23 @@ namespace WzComparerR2.Animation
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, null, null, null, pngEffect, null);
             spriteBatch.Draw(texture2, new Vector2(newOrigin.X - frame2.Origin.X, newOrigin.Y - frame2.Origin.Y), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.End();
+
+            graphicsDevice.SetRenderTarget(null);
+
+            return renderTarget;
+        }
+
+        private static Texture2D CopyTexture(GraphicsDevice graphicsDevice, Texture2D texture)
+        {
+            if (texture == null) return null;
+
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, texture.Width, texture.Height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            using SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
+
+            graphicsDevice.SetRenderTarget(renderTarget);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+            spriteBatch.Draw(texture, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);

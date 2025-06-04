@@ -150,15 +150,7 @@ namespace WzComparerR2
 
         public void ShowAnimation(AnimationItem animator)
         {
-            if (this.Items.Count > 0)
-            {
-                var itemsCopy = new List<AnimationItem>(this.Items);
-                this.Items.Clear();
-                foreach (var aniItem in itemsCopy)
-                {
-                    this.DisposeAnimationItem(aniItem);
-                }
-            }
+            ClearItemList();
 
             this.Items.Add(animator);
 
@@ -176,7 +168,7 @@ namespace WzComparerR2
             if (!ShowOverlayAni)
             {
                 ShowOverlayAni = !ShowOverlayAni;
-                this.Items.Clear();
+                ClearItemList();
             }
 
             FrameAnimator baseAniItem;
@@ -217,12 +209,11 @@ namespace WzComparerR2
                 aniItem.Data.Frames[0].Delay = pngDelay;
             }
 
-            this.Items.Clear();
-
             var config = ImageHandlerConfig.Default;
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
                     this.GraphicsDevice, delayOffset, moveX, moveY, frameStart, frameEnd));
 
+            this.Items.Clear();
             this.Items.Add(newAniItem);
 
             if (this.AutoAdjustPosition)
@@ -287,11 +278,10 @@ namespace WzComparerR2
             }
             else return;
 
-            this.Items.Clear();
-
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
                     this.GraphicsDevice, startTime, 0, 0, 0, 0));
 
+            this.Items.Clear();
             this.Items.Add(newAniItem);
 
             if (this.AutoAdjustPosition)
@@ -805,6 +795,19 @@ namespace WzComparerR2
                         }
                     }
                     break;
+            }
+        }
+
+        public void ClearItemList()
+        {
+            if (this.Items.Count > 0)
+            {
+                var itemsCopy = new List<AnimationItem>(this.Items);
+                this.Items.Clear();
+                foreach (var aniItem in itemsCopy)
+                {
+                    this.DisposeAnimationItem(aniItem);
+                }
             }
         }
     }
