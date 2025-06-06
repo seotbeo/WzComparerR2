@@ -12,6 +12,7 @@ using WzComparerR2.Animation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.Controls;
+using WzComparerR2.MapRender.Effects;
 
 namespace WzComparerR2.MapRender
 {
@@ -327,8 +328,9 @@ namespace WzComparerR2.MapRender
             }
 
             allItems.Clear();
-            var origin = this.renderEnv.Camera.Origin.ToPoint();
-            this.batcher.Begin(Matrix.CreateTranslation(new Vector3(-origin.X, -origin.Y, 0)));
+            var camera = this.renderEnv.Camera;
+            var origin = camera.Origin;
+            this.batcher.Begin(origin, (float)(gameTime.TotalGameTime.TotalSeconds % 1000));
             Rectangle[] rects = null;
             //绘制场景
             foreach (var kv in GetDrawableItems(this.mapData.Scene))
@@ -350,8 +352,8 @@ namespace WzComparerR2.MapRender
                     {
                         for (int i = 0; i < rectCount; i++)
                         {
-                            rects[i].X -= origin.X;
-                            rects[i].Y -= origin.Y;
+                            rects[i].X -= (int)origin.X;
+                            rects[i].Y -= (int)origin.Y;
                             allItems.Add(new ItemRect() { item = kv.Key, rect = rects[i] });
                         }
                     }
@@ -944,14 +946,18 @@ namespace WzComparerR2.MapRender
             if ((back.TileMode & TileMode.BothTile) != 0 && (cx == 0 || cy == 0))
             {
                 Point renderSize = Point.Zero;
-                if (back.View.Animator is FrameAnimator frameAni)
+                switch (back.View.Animator)
                 {
-                    renderSize = frameAni.Data.GetBound().Size;
-                }
-                else if (back.View.Animator is AnimationItem aniItem)
-                {
-                    // For spine animation, we don't know how to calculate the correct cx and cy
-                    renderSize = aniItem.Measure().Size;
+                    case FrameAnimator frameAni:
+                        renderSize = frameAni.Data.GetBound().Size;
+                        break;
+                    case AnimationItem aniItem:
+                        // For spine animation, we don't know how to calculate the correct cx and cy
+                        renderSize = aniItem.Measure().Size;
+                        break;
+                    case MsCustomSprite msCustomSprite:
+                        renderSize = msCustomSprite.Size.ToPoint();
+                        break;
                 }
                 
                 if (cx == 0) cx = renderSize.X;
@@ -1208,6 +1214,11 @@ namespace WzComparerR2.MapRender
             {
                 return smAni.Data.GetMesh();
             }
+            else if (animator is MsCustomSprite msCustomSprite)
+            {
+                this.UpdateShaderConstant(msCustomSprite.Material);
+                return msCustomSprite;
+            }
 
             return null;
         }
@@ -1261,6 +1272,33 @@ namespace WzComparerR2.MapRender
                     break;
             }
             return new Vector2((float)movingX, (float)movingY);
+        }
+
+        private void UpdateShaderConstant(ShaderMaterial shaderMaterial)
+        {
+            // we don't know the exact value that being used in the original client
+            switch (shaderMaterial)
+            {
+                case LightPixelShaderMaterial light:
+                    light.PlayerPos = renderEnv.Camera.CameraToWorld(renderEnv.Input.MousePosition).ToVector2();
+                    light.LightInnerRadius = 50f;
+                    light.LightOuterRadius = 200f;
+                    light.PlayerLightColor = Color.White.ToVector4();
+                    light.TopColor = Color.White.ToVector4();
+                    light.BottomColor = new Color(0.2f, 0.2f, 0.2f, 1f).ToVector4();
+                    light.MinY = 4500;
+                    light.MaxY = 19500;
+                    break;
+
+                case WaterFrontPixelShaderMaterial waterFront:
+                    waterFront.PlayerPos = renderEnv.Camera.CameraToWorld(renderEnv.Input.MousePosition).ToVector2();
+                    waterFront.Factor1 = 1f;
+                    waterFront.MinY = 4500;
+                    waterFront.MaxY = 19500;
+                    waterFront.DistNoiseCenterPos = waterFront.PlayerPos;
+                    waterFront.Factor2 = 1f;
+                    break;
+            }
         }
     }
 }
