@@ -156,6 +156,10 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         breathShooter = 1214,
         /// <summary>
+        /// 장검 1215
+        /// </summary>
+        longSword = 1215,
+        /// <summary>
         /// 灵魂手铳 122
         /// </summary>
         soulShooter = 122,
@@ -391,6 +395,10 @@ namespace WzComparerR2.CharaSim
         /// 索魂器 135403x
         /// </summary>
         hexSeeker = 135403,
+        /// <summary>
+        ///  여의보주 135404x
+        /// </summary>
+        sacredJewel = 135404,
         /// <summary>
         /// 手杖
         /// </summary>

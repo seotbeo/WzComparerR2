@@ -686,6 +686,9 @@ namespace WzComparerR2.CharaSim
                 case GearType.chakram: return "차크람";
                 case GearType.hexSeeker: return "헥스시커";
 
+                case GearType.longSword: return "장검";
+                case GearType.sacredJewel: return "여의보주";
+
                 case GearType.jewel: return "쥬얼";
 
                 case GearType.arcaneSymbol: return "아케인심볼";
@@ -838,6 +841,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.chakram:
                 case GearType.hexSeeker: return GetExtraJobReqString(154);
+
+                case GearType.longSword:
+                case GearType.sacredJewel: return GetExtraJobReqString(161);
                 default: return null;
             }
         }
@@ -874,6 +880,7 @@ namespace WzComparerR2.CharaSim
                 case 152: return "일리움 착용 가능";
                 case 154: return "칼리 착용 가능";
                 case 155: return "아크 착용 가능";
+                case 161: return "렌 착용 가능";
                 case 162: return "라라 착용 가능";
                 case 164: return "호영 착용 가능";
                 case 172: return "린 착용 가능";
@@ -1199,6 +1206,9 @@ namespace WzComparerR2.CharaSim
 
                 case 4001: return "하야토";
                 case 4002: return "칸나";
+                case 4000:
+                case 4003:
+                case 4004: return "새벽의진";
                 case 4100: return "하야토(1차)";
                 case 4110: return "하야토(2차)";
                 case 4111: return "하야토(3차)";
@@ -1209,6 +1219,21 @@ namespace WzComparerR2.CharaSim
                 case 4211: return "칸나(3차)";
                 case 4212: return "칸나(4차)";
                 case 4214: return "칸나(6차)";
+                case 4300: return "새벽의진_궁수(1차)";
+                case 4310: return "새벽의진_궁수(2차)";
+                case 4311: return "새벽의진_궁수(3차)";
+                case 4312: return "새벽의진_궁수(4차)";
+                case 4314: return "새벽의진_궁수(6차)";
+                case 4400: return "새벽의진_도적(1차)";
+                case 4410: return "새벽의진_도적(2차)";
+                case 4411: return "새벽의진_도적(3차)";
+                case 4412: return "새벽의진_도적(4차)";
+                case 4414: return "새벽의진_도적(6차)";
+                case 4500: return "새벽의진_해적(1차)";
+                case 4510: return "새벽의진_해적(2차)";
+                case 4511: return "새벽의진_해적(3차)";
+                case 4512: return "새벽의진_해적(4차)";
+                case 4514: return "새벽의진_해적(6차)";
 
 
                 case 5000: return "미하일";
@@ -1223,11 +1248,17 @@ namespace WzComparerR2.CharaSim
                 case 6001: return "엔젤릭버스터";
                 case 6002: return "카데나";
                 case 6003: return "카인";
+                case 6004: return "노바";
                 case 6100: return "카이저(1차)";
                 case 6110: return "카이저(2차)";
                 case 6111: return "카이저(3차)";
                 case 6112: return "카이저(4차)";
                 case 6114: return "카이저(6차)";
+                case 6200: return "노바_마법사(1차)";
+                case 6210: return "노바_마법사(2차)";
+                case 6211: return "노바_마법사(3차)";
+                case 6212: return "노바_마법사(4차)";
+                case 6214: return "노바_마법사(6차)";
                 case 6300: return "카인(1차)";
                 case 6310: return "카인(2차)";
                 case 6311: return "카인(3차)";
@@ -1290,6 +1321,7 @@ namespace WzComparerR2.CharaSim
                 case 15001: return "아크";
                 case 15002: return "아델";
                 case 15003: return "칼리";
+                case 15004: return "레프";
                 case 15100: return "아델(1차)";
                 case 15110: return "아델(2차)";
                 case 15111: return "아델(3차)";
@@ -1300,6 +1332,11 @@ namespace WzComparerR2.CharaSim
                 case 15211: return "일리움(3차)";
                 case 15212: return "일리움(4차)";
                 case 15214: return "일리움(6차)";
+                case 15300: return "레프_궁수(1차)";
+                case 15310: return "레프_궁수(2차)";
+                case 15311: return "레프_궁수(3차)";
+                case 15312: return "레프_궁수(4차)";
+                case 15314: return "레프_궁수(6차)";
                 case 15400: return "칼리(1차)";
                 case 15410: return "칼리(2차)";
                 case 15411: return "칼리(3차)";
@@ -1313,24 +1350,60 @@ namespace WzComparerR2.CharaSim
 
                 case 16000: return "호영";
                 case 16001: return "라라";
+                case 16002: return "렌";
+                case 16003:
+                case 16004: return "아니마";
+                case 16100: return "렌(1차)";
+                case 16110: return "렌(2차)";
+                case 16111: return "렌(3차)";
+                case 16112: return "렌(4차)";
+                case 16114: return "렌(6차)";
                 case 16200: return "라라(1차)";
                 case 16210: return "라라(2차)";
                 case 16211: return "라라(3차)";
                 case 16212: return "라라(4차)";
                 case 16214: return "라라(6차)";
+                case 16300: return "아니마_궁수(1차)";
+                case 16310: return "아니마_궁수(2차)";
+                case 16311: return "아니마_궁수(3차)";
+                case 16312: return "아니마_궁수(4차)";
+                case 16314: return "아니마_궁수(6차)";
                 case 16400: return "호영(1차)";
                 case 16410: return "호영(2차)";
                 case 16411: return "호영(3차)";
                 case 16412: return "호영(4차)";
                 case 16414: return "호영(6차)";
+                case 16500: return "아니마_해적(1차)";
+                case 16510: return "아니마_해적(2차)";
+                case 16511: return "아니마_해적(3차)";
+                case 16512: return "아니마_해적(4차)";
+                case 16514: return "아니마_해적(6차)";
 
                 case 17000: return "묵현";
                 case 17001: return "린";
+                case 17002:
+                case 17003:
+                case 17004: return "강호";
+                case 17100: return "강호_전사(1차)";
+                case 17110: return "강호_전사(2차)";
+                case 17111: return "강호_전사(3차)";
+                case 17112: return "강호_전사(4차)";
+                case 17114: return "강호_전사(6차)";
                 case 17200: return "린(1차)";
                 case 17210: return "린(2차)";
                 case 17211: return "린(3차)";
                 case 17212: return "린(4차)";
                 case 17214: return "린(6차)";
+                case 17300: return "강호_궁수(1차)";
+                case 17310: return "강호_궁수(2차)";
+                case 17311: return "강호_궁수(3차)";
+                case 17312: return "강호_궁수(4차)";
+                case 17314: return "강호_궁수(6차)";
+                case 17400: return "강호_도적(1차)";
+                case 17410: return "강호_도적(2차)";
+                case 17411: return "강호_도적(3차)";
+                case 17412: return "강호_도적(4차)";
+                case 17414: return "강호_도적(6차)";
                 case 17500: return "묵현(1차)";
                 case 17510: return "묵현(2차)";
                 case 17511: return "묵현(3차)";
