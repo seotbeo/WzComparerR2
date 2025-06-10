@@ -60,6 +60,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowLevelOrSealed { get; set; }
         public bool MaxStar25 { get; set; } = false;
         public bool IsCombineProperties { get; set; } = true;
+        public bool CompareMode { get; set; } = false;
         private bool WillDrawMedal {  get; set; }
         private bool WillDrawChatBalloon { get; set; }
         private bool WillDrawNameTag { get; set; }
@@ -625,7 +626,18 @@ namespace WzComparerR2.CharaSimControl
             // 세트 아이템
             {
                 List<string> setList = new List<string>();
-                if (Gear.Props.TryGetValue(GearPropType.setItemID, out int setID) && CharaSimLoader.LoadedSetItems.TryGetValue(setID, out SetItem setItem)) setList.Add(setItem.SetItemName);
+                if (Gear.Props.TryGetValue(GearPropType.setItemID, out int setID))
+                {
+                    SetItem setItem;
+                    if (CompareMode)
+                    {
+                        setItem = CharaSimLoader.LoadSetItem(setID, this.SourceWzFile);
+                        if (setItem != null)
+                            setList.Add(setItem.SetItemName);
+                    }
+                    else if (CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
+                        setList.Add(setItem.SetItemName);
+                } 
                 if (Gear.Props.TryGetValue(GearPropType.jokerToSetItem, out value) && value > 0) setList.Add("럭키 아이템");
 
                 var text = string.Join(", ", setList);
@@ -1448,7 +1460,12 @@ namespace WzComparerR2.CharaSimControl
             if (Gear.Props.TryGetValue(GearPropType.setItemID, out setID))
             {
                 SetItem setItem;
-                if (!CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
+                if (CompareMode)
+                {
+                    setItem = CharaSimLoader.LoadSetItem(setID, this.SourceWzFile);
+                    if (setItem == null) return null;
+                }
+                else if (!CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
                     return null;
 
                 TooltipRender renderer = this.SetItemRender;

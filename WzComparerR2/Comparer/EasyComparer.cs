@@ -676,13 +676,12 @@ namespace WzComparerR2.Comparer
                         if (skill != null)
                         {
                             skill.Level = skill.MaxLevel;
-                            tooltipRenderNewOld[i].Skill = skill;
                         }
                         else
                         {
                             nullIdx |= i + 1;
-                            tooltipRenderNewOld[i].Skill = null;
                         }
+                        tooltipRenderNewOld[i].Skill = skill;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, skillID, "스킬");
@@ -714,6 +713,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowLevelOrSealed = true;
                 tooltipRenderNewOld[i].ShowNickTag = true;
                 tooltipRenderNewOld[i].ShowNickTag = true;
+                tooltipRenderNewOld[i].CompareMode = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
                 tooltipRenderNewOld[i].CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
@@ -739,15 +739,11 @@ namespace WzComparerR2.Comparer
                     {
                         Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
 
-                        if (item != null)
-                        {
-                            tooltipRenderNewOld[i].Item = item;
-                        }
-                        else
-                        {
+                        if (item == null)
+                        { 
                             nullIdx |= i + 1;
-                            tooltipRenderNewOld[i].Item = null;
                         }
+                        tooltipRenderNewOld[i].Item = item;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템", typePicH: 23);
@@ -778,6 +774,7 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i].ShowObjectID = true;
                     tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowLevelOrSealed = true;
+                    (tooltipRenderNewOld[i] as GearTooltipRender22).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                 }
                 else
@@ -787,6 +784,7 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i].ShowObjectID = true;
                     tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowLevelOrSealed = true;
+                    (tooltipRenderNewOld[i] as GearTooltipRender2).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                 }
                 CharaWzNodeNewOld[i] = PluginManager.FindWz(Wz_Type.Character, WzFileNewOld[i]);
@@ -837,21 +835,14 @@ namespace WzComparerR2.Comparer
                             }
                         }
 
-                        if (gear != null)
-                        {
-                            if (tooltipRenderNewOld[i] is GearTooltipRender22)
-                                (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = gear;
-                            else
-                                (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = gear;
-                        }
-                        else
+                        if (gear == null)
                         {
                             nullIdx |= i + 1;
-                            if (tooltipRenderNewOld[i] is GearTooltipRender22)
-                                (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = null;
-                            else
-                                (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = null;
                         }
+                        if (tooltipRenderNewOld[i] is GearTooltipRender22)
+                            (tooltipRenderNewOld[i] as GearTooltipRender22).Gear = gear;
+                        else
+                            (tooltipRenderNewOld[i] as GearTooltipRender2).Gear = gear;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, gearID, "장비");
@@ -896,15 +887,11 @@ namespace WzComparerR2.Comparer
                     {
                         Map map = Map.CreateFromNode(PluginManager.FindWz($@"Map\Map\Map{mapID / 100000000}\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
 
-                        if (map != null)
-                        {
-                            tooltipRenderNewOld[i].Map = map;
-                        }
-                        else
+                        if (map == null)
                         {
                             nullIdx |= i + 1;
-                            tooltipRenderNewOld[i].Map = null;
                         }
+                        tooltipRenderNewOld[i].Map = map;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mapID, "맵", typePicH: 1);
@@ -949,15 +936,11 @@ namespace WzComparerR2.Comparer
                     {
                         Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]);
 
-                        if (mob != null)
-                        {
-                            tooltipRenderNewOld[i].MobInfo = mob;
-                        }
-                        else
+                        if (mob == null)
                         {
                             nullIdx |= i + 1;
-                            tooltipRenderNewOld[i].MobInfo = null;
                         }
+                        tooltipRenderNewOld[i].MobInfo = mob;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, mobID, "몬스터", typePicH: 3);
@@ -1002,15 +985,11 @@ namespace WzComparerR2.Comparer
                     {
                         Npc npc = Npc.CreateFromNode(PluginManager.FindWz($@"Npc\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]);
 
-                        if (npc != null)
-                        {
-                            tooltipRenderNewOld[i].NpcInfo = npc;
-                        }
-                        else
+                        if (npc == null)
                         {
                             nullIdx |= i + 1;
-                            tooltipRenderNewOld[i].NpcInfo = null;
                         }
+                        tooltipRenderNewOld[i].NpcInfo = npc;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, npcID, "NPC", typePicH: 3);

@@ -61,6 +61,39 @@ namespace WzComparerR2.CharaSim
             }
         }
 
+        public static SetItem LoadSetItem(int setID, Wz_File sourceWzFile)
+        {
+            //搜索setItemInfo.img
+            Wz_Node etcWz = PluginManager.FindWz(Wz_Type.Etc, sourceWzFile);
+            if (etcWz == null)
+                return null;
+            Wz_Node setItemNode = etcWz.FindNodeByPath("SetItemInfo.img", true);
+            if (setItemNode == null)
+                return null;
+
+            //搜索ItemOption.img
+            Wz_Node itemWz = PluginManager.FindWz(Wz_Type.Item, sourceWzFile);
+            if (itemWz == null)
+                return null;
+            Wz_Node optionNode = itemWz.FindNodeByPath("ItemOption.img", true);
+            if (optionNode == null)
+                return null;
+
+            foreach (Wz_Node node in setItemNode.Nodes)
+            {
+                int setItemIndex;
+                if (Int32.TryParse(node.Text, out setItemIndex) && setItemIndex == setID)
+                {
+                    SetItem setItem = SetItem.CreateFromNode(node, optionNode);
+                    if (setItem != null)
+                        return setItem;
+                    else
+                        return null;
+                }
+            }
+            return null;
+        }
+
         public static void LoadExclusiveEquipsIfEmpty()
         {
             if (LoadedExclusiveEquips.Count == 0)

@@ -54,6 +54,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowMedalTag { get; set; } = true;
         public bool MaxStar25 { get; set; } = false;
         public bool IsCombineProperties { get; set; } = true;
+        public bool CompareMode { get; set; } = false;
 
         public TooltipRender SetItemRender { get; set; }
 
@@ -1220,7 +1221,12 @@ namespace WzComparerR2.CharaSimControl
             if (Gear.Props.TryGetValue(GearPropType.setItemID, out setID))
             {
                 SetItem setItem;
-                if (!CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
+                if (CompareMode)
+                {
+                    setItem = CharaSimLoader.LoadSetItem(setID, this.SourceWzFile);
+                    if (setItem == null) return null;
+                }
+                else if (!CharaSimLoader.LoadedSetItems.TryGetValue(setID, out setItem))
                     return null;
 
                 TooltipRender renderer = this.SetItemRender;

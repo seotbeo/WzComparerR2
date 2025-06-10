@@ -46,6 +46,7 @@ namespace WzComparerR2.CharaSimControl
         public bool LinkRecipeItem { get; set; }
         public bool ShowLevelOrSealed { get; set; }
         public bool ShowNickTag { get; set; }
+        public bool CompareMode { get; set; } = false;
         public int CosmeticHairColor { get; set; }
         public int CosmeticFaceColor { get; set; }
         public bool Enable22AniStyle { get; set; }
@@ -211,7 +212,13 @@ namespace WzComparerR2.CharaSimControl
             if (this.item.Props.TryGetValue(ItemPropType.setItemID, out long setID))
             {
                 SetItem setItem;
-                if (CharaSimLoader.LoadedSetItems.TryGetValue((int)setID, out setItem))
+                if (CompareMode)
+                {
+                    setItem = CharaSimLoader.LoadSetItem((int)setID, this.SourceWzFile);
+                    if (setItem != null)
+                        setItemBmp = RenderSetItem(setItem);
+                }
+                else if (CharaSimLoader.LoadedSetItems.TryGetValue((int)setID, out setItem))
                 {
                     setItemBmp = RenderSetItem(setItem);
                 }
@@ -601,7 +608,8 @@ namespace WzComparerR2.CharaSimControl
                     if (item.Props.TryGetValue(ItemPropType.setItemID, out long setID))
                     {
                         SetItem setItem;
-                        if (CharaSimLoader.LoadedSetItems.TryGetValue((int)setID, out setItem))
+                        if ((!CompareMode && CharaSimLoader.LoadedSetItems.TryGetValue((int)setID, out setItem))
+                            || (CompareMode && (setItem = CharaSimLoader.LoadSetItem((int)setID, this.SourceWzFile)) != null))
                         {
                             string wonderGradeString = null;
                             string setItemName = setItem.SetItemName;
