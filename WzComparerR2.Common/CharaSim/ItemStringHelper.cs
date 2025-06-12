@@ -689,6 +689,9 @@ namespace WzComparerR2.CharaSim
                 case GearType.longSword: return "장검";
                 case GearType.sacredJewel: return "여의보주";
 
+                case GearType.celestialLight: return "셀레스티얼 라이트";
+                case GearType.compass: return "컴파스";
+
                 case GearType.jewel: return "쥬얼";
 
                 case GearType.arcaneSymbol: return "아케인심볼";
@@ -844,6 +847,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.longSword:
                 case GearType.sacredJewel: return GetExtraJobReqString(161);
+
+                case GearType.celestialLight:
+                case GearType.compass: return GetExtraJobReqString(182);
                 default: return null;
             }
         }
@@ -885,6 +891,7 @@ namespace WzComparerR2.CharaSim
                 case 164: return "호영 착용 가능";
                 case 172: return "린 착용 가능";
                 case 175: return "묵현 착용 가능";
+                case 182: return "시아 아스텔 착용 가능";
                 default: return null;
             }
         }
@@ -1410,7 +1417,38 @@ namespace WzComparerR2.CharaSim
                 case 17512: return "묵현(4차)";
                 case 17514: return "묵현(6차)";
 
-                    
+                case 18000: return "시아 아스텔";
+                case 18001:
+                case 18002:
+                case 18003:
+                case 18004: return "샤인";
+                case 18100: return "에릴 라이트(1차)";
+                case 18110: return "에릴 라이트(2차)";
+                case 18111: return "에릴 라이트(3차)";
+                case 18112: return "에릴 라이트(4차)";
+                case 18114: return "에릴 라이트(6차)";
+                case 18200: return "시아 아스텔(1차)";
+                case 18210: return "시아 아스텔(2차)";
+                case 18211: return "시아 아스텔(3차)";
+                case 18212: return "시아 아스텔(4차)";
+                case 18214: return "시아 아스텔(6차)";
+                case 18300: return "샤인_궁수(1차)";
+                case 18310: return "샤인_궁수(2차)";
+                case 18311: return "샤인_궁수(3차)";
+                case 18312: return "샤인_궁수(4차)";
+                case 18314: return "샤인_궁수(6차)";
+                case 18400: return "샤인_도적(1차)";
+                case 18410: return "샤인_도적(2차)";
+                case 18411: return "샤인_도적(3차)";
+                case 18412: return "샤인_도적(4차)";
+                case 18414: return "샤인_도적(6차)";
+                case 18500: return "샤인_해적(1차)";
+                case 18510: return "샤인_해적(2차)";
+                case 18511: return "샤인_해적(3차)";
+                case 18512: return "샤인_해적(4차)";
+                case 18514: return "샤인_해적(6차)";
+                
+
                 case 40000: return "5차";
                 case 40001: return "5차(전사)";
                 case 40002: return "5차(마법사)";

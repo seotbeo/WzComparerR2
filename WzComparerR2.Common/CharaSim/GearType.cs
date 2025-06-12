@@ -176,6 +176,10 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         magicStick = 1252,
         /// <summary>
+        /// 셀레스티얼 라이트 1253
+        /// </summary>
+        celestialLight = 1253,
+        /// <summary>
         /// 驯兽魔法棒 1259
         /// </summary>
         magicStick2 = 1259,
@@ -307,6 +311,10 @@ namespace WzComparerR2.CharaSim
         /// 拳天 135_86
         /// </summary>
         boxingSky = 135286,
+        /// <summary>
+        /// 컴파스 135_87
+        /// </summary>
+        compass = 135287,
         /// <summary>
         /// 手腕护带 135_90
         /// </summary>

@@ -522,30 +522,20 @@ namespace WzComparerR2.CharaSim
             switch (code / 1000)
             {
                 case 1098:
-                    return GearType.soulShield;
                 case 1099:
-                    return GearType.demonShield;
                 case 1212:
-                    return GearType.shiningRod;
                 case 1213:
-                    return GearType.tuner;
                 case 1214:
-                    return GearType.breathShooter;
                 case 1215:
-                    return GearType.longSword;
                 case 1252:
+                case 1253:
                 case 1259:
-                    return (GearType)(code / 1000);
                 case 1403:
-                    return GearType.boxingCannon;
                 case 1404:
-                    return GearType.chakram;
                 case 1712:
-                    return GearType.arcaneSymbol;
                 case 1713:
-                    return GearType.authenticSymbol;
                 case 1714:
-                    return GearType.grandAuthenticSymbol;
+                    return (GearType)(code / 1000);
             }
             if (code / 10000 == 135)
             {
