@@ -258,6 +258,9 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender22.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
 
             tooltipQuickView.MapRender.ShowMiniMap = Setting.Map.ShowMiniMap;
+            tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
+            tooltipQuickView.MapRender.ShowMiniMapNpc = Setting.Map.ShowMiniMapNpc;
+            tooltipQuickView.MapRender.ShowMiniMapPortal = Setting.Map.ShowMiniMapPortal;
 
             tooltipQuickView.RecipeRender.ShowObjectID = Setting.Recipe.ShowID;
 

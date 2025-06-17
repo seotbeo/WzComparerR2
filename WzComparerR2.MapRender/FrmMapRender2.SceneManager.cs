@@ -371,7 +371,7 @@ namespace WzComparerR2.MapRender
                     case 10:
                         this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                         {
-                            IconType = portal.ToMap == mapData.ID ? UIMinimap2.IconType.ArrowUp : UIMinimap2.IconType.HiddenPortal,
+                            IconType = (portal.ToMap == mapData.ID || (portal.ToMap == 999999999 && !string.IsNullOrEmpty(portal.ToName))) ? UIMinimap2.IconType.ArrowUp : UIMinimap2.IconType.HiddenPortal,
                             Tooltip = portal.Tooltip,
                             WorldPosition = new EmptyKeys.UserInterface.PointF(portal.X, portal.Y)
                         });
@@ -418,7 +418,7 @@ namespace WzComparerR2.MapRender
                         tooltip = sr.Name;
                     }
                 }
-                if (npc.ID == 9010022)
+                if (npc.ID == 9010022 || (npcNode?.Nodes["miniMapType"].GetValueEx<int>(0) ?? 0) == 3)
                 {
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {
@@ -427,7 +427,7 @@ namespace WzComparerR2.MapRender
                         WorldPosition = new EmptyKeys.UserInterface.PointF(npc.X, npc.Y)
                     });
                 }
-                else if ((npcNode?.Nodes["shop"].GetValueEx(0) ?? 0) != 0)
+                else if ((npcNode?.Nodes["shop"].GetValueEx(0) ?? 0) != 0 || (npcNode?.Nodes["miniMapType"].GetValueEx<int>(0) ?? 0) == 1)
                 {
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {
@@ -436,7 +436,7 @@ namespace WzComparerR2.MapRender
                         WorldPosition = new EmptyKeys.UserInterface.PointF(npc.X, npc.Y)
                     });
                 }
-                else if (npc.ID / 10000 == 900 || npc.ID / 10000 == 901)
+                else if ((npcNode?.Nodes["miniMapType"].GetValueEx<int>(0) ?? 0) == 2)
                 {
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {
@@ -445,7 +445,7 @@ namespace WzComparerR2.MapRender
                         WorldPosition = new EmptyKeys.UserInterface.PointF(npc.X, npc.Y)
                     });
                 }
-                else if ((npcNode?.Nodes["trunkPut"].GetValueEx(0) ?? 0) != 0)
+                else if ((npcNode?.Nodes["trunkPut"].GetValueEx(-1) ?? -1) != -1)
                 {
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {

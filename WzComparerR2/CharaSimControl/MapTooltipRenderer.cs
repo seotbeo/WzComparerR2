@@ -19,6 +19,9 @@ namespace WzComparerR2.CharaSimControl
 
         public Map Map { get; set; }
         public bool ShowMiniMap { get; set; }
+        public bool ShowMiniMapMob { get; set; }
+        public bool ShowMiniMapNpc { get; set; }
+        public bool ShowMiniMapPortal { get; set; }
 
         public override object TargetItem
         {
@@ -198,7 +201,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (miniMap != null)
             {
-                g2.DrawImage(miniMap, miniMapRect.X, miniMapRect.Y);
+                var dx = (width - miniMap.Width - 20) / 2;
+                miniMap = DrawMinimapIcons(miniMap, dx);
+                g2.DrawImage(miniMap, miniMapRect.X - dx, miniMapRect.Y);
                 miniMap.Dispose();
             }
 
@@ -221,6 +226,102 @@ namespace WzComparerR2.CharaSimControl
             }
 
             return bmp2;
+        }
+
+        private Bitmap DrawMinimapIcons(Bitmap miniMap, int dx)
+        {
+            Bitmap bmp = new Bitmap(miniMap.Width + dx * 2, miniMap.Height);
+            using Graphics g = Graphics.FromImage(bmp);
+            g.DrawImage(miniMap, dx, 0);
+            Image image = null;
+
+            if (ShowMiniMapMob)
+            {
+                foreach (var mob in this.Map.MiniMapMobs)
+                {
+                    image = Resource.MapHelper_img_minimap_mob_1;
+                    g.DrawImage(image, TranslateMiniMapIcon(new Point(mob.X, mob.Y), miniMap.Size, image.Size, dx));
+                }
+            }
+
+            if (ShowMiniMapNpc)
+            {
+                // 0 : npc
+                // 1 : shop
+                // 2 : event npc
+                // 3 : transport
+                // 4 : trunk
+                foreach (var npc in this.Map.MiniMapNpcs)
+                {
+                    switch (npc.Type)
+                    {
+                        case 0:
+                            image = Resource.MapHelper_img_minimap_npc;
+                            break;
+                        case 1:
+                            image = Resource.MapHelper_img_minimap_shop;
+                            break;
+                        case 2:
+                            image = Resource.MapHelper_img_minimap_eventnpc;
+                            break;
+                        case 3:
+                            image = Resource.MapHelper_img_minimap_transport;
+                            break;
+                        case 4:
+                            image = Resource.MapHelper_img_minimap_trunk;
+                            break;
+                    }
+                    g.DrawImage(image, TranslateMiniMapIcon(new Point(npc.X, npc.Y), miniMap.Size, image.Size, dx));
+                }
+            }
+
+            if (ShowMiniMapPortal)
+            {
+                // 0 : portal
+                // 1 : enchant portal
+                // 2 : blink portal
+                // 3 : hidden portal
+                foreach (var portal in this.Map.MiniMapPortals)
+                {
+                    switch (portal.Type)
+                    {
+                        case 0:
+                            image = Resource.MapHelper_img_minimap_portal;
+                            break;
+                        case 1:
+                            image = Resource.MapHelper_img_minimap_enchantportal;
+                            break;
+                        case 2:
+                            image = Resource.MapHelper_img_minimap_arrowup;
+                            break;
+                        case 3:
+                            image = Resource.MapHelper_img_minimap_hiddenportal;
+                            break;
+                    }
+                    g.DrawImage(image, TranslateMiniMapIcon(new Point(portal.X, portal.Y), miniMap.Size, image.Size, dx));
+                }
+
+                foreach (var illuminantCluster in this.Map.MiniMapIlluminantClusters)
+                {
+                    image = Resource.MapHelper_img_minimap_cluster;
+                    g.DrawImage(image, TranslateMiniMapIcon(new Point(illuminantCluster.X, illuminantCluster.Y), miniMap.Size, image.Size, dx));
+                }
+            }
+
+            miniMap.Dispose();
+            return bmp;
+        }
+
+        private Point TranslateMiniMapIcon(Point item, Size minimap, Size texture, int offset)
+        {
+            if (this.Map.MiniMapWidth != 0 && this.Map.MiniMapHeight != 0)
+            {
+                var x = (float)minimap.Width / this.Map.MiniMapWidth * (item.X + this.Map.MiniMapCenterX) - (texture.Width / 2);
+                var y = (float)minimap.Height / this.Map.MiniMapHeight * (item.Y + this.Map.MiniMapCenterY) - (texture.Height / 2) - 5;
+
+                return new Point((int)x + offset, (int)y);
+            }
+            else return (new Point(-100, -100));
         }
 
         private string[] GetMapName(int mapID, int? linkID)
