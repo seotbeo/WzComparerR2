@@ -11,7 +11,9 @@ using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 
 #if NET6_0_OR_GREATER
-using MapleStory.OpenAPI;
+using KMS = MapleStory.OpenAPI.KMS;
+using MSEA = MapleStory.OpenAPI.MSEA;
+using MapleStory.OpenAPI.Common;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Encodings.Web;
@@ -20,29 +22,74 @@ namespace WzComparerR2.OpenAPI
 {
     public class NexonOpenAPI
     {
-        public NexonOpenAPI(string apiKey)
+        public NexonOpenAPI(string apiKey, string region)
         {
             APIKey = apiKey;
-            if (API == null)
+            
+            switch (region)
             {
-                API = new MapleStoryAPI(apiKey);
+                case "KMS":
+                    this.region = 0;
+                    if (API_KMS == null)
+                    {
+                        API_KMS = new KMS.MapleStoryAPI(apiKey);
+                    }
+                    break;
+
+                case "MSEA":
+                    this.region = 1;
+                    if (API_MSEA == null)
+                    {
+                        API_MSEA = new MSEA.MapleStoryAPI(apiKey);
+                    }
+                    break;
+
+                default:
+                    break;
             }
         }
 
         private string APIKey;
-        private MapleStoryAPI API;
+        private int region;
+        private KMS.MapleStoryAPI API_KMS;
+        private MSEA.MapleStoryAPI API_MSEA;
 
         public bool CheckSameAPIKey(string apiKey)
         {
             return APIKey == apiKey;
         }
 
+        public bool CheckRegion(string region)
+        {
+            switch (region)
+            {
+                case "KMS":
+                    return this.region == 0;
+                case "MSEA":
+                    return this.region == 1;
+                default:
+                    return false;
+            }
+        }
+
         public async Task<string> GetCharacterOCID(string characterName)
         {
             try
             {
-                var character = await API.GetCharacter(characterName);
-                return character.OCID;
+                MapleStory.OpenAPI.Common.DTO.CharacterDTO character = null;
+                switch (region)
+                {
+                    case 0:
+                        character = await API_KMS.GetCharacter(characterName);
+                        return character.OCID;
+
+                    case 1:
+                        character = await API_MSEA.GetCharacter(characterName);
+                        return character.OCID;
+
+                    default:
+                        return null;
+                }
             }
             catch (MapleStoryAPIException e)
             {
@@ -65,7 +112,17 @@ namespace WzComparerR2.OpenAPI
         {
             try
             {
-                var basic = await API.GetCharacterBasic(ocid);
+                MapleStory.OpenAPI.Common.DTO.CharacterBasicDTO basic = null;
+                switch (region)
+                {
+                    case 0:
+                        basic = await API_KMS.GetCharacterBasic(ocid);
+                        break;
+
+                    case 1:
+                        basic = await API_MSEA.GetCharacterBasic(ocid);
+                        break;
+                }
                 var m = Regex.Match(basic.CharacterImage, @"look/([A-Z]+)$");
                 if (m.Success)
                 {
@@ -114,7 +171,17 @@ namespace WzComparerR2.OpenAPI
             { 
                 result.ItemList = new List<string>();
 
-                var item = await API.GetCharacterItemEquipment(ocid);
+                dynamic item = null;
+                switch (region)
+                {
+                    case 0:
+                        item = await API_KMS.GetCharacterItemEquipment(ocid);
+                        break;
+
+                    case 1:
+                        item = await API_MSEA.GetCharacterItemEquipment(ocid);
+                        break;
+                }
                 result.Preset = item.PresetNo ?? 0;
 
                 foreach (var it in item.ItemEquipment)
@@ -145,7 +212,17 @@ namespace WzComparerR2.OpenAPI
                 result.CashBaseItemList = new List<string>();
                 result.CashPresetItemList = new List<string>();
 
-                var item = await API.GetCharacterCashItemEquipment(ocid);
+                dynamic item = null;
+                switch (region)
+                {
+                    case 0:
+                        item = await API_KMS.GetCharacterCashItemEquipment(ocid);
+                        break;
+
+                    case 1:
+                        item = await API_MSEA.GetCharacterCashItemEquipment(ocid);
+                        break;
+                }
                 result.CashPreset = item.PresetNo ?? 0;
 
                 foreach (var it in item.CashItemEquipmentBase)
@@ -183,8 +260,17 @@ namespace WzComparerR2.OpenAPI
         {
             try
             {
-                var item = await API.GetCharacterBeautyEquipment(ocid);
+                dynamic item = null;
+                switch (region)
+                {
+                    case 0:
+                        item = await API_KMS.GetCharacterBeautyEquipment(ocid);
+                        break;
 
+                    case 1:
+                        item = await API_MSEA.GetCharacterBeautyEquipment(ocid);
+                        break;
+                }
                 result.Gender = item.CharacterGender == "남" ? 0 : 1;
 
                 result.HairInfo = new Dictionary<string, string>
@@ -231,7 +317,16 @@ namespace WzComparerR2.OpenAPI
             var data = "";
             var cname = "창섭";
             var ocid = await GetCharacterOCID(cname);
-            var basic = await API.GetCharacterBasic(ocid);
+            MapleStory.OpenAPI.Common.DTO.CharacterBasicDTO basic = null;
+            switch (region)
+            {
+                case 0:
+                    basic = await API_KMS.GetCharacterBasic(ocid);
+                    break;
+                case 1:
+                    basic = await API_MSEA.GetCharacterBasic(ocid);
+                    break;
+            }
             var m = Regex.Match(basic.CharacterImage, @"look/([A-Z]+)$");
             if (m.Success)
                 data = m.Groups[1].Value;

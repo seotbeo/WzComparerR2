@@ -26,11 +26,19 @@ namespace WzComparerR2.Avatar.UI
                 //new ComboItem("CMS"){ Value = 3 },
                 //new ComboItem("GMS(북미)"){ Value = 4 },
                 //new ComboItem("GMS(유럽)"){ Value = 5 },
-                //new ComboItem("MSEA"){ Value = 6 },
+                new ComboItem("MSEA"){ Value = 6 },
                 //new ComboItem("TMS"){ Value = 7 },
                 //new ComboItem("MSN"){ Value = 8 },
             });
             cmbRegion.SelectedIndex = 0;
+        }
+
+        public AvatarAPIForm(string region) : this()
+        {
+            if (!string.IsNullOrEmpty(region))
+            {
+                selectedRegion = region;
+            }    
         }
 
         public string CharaName
@@ -44,17 +52,17 @@ namespace WzComparerR2.Avatar.UI
             get { return checkBoxX1.Checked; }
         }
 
-        public int selectedRegion
+        public string selectedRegion
         {
             get
             {
-                return cmbRegion.SelectedIndex + 1;
+                return cmbRegion.SelectedItem.ToString();
             }
             set
             {
                 for (int i = 0; i < cmbRegion.Items.Count; i++)
                 {
-                    if ((int)(cmbRegion.Items[i] as ComboItem).Value == value + 1)
+                    if ((cmbRegion.Items[i] as ComboItem).Text == value)
                     {
                         cmbRegion.SelectedIndex = i;
                         return;

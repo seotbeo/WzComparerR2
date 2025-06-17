@@ -85,6 +85,7 @@ namespace WzComparerR2.Avatar.UI
         private bool updatingActionEffect = false;
 #if NET6_0_OR_GREATER
         private NexonOpenAPI API;
+        private string APIregion;
 #endif
 
         /// <summary>
@@ -1703,7 +1704,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            var dlg = new AvatarAPIForm();
+            var dlg = new AvatarAPIForm(APIregion);
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -1716,13 +1717,19 @@ namespace WzComparerR2.Avatar.UI
 
                 try
                 {
-                    if (this.API == null || !this.API.CheckSameAPIKey(key))
+                    APIregion = dlg.selectedRegion;
+                    if (this.API == null || !this.API.CheckSameAPIKey(key) || !this.API.CheckRegion(APIregion))
                     {
-                        this.API = new NexonOpenAPI(key);
+                        this.API = new NexonOpenAPI(key, APIregion);
                     }
 
                     var name = dlg.CharaName;
                     var ocid = await this.API.GetCharacterOCID(name);
+
+                    if (string.IsNullOrEmpty(ocid))
+                    {
+                        throw new Exception("받은 ocid가 없습니다.");
+                    }
 
                     if (dlg.Type1)
                     {
