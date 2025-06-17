@@ -13,6 +13,8 @@ using TR = System.Windows.Forms.TextRenderer;
 using TextFormatFlags = System.Windows.Forms.TextFormatFlags;
 using WzComparerR2.Text;
 using WzComparerR2.WzLib;
+using WzComparerR2.Common;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -492,6 +494,29 @@ namespace WzComparerR2.CharaSimControl
             g.FillRectangle(brush, guideX[x0], guideY[y0], guideX[x1] - guideX[x0], guideY[y1] - guideY[y0]);
         }
 
+        public static string GetNameTagString(StringResult sr)
+        {
+            string res;
+            string nickWithQR = sr["nickWithQR"];
+            string nickWithWSR = sr["nickWithWSR"];
+            if (nickWithQR != null)
+            {
+                string qrDefault = sr["qrDefault"] ?? string.Empty;
+                res = Regex.Replace(nickWithQR, "#qr.*?#", qrDefault);
+            }
+            else if (!string.IsNullOrEmpty(nickWithWSR))
+            {
+                string wsrDefault = sr["wsrDefault"] ?? string.Empty;
+                res = Regex.Replace(nickWithWSR, "#wsr.*?#", wsrDefault);
+            }
+            else
+            {
+                res = sr.Name;
+            }
+
+            return res;
+        }
+
         public static void DrawNameTag(Graphics g, Wz_Node resNode, string tagName, int picW, ref int picH)
         {
             DrawNameTag(g, resNode, tagName, picW, out Rectangle rectResult, ref picH);
@@ -594,31 +619,31 @@ namespace WzComparerR2.CharaSimControl
             {
                 bool mixedAniMode = wce[1].Bitmap != null && (wce[1].Bitmap.Width > 1 || wce[1].Bitmap.Height > 1);
 
-                offsetY = Math.Min(offsetY, ani0.OpOrigin.Y);
-                height = Math.Max(height, ani0.Rectangle.Bottom);
+                offsetY = Math.Min((!aniNameTag ? offsetY : 0), ani0.OpOrigin.Y);
+                height = Math.Max((!aniNameTag ? height : 0), ani0.Rectangle.Bottom);
 
-                int bgWidth = mixedAniMode ? wce[1].Bitmap.Width : nameWidth;
+                int bgWidth = mixedAniMode || aniNameTag ? wce[1].Bitmap.Width : nameWidth;
                 int left = center - bgWidth / 2;
                 int right = left + bgWidth;
                 int nameLeft = center - nameWidth / 2;
 
                 picH -= offsetY;
 
-                if (mixedAniMode)
+                if (mixedAniMode || aniNameTag)
                 {
                     // draw legay center
                     // Note: item 1143360 (MILESTONE) does not render well, ignore it.
                     if (!aniNameTag) g.DrawImage(wce[1].Bitmap, left - wce[1].Origin.X, picH - wce[1].Origin.Y);                   
                     // draw ani0 based on bg center position
-                    g.DrawImage(ani0.Bitmap, left - wce[1].Origin.X - ani0.Origin.X, picH - wce[1].Origin.Y - ani0.Origin.Y);
+                    g.DrawImage(ani0.Bitmap, left - (!aniNameTag ? wce[1].Origin.X : 0) - ani0.Origin.X, picH - (!aniNameTag ? wce[1].Origin.Y : 0) - ani0.Origin.Y);
                     if (!string.IsNullOrEmpty(tagName)) // draw name
                     {
                         using var brush = new SolidBrush(color);
                         // offsetX with bg for better alignment
-                        g.DrawString(tagName, font, brush, nameLeft - wce[1].Origin.X, picH + (aniNameTag ? -5 : 0), fmt);
+                        g.DrawString(tagName, font, brush, nameLeft - (!aniNameTag ? wce[1].Origin.X : 0), picH, fmt);
                     }
 
-                    rectResult.X = left - wce[1].Origin.X - ani0.Origin.X;
+                    rectResult.X = left - (!aniNameTag ? wce[1].Origin.X : 0) - ani0.Origin.X;
                     rectResult.Width = ani0.Bitmap.Width;
                 }
                 else

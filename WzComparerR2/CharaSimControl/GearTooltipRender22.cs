@@ -999,7 +999,8 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (this.MedalResNode != null)
                 {
-                    GearGraphics.DrawNameTag(g, this.MedalResNode, sr.Name.Replace("의 훈장", ""), bitmap.Width, ref picH);
+                    string medalName = GearGraphics.GetNameTagString(sr);
+                    GearGraphics.DrawNameTag(g, this.MedalResNode, medalName.Replace("의 훈장", ""), bitmap.Width, ref picH);
                     picH += 4;
                 }
                 picH += 6;
@@ -2157,7 +2158,8 @@ namespace WzComparerR2.CharaSimControl
                         sr = new StringResult();
                         sr.Name = "(null)";
                     }
-                    GearGraphics.DrawNameTag(tempG, this.MedalResNode, sr.Name.Replace("의 훈장", ""), tempBitmap.Width, out rect, ref h);
+                    string medalName = GearGraphics.GetNameTagString(sr);
+                    GearGraphics.DrawNameTag(tempG, this.MedalResNode, medalName.Replace("의 훈장", ""), tempBitmap.Width, out rect, ref h);
                 }
                 else if (this.NameTagResNode != null)
                 {

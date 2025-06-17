@@ -959,17 +959,8 @@ namespace WzComparerR2.CharaSimControl
                 if (this.NickResNode != null)
                 {
                     //获取称号名称
-                    string nickName;
-                    string nickWithQR = sr["nickWithQR"];
-                    if (nickWithQR != null)
-                    {
-                        string qrDefault = sr["qrDefault"] ?? string.Empty;
-                        nickName = Regex.Replace(nickWithQR, "#qr.*?#", qrDefault);
-                    }
-                    else
-                    {
-                        nickName = sr.Name;
-                    }
+
+                    string nickName = GearGraphics.GetNameTagString(sr);
                     GearGraphics.DrawNameTag(g, this.NickResNode, nickName, tooltip.Width, ref picH);
                     picH += 4;
                 }
@@ -1390,18 +1381,7 @@ namespace WzComparerR2.CharaSimControl
                     sr.Name = "(null)";
                 }
 
-                string nickName;
-                string nickWithQR = sr["nickWithQR"];
-                if (nickWithQR != null)
-                {
-                    string qrDefault = sr["qrDefault"] ?? string.Empty;
-                    nickName = Regex.Replace(nickWithQR, "#qr.*?#", qrDefault);
-                }
-                else
-                {
-                    nickName = sr.Name;
-                }
-
+                string nickName = GearGraphics.GetNameTagString(sr);
                 GearGraphics.DrawNameTag(tempG, this.NickResNode, nickName, tempBitmap.Width, out rect, ref h);
 
                 Bitmap resBitmap = new Bitmap(rect.Width, rect.Height);
