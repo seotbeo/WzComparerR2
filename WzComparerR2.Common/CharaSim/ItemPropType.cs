@@ -58,6 +58,7 @@ namespace WzComparerR2.CharaSim
         addTooltip_tucCnt,
         pointCost,
         tamingMob,
+        cashTradeBlock,
         //MSN专属属性
         mintable,
     }

@@ -24,6 +24,7 @@ namespace WzComparerR2.CharaSimControl
             this.GearRender = new GearTooltipRender2();
             this.GearRender22 = new GearTooltipRender22();
             this.ItemRender = new ItemTooltipRender2();
+            this.ItemRender22 = new ItemTooltipRender22();
             this.SkillRender = new SkillTooltipRender2();
             this.RecipeRender = new RecipeTooltipRender();
             this.MapRender = new MapTooltipRenderer();
@@ -56,6 +57,7 @@ namespace WzComparerR2.CharaSimControl
         public GearTooltipRender2 GearRender { get; private set; }
         public GearTooltipRender22 GearRender22 { get; private set; }
         public ItemTooltipRender2 ItemRender { get; private set; }
+        public ItemTooltipRender22 ItemRender22 { get; private set; }
         public SkillTooltipRender2 SkillRender { get; private set; }
         public RecipeTooltipRender RecipeRender { get; private set; }
         public MapTooltipRenderer MapRender { get; private set; }
@@ -78,6 +80,7 @@ namespace WzComparerR2.CharaSimControl
                 this.GearRender.ShowObjectID = value;
                 this.GearRender22.ShowObjectID = value;
                 this.ItemRender.ShowObjectID = value;
+                this.ItemRender22.ShowObjectID = value;
                 this.SkillRender.ShowObjectID = value;
                 this.RecipeRender.ShowObjectID = value;
             }
@@ -96,7 +99,6 @@ namespace WzComparerR2.CharaSimControl
             {
                 this.enable22AniStyle = value;
                 this.SkillRender.Enable22AniStyle = value;
-                this.ItemRender.Enable22AniStyle = value;
                 this.RecipeRender.Enable22AniStyle = value;
             }
         }
@@ -131,14 +133,29 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (this.item is Item)
                 {
-                    if (this.ItemRender.HasSamples())
+                    if (Enable22AniStyle)
                     {
-                        this.SaveSample.Tag = new Dictionary<string, object>
+                        if (this.ItemRender22.HasSamples())
                         {
-                            ["type"] = "item",
-                            ["renderer"] = this.ItemRender
-                        };
-                        this.menu.Items.Add(this.SaveSample);
+                            this.SaveSample.Tag = new Dictionary<string, object>
+                            {
+                                ["type"] = "item",
+                                ["renderer"] = this.ItemRender22
+                            };
+                            this.menu.Items.Add(this.SaveSample);
+                        }
+                    }
+                    else
+                    {
+                        if (this.ItemRender.HasSamples())
+                        {
+                            this.SaveSample.Tag = new Dictionary<string, object>
+                            {
+                                ["type"] = "item",
+                                ["renderer"] = this.ItemRender
+                            };
+                            this.menu.Items.Add(this.SaveSample);
+                        }
                     }
                 }
             }
@@ -159,8 +176,16 @@ namespace WzComparerR2.CharaSimControl
             TooltipRender renderer;
             if (item is Item)
             {
-                renderer = ItemRender;
-                ItemRender.Item = this.item as Item;
+                if (Enable22AniStyle)
+                {
+                    renderer = ItemRender22;
+                    ItemRender22.Item = this.item as Item;
+                }
+                else
+                {
+                    renderer = ItemRender;
+                    ItemRender.Item = this.item as Item;
+                }
             }
             else if (item is Gear)
             {
@@ -248,17 +273,8 @@ namespace WzComparerR2.CharaSimControl
             {
                 if (Enable22AniStyle)
                 {
-                    if ((item as SetItem).ItemIDs.Parts.Any(p => p.Value.ItemIDs.Any(i => i.Key / 1000000 == 5)))
-                    {
-                        renderer = SetItemRender;
-                        SetItemRender.Enable22AniStyle = true;
-                        SetItemRender.SetItem = this.item as SetItem;
-                    }
-                    else
-                    {
-                        renderer = SetItemRender22;
-                        SetItemRender22.SetItem = this.item as SetItem;
-                    }
+                    renderer = SetItemRender22;
+                    SetItemRender22.SetItem = this.item as SetItem;
                 }
                 else
                 {

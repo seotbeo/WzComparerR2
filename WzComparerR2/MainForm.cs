@@ -248,9 +248,14 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender.LinkRecipeInfo = Setting.Item.LinkRecipeInfo;
             tooltipQuickView.ItemRender.LinkRecipeItem = Setting.Item.LinkRecipeItem;
             tooltipQuickView.ItemRender.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
-            tooltipQuickView.ItemRender.ShowNickTag = Setting.Item.ShowNickTag;
             tooltipQuickView.ItemRender.CosmeticHairColor = Setting.Item.CosmeticHairColor;
             tooltipQuickView.ItemRender.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
+            tooltipQuickView.ItemRender22.ShowObjectID = Setting.Item.ShowID;
+            tooltipQuickView.ItemRender22.LinkRecipeInfo = Setting.Item.LinkRecipeInfo;
+            tooltipQuickView.ItemRender22.LinkRecipeItem = Setting.Item.LinkRecipeItem;
+            tooltipQuickView.ItemRender22.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
+            tooltipQuickView.ItemRender22.CosmeticHairColor = Setting.Item.CosmeticHairColor;
+            tooltipQuickView.ItemRender22.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
 
             tooltipQuickView.MapRender.ShowMiniMap = Setting.Map.ShowMiniMap;
 

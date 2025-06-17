@@ -313,9 +313,14 @@ namespace WzComparerR2.CharaSimControl
             tooltip.ItemRender.LinkRecipeInfo = false;
             tooltip.ItemRender.LinkRecipeItem = Setting.Item.LinkRecipeItem;
             tooltip.ItemRender.ShowLevelOrSealed = false;
-            tooltip.ItemRender.ShowNickTag = false;
             tooltip.ItemRender.CosmeticHairColor = Setting.Item.CosmeticHairColor;
             tooltip.ItemRender.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
+            tooltip.ItemRender22.ShowObjectID = false;
+            tooltip.ItemRender22.LinkRecipeInfo = false;
+            tooltip.ItemRender22.LinkRecipeItem = Setting.Item.LinkRecipeItem;
+            tooltip.ItemRender22.ShowLevelOrSealed = false;
+            tooltip.ItemRender22.CosmeticHairColor = Setting.Item.CosmeticHairColor;
+            tooltip.ItemRender22.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
 
             tooltip.RecipeRender.ShowObjectID = false;
 

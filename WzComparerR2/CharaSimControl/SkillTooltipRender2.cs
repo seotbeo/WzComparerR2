@@ -431,7 +431,7 @@ namespace WzComparerR2.CharaSimControl
                 picH += 9;
                 foreach (var descEx in skillDescEx)
                 {
-                    GearGraphics.DrawString(g, descEx, GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    GearGraphics.DrawString(g, descEx, GearGraphics.ItemDetailFont, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
                 picH += 3;
             }

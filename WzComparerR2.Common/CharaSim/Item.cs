@@ -53,6 +53,11 @@ namespace WzComparerR2.CharaSim
             return this.Props.TryGetValue(type, out long value) && value != 0;
         }
 
+        public bool IsPet
+        {
+            get { return this.type == ItemType.Pet; }
+        }
+
         public static ItemType GetItemType(int code)
         {
             switch (code / 1000000)
@@ -341,6 +346,8 @@ namespace WzComparerR2.CharaSim
                     }
                 }
             }
+
+            item.type = GetItemType(item.ItemID);
             return item;
         }
 

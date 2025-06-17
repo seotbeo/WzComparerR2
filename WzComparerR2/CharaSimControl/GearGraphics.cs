@@ -62,6 +62,8 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Font ItemReqLevelFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9Font = new Font("돋움", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9FontBold = new Font("돋움", 11f, FontStyle.Bold, GraphicsUnit.Pixel);
+        public static readonly Font ItemGulimFont = new Font("굴림", 12f, GraphicsUnit.Pixel);
+        public static readonly Font ItemGulimFontBold = new Font("굴림", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
 
         public static Font ItemNameFont2 { get; private set; }
         public static Font ItemDetailFont2 { get; private set; }
@@ -633,7 +635,7 @@ namespace WzComparerR2.CharaSimControl
                 {
                     // draw legay center
                     // Note: item 1143360 (MILESTONE) does not render well, ignore it.
-                    if (!aniNameTag) g.DrawImage(wce[1].Bitmap, left - wce[1].Origin.X, picH - wce[1].Origin.Y);                   
+                    if (!aniNameTag) g.DrawImage(wce[1].Bitmap, left - wce[1].Origin.X, picH - wce[1].Origin.Y);
                     // draw ani0 based on bg center position
                     g.DrawImage(ani0.Bitmap, left - (!aniNameTag ? wce[1].Origin.X : 0) - ani0.Origin.X, picH - (!aniNameTag ? wce[1].Origin.Y : 0) - ani0.Origin.Y);
                     if (!string.IsNullOrEmpty(tagName)) // draw name

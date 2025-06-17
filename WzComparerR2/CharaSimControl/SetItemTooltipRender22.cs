@@ -49,19 +49,17 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
 
-            bool specialPetSetEffectName = this.SetItem.ItemIDs.Parts.Any(p => p.Value.ItemIDs.Any(i => isSpecialPet(i.Key)));
-
             linePos = new List<int>();
             int width = 298;
             int picHeight1;
-            Bitmap originBmp = RenderSetItem(specialPetSetEffectName, out picHeight1);
+            Bitmap originBmp = RenderSetItem(out picHeight1);
             int picHeight2 = 0;
             Bitmap effectBmp = null;
 
             //if (this.SetItem.ExpandToolTip)
             if (false)
             {
-                effectBmp = RenderEffectPart(specialPetSetEffectName, out picHeight2);
+                effectBmp = RenderEffectPart(out picHeight2);
                 width += 298;
             }
 
@@ -142,7 +140,7 @@ namespace WzComparerR2.CharaSimControl
             return false;
         }
 
-        private Bitmap RenderSetItem(bool specialPetSetEffectName, out int picHeight)
+        private Bitmap RenderSetItem(out int picHeight)
         {
             Bitmap setBitmap = new Bitmap(298, DefaultPicHeight);
             Graphics g = Graphics.FromImage(setBitmap);
@@ -242,7 +240,7 @@ namespace WzComparerR2.CharaSimControl
                                     {
                                         if (itemID / 10000 == 500)
                                         {
-                                            typeName = "펫";
+                                            typeName = "(펫)";
                                         }
                                         else
                                         {
@@ -279,9 +277,9 @@ namespace WzComparerR2.CharaSimControl
                     if (!partNames.Contains(itemName + typeName))
                     {
                         partNames.Add(itemName + typeName);
-                        Brush brush = setItemPart.Value.Enabled ? Brushes.White : GearGraphics.Equip22BrushDarkGray;
                         if (!cash)
                         {
+                            Brush brush = setItemPart.Value.Enabled ? Brushes.White : GearGraphics.Equip22BrushDarkGray;
                             int typeWidth = TextRenderer.MeasureText(g, typeName, GearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             TextRenderer.DrawText(g, typeName, GearGraphics.EquipMDMoris9Font, new Point(14, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
                             TextRenderer.DrawText(g, Compact(g, itemName, 200), GearGraphics.EquipMDMoris9Font, new Point(90, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
@@ -289,6 +287,7 @@ namespace WzComparerR2.CharaSimControl
                         }
                         else
                         {
+                            Brush brush = setItemPart.Value.Enabled ? Brushes.White : GearGraphics.Equip22BrushGray;
                             g.DrawImage(Resource.UIToolTip_img_Item_ItemIcon_canvas_Backgrnd, 13, picHeight - 2);
                             g.DrawImage(Resource.Item_shadow, 15 + 2 + 3, picHeight + 1 + 32 - 6);
                             if (itemBase?.IconRaw.Bitmap != null)
@@ -352,7 +351,7 @@ namespace WzComparerR2.CharaSimControl
             if (true)
             {
                 picHeight += 6;
-                RenderEffect(g, specialPetSetEffectName, ref picHeight);
+                RenderEffect(g, ref picHeight);
             }
             picHeight += 11;
 
@@ -402,12 +401,12 @@ namespace WzComparerR2.CharaSimControl
             return fit;
         }
 
-        private Bitmap RenderEffectPart(bool specialPetSetEffectName, out int picHeight)
+        private Bitmap RenderEffectPart(out int picHeight)
         {
             Bitmap effBitmap = new Bitmap(298, DefaultPicHeight);
             Graphics g = Graphics.FromImage(effBitmap);
             picHeight = 9;
-            RenderEffect(g, specialPetSetEffectName, ref picHeight);
+            RenderEffect(g, ref picHeight);
             picHeight += 11;
             g.Dispose();
             return effBitmap;
@@ -416,7 +415,7 @@ namespace WzComparerR2.CharaSimControl
         /// <summary>
         /// 绘制套装属性。
         /// </summary>
-        private void RenderEffect(Graphics g, bool specialPetSetEffectName, ref int picHeight)
+        private void RenderEffect(Graphics g, ref int picHeight)
         {
             foreach (KeyValuePair<int, SetItemEffect> effect in this.SetItem.Effects)
             {
@@ -430,13 +429,9 @@ namespace WzComparerR2.CharaSimControl
                     effTitle = $"[ 월드 내 중복 착용 효과 ({effect.Key} / {this.SetItem.CompleteCount}) ]";
                     worldSetEff = true ;
                 }
-                else if (specialPetSetEffectName && this.SetItem.SetItemName.EndsWith(" 세트"))
-                {
-                    effTitle = $"{Regex.Replace(this.SetItem.SetItemName, " 세트$", "")} {effect.Key}세트 효과";
-                }
                 else
                 {
-                    effTitle = effect.Key + "세트효과";
+                    effTitle = effect.Key + "세트 효과";
                 }
                 TextRenderer.DrawText(g, effTitle, GearGraphics.EquipMDMoris9Font, new Point(14 - (worldSetEff ? 1 : 0), picHeight), color, TextFormatFlags.NoPadding);
                 if (worldSetEff)
@@ -454,7 +449,7 @@ namespace WzComparerR2.CharaSimControl
                         List<Potential> ops = (List<Potential>)prop.Value;
                         foreach (Potential p in ops)
                         {
-                            GearGraphics.DrawString(g, p.ConvertSummary(), GearGraphics.EquipMDMoris9Font, new Dictionary<string, Color>() { { string.Empty, color } }, 14 + dx, 290, ref picHeight, 15);
+                            GearGraphics.DrawString(g, p.ConvertSummary(), GearGraphics.EquipMDMoris9Font, new Dictionary<string, Color>() { { string.Empty, color } }, 14 + dx, 283, ref picHeight, 15);
                         }
                     }
                     else if (prop.Key == GearPropType.OptionToMob)
@@ -462,7 +457,7 @@ namespace WzComparerR2.CharaSimControl
                         List<SetItemOptionToMob> ops = (List<SetItemOptionToMob>)prop.Value;
                         foreach (SetItemOptionToMob p in ops)
                         {
-                            GearGraphics.DrawPlainText(g, p.ConvertSummary(), GearGraphics.EquipMDMoris9Font, color, 14 + dx, 290, ref picHeight, 15);
+                            GearGraphics.DrawPlainText(g, p.ConvertSummary(), GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                         }
                     }
                     else if (prop.Key == GearPropType.activeSkill)
@@ -477,7 +472,7 @@ namespace WzComparerR2.CharaSimControl
                                 sr.Name = p.SkillID.ToString();
                             }
                             string summary = $"[{sr.Name.Replace(Environment.NewLine, "")}] 스킬 사용 가능";
-                            GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 290, ref picHeight, 15);
+                            GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                         }
                     }
                     else if (prop.Key == GearPropType.bonusByTime)
@@ -485,18 +480,18 @@ namespace WzComparerR2.CharaSimControl
                         var ops = (List<SetItemBonusByTime>)prop.Value;
                         foreach (SetItemBonusByTime p in ops)
                         {
-                            GearGraphics.DrawPlainText(g, $"{p.TermStart}小时后", GearGraphics.EquipMDMoris9Font, color, 10, 290, ref picHeight, 15);
+                            GearGraphics.DrawPlainText(g, $"{p.TermStart}小时后", GearGraphics.EquipMDMoris9Font, color, 10, 283, ref picHeight, 15);
                             foreach (var bonusProp in p.Props)
                             {
                                 var summary = ItemStringHelper.GetGearPropString(bonusProp.Key, Convert.ToInt32(bonusProp.Value));
-                                GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 290, ref picHeight, 15);
+                                GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                             }
                         }
                     }
                     else
                     {
                         var summary = ItemStringHelper.GetGearPropString(prop.Key, Convert.ToInt32(prop.Value)).Replace(":","");
-                        GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 290, ref picHeight, 15);
+                        GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                     }
                 }
                 picHeight += 7;
@@ -524,7 +519,7 @@ namespace WzComparerR2.CharaSimControl
                 g.DrawImage(res["category_w"].Image, sp - ew - length - ww, picH);
                 g.FillRectangle(res["category_c"], sp - ew - length, picH, length, ch);
                 picH += 2;
-                GearGraphics.DrawString(g, categories[i], font, new Dictionary<string, Color>() { { "$g", ((SolidBrush)GearGraphics.Equip22BrushGray).Color } }, sp - ew - length, 290, ref picH, 0);
+                GearGraphics.DrawString(g, categories[i], font, new Dictionary<string, Color>() { { "$g", ((SolidBrush)GearGraphics.Equip22BrushGray).Color } }, sp - ew - length, 283, ref picH, 0);
                 picH -= 2;
                 g.DrawImage(res["category_e"].Image, sp - ew, picH);
 

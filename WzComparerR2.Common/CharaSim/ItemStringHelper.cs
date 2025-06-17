@@ -34,11 +34,6 @@ namespace WzComparerR2.CharaSim
             return GetGearPropString(propType, value, 0);
         }
 
-        public static string[] GetGearPropString22(GearPropType propType, long value)
-        {
-            return GetGearPropString22(propType, value, 0);
-        }
-
         /// <summary>
         /// 获取GearPropType所对应的文字说明。
         /// </summary>
@@ -161,6 +156,11 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.CuttableCount: return "가위 사용 가능 횟수：" + value + "회";
                 default: return null;
             }
+        }
+
+        public static string[] GetGearPropString22(GearPropType propType, long value)
+        {
+            return GetGearPropString22(propType, value, 0);
         }
 
         public static string[] GetGearPropString22(GearPropType propType, long value, int signFlag)

@@ -97,7 +97,7 @@ namespace WzComparerR2.Comparer
         public void EasyCompareWzFiles(Wz_File fileNew, Wz_File fileOld, string outputDir, StreamWriter index = null)
         {
             StateInfo = "Wz 비교중...";
-           
+
             if ((fileNew.Type == Wz_Type.Base || fileOld.Type == Wz_Type.Base) && index == null) //至少有一个base 拆分对比
             {
                 var virtualNodeNew = RebuildWzFile(fileNew);
@@ -699,25 +699,38 @@ namespace WzComparerR2.Comparer
         // 변경된 아이템 툴팁 출력
         private void SaveItemTooltip(string tooltipPath)
         {
-            ItemTooltipRender2[] tooltipRenderNewOld = new ItemTooltipRender2[2];
+            TooltipRender[] tooltipRenderNewOld = new TooltipRender[2];
             int count = 0;
             int allCount = OutputItemTooltipIDs.Count;
 
             for (int i = 0; i < 2; i++) // 0: New, 1: Old
             {
-                tooltipRenderNewOld[i] = new ItemTooltipRender2();
-                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
-                tooltipRenderNewOld[i].ShowObjectID = true;
-                tooltipRenderNewOld[i].LinkRecipeInfo = true;
-                tooltipRenderNewOld[i].LinkRecipeItem = true;
-                tooltipRenderNewOld[i].ShowLevelOrSealed = true;
-                tooltipRenderNewOld[i].ShowNickTag = true;
-                tooltipRenderNewOld[i].ShowNickTag = true;
-                tooltipRenderNewOld[i].CompareMode = true;
-                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
-                tooltipRenderNewOld[i].CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
-                tooltipRenderNewOld[i].CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
-                tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
+                if (CharaSimConfig.Default.Misc.Enable22AniStyle)
+                {
+                    tooltipRenderNewOld[i] = new ItemTooltipRender22();
+                    tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                    tooltipRenderNewOld[i].ShowObjectID = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).LinkRecipeInfo = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).LinkRecipeItem = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).ShowLevelOrSealed = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).CompareMode = true;
+                    tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
+                }
+                else
+                {
+                    tooltipRenderNewOld[i] = new ItemTooltipRender2();
+                    tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                    tooltipRenderNewOld[i].ShowObjectID = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).LinkRecipeInfo = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).LinkRecipeItem = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).ShowLevelOrSealed = true;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).CompareMode = true;
+                    tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
+                }
             }
 
             foreach (var itemID in OutputItemTooltipIDs)
@@ -740,10 +753,13 @@ namespace WzComparerR2.Comparer
                         Item item = Item.CreateFromNode(PluginManager.FindWz($@"Item\{itemType}\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]);
 
                         if (item == null)
-                        { 
+                        {
                             nullIdx |= i + 1;
                         }
-                        tooltipRenderNewOld[i].Item = item;
+                        if (tooltipRenderNewOld[i] is ItemTooltipRender22)
+                            (tooltipRenderNewOld[i] as ItemTooltipRender22).Item = item;
+                        else
+                            (tooltipRenderNewOld[i] as ItemTooltipRender2).Item = item;
                     }
 
                     SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, itemID, "아이템", typePicH: 23);

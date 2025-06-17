@@ -7,7 +7,9 @@ namespace WzComparerR2.CharaSim
     public enum GearPropType
     {
         //普通装备属性
-        incSTR = 1,
+        incARC = 1,
+        incAUT,
+        incSTR,
         incSTRr,
         incDEX,
         incDEXr,
@@ -48,8 +50,6 @@ namespace WzComparerR2.CharaSim
         imdR,
         incIMDR,
         nbdR,
-        incARC,
-        incAUT,
         incCHUC,
         incPQEXPr,
 

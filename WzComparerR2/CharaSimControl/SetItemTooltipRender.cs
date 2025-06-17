@@ -95,7 +95,7 @@ namespace WzComparerR2.CharaSimControl
             format.Alignment = StringAlignment.Center;
 
             picHeight = 10;
-            TextRenderer.DrawText(g, this.SetItem.SetItemName, GearGraphics.EquipDetailFont2, new Point(261 + (Enable22AniStyle ? 2 : 0), 10), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
+            TextRenderer.DrawText(g, this.SetItem.SetItemName, GearGraphics.EquipDetailFont2, new Point(261, 10), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
             picHeight += 25;
 
             format.Alignment = StringAlignment.Far;
@@ -229,21 +229,14 @@ namespace WzComparerR2.CharaSimControl
                         }
                         else
                         {
-                            if (Enable22AniStyle)
-                            {
-                                g.DrawImage(Resource.UIToolTip_img_Item_ItemIcon_canvas_Backgrnd, 10, picHeight);
-                            }
-                            else
-                            {
-                                g.FillRectangle(GearGraphics.GearIconBackBrush2, 10, picHeight, 36, 36);
-                            }
-                            g.DrawImage(Resource.Item_shadow, 10 + 2 + 3 + (Enable22AniStyle ? 2 : 0), picHeight + 2 + 32 - 6 + (Enable22AniStyle ? 1 : 0));
+                            g.FillRectangle(GearGraphics.GearIconBackBrush2, 10, picHeight, 36, 36);
+                            g.DrawImage(Resource.Item_shadow, 10 + 2 + 3, picHeight + 2 + 32 - 6);
                             if (itemBase?.IconRaw.Bitmap != null)
                             {
                                 var icon = itemBase.IconRaw;
-                                g.DrawImage(icon.Bitmap, 10 + 2 - icon.Origin.X + (Enable22AniStyle ? 2 : 0), picHeight + 2 + 32 - icon.Origin.Y + (Enable22AniStyle ? 1 : 0));
+                                g.DrawImage(icon.Bitmap, 10 + 2 - icon.Origin.X, picHeight + 2 + 32 - icon.Origin.Y);
                             }
-                            g.DrawImage(Resource.CashItem_0, 10 + 2 + 20 + (Enable22AniStyle ? 2 : 0), picHeight + 2 + 32 - 12 + (Enable22AniStyle ? 1 : 0));
+                            g.DrawImage(Resource.CashItem_0, 10 + 2 + 20, picHeight + 2 + 32 - 12);
                             int typeWidth = TextRenderer.MeasureText(g, typeName, GearGraphics.EquipDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             TextRenderer.DrawText(g, typeName, GearGraphics.EquipDetailFont2, new Point(261 - 10 - typeWidth, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
                             TextRenderer.DrawText(g, Compact(g, itemName, 261 - 10 - typeWidth - 52), GearGraphics.EquipDetailFont2, new Point(52, picHeight), ((SolidBrush)brush).Color, TextFormatFlags.NoPadding);
@@ -418,14 +411,7 @@ namespace WzComparerR2.CharaSimControl
                                 sr = new StringResult();
                                 sr.Name = p.SkillID.ToString();
                             }
-                            if (Enable22AniStyle)
-                            {
-                                summary = $"[{sr.Name.Replace(Environment.NewLine, "")}] 스킬 사용 가능";
-                            }
-                            else
-                            {
-                                summary = $"<{sr.Name.Replace(Environment.NewLine, "")}> 스킬 사용 가능";
-                            }
+                            summary = $"<{sr.Name.Replace(Environment.NewLine, "")}> 스킬 사용 가능";
                             GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipDetailFont2, color, 10, 244, ref picHeight, 15);
                         }
                     }
