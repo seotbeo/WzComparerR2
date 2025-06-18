@@ -311,7 +311,7 @@ namespace WzComparerR2.CharaSimControl
             AddLines(0, -5, ref picH);
 
             // 아이템 아이콘 이미지
-            g.DrawImage(Resource.UIToolTipNew_img_Item_Common_ItemIcon_base, 15, picH + 10);
+            g.DrawImage(Resource.UIToolTipNew_img_Item_Common_ItemIcon_base_custom, 15, picH + 10);
             if (Gear.IconRaw.Bitmap != null) //绘制icon
             {
                 /*
@@ -328,13 +328,15 @@ namespace WzComparerR2.CharaSimControl
                 */
 
                 //绘制阴影
+                /*
                 var shade = Resource.UIToolTipNew_img_Item_Common_ItemIcon_shade;
                 g.DrawImage(shade,
                     new Rectangle(15, picH + 10, shade.Width, shade.Height),
                     0, 0, shade.Width, shade.Height,
                     GraphicsUnit.Pixel);
+                */
                 //绘制图标
-                g.DrawImage(GearGraphics.EnlargeBitmap(Gear.Icon.Bitmap),
+                g.DrawImage(GearGraphics.EnlargeBitmap(Gear.IconRaw.Bitmap),
                     21 + (1 - Gear.Icon.Origin.X) * 2,
                     picH + 16 + (33 - Gear.Icon.Origin.Y) * 2);
 
