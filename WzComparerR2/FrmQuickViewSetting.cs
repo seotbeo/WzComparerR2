@@ -42,6 +42,9 @@ namespace WzComparerR2
 
             this.comboBoxEx3.SelectedIndex = 0;
             this.comboBoxEx4.SelectedIndex = 0;
+            this.chkShowMiniMapMob.Enabled = this.chkShowMiniMap.Checked;
+            this.chkShowMiniMapNpc.Enabled = this.chkShowMiniMap.Checked;
+            this.chkShowMiniMapPortal.Enabled = this.chkShowMiniMap.Checked;
         }
 
         [Link]
