@@ -344,6 +344,7 @@ namespace WzComparerR2.CharaSimControl
         private Bitmap RenderItem(out int picH)
         {
             StringFormat format = (StringFormat)StringFormat.GenericDefault.Clone();
+            picH = 0;
             long value;
             int intvalue;
 
@@ -379,12 +380,17 @@ namespace WzComparerR2.CharaSimControl
                     {
                         tooltipWidth = (int)Math.Ceiling(titleSize.Width);
                     }
+
+                    if (CompareMode && tooltipWidth - titleSize.Width < 32)
+                    {
+                        picH += 14;
+                    }
                 }
             }
 
             Bitmap tooltip = new Bitmap(tooltipWidth, DefaultPicHeight);
             Graphics g = Graphics.FromImage(tooltip);
-            picH = 10;
+            picH += 10;
 
             //绘制标题
             bool hasPart2 = false;

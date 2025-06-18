@@ -362,6 +362,7 @@ namespace WzComparerR2.CharaSimControl
                 { "$g", ((SolidBrush)GearGraphics.Equip22BrushLegendary).Color },
             };
             splitterH = new List<int>();
+            picH = 0;
             const int LineHeight = 18;
             long value;
             int intvalue;
@@ -393,12 +394,17 @@ namespace WzComparerR2.CharaSimControl
                     {
                         tooltipWidth = (int)Math.Ceiling(titleSize.Width);
                     }
+
+                    if (CompareMode && tooltipWidth - titleSize.Width < 32)
+                    {
+                        picH += 14;
+                    }
                 }
             }
 
             Bitmap tooltip = new Bitmap(tooltipWidth, DefaultPicHeight);
             Graphics g = Graphics.FromImage(tooltip);
-            picH = 10;
+            picH += 10;
 
             // 이름
             format.Alignment = StringAlignment.Center;
