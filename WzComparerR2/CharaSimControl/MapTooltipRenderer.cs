@@ -48,6 +48,7 @@ namespace WzComparerR2.CharaSimControl
             List<TextBlock> mobBlocks = new List<TextBlock>();
             List<TextBlock> npcBlocks = new List<TextBlock>();
             TextBlock barrierBlock = null;
+            TextBlock descBlock = null;
             int[] barrierResourceWidth = [17, 18, 18];
             int barrierType = 0;
             int picY = 0;
@@ -81,6 +82,13 @@ namespace WzComparerR2.CharaSimControl
             {
                 barrierType = 3;
                 barrierBlock = PrepareText(g, Map.BarrierAut.ToString(), GearGraphics.EquipDetailFont, GearGraphics.BarrierAutBrush, 0, 0);
+            }
+
+            var mapDesc = GetMapDesc(Map.MapID, Map.Link);
+            if (!string.IsNullOrEmpty(mapDesc))
+            {
+                var block = PrepareText(g, mapDesc, GearGraphics.ItemDetailFont, Brushes.White, 0, 0);
+                descBlock = block;
             }
 
             if (Map.Mobs.Count > 0)
@@ -128,11 +136,14 @@ namespace WzComparerR2.CharaSimControl
             Rectangle markRect = new Rectangle(0, 0, mapMark?.Width ?? 0, mapMark?.Height ?? 0);
             Rectangle titleRect = Measure(titleBlocks);
             Rectangle miniMapRect = new Rectangle(0, 0, miniMap?.Width ?? 0, miniMap?.Height ?? 0);
+            Rectangle descRect = descBlock?.Rectangle ?? new Rectangle();
             Rectangle mobRect = Measure(mobBlocks);
             Rectangle npcRect = Measure(npcBlocks);
 
             int width = 0;
             width = Math.Max(miniMapRect.Width, Math.Max(markRect.Width + 5 + titleRect.Width, Math.Max(mobRect.Width + 21, npcRect.Width + 21)));
+            if (!descRect.IsEmpty)
+                width = Math.Max(width, 250);
             if (!markRect.IsEmpty)
                 titleRect.X = markRect.Width + 5;
             miniMapRect.X = (width - miniMapRect.Width) / 2;
@@ -152,27 +163,30 @@ namespace WzComparerR2.CharaSimControl
                 titleHeight += 6;
             if (!miniMapRect.IsEmpty)
                 miniMapRect.Height += 6;
+            if (!descRect.IsEmpty)
+                descRect.Height += 6;
             if (!mobRect.IsEmpty)
                 mobRect.Height += 6;
             if (!npcRect.IsEmpty)
                 npcRect.Height += 6;
 
             miniMapRect.Y = barrierRect.Height + titleHeight;
-            mobRect.Y = miniMapRect.Y + miniMapRect.Height;
+            descRect.Y = miniMapRect.Y + miniMapRect.Height;
+            mobRect.Y = descRect.Y + descRect.Height;
             npcRect.Y = mobRect.Y + mobRect.Height;
 
-            int height = barrierRect.Height + titleHeight + miniMapRect.Height + mobRect.Height + npcRect.Height;
+            int height = barrierRect.Height + titleHeight + miniMapRect.Height + descRect.Height + mobRect.Height + npcRect.Height;
 
             Bitmap bmp2 = new Bitmap(width + 20, height + 20);
-            using Graphics g2 = Graphics.FromImage(bmp2);
+            Graphics g2 = Graphics.FromImage(bmp2);
             barrierRect.Offset(10, 10);
             markRect.Offset(10, 10);
             titleRect.Offset(10, 10);
             miniMapRect.Offset(10, 10);
+            descRect.Offset(10, 10);
             mobRect.Offset(31, 12);
             npcRect.Offset(31, 12);
 
-            GearGraphics.DrawNewTooltipBack(g2, 0, 0, bmp2.Width, bmp2.Height);
             if (barrierBlock != null)
             {
                 switch (barrierType)
@@ -201,12 +215,30 @@ namespace WzComparerR2.CharaSimControl
 
             if (miniMap != null)
             {
-                var dx = (width - miniMap.Width - 20) / 2;
+                var dx = (bmp2.Width - miniMap.Width - 2) / 2;
                 miniMap = DrawMinimapIcons(miniMap, dx);
                 g2.DrawImage(miniMap, miniMapRect.X - dx, miniMapRect.Y);
                 miniMap.Dispose();
             }
 
+            if(descBlock != null)
+            {
+                DrawMultilineText(g2, descBlock, descRect.Location, bmp2.Width - 15, 18, out int offsetY);
+
+                // 비트맵 크기 조절
+                Bitmap bmp3 = new Bitmap(bmp2.Width, bmp2.Height + offsetY);
+                Graphics g3 = Graphics.FromImage(bmp3);
+                g3.DrawImage(bmp2, 0, 0);
+
+                bmp2.Dispose();
+                g2.Dispose();
+                bmp2 = bmp3;
+                g2 = g3;
+
+                mobRect.Offset(0, offsetY);
+                npcRect.Offset(0, offsetY);
+            }
+            
             if (mobBlocks.Count > 0)
             {
                 g2.DrawImage(Resource.UIWindow_img_ToolTip_WorldMap_Mob, mobRect.X - 21, mobRect.Y - 2);
@@ -225,7 +257,16 @@ namespace WzComparerR2.CharaSimControl
                 DrawText(g2, item, npcRect.Location);
             }
 
-            return bmp2;
+            // 배경 채워넣기
+            Bitmap bmpResult = new Bitmap(bmp2.Width, bmp2.Height);
+            using Graphics gResult = Graphics.FromImage(bmpResult);
+            GearGraphics.DrawNewTooltipBack(gResult, 0, 0, bmpResult.Width, bmpResult.Height);
+            gResult.DrawImage(bmp2, 0, 0);
+
+            bmp2.Dispose();
+            g2.Dispose();
+
+            return bmpResult;
         }
 
         private Bitmap DrawMinimapIcons(Bitmap miniMap, int dx)
@@ -338,6 +379,22 @@ namespace WzComparerR2.CharaSimControl
 
             ret[0] = sr.StreetName ?? "(null)";
             ret[1] = sr.MapName ?? "(null)";
+            return ret;
+        }
+
+        private string GetMapDesc(int mapID, int? linkID)
+        {
+            string ret = null;
+            StringResult sr;
+            if (this.StringLinker == null || !this.StringLinker.StringMap.TryGetValue(mapID, out sr))
+            {
+                if (!this.StringLinker.StringMap.TryGetValue(linkID ?? -1, out sr))
+                {
+                    return ret;
+                }
+            }
+
+            ret = sr["mapDesc"];
             return ret;
         }
 
