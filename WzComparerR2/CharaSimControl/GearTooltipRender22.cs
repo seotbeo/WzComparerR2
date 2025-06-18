@@ -311,7 +311,6 @@ namespace WzComparerR2.CharaSimControl
             AddLines(0, -5, ref picH);
 
             // 아이템 아이콘 이미지
-            g.DrawImage(Resource.UIToolTipNew_img_Item_Common_ItemIcon_base_custom, 15, picH + 10);
             if (Gear.IconRaw.Bitmap != null) //绘制icon
             {
                 /*
@@ -336,12 +335,14 @@ namespace WzComparerR2.CharaSimControl
                     GraphicsUnit.Pixel);
                 */
                 //绘制图标
+                g.DrawImage(Resource.UIToolTipNew_img_Item_Common_ItemIcon_base_custom, 15, picH + 10);
                 g.DrawImage(GearGraphics.EnlargeBitmap(Gear.IconRaw.Bitmap),
-                    21 + (1 - Gear.Icon.Origin.X) * 2,
-                    picH + 16 + (33 - Gear.Icon.Origin.Y) * 2);
+                    21 + (1 - Gear.IconRaw.Origin.X) * 2,
+                    picH + 16 + (33 - Gear.IconRaw.Origin.Y) * 2);
 
                 //attr.Dispose();
             }
+            else g.DrawImage(Resource.UIToolTipNew_img_Item_Common_ItemIcon_base, 15, picH + 10);
 
             // 캐시 라벨 아이콘
             if (Gear.Cash)
