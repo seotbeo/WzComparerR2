@@ -204,7 +204,7 @@ namespace WzComparerR2.CharaSimControl
 
         public static readonly Brush Equip22BrushGray = new SolidBrush(Color.FromArgb(183, 191, 197));
         public static readonly Brush Equip22BrushDarkGray = new SolidBrush(Color.FromArgb(133, 145, 159));
-        public static readonly Brush Equip22BrushRed = new SolidBrush(Color.FromArgb(255, 102, 51));
+        public static readonly Brush Equip22BrushRed = new SolidBrush(Color.FromArgb(255, 138, 24));
         public static readonly Brush Equip22BrushEmphasis = new SolidBrush(Color.FromArgb(255, 204, 0));
         public static readonly Brush Equip22BrushScroll = new SolidBrush(Color.FromArgb(175, 173, 255));
         public static readonly Brush Equip22BrushBonusStat = new SolidBrush(Color.FromArgb(10, 227, 173));
