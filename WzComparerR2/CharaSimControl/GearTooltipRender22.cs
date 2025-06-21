@@ -1699,7 +1699,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (Gear.State == GearState.itemList && Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))
             {
-                tags.Add("#$r사용 전 1회 교환 가능 (사용 시 교환 불가)#");
+                tags.Add("#$r장착 전 1회 교환 가능 (장착 시 교환 불가)#");
             }
 
             // 기간제
