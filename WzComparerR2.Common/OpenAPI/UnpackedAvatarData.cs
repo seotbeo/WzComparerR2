@@ -279,14 +279,35 @@ namespace WzComparerR2.OpenAPI
             return (byte)GetValue("jobWingTailType");
         }
 
+        public byte GetJobWingTailTypeDetail()
+        {
+            return (byte)GetValue("jobWingTailTypeDetail");
+        }
+
         public string GetJobWingTailTypeString()
         {
+            var detail = "";
+            switch (this.JobWingTailTypeDetail)
+            {
+                case 0:
+                    detail += "(귀)";
+                    break;
+                case 1:
+                    detail += "(머리 장식)";
+                    break;
+                case 2:
+                    break;
+            }
+
             switch (this.JobWingTailType)
             {
                 case 1:
                     return "호영";
                 case 2:
                     return "라라";
+                case 12:
+                case 16:
+                    return $"렌{detail}";
                 default:
                     return null;
             }
@@ -378,6 +399,7 @@ namespace WzComparerR2.OpenAPI
 
             EarType = GetEarType();
             JobWingTailType = GetJobWingTailType();
+            JobWingTailTypeDetail = GetJobWingTailTypeDetail();
             WeaponMotionType = GetWeaponMotionType();
 
             MixHairRatio = GetMixHairRatio();
@@ -417,7 +439,10 @@ namespace WzComparerR2.OpenAPI
         public string Ring4 { get; set; }
         public byte EarType { get; set; }
         public byte JobWingTailType { get; set; }
+        public byte JobWingTailTypeDetail { get; set; }
+        public string JobWingTailTypeString { get { return this.GetJobWingTailTypeString(); } }
         public byte WeaponMotionType { get; set; }
+        public string WeaponMotionTypeString { get { return this.GetWeaponMotionTypeString(); } }
         public string MixHairRatio { get; set; }
         public string MixHairColor { get; set; }
         public string MixFaceRatio { get; set; }
@@ -436,6 +461,7 @@ namespace WzComparerR2.OpenAPI
     {
         public bool Valid { get; set; }
         public byte ColorType { get; set; }
+        public string ColorTypeString { get { return this.GetColorType(); } }
         public int Hue { get; set; }
         public int Saturation { get; set; }
         public int Brightness { get; set; }
@@ -447,6 +473,8 @@ namespace WzComparerR2.OpenAPI
 
         public string GetColorType()
         {
+            if (!this.Valid) return null;
+
             switch (ColorType)
             {
                 case 0:
