@@ -89,6 +89,9 @@ namespace WzComparerR2.CharaSim
                     case "Limit":
                         commodity.Limit = value;
                         break;
+                    case "LimitMax":
+                        commodity.LimitMax = value;
+                        break;
                     case "gameWorld":
                         commodity.gameWorld = Convert.ToString(subNode.Value);
                         break;

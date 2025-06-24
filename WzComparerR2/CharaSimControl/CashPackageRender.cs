@@ -219,7 +219,30 @@ namespace WzComparerR2.CharaSimControl
 
                 topAttrList.Add($"#$r{term}#");
             }
-            if (commodityPackage.Limit > 0)
+            if (commodityPackage.LimitMax > 0)
+            {
+                string limit = null;
+                switch (commodityPackage.LimitMax)
+                {
+                    case 1:
+                        limit = "메이플 ID";
+                        break;
+                    case 2:
+                        limit = "월드";
+                        break;
+                    case 3:
+                        limit = "넥슨 ID";
+                        break;
+                    default:
+                        limit = commodityPackage.LimitMax.ToString();
+                        break;
+                }
+                if (!string.IsNullOrEmpty(limit))
+                {
+                    topAttrList.Add($"#$r< {limit} 당 구매 제한 >#");
+                }
+            }
+            else if (commodityPackage.Limit > 0)
             {
                 string limit = null;
                 switch (commodityPackage.Limit)
@@ -237,7 +260,7 @@ namespace WzComparerR2.CharaSimControl
                         limit = commodityPackage.Limit.ToString();
                         break;
                 }
-                if (limit != null && limit.Length > 0)
+                if (!string.IsNullOrEmpty(limit))
                 {
                     topAttrList.Add($"#$r< {limit} 한정판매 >#");
                 }
