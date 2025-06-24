@@ -529,6 +529,7 @@ namespace WzComparerR2.CharaSim
                 case 1215:
                 case 1252:
                 case 1253:
+                case 1259:
                 case 1403:
                 case 1404:
                 case 1712:
