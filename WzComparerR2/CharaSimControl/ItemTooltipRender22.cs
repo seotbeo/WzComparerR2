@@ -1203,6 +1203,7 @@ namespace WzComparerR2.CharaSimControl
                 var defaultRenderer = new CashPackageTooltipRender();
                 defaultRenderer.StringLinker = this.StringLinker;
                 defaultRenderer.ShowObjectID = this.ShowObjectID;
+                defaultRenderer.Enable22AniStyle = true;
                 renderer = defaultRenderer;
             }
 

@@ -836,7 +836,7 @@
             this.chkEnable22AniStyle.Size = new System.Drawing.Size(145, 16);
             this.chkEnable22AniStyle.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkEnable22AniStyle.TabIndex = 4;
-            this.chkEnable22AniStyle.Text = "22주년 UI 적용";
+            this.chkEnable22AniStyle.Text = "2025 UI 적용";
             // 
             // buttonX2
             // 

@@ -19,6 +19,7 @@ namespace WzComparerR2.CharaSimControl
         {
         }
 
+        public bool Enable22AniStyle { get; set; }
         public CashPackage CashPackage { get; set; }
 
         public override object TargetItem
@@ -30,12 +31,23 @@ namespace WzComparerR2.CharaSimControl
         public override Bitmap Render()
         {
             int picHeight;
-            Bitmap originBmp = RenderCashPackage(out picHeight);
+            List<int> splitterH;
+            Bitmap originBmp = RenderCashPackage(out picHeight, out splitterH);
             Bitmap tooltip = new Bitmap(originBmp.Width, picHeight);
             Graphics g = Graphics.FromImage(tooltip);
 
             //绘制背景区域
             GearGraphics.DrawNewTooltipBack(g, 0, 0, tooltip.Width, tooltip.Height);
+            if (splitterH != null && splitterH.Count > 0)
+            {
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                var margin = 6;
+                foreach (var y in splitterH)
+                {
+                    DrawDotline(g, margin, tooltip.Width - margin, y);
+                }
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            }
 
             //复制图像
             g.DrawImage(originBmp, 0, 0, new Rectangle(0, 0, tooltip.Width, picHeight), GraphicsUnit.Pixel);
@@ -52,9 +64,36 @@ namespace WzComparerR2.CharaSimControl
             return tooltip;
         }
 
-        private Bitmap RenderCashPackage(out int picH)
+        private void DrawDotline(Graphics g, int x1, int x2, int y)
         {
-            Bitmap cashBitmap = new Bitmap(220, DefaultPicHeight);
+            var picCenter = Resource.UIToolTipNew_img_Skill_Frame_dotline_c;
+            using (var brush = new TextureBrush(picCenter))
+            {
+                brush.TranslateTransform(x1, y);
+                g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
+            }
+        }
+
+        private Bitmap RenderCashPackage(out int picH, out List<int> splitterH)
+        {
+            var cashPackageColorTable = new Dictionary<string, Color>()
+            {
+                { "$r", ((SolidBrush)GearGraphics.OrangeBrush4).Color },
+            };
+            var cashPackage22ColorTable = new Dictionary<string, Color>()
+            {
+                { "c", ((SolidBrush)GearGraphics.Equip22BrushEmphasis).Color },
+                { "$r", ((SolidBrush)GearGraphics.Equip22BrushRed).Color },
+                { "$g", ((SolidBrush)GearGraphics.Equip22BrushLegendary).Color },
+            };
+            splitterH = new List<int>();
+
+            var colorTable = this.Enable22AniStyle ? cashPackage22ColorTable : cashPackageColorTable;
+            var detailFont = this.Enable22AniStyle ? GearGraphics.ItemGulimFont : GearGraphics.ItemDetailFont;
+            var onlyCashTrade = false;
+
+            const int DefaultWidth = 300;
+            Bitmap cashBitmap = new Bitmap(DefaultWidth, DefaultPicHeight);
             Graphics g = Graphics.FromImage(cashBitmap);
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Center;
@@ -64,8 +103,8 @@ namespace WzComparerR2.CharaSimControl
             if (CharaSimLoader.LoadedCommoditiesByItemId.ContainsKey(CashPackage.ItemID))
                 commodityPackage = CharaSimLoader.LoadedCommoditiesByItemId[CashPackage.ItemID];
 
-            int fullWidth = Math.Max(220, TextRenderer.MeasureText(g, CashPackage.name, GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix).Width + 12 * 2);
-            int[] columnWidth = { CashPackage.SN.Count < 8 ? fullWidth : 220, 220, 220 };
+            int fullWidth = Math.Max(DefaultWidth, TextRenderer.MeasureText(g, CashPackage.name, GearGraphics.ItemNameFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix).Width + 12 * 2);
+            int[] columnWidth = { CashPackage.SN.Count < 8 ? fullWidth : 34, 34, 34 };
 
             for (int i = 0; i < CashPackage.SN.Count; ++i)
             {
@@ -93,33 +132,39 @@ namespace WzComparerR2.CharaSimControl
                     name = "(null)";
                 }
 
-                int nameWidth = TextRenderer.MeasureText(g, name.Replace(Environment.NewLine, ""), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width;
+                int nameWidth = TextRenderer.MeasureText(g, name.Replace(Environment.NewLine, ""), detailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width;
                 if (commodity.Bonus == 0)
                 {
                     if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
-                        nameWidth += 55 + 31 + 6 + 8;
+                        nameWidth += 55 + 31 + 6 + 8 + (this.Enable22AniStyle ? 4 : 0);
                     else
-                        nameWidth += 55 + 8;
+                        nameWidth += 55 + 9;
                 }
                 else
-                    nameWidth += 55 + 38 + 6 + 8;
+                {
+                    nameWidth += 55 + 38 + 6 + 8 + (this.Enable22AniStyle ? 4 : 0);
+                    if (commodity.Bonus == 2)
+                    {
+                        onlyCashTrade = true;
+                    }
+                }
 
                 if (CashPackage.SN.Count < 8)
                 {
                     columnWidth[0] = Math.Max(columnWidth[0], nameWidth);
                 }
-                else if (CashPackage.SN.Count < 27)
+                else if (CashPackage.SN.Count < 15)
                 {
-                    if (i < (CashPackage.SN.Count + 1) / 2)
+                    if (i < 7)
                         columnWidth[0] = Math.Max(columnWidth[0], nameWidth);
                     else
                         columnWidth[1] = Math.Max(columnWidth[1], nameWidth);
                 }
                 else
                 {
-                    if (i < (CashPackage.SN.Count + 2) / 3)
+                    if (i < Math.Max(7, CashPackage.SN.Count / 3))
                         columnWidth[0] = Math.Max(columnWidth[0], nameWidth);
-                    else if (i < (2 * CashPackage.SN.Count + 2) / 3)
+                    else if (i < Math.Max(14, 2 * CashPackage.SN.Count / 3))
                         columnWidth[1] = Math.Max(columnWidth[1], nameWidth);
                     else
                         columnWidth[2] = Math.Max(columnWidth[2], nameWidth);
@@ -127,13 +172,19 @@ namespace WzComparerR2.CharaSimControl
             }
 
             if (CashPackage.SN.Count < 8)
+            {
                 fullWidth = Math.Max(fullWidth, columnWidth[0]);
-            else if (CashPackage.SN.Count < 27)
-                fullWidth = Math.Max(fullWidth, columnWidth[0] + columnWidth[1] - 4);
+            }
+            else if (CashPackage.SN.Count < 15)
+            {
+                fullWidth = Math.Max(fullWidth, columnWidth[0] + columnWidth[1] + (this.Enable22AniStyle ? 0 : -4));
+            }
             else
-                fullWidth = Math.Max(fullWidth, columnWidth[0] + columnWidth[1] + columnWidth[2] - 8);
+            {
+                fullWidth = Math.Max(fullWidth, columnWidth[0] + columnWidth[1] + columnWidth[2] + (this.Enable22AniStyle ? 0 : -8));
+            }
 
-            if (fullWidth > 220)
+            if (fullWidth > DefaultWidth)
             {
                 //重构大小
                 g.Dispose();
@@ -144,8 +195,9 @@ namespace WzComparerR2.CharaSimControl
             }
 
             picH = 10;
-            TextRenderer.DrawText(g, CashPackage.name, GearGraphics.ItemNameFont2, new Point(cashBitmap.Width, picH), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
+            TextRenderer.DrawText(g, CashPackage.name, GearGraphics.ItemNameFont2, new Point(cashBitmap.Width + 2, picH), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
             picH += 14;
+            var topAttrList = new List<string>();
             if (commodityPackage.termStart > 0 || commodityPackage.termEnd != null)
             {
                 string term = "< 판매기간 :";
@@ -165,9 +217,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 term += " >";
 
-                picH += 8;
-                TextRenderer.DrawText(g, term, GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
-                picH += 12 * term.Split('\n').Length;
+                topAttrList.Add($"#$r{term}#");
             }
             if (commodityPackage.Limit > 0)
             {
@@ -189,55 +239,89 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (limit != null && limit.Length > 0)
                 {
-                    TextRenderer.DrawText(g, "< " + limit + " 한정판매 >", GearGraphics.ItemDetailFont2, new Point(cashBitmap.Width, picH), ((SolidBrush)GearGraphics.OrangeBrush4).Color, TextFormatFlags.HorizontalCenter);
-                    picH += 12;
+                    topAttrList.Add($"#$r< {limit} 한정판매 >#");
                 }
             }
-            picH += 19;
+            if (topAttrList.Count > 0)
+            {
+                picH += 8;
+                foreach (var attr in topAttrList)
+                {
+                    GearGraphics.DrawString(g, attr, detailFont, colorTable, 0, cashBitmap.Width, ref picH, 12, alignment: Text.TextAlignment.Center);
+                }
+            }
+            picH += 4;
+            if (this.Enable22AniStyle)
+            {
+                splitterH.Add(picH);
+                picH -= 1;
+            }
 
-            int right = cashBitmap.Width - 18;
-            if (CashPackage.desc != null && CashPackage.desc.Length > 0)
-                CashPackage.desc += "\n";
+            // ----------------------------------------------------------------------
+            picH += 15;
+
+            int descLeft = this.Enable22AniStyle ? 15 : 11;
+            int descRight = cashBitmap.Width - (this.Enable22AniStyle ? 26 : 18);
+            var desc = CashPackage.desc;
+            if (desc != null && desc.Length > 0)
+                desc += "\n";
             if (CashPackage.onlyCash == 0)
-                GearGraphics.DrawString(g, CashPackage.desc + "\n#넥슨캐시로 구매하면 사용 전 1회에 한해 타인과 교환 할 수 있습니다. (보너스 아이템 제외)#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+            {
+                var bonus = onlyCashTrade ? "(보너스 아이템 포함)" : "(보너스 아이템 제외)";
+                desc += this.Enable22AniStyle ? $"#$r넥슨캐시로 구매 시 사용 전 타인과 1회 교환 가능 {bonus}#"
+                    : $"#넥슨캐시로 구매하면 사용 전 1회에 한해 타인과 교환 할 수 있습니다. {bonus}#";
+            }
             else
-                GearGraphics.DrawString(g, CashPackage.desc + "\n#넥슨캐시로만 구매할 수 있습니다.#", GearGraphics.ItemDetailFont2, 11, right, ref picH, 16);
+            {
+                desc += this.Enable22AniStyle ? "#$r넥슨캐시로만 구매 가능#"
+                    : "#넥슨캐시로만 구매할 수 있습니다.#";
+                if (onlyCashTrade)
+                {
+                    desc += this.Enable22AniStyle ? $"\n#$r넥슨캐시로 구매 시 사용 전 타인과 1회 교환 가능 (보너스 아이템 포함)#"
+                    : $"\n#넥슨캐시로 구매하면 사용 전 1회에 한해 타인과 교환 할 수 있습니다. (보너스 아이템 포함)#";
+                }
+            }
+            GearGraphics.DrawString(g, desc, detailFont, colorTable, descLeft, descRight, ref picH, 16, strictlyAlignLeft: 2);
 
             bool hasLine = false;
             picH -= 4;
 
             int picStartH = picH, picEndH = 0, columnLeft = 0, columnRight = columnWidth[0];
+            if (this.Enable22AniStyle)
+            {
+                columnLeft += 4;
+            }
 
             for (int i = 0; i < CashPackage.SN.Count; ++i)
             {
-                if (CashPackage.SN.Count >= 8 && CashPackage.SN.Count < 27)
+                if (CashPackage.SN.Count >= 8 && CashPackage.SN.Count < 15)
                 {
-                    if (i == (CashPackage.SN.Count + 1) / 2)
+                    if (i == 7)
                     {
                         hasLine = false;
                         picEndH = picH;
                         picH = picStartH;
-                        columnLeft = columnWidth[0] - 2;
-                        columnRight = columnWidth[0] + columnWidth[1] - 4;
+                        columnLeft = columnWidth[0] + (this.Enable22AniStyle ? 4 : -2);
+                        columnRight = columnWidth[0] + columnWidth[1] + (this.Enable22AniStyle ? 0 : -4);
                     }
                 }
-                else if (CashPackage.SN.Count >= 27)
+                else if (CashPackage.SN.Count >= 15)
                 {
-                    if (i == (CashPackage.SN.Count + 2) / 3)
+                    if (i == Math.Max(7, CashPackage.SN.Count / 3))
                     {
                         hasLine = false;
                         picEndH = picH;
                         picH = picStartH;
-                        columnLeft = columnWidth[0] - 2;
-                        columnRight = columnWidth[0] + columnWidth[1] - 4;
+                        columnLeft = columnWidth[0] + (this.Enable22AniStyle ? 4 : -2);
+                        columnRight = columnWidth[0] + columnWidth[1] + (this.Enable22AniStyle ? 0 : -4);
                     }
-                    else if (i == (2 * CashPackage.SN.Count + 2) / 3)
+                    else if (i == 2 * Math.Max(7, CashPackage.SN.Count / 3))
                     {
                         hasLine = false;
                         picEndH = picH;
                         picH = picStartH;
-                        columnLeft = columnWidth[0] + columnWidth[1] - 6;
-                        columnRight = columnWidth[0] + columnWidth[1] + columnWidth[2] - 8;
+                        columnLeft = columnWidth[0] + columnWidth[1] + (this.Enable22AniStyle ? 8 : -6);
+                        columnRight = columnWidth[0] + columnWidth[1] + columnWidth[2] + (this.Enable22AniStyle ? 0 : -8);
                     }
                 }
 
@@ -345,17 +429,18 @@ namespace WzComparerR2.CharaSimControl
                 g.DrawImage(Resource.CSDiscount_backgrnd, columnLeft + 13, picH + 12);
                 if (IconRaw.Bitmap != null)
                 {
-                    g.DrawImage(IconRaw.Bitmap, columnLeft + 13 + 1 - IconRaw.Origin.X, picH + 12 + 33 - IconRaw.Origin.Y);
+                    //g.DrawImage(IconRaw.Bitmap, columnLeft + 13 + 1 - IconRaw.Origin.X, picH + 12 + 33 - IconRaw.Origin.Y);
+                    g.DrawImage(IconRaw.Bitmap, columnLeft + 30 - (IconRaw.Bitmap.Width + 1) / 2, picH + 29 - (IconRaw.Bitmap.Height + 1) / 2);
                 }
                 if (time == null)
                 {
-                    TextRenderer.DrawText(g, name.TrimEnd(Environment.NewLine.ToCharArray()), GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 17), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    TextRenderer.DrawText(g, name.TrimEnd(Environment.NewLine.ToCharArray()), detailFont, new Point(columnLeft + 55, picH + 17), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                     if (commodity.Bonus == 0)
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.White, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, detailFont, new Point(columnLeft + 55, picH + 33), Color.White, TextFormatFlags.NoPadding);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
-                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
+                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), detailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             g.DrawLine(Pens.White, columnLeft + 55, picH + 33 + 4, columnLeft + 55 + width + 1, picH + 33 + 4);
                             g.DrawImage(Resource.CSDiscount_arrow, columnLeft + 55 + width + 10, picH + 33 + 1);
                             DrawDiscountNum(g, "-" + (int)(100 - 100.0 * commodity.Price / commodity.originalPrice) + "%", columnRight - 40, picH + 16, StringAlignment.Near);
@@ -363,19 +448,19 @@ namespace WzComparerR2.CharaSimControl
                     }
                     else
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 33), Color.Red, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, detailFont, new Point(columnLeft + 55, picH + 33), Color.Red, TextFormatFlags.NoPadding);
                         g.DrawImage(Resource.CSDiscount_bonus, columnRight - 47, picH + 29);
                     }
                 }
                 else
                 {
-                    TextRenderer.DrawText(g, name.Replace(Environment.NewLine, ""), GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 8), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                    TextRenderer.DrawText(g, name.Replace(Environment.NewLine, ""), detailFont, new Point(columnLeft + 55, picH + 8), Color.White, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                     if (commodity.Bonus == 0)
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.White, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, detailFont, new Point(columnLeft + 55, picH + 24), Color.White, TextFormatFlags.NoPadding);
                         if (commodity.originalPrice > 0 && commodity.Price < commodity.originalPrice)
                         {
-                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
+                            int width = TextRenderer.MeasureText(g, info.Substring(0, info.IndexOf("      ")), detailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
                             g.DrawLine(Pens.White, columnLeft + 55, picH + 24 + 4, columnLeft + 55 + width + 1, picH + 24 + 4);
                             g.DrawImage(Resource.CSDiscount_arrow, columnLeft + 55 + width + 10, picH + 24 + 1);
                             DrawDiscountNum(g, "-" + (int)(100 - 100.0 * commodity.Price / commodity.originalPrice) + "%", columnRight - 40, picH + 7, StringAlignment.Near);
@@ -383,10 +468,10 @@ namespace WzComparerR2.CharaSimControl
                     }
                     else
                     {
-                        TextRenderer.DrawText(g, info, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 24), Color.Red, TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(g, info, detailFont, new Point(columnLeft + 55, picH + 24), Color.Red, TextFormatFlags.NoPadding);
                         g.DrawImage(Resource.CSDiscount_bonus, columnRight - 47, picH + 20);
                     }
-                    TextRenderer.DrawText(g, time, GearGraphics.ItemDetailFont, new Point(columnLeft + 55, picH + 39), Color.White, TextFormatFlags.NoPadding);
+                    TextRenderer.DrawText(g, time, detailFont, new Point(columnLeft + 55, picH + 39), Color.White, TextFormatFlags.NoPadding);
                 }
                 picH += 57;
 
@@ -395,20 +480,22 @@ namespace WzComparerR2.CharaSimControl
 
             if (picEndH != 0)
                 picH = picEndH;
+            if (CashPackage.SN.Count == 0)
+                picH += 4;
 
-            g.DrawLine(Pens.White, 13, picH, cashBitmap.Width - 8, picH);
+            g.DrawLine(Pens.White, descLeft + 2, picH, cashBitmap.Width - (this.Enable22AniStyle ? 14 : 8), picH);
             picH += 11;
 
-            g.DrawImage(Resource.CSDiscount_total, 9, picH + 1);
+            g.DrawImage(Resource.CSDiscount_total, descLeft - 2, picH + 1);
             if (totalOriginalPrice == totalPrice)
             {
-                TextRenderer.DrawText(g, totalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, totalPrice + "캐시", detailFont, new Point(descLeft + 42, picH), Color.White, TextFormatFlags.NoPadding);
             }
             else
             {
-                TextRenderer.DrawText(g, totalOriginalPrice + "캐시     " + totalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.White, TextFormatFlags.NoPadding);
-                TextRenderer.DrawText(g, totalOriginalPrice + "캐시", GearGraphics.ItemDetailFont, new Point(53, picH), Color.Red, TextFormatFlags.NoPadding);
-                g.DrawImage(Resource.CSDiscount_arrow, 53 + TextRenderer.MeasureText(g, totalOriginalPrice + "캐시", GearGraphics.ItemDetailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
+                TextRenderer.DrawText(g, totalOriginalPrice + "캐시     " + totalPrice + "캐시", detailFont, new Point(descLeft + 42, picH), Color.White, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, totalOriginalPrice + "캐시", detailFont, new Point(descLeft + 42, picH), Color.Red, TextFormatFlags.NoPadding);
+                g.DrawImage(Resource.CSDiscount_arrow, (descLeft + 42) + TextRenderer.MeasureText(g, totalOriginalPrice + "캐시", detailFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width + 5, picH + 1);
                 DrawDiscountNum(g, "-" + (int)((100 - 100.0 * totalPrice / totalOriginalPrice)) + "%", cashBitmap.Width - 40, picH - 1, StringAlignment.Near);
             }
             picH += 11;
