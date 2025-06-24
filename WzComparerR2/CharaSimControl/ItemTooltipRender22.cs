@@ -50,7 +50,7 @@ namespace WzComparerR2.CharaSimControl
         public int CosmeticHairColor { get; set; }
         public int CosmeticFaceColor { get; set; }
         private bool WillDrawNickTag { get; set; }
-        private Wz_Node NickResNode {  get; set; }
+        private Wz_Node NickResNode { get; set; }
         private Bitmap ItemSample { get; set; }
 
         public TooltipRender LinkRecipeInfoRender { get; set; }
@@ -449,7 +449,7 @@ namespace WzComparerR2.CharaSimControl
             var attrList = GetItemTopAttributeString();
             if (attrList.Count > 0)
             {
-                foreach ( var attr in attrList )
+                foreach (var attr in attrList)
                 {
                     GearGraphics.DrawString(g, $"#$r{attr}#", GearGraphics.ItemGulimFont, item22ColorTable, 0, tooltip.Width, ref picH, LineHeight, alignment: Text.TextAlignment.Center);
                 }
@@ -661,11 +661,6 @@ namespace WzComparerR2.CharaSimControl
                 picH += 3;
             }
 
-            if (item.ItemID / 1000 == 5533)
-            {
-                GearGraphics.DrawString(g, "#c더블 클릭 시 미리보기에서 상자 속 아이템들을 3초마다 차례로 확인할 수 있습니다.\n\n캐시 보관함에서 더블 클릭하여 사용 가능하며, 상자는 교환할 수 없습니다.\n상자에서 획득한 보상품은 타인과 교환할 수 없습니다.#", GearGraphics.ItemDetailFont, item22ColorTable, 100, descRight, ref picH, LineHeight);
-            }
-
             // 펫 명령어
             if (item.IsPet)
             {
@@ -747,7 +742,7 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(frame.Bitmap, tooltip.Width / 2 - frame.Origin.X, picH);
                         picH += frame.Bitmap.Height;
                         picH += 6;
-                        
+
                         if (this.ItemSample != null) this.ItemSample.Dispose();
                         this.ItemSample = new Bitmap(frame.Bitmap);
                     }
@@ -1104,7 +1099,11 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if ((!item.Props.TryGetValue(ItemPropType.tradeBlock, out value) || value == 0))
                 {
-                    if (!(item.ItemID / 10000 == 501 || item.ItemID / 10000 == 502 || item.ItemID / 10000 == 516))
+                    if (item.ItemID / 1000 == 5533)
+                    {
+                        tags.Add("#c더블 클릭 시 미리보기에서 상자 속 아이템들을 3초마다 차례로 확인할 수 있습니다.#\n#$r캐시 보관함에서 더블 클릭하여 사용 가능하며, 상자는 교환할 수 없습니다.\n넥슨캐시로 구매하면 사용 전 1회에 한해 상자에서 획득한 보상품은 타인과 교환할 수 있습니다.#");
+                    }
+                    else if (!(item.ItemID / 10000 == 501 || item.ItemID / 10000 == 502 || item.ItemID / 10000 == 516))
                     {
                         tags.Add("#$r넥슨캐시로 구매 시 사용 전 타인과 1회 교환 가능#");
                     }
@@ -1341,7 +1340,7 @@ namespace WzComparerR2.CharaSimControl
 
                 text = text.Replace("#cosmetic_EULO#", name);
             }
-            
+
             return text;
         }
 
