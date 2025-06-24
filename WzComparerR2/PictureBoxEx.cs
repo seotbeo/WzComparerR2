@@ -717,6 +717,11 @@ namespace WzComparerR2
             if (ShowOverlayAni)
             {
                 this.sbInfo.Append("애니메이션 중첩 중\n");
+                this.Padding = new System.Windows.Forms.Padding(0, 28, 0, 0);
+            }
+            else
+            {
+                this.Padding = new System.Windows.Forms.Padding(0, 14, 0, 0);
             }
             if (this.Items.Count > 0)
             {

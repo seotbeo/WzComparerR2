@@ -243,8 +243,8 @@
             this.advTree1 = new DevComponents.AdvTree.AdvTree();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmi1Sort = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi1Export = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi1DumpAsXml = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi1UpdateStringLinker = new System.Windows.Forms.ToolStripMenuItem();
@@ -274,6 +274,9 @@
             this.chkHashPngFileName = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btnItemOpenImg = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemSaveWithOptions = new DevComponents.DotNetBar.ButtonItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmi2CopyFullPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboItem19 = new DevComponents.Editors.ComboItem();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -1363,6 +1366,7 @@
             this.comboItem10,
             this.comboItem11,
             this.comboItem12,
+            this.comboItem19,
             this.comboItem12_2});
             this.comboBoxItem1.Name = "comboBoxItem1";
             this.comboBoxItem1.SelectedIndex = 0;
@@ -1932,6 +1936,7 @@
             this.pictureBoxEx1.MouseDragEnabled = true;
             this.pictureBoxEx1.MouseDragSaveEnabled = true;
             this.pictureBoxEx1.Name = "pictureBoxEx1";
+            this.pictureBoxEx1.Padding = new System.Windows.Forms.Padding(0, 14, 0, 0);
             this.pictureBoxEx1.PictureName = null;
             this.pictureBoxEx1.ShowInfo = true;
             this.pictureBoxEx1.ShowPositionGridOnDrag = true;
@@ -2088,9 +2093,9 @@
             // 
             // 
             this.itemContainer36.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            //
+            // 
             // buttonItemExtractGifEx
-            //
+            // 
             this.buttonItemExtractGifEx.Name = "buttonItemExtractGifEx";
             this.buttonItemExtractGifEx.Text = "활성화+";
             this.buttonItemExtractGifEx.Tooltip = "0부터 순서대로가 아닌, 모든 하위 노드에서 애니메이션을 불러옵니다.";
@@ -2281,9 +2286,11 @@
             this.tsmi2CollapseType,
             this.toolStripMenuItem3,
             this.tsmi2Prev,
-            this.tsmi2Next});
+            this.tsmi2Next,
+            this.toolStripMenuItem4,
+            this.tsmi2CopyFullPath});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(196, 198);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(196, 226);
             this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // tsmi2SaveAs
@@ -2899,7 +2906,7 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmi1Sort,
-            this.toolStripMenuItem4,
+            this.toolStripMenuItem5,
             this.tsmi1Export,
             this.tsmi1DumpAsXml});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
@@ -2912,15 +2919,15 @@
             this.tsmi1Sort.Text = "정렬(&S)";
             this.tsmi1Sort.Click += new System.EventHandler(this.tsmi1Sort_Click);
             // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(151, 6);
-            // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
             this.toolStripMenuItem5.Size = new System.Drawing.Size(151, 6);
+            //
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(151, 6);
             // 
             // tsmi1Export
             // 
@@ -3182,6 +3189,22 @@
             this.panelDockContainer2.Style.GradientAngle = 90;
             this.panelDockContainer2.TabIndex = 2;
             // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(192, 6);
+            // 
+            // tsmi2CopyFullPath
+            // 
+            this.tsmi2CopyFullPath.Name = "tsmi2CopyFullPath";
+            this.tsmi2CopyFullPath.Size = new System.Drawing.Size(195, 22);
+            this.tsmi2CopyFullPath.Text = "전체 경로 복사";
+            this.tsmi2CopyFullPath.Click += new System.EventHandler(this.tsmi2CopyFullPath_Click);
+            // 
+            // comboItem19
+            // 
+            this.comboItem19.Text = "fullPath";
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(750, 512);
@@ -3412,8 +3435,8 @@
         private DevComponents.DotNetBar.LabelX labelXComp1;
         private DevComponents.DotNetBar.LabelX labelXComp2;
         private System.Windows.Forms.ToolStripMenuItem tsmi1Export;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
         private DevComponents.DotNetBar.ComboBoxItem comboBoxItemLanguage;
         private DevComponents.Editors.ComboItem comboItem13;
         private DevComponents.Editors.ComboItem comboItem14;
@@ -3475,5 +3498,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
         private DevComponents.Editors.ComboItem comboItem12_2;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
     }
 }

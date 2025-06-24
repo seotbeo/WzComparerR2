@@ -174,7 +174,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 驯兽魔法棒 1252
         /// </summary>
-        magicStick = 1252,
+        memorialStaff = 1252,
         /// <summary>
         /// 셀레스티얼 라이트 1253
         /// </summary>
@@ -182,7 +182,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// 驯兽魔法棒 1259
         /// </summary>
-        magicStick2 = 1259,
+        magicStick = 1259,
         /// <summary>
         /// ESP限制器
         /// </summary>
@@ -548,6 +548,13 @@ namespace WzComparerR2.CharaSim
         /// 珠宝 178
         /// </summary>
         jewel = 178,
+        /// <summary>
+        /// MSN纸娃娃 179
+        /// </summary>
+        face_n = 1790,
+        hair_n = 1791,
+        head_n = 1792,
+        hair2_n = 1793,
         /// <summary>
         /// 宠物装备 180
         /// </summary>

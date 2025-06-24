@@ -540,12 +540,16 @@ namespace WzComparerR2.CharaSim
             switch (type)
             {
                 //case GearType.body: return "纸娃娃(身体)";
-                case GearType.head: return "피부";
+                case GearType.head:
+                case GearType.head_n: return "피부";
                 case GearType.face:
-                case GearType.face2: return "성형";
+                case GearType.face2:
+                case GearType.face_n: return "성형";
                 case GearType.hair:
                 case GearType.hair2:
-                case GearType.hair3: return "헤어";
+                case GearType.hair3:
+                case GearType.hair_n:
+                case GearType.hair2_n: return "헤어";
                 case GearType.faceAccessory: return "얼굴장식";
                 case GearType.eyeAccessory: return "눈장식";
                 case GearType.earrings: return "귀고리";
@@ -648,8 +652,8 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.energySword: return "에너지소드";
                 case GearType.desperado: return "데스페라도";
-                case GearType.magicStick: return "메모리얼 스태프";
-                case GearType.magicStick2: return "셉터";
+                case GearType.memorialStaff: return "메모리얼 스태프";
+                case GearType.magicStick: return "셉터";
                 case GearType.whistle:
                 case GearType.whistle2: return "리프";
                 case GearType.boxingClaw: return "피스트";
@@ -820,9 +824,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.whistle:
                 case GearType.whistle2:
-                case GearType.magicStick: return GetExtraJobReqString(172);
+                case GearType.memorialStaff: return GetExtraJobReqString(172);
 
-                case GearType.magicStick2: return GetExtraJobReqString(112);
+                case GearType.magicStick: return GetExtraJobReqString(112);
 
                 case GearType.espLimiter:
                 case GearType.chess: return GetExtraJobReqString(142);
