@@ -1424,7 +1424,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 hasThirdContents = true;
 
-                GearGraphics.DrawString(g, $"#$d주문서 강화 없음# (잔여 {tuc}회, 복구 가능 0회)", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16);
+                GearGraphics.DrawString(g, $"#$d주문서 강화 없음 (잔여 {tuc}회, 복구 가능 0회)#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16);
                 picH += 4;
             }
 
