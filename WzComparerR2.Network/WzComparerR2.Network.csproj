@@ -38,7 +38,7 @@
       <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup Condition="Exists('..\Build\CommonAssemblyInfo.cs')">
     <Compile Include="..\Build\CommonAssemblyInfo.cs">

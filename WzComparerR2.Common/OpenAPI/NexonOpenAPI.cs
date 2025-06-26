@@ -293,9 +293,9 @@ namespace WzComparerR2.OpenAPI
                 {
                     { "SkinName", item.CharacterSkin?.SkinName ?? "" },
                     { "ColorStyle", item.CharacterSkin?.ColorStyle ?? "" },
-                    { "Hue", item.CharacterSkin?.Hue.ToString() ?? "" },
-                    { "Saturation", item.CharacterSkin?.Saturation.ToString() ?? "" },
-                    { "Brightness", item.CharacterSkin?.Brightness.ToString() ?? "" },
+                    { "Hue", (item.CharacterSkin?.Hue as int?).ToString() ?? "" },
+                    { "Saturation", (item.CharacterSkin?.Saturation as int?).ToString() ?? "" },
+                    { "Brightness", (item.CharacterSkin?.Brightness as int?).ToString() ?? "" },
                 };
             }
             catch (MapleStoryAPIException e)
