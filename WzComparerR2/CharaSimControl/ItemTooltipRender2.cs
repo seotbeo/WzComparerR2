@@ -913,6 +913,7 @@ namespace WzComparerR2.CharaSimControl
                     }
 
                     this.avatar.ClearCanvas();
+                    frame.Bitmap.Dispose();
                 }
                 else if (item.SamplePath != null)
                 {

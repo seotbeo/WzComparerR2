@@ -59,6 +59,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowSpeed { get; set; }
         public bool ShowLevelOrSealed { get; set; }
         public bool MaxStar25 { get; set; } = false;
+        public bool ShowCosmetic { get; set; }
         public bool IsCombineProperties { get; set; } = true;
         public bool CompareMode { get; set; } = false;
         private bool WillDrawMedal {  get; set; }
@@ -624,6 +625,7 @@ namespace WzComparerR2.CharaSimControl
                 }
 
                 this.AvatarSample = new Bitmap(appearance.Bitmap);
+                appearance.Bitmap.Dispose();
             }
 
             // 세트 아이템
@@ -1008,6 +1010,40 @@ namespace WzComparerR2.CharaSimControl
                 }
                 picH += 6;
             }
+            else if (this.ShowCosmetic && Gear.type != GearType.android && Gear.IsCosmetic(Gear.type))
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                picH -= 2;
+                hasThirdContents = true;
+                hasDescPart = true;
+
+                if (this.avatar == null)
+                {
+                    this.avatar = new AvatarCanvasManager(this.SourceWzFile);
+                }
+
+                if (Gear.ItemID / 20000 == 0)
+                {
+                    this.avatar.AddBodyFromSkin(Gear.ItemID % 10000);
+                }
+                else
+                {
+                    this.avatar.AddBodyFromSkin(2015);
+                    this.avatar.AddGear(Gear.ItemID);
+                }
+
+                var cosmeticSample = this.avatar.GetBitmapOrigin();
+                this.avatar.ClearCanvas();
+
+                g.DrawImage(cosmeticSample.Bitmap, bitmap.Width / 2 - cosmeticSample.Origin.X, picH);
+                picH += cosmeticSample.Bitmap.Height;
+                picH += 4;
+
+                this.AvatarSample = new Bitmap(cosmeticSample.Bitmap);
+                cosmeticSample.Bitmap.Dispose();
+            }
+
             // 장비 설명
             if (!string.IsNullOrEmpty(sr.Desc))
             {

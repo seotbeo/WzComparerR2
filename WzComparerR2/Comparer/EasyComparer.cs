@@ -792,6 +792,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowLevelOrSealed = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
+                    (tooltipRenderNewOld[i] as GearTooltipRender22).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
                 }
                 else
                 {
@@ -802,6 +803,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowLevelOrSealed = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
+                    (tooltipRenderNewOld[i] as GearTooltipRender2).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
                 }
                 CharaWzNodeNewOld[i] = PluginManager.FindWz(Wz_Type.Character, WzFileNewOld[i]);
             }

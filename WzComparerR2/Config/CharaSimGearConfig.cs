@@ -42,5 +42,12 @@ namespace WzComparerR2.Config
             get { return (bool)this["maxStar25"]; }
             set { this["maxStar25"] = value; }
         }
+
+        [ConfigurationProperty("showCosmetic", DefaultValue = true)]
+        public bool ShowCosmetic
+        {
+            get { return (bool)this["showCosmetic"]; }
+            set { this["showCosmetic"] = value; }
+        }
     }
 }

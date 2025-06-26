@@ -53,6 +53,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowLevelOrSealed { get; set; }
         public bool ShowMedalTag { get; set; } = true;
         public bool MaxStar25 { get; set; } = false;
+        public bool ShowCosmetic { get; set; }
         public bool IsCombineProperties { get; set; } = true;
         public bool CompareMode { get; set; } = false;
 
@@ -1072,6 +1073,7 @@ namespace WzComparerR2.CharaSimControl
                 && this.TryGetMedalResource(value, 1, out chatBalloonResNode);
             bool willDrawNameTag = this.Gear.Props.TryGetValue(GearPropType.nameTag, out value)
                 && this.TryGetMedalResource(value, 2, out nameTagResNode);
+            bool isCosmetic = Gear.IsCosmetic(Gear.type);
 
             //判断是否绘制技能desc
             string levelDesc = null;
@@ -1084,7 +1086,7 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            if (!string.IsNullOrEmpty(sr.Desc) || !string.IsNullOrEmpty(levelDesc) || desc.Count > 0 || Gear.Sample.Bitmap != null || willDrawMedalTag || willDrawChatBalloon || willDrawNameTag)
+            if (!string.IsNullOrEmpty(sr.Desc) || !string.IsNullOrEmpty(levelDesc) || desc.Count > 0 || Gear.Sample.Bitmap != null || willDrawMedalTag || willDrawChatBalloon || willDrawNameTag || isCosmetic)
             {
                 //分割线4号
                 if (hasPart2)
@@ -1114,6 +1116,34 @@ namespace WzComparerR2.CharaSimControl
                     GearGraphics.DrawNameTag(g, medalResNode, medalName.Replace("의 훈장", ""), bitmap.Width, ref picH);
                     picH += 4;
                 }
+                else if (this.ShowCosmetic && Gear.type != GearType.android && isCosmetic)
+                {
+                    if (this.avatar == null)
+                    {
+                        this.avatar = new AvatarCanvasManager(this.SourceWzFile);
+                    }
+
+                    if (Gear.ItemID / 20000 == 0)
+                    {
+                        this.avatar.AddBodyFromSkin(Gear.ItemID % 10000);
+                    }
+                    else
+                    {
+                        this.avatar.AddBodyFromSkin(2015);
+                        this.avatar.AddGear(Gear.ItemID);
+                    }
+
+                    var cosmeticSample = this.avatar.GetBitmapOrigin();
+                    this.avatar.ClearCanvas();
+
+                    g.DrawImage(cosmeticSample.Bitmap, bitmap.Width / 2 - cosmeticSample.Origin.X, picH);
+                    picH += cosmeticSample.Bitmap.Height;
+                    picH += 4;
+
+                    //this.AvatarSample = new Bitmap(cosmeticSample.Bitmap);
+                    cosmeticSample.Bitmap.Dispose();
+                }
+
                 if (!string.IsNullOrEmpty(sr.Desc))
                 {
                     GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);

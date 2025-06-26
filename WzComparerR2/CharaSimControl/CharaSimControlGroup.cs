@@ -304,10 +304,12 @@ namespace WzComparerR2.CharaSimControl
             tooltip.GearRender.ShowSpeed = Setting.Gear.ShowWeaponSpeed;
             tooltip.GearRender.ShowLevelOrSealed = false;
             tooltip.GearRender.MaxStar25 = Setting.Gear.MaxStar25;
+            tooltip.GearRender.ShowCosmetic = false;
             tooltip.GearRender22.ShowObjectID = false;
             tooltip.GearRender22.ShowSpeed = true;
             tooltip.GearRender22.ShowLevelOrSealed = false;
             tooltip.GearRender22.MaxStar25 = Setting.Gear.MaxStar25;
+            tooltip.GearRender22.ShowCosmetic = false;
 
             tooltip.ItemRender.ShowObjectID = false;
             tooltip.ItemRender.LinkRecipeInfo = false;

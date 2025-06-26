@@ -163,6 +163,13 @@ namespace WzComparerR2
             set { checkBoxX17.Checked = value; }
         }
 
+        [Link]
+        public bool Gear_ShowCosmetic
+        {
+            get { return checkBoxX18.Checked; }
+            set { checkBoxX18.Checked = value; }
+        }
+
 
         [Link]
         public bool Recipe_ShowID

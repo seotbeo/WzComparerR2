@@ -253,6 +253,11 @@ namespace WzComparerR2.CharaSim
             return gearTypeName != null && Regex.IsMatch(gearTypeName, @"^hair\d*$");
         }
 
+        public static bool IsCosmetic(GearType type)
+        {
+            return IsHair(type) || IsFace(type) || type == GearType.body || type == GearType.head;
+        }
+
         public static bool IsWeapon(GearType type)
         {
             return IsLeftWeapon(type)
