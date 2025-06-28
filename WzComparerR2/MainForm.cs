@@ -3923,6 +3923,11 @@ namespace WzComparerR2
             }
         }
 
+        private void colorPickerPicBoxBgColor_SelectedColorChanged(object sender, EventArgs e)
+        {
+            this.pictureBoxEx1.BackColor = ((ColorPickerDropDown)sender).SelectedColor;
+        }
+
         private async void MainForm_Shown(object sender, EventArgs e)
         {
             //Automatic Update Check

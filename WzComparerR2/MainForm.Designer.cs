@@ -177,6 +177,7 @@
             this.buttonItemExtractGifEx = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer44 = new DevComponents.DotNetBar.ItemContainer();
             this.buttonItemGifSetting = new DevComponents.DotNetBar.ButtonItem();
+            this.colorPickerPicBoxBgColor = new DevComponents.DotNetBar.ColorPickerDropDown();
             this.buttonDisableOverlayAni = new DevComponents.DotNetBar.ButtonItem();
             this.buttonHitboxOverlay = new DevComponents.DotNetBar.ButtonItem();
             this.buttonLoadMultiFrameAniList = new DevComponents.DotNetBar.ButtonItem();
@@ -1963,7 +1964,8 @@
             this.cmbItemSkins,
             this.buttonItemSaveImage,
             this.buttonItemGif,
-            this.buttonItemGif2});
+            this.buttonItemGif2,
+            this.colorPickerPicBoxBgColor});
             this.ribbonBar5.Location = new System.Drawing.Point(0, 202);
             this.ribbonBar5.Name = "ribbonBar5";
             this.ribbonBar5.Size = new System.Drawing.Size(292, 26);
@@ -2151,6 +2153,23 @@
             this.buttonLoadMultiFrameAniList.Text = "멀티프레임 로드";
             this.buttonLoadMultiFrameAniList.Tooltip = "찾아지는 프레임들의 목록을 불러옵니다. 불러온 목록 중 하나를 선택하여 중첩시킬 수 있습니다.";
             this.buttonLoadMultiFrameAniList.Click += new System.EventHandler(this.buttonLoadMultiFrameAniList_Click);
+            // 
+            // colorPickerPicBoxBgColor
+            // 
+            this.colorPickerPicBoxBgColor.AutoExpandOnClick = true;
+            this.colorPickerPicBoxBgColor.BeginGroup = true;
+            this.colorPickerPicBoxBgColor.ImagePaddingHorizontal = 6;
+            this.colorPickerPicBoxBgColor.ImagePaddingVertical = 0;
+            this.colorPickerPicBoxBgColor.ImagePosition = DevComponents.DotNetBar.eImagePosition.Bottom;
+            this.colorPickerPicBoxBgColor.Name = "colorPickerPicBoxBgColor";
+            this.colorPickerPicBoxBgColor.SelectedColorImageRectangle = new System.Drawing.Rectangle(0, 0, 100, 100);
+            this.colorPickerPicBoxBgColor.ShowSubItems = false;
+            this.colorPickerPicBoxBgColor.SubItemsExpandWidth = 14;
+            this.colorPickerPicBoxBgColor.Symbol = "57914";
+            this.colorPickerPicBoxBgColor.SymbolSet = DevComponents.DotNetBar.eSymbolSet.Material;
+            this.colorPickerPicBoxBgColor.SymbolSize = 12F;
+            this.colorPickerPicBoxBgColor.Tooltip = "배경 색상";
+            this.colorPickerPicBoxBgColor.SelectedColorChanged += new System.EventHandler(this.colorPickerPicBoxBgColor_SelectedColorChanged);
             // 
             // textBoxX1
             // 
@@ -3500,5 +3519,6 @@
         private DevComponents.Editors.ComboItem comboItem12_2;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
+        private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;
     }
 }
