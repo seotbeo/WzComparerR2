@@ -1064,7 +1064,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             // howToUse
-            if (item.ItemID / 10000 == 370 || item.ItemID / 10000 == 501)
+            if (item.ItemID / 10000 == 313 || item.ItemID / 10000 == 370 || item.ItemID / 10000 == 501)
             {
                 tags.Add("#c더블클릭하여 ON/OFF 가능#");
             }
