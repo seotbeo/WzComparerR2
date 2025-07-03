@@ -169,6 +169,10 @@ namespace WzComparerR2.CharaSimControl
             {
                 g.DrawImage(Resource.UIWindow2_img_Skill_skillTypeIcon_origin, 16, 11);
             }
+            else if (Skill.Ascent)
+            {
+                g.DrawImage(Resource.UIWindow2_img_Skill_skillTypeIcon_ascent, 16, 11);
+            }
 
             //绘制desc
             picH = 35;
