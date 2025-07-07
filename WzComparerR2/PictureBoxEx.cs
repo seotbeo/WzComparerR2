@@ -198,9 +198,17 @@ namespace WzComparerR2
                 frameStart = frameStart == -1 ? 0 : frameStart;
                 frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
 
-                if (frameStart > frameEnd) return;
+                if (frameStart > frameEnd)
+                {
+                    DisposeAnimationItem(aniItem);
+                    return;
+                }
             }
-            else return;
+            else
+            {
+                DisposeAnimationItem(aniItem);
+                return;
+            }
 
             // png 하나의 딜레이 설정
             if (isPngFrameAni)
