@@ -295,6 +295,14 @@ namespace WzComparerR2.Animation
                         frameD.Texture.Dispose();
                     }
                 }
+                for (int i = frameEnd + 1; i < addData.Frames.Count; i++)
+                {
+                    var frameD = addData.Frames[i];
+                    if (frameD.Texture != null && !frameD.Texture.IsDisposed)
+                    {
+                        frameD.Texture.Dispose();
+                    }
+                }
 
                 // 남은 프레임 붙여넣기
                 if (baseCount < baseMax)
