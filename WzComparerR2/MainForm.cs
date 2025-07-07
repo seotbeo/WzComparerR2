@@ -613,6 +613,18 @@ namespace WzComparerR2
                     this.cmbItemSkins.SelectedIndex = aniItem.Skins.IndexOf(aniItem.SelectedSkin);
                 }
             }
+            else if (node.Value is Wz_Video)
+            {
+                var origin = node.FindNodeByPath("origin").GetValueEx<Wz_Vector>(null);
+                var videoFrameData = this.pictureBoxEx1.LoadVideo(node.Value as Wz_Video, origin);
+
+                if (videoFrameData != null)
+                {
+                    this.pictureBoxEx1.ShowAnimation(videoFrameData);
+                    this.cmbItemAniNames.Items.Clear();
+                    this.cmbItemSkins.Visible = false;
+                }
+            }
             else
             {
                 var options = (sender == this.buttonItemExtractGifEx) ? FrameAnimationCreatingOptions.ScanAllChildrenFrames: default;
