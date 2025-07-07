@@ -15,7 +15,7 @@ namespace WzComparerR2.Animation
 {
     public class MaplestoryCanvasVideoLoader
     {
-        public FrameAnimationData Load(Wz_Video wzVideo, GraphicsDevice graphicsDevice)
+        public FrameAnimationData Load(Wz_Video wzVideo, GraphicsDevice graphicsDevice, Wz_Vector origin = null)
         {
             var wzFile = wzVideo.WzFile;
             var stream = wzVideo.WzImage.OpenRead();
@@ -96,6 +96,7 @@ namespace WzComparerR2.Animation
                 var frame = new Frame();
                 frame.Texture = texture;
                 frame.Delay = (int)fi.Delay.TotalMilliseconds;
+                frame.Origin = new Microsoft.Xna.Framework.Point(origin?.X ?? 0, origin?.Y ?? 0);
                 frames.Add(frame);
             }
 

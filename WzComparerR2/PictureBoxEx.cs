@@ -84,9 +84,9 @@ namespace WzComparerR2
             this.ShowAnimation(frameData);
         }
 
-        public FrameAnimationData LoadVideo(Wz_Video wzVideo)
+        public FrameAnimationData LoadVideo(Wz_Video wzVideo, Wz_Vector origin = null)
         {
-            return new MaplestoryCanvasVideoLoader().Load(wzVideo, this.GraphicsDevice);
+            return new MaplestoryCanvasVideoLoader().Load(wzVideo, this.GraphicsDevice, origin);
         }
 
         public FrameAnimationData LoadFrameAnimation(Wz_Node node, FrameAnimationCreatingOptions options = default)
