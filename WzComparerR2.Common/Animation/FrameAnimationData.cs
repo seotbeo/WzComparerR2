@@ -178,6 +178,24 @@ namespace WzComparerR2.Animation
             int addDelayAll = 0;
             int globalDelay = 0;
 
+            // dispose useless textures
+            for (int i = 0; i < frameStart; i++)
+            {
+                var frameD = addData.Frames[i];
+                if (frameD.Texture != null && !frameD.Texture.IsDisposed)
+                {
+                    frameD.Texture.Dispose();
+                }
+            }
+            for (int i = frameEnd + 1; i < addData.Frames.Count; i++)
+            {
+                var frameD = addData.Frames[i];
+                if (frameD.Texture != null && !frameD.Texture.IsDisposed)
+                {
+                    frameD.Texture.Dispose();
+                }
+            }
+
             foreach (var frame in baseData.Frames)
             {
                 baseDelayAll += frame.Delay;
@@ -287,15 +305,7 @@ namespace WzComparerR2.Animation
                         frameD.Texture.Dispose();
                     }
                 }
-                for (int i = 0; i < addCount; i++)
-                {
-                    var frameD = addData.Frames[i];
-                    if (frameD.Texture != null && !frameD.Texture.IsDisposed)
-                    {
-                        frameD.Texture.Dispose();
-                    }
-                }
-                for (int i = frameEnd + 1; i < addData.Frames.Count; i++)
+                for (int i = frameStart; i < addCount; i++)
                 {
                     var frameD = addData.Frames[i];
                     if (frameD.Texture != null && !frameD.Texture.IsDisposed)
