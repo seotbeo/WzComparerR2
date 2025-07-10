@@ -277,6 +277,17 @@ namespace WzComparerR2.CharaSimControl
                 TextRenderer.DrawText(g, "BLACKPINK 라벨", GearGraphics.EquipDetailFont, new Point(261, picH), Color.FromArgb(255, 136, 170), TextFormatFlags.HorizontalCenter);
                 picH += 15;
             }
+            else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
+            {
+                TextRenderer.DrawText(g, "LIMITED 라벨", GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
+                picH += 16;
+                if (!string.IsNullOrEmpty(Gear.LabelGradeTooltip))
+                {
+                    var limitedLabelText = Regex.Replace(Gear.LabelGradeTooltip, "%d", "0");
+                    TextRenderer.DrawText(g, limitedLabelText, GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
+                    picH += 16;
+                }
+            }
 
             //额外属性
             var attrList = GetGearAttributeString();
@@ -412,6 +423,11 @@ namespace WzComparerR2.CharaSimControl
                             cashOrigin = new Point(cashImg.Width, cashImg.Height);
                             break;
                     }
+                }
+                else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_15;
+                    cashOrigin = new Point(12, 12);
                 }
                 if (cashImg == null) //default cashImg
                 {
@@ -1040,7 +1056,7 @@ namespace WzComparerR2.CharaSimControl
                     desc.Add($"\n #c장착 시 1회에 한해 {incline}의 경험치를 얻을 수 있습니다.(일일제한, 최대치 초과 시 제외)#");
                 }
 
-                if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0))
+                if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) || value <= 0))
                 {
                     desc.Add(" #c사용 전 1회에 한해 타인과 교환할 수 있으며, 아이템 사용 후에는 교환이 제한됩니다.#");
                 }
