@@ -777,6 +777,17 @@ namespace WzComparerR2.CharaSimControl
                     GearGraphics.DrawString(g, $"#$g{10 - value}단계#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 100, 305, ref picH, 16, alignment: Text.TextAlignment.Left);
                 }
             }
+            // 등급
+            if (Gear.type != GearType.android && Gear.Props.TryGetValue(GearPropType.grade, out value) && value > 0)
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                hasThirdContents = true;
+                hasOptionPart = true;
+
+                TextRenderer.DrawText(g, "등급 : " + value, GearGraphics.EquipMDMoris9Font, new Point(15, picH), Color.White, TextFormatFlags.NoPadding);
+                picH += 16;
+            }
 
             // 내구도
             if (Gear.Props.TryGetValue(GearPropType.durability, out value))
