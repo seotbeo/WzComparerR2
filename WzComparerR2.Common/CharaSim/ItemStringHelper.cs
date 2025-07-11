@@ -115,6 +115,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.onlyEquip: return value == 0 ? null : "중복 장착 불가";
                 case GearPropType.notExtend: return value == 0 ? null : "유효기간 연장 불가";
                 case GearPropType.accountSharableAfterExchange: return value == 0 ? null : "1회 교환 가능\n(거래 후 월드 내 나의 캐릭터 간 이동만 가능)";
+                case GearPropType.noPrism: return value == 0 ? null : "프리즘 불가";
                 case GearPropType.mintable: return value == 0 ? null : "민팅 가능";
                 case GearPropType.tradeAvailable:
                     switch (value)
@@ -367,6 +368,9 @@ namespace WzComparerR2.CharaSim
                     return res;
                 case GearPropType.noLookChange:
                     res[0] = value == 0 ? null : "#$r훈장 신비의 모루 사용 불가#";
+                    return res;
+                case GearPropType.noPrism:
+                    res[0] = value == 0 ? null : "#$r프리즘 불가#";
                     return res;
                 case GearPropType.mintable:
                     res[0] = value == 0 ? null : "#$r민팅 가능#";

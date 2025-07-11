@@ -196,7 +196,8 @@ namespace WzComparerR2.CharaSim
         CuttableCount,
         illusionGrade,
         limitedLabel,
-        
+        noPrism,
+
         //MSN专属属性
         blockUpgradeExtraOption,
         blockUpgradeStarforce,
