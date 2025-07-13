@@ -2189,6 +2189,7 @@ namespace WzComparerR2.CharaSimControl
             if (this.AvatarSample != null)
             {
                 this.AvatarSample.Dispose();
+                this.AvatarSample = null;
             }
 
             int value;

@@ -1334,6 +1334,7 @@ namespace WzComparerR2.CharaSimControl
             if (this.ItemSample != null)
             {
                 this.ItemSample.Dispose();
+                this.ItemSample = null;
             }
 
             long value;
