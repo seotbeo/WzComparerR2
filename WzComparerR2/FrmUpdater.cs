@@ -102,11 +102,13 @@ namespace WzComparerR2
                 fileurl = downloadUrls[0];
 
                 this.lblLatestVer.Text = BuildNumber;
+                this.advTree1.BeginUpdate();
                 this.advTree1.Nodes.Add(new Node("<font color=\"#FF0000\">" + ChangeTitle + "</font>"));
-                foreach (string line in Changelog.Split('\r'))
+                foreach (string line in Changelog.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
                 {
                     this.advTree1.Nodes.Add(new Node(line));
                 }
+                this.advTree1.EndUpdate();
 
                 if (Int64.Parse(BuildNumber.Substring(1, 8)) > Int64.Parse(BuildInfo.BuildTime.Substring(1, 8)))
                 {
