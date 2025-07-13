@@ -78,6 +78,7 @@ namespace WzComparerR2.Avatar.UI
         string partsTag;
         bool suspendUpdate;
         bool needUpdate;
+        bool isUpdatingBtnItem;
         Animator animator;
         // virtual comboboxes for item effects, not shown
         private DevComponents.DotNetBar.Controls.ComboBoxEx[] cmbActionEffects;
@@ -571,6 +572,11 @@ namespace WzComparerR2.Avatar.UI
                     {
                         partsID[i] += "+" + part.MixColor + "*" + part.MixOpacity;
                     }
+                    if (part.HasPrism)
+                    {
+                        var prismData = part.PrismData;
+                        partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}";
+                    }
                 }
             }
             return string.Join(",", partsID);
@@ -821,13 +827,24 @@ namespace WzComparerR2.Avatar.UI
             {
                 if (part != null)
                 {
-                    var btn = new AvatarPartButtonItem(part.ID.Value, part.IsMixing ? part.MixColor : (int?)null, part.IsMixing ? part.MixOpacity : (int?)null);
+                    var btn = new AvatarPartButtonItem(part.ID.Value, part.IsMixing ? part.MixColor : (int?)null, part.IsMixing ? part.MixOpacity : (int?)null,
+                        part.PrismData);
                     this.SetButtonText(part, btn);
-                    btn.SetIcon(part.Icon.Bitmap);
+                    if (part == avatar.Body || part == avatar.Head || part == avatar.Face || part == avatar.Hair)
+                    {
+                        using Bitmap icon = part.Icon.Bitmap == null ? null : new Bitmap(part.Icon.Bitmap);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+                    else
+                    {
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, part.PrismData.Type, part.PrismData.Hue, part.PrismData.Saturation, part.PrismData.Brightness);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
                     btn.Tag = part;
                     btn.Checked = part.Visible;
                     btn.btnItemShow.Click += BtnItemShow_Click;
                     btn.btnItemDel.Click += BtnItemDel_Click;
+                    btn.btnItemReset.Click += BtnItemReset_Click;
                     btn.chkShowEffect.Click += ChkShowEffect_Click;
                     btn.CheckedChanged += Btn_CheckedChanged;
                     btn.rdoMixColor0.CheckedChanged += RadioMixColor0_CheckedChanged;
@@ -838,7 +855,20 @@ namespace WzComparerR2.Avatar.UI
                     btn.rdoMixColor5.CheckedChanged += RadioMixColor5_CheckedChanged;
                     btn.rdoMixColor6.CheckedChanged += RadioMixColor6_CheckedChanged;
                     btn.rdoMixColor7.CheckedChanged += RadioMixColor7_CheckedChanged;
+                    btn.rdoPrismType0.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType1.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType2.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType3.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType4.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType5.CheckedChanged += RadioPrismType_CheckedChanged;
+                    btn.rdoPrismType6.CheckedChanged += RadioPrismType_CheckedChanged;
                     btn.sliderMixRatio.ValueChanged += SliderMixRatio_ValueChanged;
+                    btn.sliderHue.ValueChanged += SliderHue_ValueChanged;
+                    btn.sliderSaturation.ValueChanged += SliderSaturation_ValueChanged;
+                    btn.sliderBrightness.ValueChanged += SliderBrightness_ValueChanged;
+                    btn.labelHue.MouseDown += LabelHue_MouseDown;
+                    btn.labelSaturation.MouseDown += LabelSaturation_MouseDown;
+                    btn.labelBrightness.MouseDown += LabelBrightness_MouseDown;
                     itemPanel1.Items.Add(btn);
                 }
             }
@@ -870,6 +900,25 @@ namespace WzComparerR2.Avatar.UI
                         this.UpdateDisplay();
                     }
                 }
+            }
+        }
+
+        private void BtnItemReset_Click(object sender, EventArgs e)
+        {
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                this.isUpdatingBtnItem = true;
+
+                var part = btn.Tag as AvatarPart;
+                btn.Reset(part.ID ?? 0);
+
+                this.UpdateDisplay();
+                this.SetButtonText(part, btn);
+                using Bitmap icon = new Bitmap(part.Icon.Bitmap);
+                btn.SetIcon(icon);
+
+                this.isUpdatingBtnItem = false;
             }
         }
 
@@ -979,6 +1028,7 @@ namespace WzComparerR2.Avatar.UI
                 if (part != null)
                 {
                     part.MixColor = mixColor;
+                    if (this.isUpdatingBtnItem) return;
                     this.UpdateDisplay();
                     this.SetButtonText(part, btn);
                 }
@@ -995,14 +1045,143 @@ namespace WzComparerR2.Avatar.UI
                 if (part != null)
                 {
                     part.MixOpacity = slider.Value;
+                    if (this.isUpdatingBtnItem) return;
                     this.UpdateDisplay();
                     this.SetButtonText(part, btn);
                 }
             }
         }
 
+        private void RadioPrismType_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as CheckBoxItem;
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var part = btn.Tag as AvatarPart;
+                if (part != null)
+                {
+                    part.PrismData.Type = radio.Name[radio.Name.Length - 1] - '0';
+                    if (this.isUpdatingBtnItem) return;
+                    this.UpdateDisplay();
+                    this.SetButtonText(part, btn);
+                    if (part != avatar.Head)
+                    {
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, part.PrismData.Type, part.PrismData.Hue, part.PrismData.Saturation, part.PrismData.Brightness);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+                }
+            }
+        }
+
+        private void SliderHue_ValueChanged(object sender, EventArgs e)
+        {
+            var slider = sender as SliderItem;
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var part = btn.Tag as AvatarPart;
+                if (part != null)
+                {
+                    part.PrismData.Hue = slider.Value;
+                    if (this.isUpdatingBtnItem) return;
+                    this.UpdateDisplay();
+                    this.SetButtonText(part, btn);
+                    if (part != avatar.Head)
+                    {
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, part.PrismData.Type, part.PrismData.Hue, part.PrismData.Saturation, part.PrismData.Brightness);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+
+                    var labelHue = btn.SubItems.OfType<LabelItem>().FirstOrDefault(Item => Item.Name.Contains("Hue"));
+                    labelHue.Text = $"색조({part.PrismData.Hue})";
+                }
+            }
+        }
+
+        private void SliderSaturation_ValueChanged(object sender, EventArgs e)
+        {
+            var slider = sender as SliderItem;
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var part = btn.Tag as AvatarPart;
+                if (part != null)
+                {
+                    part.PrismData.Saturation = slider.Value + 100;
+                    if (this.isUpdatingBtnItem) return;
+                    this.UpdateDisplay();
+                    this.SetButtonText(part, btn);
+                    if (part != avatar.Head)
+                    {
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, part.PrismData.Type, part.PrismData.Hue, part.PrismData.Saturation, part.PrismData.Brightness);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+
+                    var labelSaturation = btn.SubItems.OfType<LabelItem>().FirstOrDefault(Item => Item.Name.Contains("Saturation"));
+                    labelSaturation.Text = $"채도({(part.PrismData.Saturation > 100 ? "+" : "")}{part.PrismData.Saturation - 100})";
+                }
+            }
+        }
+
+        private void SliderBrightness_ValueChanged(object sender, EventArgs e)
+        {
+            var slider = sender as SliderItem;
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var part = btn.Tag as AvatarPart;
+                if (part != null)
+                {
+                    part.PrismData.Brightness = slider.Value + 100;
+                    if (this.isUpdatingBtnItem) return;
+                    this.UpdateDisplay();
+                    this.SetButtonText(part, btn);
+                    if (part != avatar.Head)
+                    {
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, part.PrismData.Type, part.PrismData.Hue, part.PrismData.Saturation, part.PrismData.Brightness);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+
+                    var labelBrightness = btn.SubItems.OfType<LabelItem>().FirstOrDefault(Item => Item.Name.Contains("Brightness"));
+                    labelBrightness.Text = $"명도({(part.PrismData.Brightness > 100 ? "+" : "")}{part.PrismData.Brightness - 100})";
+                }
+            }
+        }
+
+        private void LabelHue_MouseDown(object sender, EventArgs e)
+        {
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var slider = btn.sliderHue;
+                slider.Value = 0;
+            }
+        }
+
+        private void LabelSaturation_MouseDown(object sender, EventArgs e)
+        {
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var slider = btn.sliderSaturation;
+                slider.Value = 0;
+            }
+        }
+
+        private void LabelBrightness_MouseDown(object sender, EventArgs e)
+        {
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var slider = btn.sliderBrightness;
+                slider.Value = 0;
+            }
+        }
+
         private void SetButtonText(AvatarPart part, AvatarPartButtonItem btn)
         {
+            itemPanel1.BeginUpdate();
             var stringLinker = this.PluginEntry.Context.DefaultStringLinker;
             StringResult sr;
             string text;
@@ -1021,6 +1200,20 @@ namespace WzComparerR2.Avatar.UI
                         part.MixColor,
                         part.MixOpacity);
                 }
+                if (part.HasPrism)
+                {
+                    text = string.Format("{0}\r\n{1}\r\n색조 {2}, 채도 {3}, 명도 {4}\r\n{5}+{6}h{7}s{8}v{9}",
+                        sr.Name,
+                        part.PrismData.GetColorType(),
+                        part.PrismData.Hue,
+                        $"{(part.PrismData.Saturation > 100 ? "+" : "")}{part.PrismData.Saturation - 100}",
+                        $"{(part.PrismData.Brightness > 100 ? "+" : "")}{part.PrismData.Brightness - 100}",
+                        part.ID,
+                        part.PrismData.Type,
+                        part.PrismData.Hue,
+                        part.PrismData.Saturation,
+                        part.PrismData.Brightness);
+                }
             }
             else
             {
@@ -1033,6 +1226,7 @@ namespace WzComparerR2.Avatar.UI
             btn.Text = text;
             btn.NeedRecalcSize = true;
             btn.Refresh();
+            itemPanel1.EndUpdate();
         }
 
         private string GetColorName(int ID)
@@ -1762,7 +1956,19 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
 
-                var code = $"20{res.Skin}, {res.Face + mixFace}, {res.Hair + mixHair}, {res.Cap}, {res.FaceAcc}, {res.EyeAcc}, {res.EarAcc}, {res.Coat}, {res.Pants}, {res.Shoes}, {res.Gloves}, {res.Cape}, {res.Shield}, {res.Weapon}, {res.CashWeapon}";
+                var code = $"20{res.Skin}, 120{res.Skin + GetPrismCode(res.SkinPrismInfo)}, {res.Face + mixFace}, {res.Hair + mixHair}," +
+                    $"{res.Cap + GetPrismCode(res.CapPrismInfo)}," +
+                    $"{res.FaceAcc}," +
+                    $"{res.EyeAcc}," +
+                    $"{res.EarAcc}," +
+                    $"{res.Coat + GetPrismCode(res.CoatPrismInfo)}," +
+                    $"{res.Pants + GetPrismCode(res.PantsPrismInfo)}," +
+                    $"{res.Shoes + GetPrismCode(res.ShoesPrismInfo)}," +
+                    $"{res.Gloves + GetPrismCode(res.GlovesPrismInfo)}," +
+                    $"{res.Cape + GetPrismCode(res.CapePrismInfo)}," +
+                    $"{res.Shield}," +
+                    $"{res.Weapon}," +
+                    $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}";
                 LoadCode(code, 0);
 
                 if (res.UnknownVer)
@@ -1804,6 +2010,17 @@ namespace WzComparerR2.Avatar.UI
             return;
 #endif
         }
+
+#if NET6_0_OR_GREATER
+        private string GetPrismCode(OpenAPI.PrismInfo prism)
+        {
+            if (prism.Valid)
+            {
+                return $"+{prism.ColorType}h{prism.Hue}s{prism.Saturation}v{prism.Brightness}";
+            }
+            return "";
+        }
+#endif
 
         private void btnReset_Click(object sender, EventArgs e)
         {
@@ -2165,7 +2382,7 @@ namespace WzComparerR2.Avatar.UI
         private void LoadCode(string code, int loadType)
         {
             //解析
-            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-7])\*(\d{1,2}))?([,\s]|$)");
+            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-7])\*(\d{1,2}))?(\+(\d+)h(\d+)s(\d+)v(\d+))?([,\s]|$)");
             if (matches.Count <= 0)
             {
                 ToastNotification.Show(this, $"아이템 코드에 해당되는 아이템이 없습니다.", null, 3000, eToastGlowColor.Red, eToastPosition.TopCenter);
@@ -2215,6 +2432,10 @@ namespace WzComparerR2.Avatar.UI
                             part.MixColor = mixColor;
                             part.MixOpacity = mixOpacity;
                         }
+                        if (m.Groups.Count >= 9 && Int32.TryParse(m.Result("$6"), out int type) && Int32.TryParse(m.Result("$7"), out int hue) && Int32.TryParse(m.Result("$8"), out int saturation) && Int32.TryParse(m.Result("$9"), out int brightness))
+                        {
+                            part.PrismData.Set(type, hue, saturation, brightness);
+                        }
                         OnNewPartAdded(part);
                         continue;
                     }
@@ -2234,6 +2455,10 @@ namespace WzComparerR2.Avatar.UI
                                 if (tamingMobNode != null)
                                 {
                                     var part = this.avatar.AddTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(imgNode.Nodes["icon"], PluginBase.PluginManager.FindWz), gearID, true);
+                                    if (m.Groups.Count >= 9 && Int32.TryParse(m.Result("$6"), out int type) && Int32.TryParse(m.Result("$7"), out int hue) && Int32.TryParse(m.Result("$8"), out int saturation) && Int32.TryParse(m.Result("$9"), out int brightness))
+                                    {
+                                        part.PrismData.Set(type, hue, saturation, brightness);
+                                    }
                                     OnNewPartAdded(part);
                                 }
                             }
@@ -2261,6 +2486,10 @@ namespace WzComparerR2.Avatar.UI
 
                                 this.avatar.RemoveChairPart();
                                 var part = this.avatar.AddTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(tamingMobNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), tamingMobID, false, brm);
+                                if (m.Groups.Count >= 9 && Int32.TryParse(m.Result("$6"), out int type) && Int32.TryParse(m.Result("$7"), out int hue) && Int32.TryParse(m.Result("$8"), out int saturation) && Int32.TryParse(m.Result("$9"), out int brightness))
+                                {
+                                    part.PrismData.Set(type, hue, saturation, brightness);
+                                }
                                 OnNewPartAdded(part);
                             }
                         }
@@ -2281,12 +2510,20 @@ namespace WzComparerR2.Avatar.UI
 
                             if (removeTamingPart) RemoveTamingPart();
                             var part = this.avatar.AddChairPart(imgNode, BitmapOrigin.CreateFromNode(imgNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), gearID, brm, fb);
+                            if (m.Groups.Count >= 9 && Int32.TryParse(m.Result("$6"), out int type) && Int32.TryParse(m.Result("$7"), out int hue) && Int32.TryParse(m.Result("$8"), out int saturation) && Int32.TryParse(m.Result("$9"), out int brightness))
+                            {
+                                part.PrismData.Set(type, hue, saturation, brightness);
+                            }
                             OnNewPartAdded(part);
                         }
 
                         if (gearID / 10000 == 501) // effect items
                         {
                             var part = this.avatar.AddEffectPart(imgNode);
+                            if (m.Groups.Count >= 9 && Int32.TryParse(m.Result("$6"), out int type) && Int32.TryParse(m.Result("$7"), out int hue) && Int32.TryParse(m.Result("$8"), out int saturation) && Int32.TryParse(m.Result("$9"), out int brightness))
+                            {
+                                part.PrismData.Set(type, hue, saturation, brightness);
+                            }
                             OnNewPartAdded(part);
                         }
                         continue;

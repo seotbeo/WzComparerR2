@@ -35,6 +35,17 @@ namespace WzComparerR2.Avatar.UI
 
         public void ClearAllCache()
         {
+            foreach (var cache in bmpCache.Values)
+            {
+                foreach (var bmpOrigin in cache)
+                {
+                    var bmp = bmpOrigin.Bitmap;
+                    if (bmp != null)
+                    {
+                        bmp.Dispose();
+                    }
+                }
+            }
             this.bmpCache.Clear();
         }
 

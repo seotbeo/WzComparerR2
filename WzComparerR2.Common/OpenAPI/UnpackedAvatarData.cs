@@ -359,8 +359,8 @@ namespace WzComparerR2.OpenAPI
             if (GetValue($"has{type}Prism") != 0)
             {
                 ret.ColorType = (byte)GetValue($"{type.ToLower()}PrismColorType");
-                ret.Brightness = GetValue($"{type.ToLower()}PrismBrightness") - 100;
-                ret.Saturation = GetValue($"{type.ToLower()}PrismSaturation") - 100;
+                ret.Brightness = GetValue($"{type.ToLower()}PrismBrightness");
+                ret.Saturation = GetValue($"{type.ToLower()}PrismSaturation");
                 ret.Hue = GetValue($"{type.ToLower()}PrismHue");
                 ret.Valid = true;
             }

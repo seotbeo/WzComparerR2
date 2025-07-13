@@ -19,10 +19,10 @@ namespace WzComparerR2.Avatar.Properties {
     // 클래스에서 자동으로 생성되었습니다.
     // 멤버를 추가하거나 제거하려면 .ResX 파일을 편집한 다음 /str 옵션을 사용하여 ResGen을
     // 다시 실행하거나 VS 프로젝트를 다시 빌드하십시오.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace WzComparerR2.Avatar.Properties {
         ///   이 클래스에서 사용하는 캐시된 ResourceManager 인스턴스를 반환합니다.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WzComparerR2.Avatar.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace WzComparerR2.Avatar.Properties {
         ///   재정의합니다.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap _lock {
+        public static System.Drawing.Bitmap _lock {
             get {
                 object obj = ResourceManager.GetObject("_lock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +73,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap arrow_in {
+        public static System.Drawing.Bitmap arrow_in {
             get {
                 object obj = ResourceManager.GetObject("arrow_in", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +83,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap disk {
+        public static System.Drawing.Bitmap disk {
             get {
                 object obj = ResourceManager.GetObject("disk", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +93,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap export {
+        public static System.Drawing.Bitmap export {
             get {
                 object obj = ResourceManager.GetObject("export", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +103,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap script_code {
+        public static System.Drawing.Bitmap script_code {
             get {
                 object obj = ResourceManager.GetObject("script_code", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -113,7 +113,17 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap user {
+        public static System.Drawing.Bitmap UIWindow2_img_ColoringPrism_ColoringPrismLabel_0 {
+            get {
+                object obj = ResourceManager.GetObject("UIWindow2_img_ColoringPrism_ColoringPrismLabel_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static System.Drawing.Bitmap user {
             get {
                 object obj = ResourceManager.GetObject("user", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -123,7 +133,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -133,7 +143,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor0_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -143,7 +153,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -153,7 +163,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor1_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -163,7 +173,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -173,7 +183,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor2_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -183,7 +193,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -193,7 +203,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor3_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -203,7 +213,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -213,7 +223,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor4_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -223,7 +233,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -233,7 +243,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor5_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -243,7 +253,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -253,7 +263,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor6_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -263,7 +273,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -273,7 +283,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixHair_KR_BtColor_button_BtColor7_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -283,7 +293,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -293,7 +303,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor0_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -303,7 +313,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -313,7 +323,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor1_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -323,7 +333,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -333,7 +343,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor2_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -343,7 +353,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -353,7 +363,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor3_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -363,7 +373,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -373,7 +383,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor4_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -383,7 +393,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -393,7 +403,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor5_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -403,7 +413,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -413,7 +423,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor6_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -423,7 +433,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_normal_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_normal_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_normal_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -433,7 +443,7 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_pressed_0 {
+        public static System.Drawing.Bitmap UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_pressed_0 {
             get {
                 object obj = ResourceManager.GetObject("UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_pressed_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

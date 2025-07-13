@@ -232,4 +232,7 @@
   <data name="UtilDlgEx_MixLens_KR_BtColor_button_BtColor7_pressed_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UtilDlgEx_MixLens_KR.BtColor.button_BtColor7.pressed.0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="UIWindow2_img_ColoringPrism_ColoringPrismLabel_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UIWindow2.img.ColoringPrism.ColoringPrismLabel.0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

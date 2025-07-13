@@ -147,7 +147,7 @@
             ((DevComponents.DotNetBar.DocumentBaseContainer)(new DevComponents.DotNetBar.DocumentBarContainer(this.bar2, 213, 231)))}, DevComponents.DotNetBar.eOrientation.Vertical);
             this.dockSite2.Location = new System.Drawing.Point(559, 27);
             this.dockSite2.Name = "dockSite2";
-            this.dockSite2.Size = new System.Drawing.Size(250, 512);
+            this.dockSite2.Size = new System.Drawing.Size(280, 512);
             this.dockSite2.TabIndex = 1;
             this.dockSite2.TabStop = false;
             // 
