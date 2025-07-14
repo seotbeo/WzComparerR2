@@ -43,7 +43,7 @@ namespace WzComparerR2.AvatarCommon
                     var hsv = new HSV(0, 0, 0);
                     SetHSVfromRGB(ref rgb, ref hsv);
 
-                    bool convert = CheckColorType(type, (int)hsv.Hue);
+                    bool convert = CheckColorType(type, ref hsv);
                     if ((rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
                     {
                         convert = false;
@@ -275,9 +275,10 @@ namespace WzComparerR2.AvatarCommon
             return addRGB;
         }
 
-        private static bool CheckColorType(int type, int hue)
+        private static bool CheckColorType(int type, ref HSV hsv)
         {
             bool convert = true;
+            int hue = (int)hsv.Hue;
             switch (type)
             {
                 case 0:
@@ -285,7 +286,7 @@ namespace WzComparerR2.AvatarCommon
                     break;
                 case 1:
                     // 빨간색 계열
-                    if (hue >= 30 && hue <= 330) convert = false;
+                    if ((hue >= 30 && hue <= 330) || hsv.Saturation == 0) convert = false;
                     break;
                 case 2:
                     // 노란색 계열
