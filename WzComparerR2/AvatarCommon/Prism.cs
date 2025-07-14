@@ -253,11 +253,6 @@ namespace WzComparerR2.AvatarCommon
                 for (int i = 0; i < color.Length; i++)
                 {
                     var c = color[i];
-                    if (c >= 238)
-                    {
-                        addColor[i] = 255;
-                        continue;
-                    }
                     var v = 0f;
 
                     if (max == 255 || gray)
