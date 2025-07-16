@@ -25,6 +25,7 @@ namespace WzComparerR2.AvatarCommon
             {
                 this.EffectActions[i] = new List<string>();
             }
+            this.SkinCache = new Dictionary<string, BitmapOrigin>();
             this.Parts = new AvatarPart[PartLength];
             this.EarType = 0;
             this.CapType = "";
@@ -38,6 +39,8 @@ namespace WzComparerR2.AvatarCommon
         public List<string> TamingActions { get; private set; }
         public List<string>[] EffectActions { get; private set; }
         public List<bool> EffectVisibles { get; private set; }
+
+        public Dictionary<string, BitmapOrigin> SkinCache { get; set; }
 
         public AvatarPart[] Parts { get; private set; }
         public string ActionName { get; set; }
@@ -1121,19 +1124,27 @@ namespace WzComparerR2.AvatarCommon
 
                     Skin skin = new Skin();
                     skin.Name = frameIdx;
-                    skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
                     string pos = linkPartNode.ParentNode.FindNodeByPath("pos")?.GetValueEx<string>(null) ?? "0";
                     skin.Offset = new Point(0, 0);
 
-                    PrismData prismData = partNode.Item4;
-                    if (prismData.Valid)
+                    if (SkinCache.ContainsKey(linkPartNode.FullPathToFile))
                     {
-                        var prism = Prism.Apply(skin.Image, prismData, true);
-                        if (prism.Bitmap != null)
+                        skin.Image = SkinCache[linkPartNode.FullPathToFile];
+                    }
+                    else
+                    {
+                        skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
+                        PrismData prismData = partNode.Item4;
+                        if (prismData.Valid)
                         {
-                            skin.Image.Bitmap.Dispose();
-                            skin.Image = prism;
+                            var prism = Prism.Apply(skin.Image, prismData, true);
+                            if (prism.Bitmap != null)
+                            {
+                                skin.Image.Bitmap.Dispose();
+                                skin.Image = prism;
+                            }
                         }
+                        SkinCache.Add(linkPartNode.FullPathToFile, skin.Image);
                     }
 
                     if (skin.Image.Bitmap != null)
@@ -1305,43 +1316,50 @@ namespace WzComparerR2.AvatarCommon
                         //读取纹理
                         Skin skin = new Skin();
                         skin.Name = childNode.Text;
-                        skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
 
-                        if (partNode.Item2 != null)
+                        if (SkinCache.ContainsKey(linkNode.FullPathToFile))
                         {
-                            Wz_Node childMixNode = linkPartMixNode?.Nodes[childNode.Text];
-                            Wz_Node linkMixNode = childMixNode;
-                            while (linkMixNode?.Value is Wz_Uol uol)
+                            skin.Image = SkinCache[linkNode.FullPathToFile];
+                        }
+                        else
+                        {
+                            skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
+                            if (partNode.Item2 != null)
                             {
-                                linkMixNode = uol.HandleUol(linkMixNode);
-                            }
-                            if (linkMixNode == null)
-                            {
-                                continue;
-                            }
-                            if (childMixNode.Text == "hairShade")
-                            {
-                                linkMixNode = childMixNode.FindNodeByPath("0");
+                                Wz_Node childMixNode = linkPartMixNode?.Nodes[childNode.Text];
+                                Wz_Node linkMixNode = childMixNode;
+                                while (linkMixNode?.Value is Wz_Uol uol)
+                                {
+                                    linkMixNode = uol.HandleUol(linkMixNode);
+                                }
                                 if (linkMixNode == null)
                                 {
                                     continue;
                                 }
-                            }
+                                if (childMixNode.Text == "hairShade")
+                                {
+                                    linkMixNode = childMixNode.FindNodeByPath("0");
+                                    if (linkMixNode == null)
+                                    {
+                                        continue;
+                                    }
+                                }
 
-                            var mix = new BitmapOrigin(MixBitmaps(skin.Image.Bitmap, BitmapOrigin.CreateFromNode(linkMixNode, PluginBase.PluginManager.FindWz).Bitmap, partNode.Item3), skin.Image.Origin);
-                            skin.Image.Bitmap.Dispose();
-                            skin.Image = mix;
-                        }
-
-                        PrismData prismData = partNode.Item4;
-                        if (prismData.Valid)
-                        {
-                            var prism = Prism.Apply(skin.Image, prismData);
-                            if (prism.Bitmap != null)
-                            {
+                                var mix = new BitmapOrigin(MixBitmaps(skin.Image.Bitmap, BitmapOrigin.CreateFromNode(linkMixNode, PluginBase.PluginManager.FindWz).Bitmap, partNode.Item3), skin.Image.Origin);
                                 skin.Image.Bitmap.Dispose();
-                                skin.Image = prism;
+                                skin.Image = mix;
                             }
+                            PrismData prismData = partNode.Item4;
+                            if (prismData.Valid)
+                            {
+                                var prism = Prism.Apply(skin.Image, prismData);
+                                if (prism.Bitmap != null)
+                                {
+                                    skin.Image.Bitmap.Dispose();
+                                    skin.Image = prism;
+                                }
+                            }
+                            SkinCache.Add(linkNode.FullPathToFile, skin.Image);
                         }
 
                         var zNode = linkNode.FindNodeByPath("z");
@@ -2061,6 +2079,18 @@ namespace WzComparerR2.AvatarCommon
             }
 
             return (this.Parts[realIndex]?.Visible ?? false) && (this.Parts[realIndex]?.EffectVisible ?? false);
+        }
+
+        public void ClearSkinCache()
+        {
+            foreach (var bo in this.SkinCache.Values)
+            {
+                if (bo.Bitmap != null)
+                {
+                    bo.Bitmap.Dispose();
+                }
+            }
+            this.SkinCache.Clear();
         }
 
         #region parts

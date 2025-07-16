@@ -490,6 +490,7 @@ namespace WzComparerR2.Avatar.UI
             {
                 this.partsTag = newPartsTag;
                 this.avatarContainer1.ClearAllCache();
+                this.avatar.ClearSkinCache();
             }
 
             ComboItem selectedItem;
@@ -1738,6 +1739,7 @@ namespace WzComparerR2.Avatar.UI
         {
             avatar.ApplyBRM = chkApplyBRM.Checked;
             this.avatarContainer1.ClearAllCache();
+            this.avatar.ClearSkinCache();
             UpdateDisplay();
         }
 
