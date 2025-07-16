@@ -1056,7 +1056,7 @@ namespace WzComparerR2.CharaSimControl
                     desc.Add($"\n #c장착 시 1회에 한해 {incline}의 경험치를 얻을 수 있습니다.(일일제한, 최대치 초과 시 제외)#");
                 }
 
-                if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) || value <= 0))
+                if (Gear.Cash && (!Gear.Props.TryGetValue(GearPropType.noMoveToLocker, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.tradeBlock, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.accountSharable, out value) || value == 0) && (!Gear.Props.TryGetValue(GearPropType.noTradeLimitCash, out value) || value <= 0))
                 {
                     desc.Add(" #c사용 전 1회에 한해 타인과 교환할 수 있으며, 아이템 사용 후에는 교환이 제한됩니다.#");
                 }

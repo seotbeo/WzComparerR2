@@ -197,6 +197,7 @@ namespace WzComparerR2.CharaSim
         illusionGrade,
         limitedLabel,
         noPrism,
+        noTradeLimitCash,
 
         //MSN专属属性
         blockUpgradeExtraOption,
