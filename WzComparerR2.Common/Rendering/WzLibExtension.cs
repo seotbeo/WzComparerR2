@@ -109,7 +109,7 @@ namespace WzComparerR2.Rendering
                         break;
 
                     case Wz_TextureFormat.BC7 when png.ActualScale == 1:
-                        texture.SetDataBC7(rawData.AsSpan(0, bufferSize));
+                        texture.SetDataBC7(rawData.AsSpan(0, bufferSize), png.Width, png.Height);
                         break;
 
                     default:

@@ -282,12 +282,15 @@ namespace WzComparerR2.WzLib
                 case Wz_TextureFormat.BC7:
                     if (this.ActualScale != 1)
                         throw new Exception("BC7 does not support scale.");
-                    pngDecoded = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
-                    bmpdata = pngDecoded.LockBits(new Rectangle(0, 0, this.Width, this.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                    var w = (this.Width + 3) & ~3;
+                    var h = (this.Height + 3) & ~3;
+                    pngDecoded = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+                    bmpdata = pngDecoded.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                    var paddedPixel = PadBC7Data(pixel, this.Width, this.Height);
                     unsafe
                     {
                         Span<byte> outputPixels = new Span<byte>(bmpdata.Scan0.ToPointer(), bmpdata.Stride * bmpdata.Height);
-                        ImageCodec.BC7ToRGBA32(pixel, outputPixels, bmpdata.Width, bmpdata.Stride, bmpdata.Height);
+                        ImageCodec.BC7ToRGBA32(paddedPixel, outputPixels, bmpdata.Width, bmpdata.Stride, bmpdata.Height);
                         ImageCodec.RGBA32ToBGRA32(outputPixels, outputPixels);
                     }
                     pngDecoded.UnlockBits(bmpdata);
@@ -298,6 +301,23 @@ namespace WzComparerR2.WzLib
             }
 
             return pngDecoded;
+        }
+
+        public static byte[] PadBC7Data(ReadOnlySpan<byte> srcData, int originalWidth, int originalHeight)
+        {
+            int paddedWidth = (originalWidth + 3) & ~3;
+            int paddedHeight = (originalHeight + 3) & ~3;
+
+            byte[] dstData = new byte[paddedWidth * paddedHeight];
+
+            for (int y = 0; y < (originalHeight & ~3); y += 4)
+            {
+                int srcOffset = y * originalWidth;
+                int dstOffset = y * paddedWidth;
+                srcData.Slice(srcOffset, originalWidth * 4).CopyTo(dstData.AsSpan(dstOffset, originalWidth * 4));
+            }
+
+            return dstData;
         }
 
         private static void CopyBmpDataWithStride(byte[] source, int stride, BitmapData bmpData)
@@ -341,8 +361,8 @@ namespace WzComparerR2.WzLib
                 Wz_TextureFormat.RGBA1010102 => width * height * 4,
 
                 Wz_TextureFormat.DXT3 or
-                Wz_TextureFormat.DXT5 or
-                Wz_TextureFormat.BC7 => ((width + 3) / 4) * ((height + 3) / 4) * 16,
+                Wz_TextureFormat.DXT5 => ((width + 3) / 4) * ((height + 3) / 4) * 16,
+                Wz_TextureFormat.BC7 => width * (height & ~3),
 
                 Wz_TextureFormat.DXT1 => ((width + 3) / 4) * ((height + 3) / 4) * 8,
 

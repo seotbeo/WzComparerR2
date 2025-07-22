@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Xna.Framework.Graphics;
 using SharpDX.Direct3D11;
+using WzComparerR2.WzLib;
 using Texture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
 
 namespace WzComparerR2.Rendering
@@ -10,6 +11,8 @@ namespace WzComparerR2.Rendering
     {
         public static Texture2D Create_BC7(GraphicsDevice graphicsDevice, int width, int height)
         {
+            width = (width + 3) & ~3;
+            height = (height + 3) & ~3;
             var t2d = new Texture2D(graphicsDevice, width, height, false, SurfaceFormatEx.BC7);
 
             Texture2DDescription description = new Texture2DDescription
@@ -41,10 +44,12 @@ namespace WzComparerR2.Rendering
             return t2d;
         }
 
-        public static unsafe void SetDataBC7(this Texture2D texture, Span<byte> data)
+        public static unsafe void SetDataBC7(this Texture2D texture, Span<byte> originalData, int originalWidth, int originalHeight)
         {
             if (texture.Format != SurfaceFormatEx.BC7)
                 throw new ArgumentException($"{nameof(SetDataBC7)} can only be used for BC7 format texture.", nameof(texture));
+
+            var data = Wz_Png.PadBC7Data(originalData, originalWidth, originalHeight);
 
             int w = texture.Width;
             int h = texture.Height;
