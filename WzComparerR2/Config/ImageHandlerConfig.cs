@@ -12,6 +12,7 @@ namespace WzComparerR2.Config
     {
         public ImageHandlerConfig()
         {
+            GifEncoder = 1;
             BackgroundColor = Color.White;
             BackgroundType = ImageBackgroundType.Transparent;
             MinMixedAlpha = 0;
