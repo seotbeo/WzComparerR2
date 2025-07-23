@@ -82,6 +82,13 @@
             this.panelEx1 = new DevComponents.DotNetBar.PanelEx();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
+            this.btnPreset = new DevComponents.DotNetBar.ButtonX();
+            this.btnNonTransparentMP4Preset = new DevComponents.DotNetBar.ButtonItem();
+            this.btnGreenBackdropMP4Preset = new DevComponents.DotNetBar.ButtonItem();
+            this.btnBlueBackdropMP4Preset = new DevComponents.DotNetBar.ButtonItem();
+            this.btnTransparentMOVPreset = new DevComponents.DotNetBar.ButtonItem();
+            this.btnTransparentWebMPreset = new DevComponents.DotNetBar.ButtonItem();
+            this.btnDefaultPreset = new DevComponents.DotNetBar.ButtonItem();
             this.panelExMosaic.SuspendLayout();
             this.panelExColor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.integerInput1)).BeginInit();
@@ -118,6 +125,59 @@
             this.labelX1.Size = new System.Drawing.Size(44, 18);
             this.labelX1.TabIndex = 0;
             this.labelX1.Text = "배경색";
+            //
+            // btnPreset
+            //
+            this.btnPreset.Location = new System.Drawing.Point(160, 6);
+            this.btnPreset.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnPreset.Size = new System.Drawing.Size(56, 23);
+            this.btnPreset.AutoExpandOnClick = true;
+            this.btnPreset.Name = "btnPreset";
+            this.btnPreset.TabIndex = 4;
+            this.btnPreset.Text = "프리셋";
+            this.btnPreset.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.btnNonTransparentMP4Preset,
+            this.btnGreenBackdropMP4Preset,
+            this.btnBlueBackdropMP4Preset,
+            this.btnTransparentMOVPreset,
+            this.btnTransparentWebMPreset,
+            this.btnDefaultPreset});
+            //
+            // btnNonTransparentMP4Preset
+            //
+            this.btnNonTransparentMP4Preset.Name = "btnNonTransparentMP4Preset";
+            this.btnNonTransparentMP4Preset.Text = "흰색 배경 MP4";
+            this.btnNonTransparentMP4Preset.Click += new System.EventHandler(this.btnNonTransparentMP4Preset_Click);
+            //
+            // btnGreenBackdropMP4Preset
+            //
+            this.btnGreenBackdropMP4Preset.Name = "btnGreenBackdropMP4Preset";
+            this.btnGreenBackdropMP4Preset.Text = "초록색 배경 MP4";
+            this.btnGreenBackdropMP4Preset.Click += new System.EventHandler(this.btnGreenBackdropMP4Preset_Click);
+            //
+            // btnBlueBackdropMP4Preset
+            //
+            this.btnBlueBackdropMP4Preset.Name = "btnBlueBackdropMP4Preset";
+            this.btnBlueBackdropMP4Preset.Text = "파란색 배경 MP4";
+            this.btnBlueBackdropMP4Preset.Click += new System.EventHandler(this.btnBlueBackdropMP4Preset_Click);
+            //
+            // btnTransparentMOVPreset
+            //
+            this.btnTransparentMOVPreset.Name = "btnTransparentMOVPreset";
+            this.btnTransparentMOVPreset.Text = "투명한 배경 MOV";
+            this.btnTransparentMOVPreset.Click += new System.EventHandler(this.btnTransparentMOVPreset_Click);
+            //
+            // btnTransparentWebMPreset
+            //
+            this.btnTransparentWebMPreset.Name = "btnTransparentWebMPreset";
+            this.btnTransparentWebMPreset.Text = "투명한 배경 WebM";
+            this.btnTransparentWebMPreset.Click += new System.EventHandler(this.btnTransparentWebMPreset_Click);
+            //
+            // btnDefaultPreset
+            //
+            this.btnDefaultPreset.Name = "btnDefaultPreset";
+            this.btnDefaultPreset.Text = "기본";
+            this.btnDefaultPreset.Click += new System.EventHandler(this.btnDefaultPreset_Click);
             // 
             // checkBoxX1
             // 
@@ -364,6 +424,7 @@
             this.panelExColor.Controls.Add(this.checkBoxX1);
             this.panelExColor.Controls.Add(this.labelX3);
             this.panelExColor.Controls.Add(this.slider1);
+            this.panelExColor.Controls.Add(this.btnPreset);
             this.panelExColor.DisabledBackColor = System.Drawing.Color.Empty;
             this.panelExColor.Enabled = false;
             this.panelExColor.Location = new System.Drawing.Point(100, 14);
@@ -858,5 +919,12 @@
         private DevComponents.DotNetBar.LabelX labelX12;
         private DevComponents.DotNetBar.Controls.TextBoxX textBoxX3;
         private DevComponents.DotNetBar.LabelX labelX13;
+        private DevComponents.DotNetBar.ButtonX btnPreset;
+        private DevComponents.DotNetBar.ButtonItem btnNonTransparentMP4Preset;
+        private DevComponents.DotNetBar.ButtonItem btnGreenBackdropMP4Preset;
+        private DevComponents.DotNetBar.ButtonItem btnBlueBackdropMP4Preset;
+        private DevComponents.DotNetBar.ButtonItem btnTransparentMOVPreset;
+        private DevComponents.DotNetBar.ButtonItem btnTransparentWebMPreset;
+        private DevComponents.DotNetBar.ButtonItem btnDefaultPreset;
     }
 }
