@@ -684,6 +684,7 @@ namespace WzComparerR2.Avatar.UI
         {
             var oldSelection = cmbActionBody.SelectedItem as ComboItem;
             int? newSelection = null;
+            int? stand1 = null;
             cmbActionBody.BeginUpdate();
             cmbActionBody.Items.Clear();
             foreach (var action in this.avatar.Actions)
@@ -710,11 +711,15 @@ namespace WzComparerR2.Avatar.UI
                         newSelection = cmbActionBody.Items.Count - 1;
                     }
                 }
+                if (cmbItem.Text == "stand1")
+                {
+                    stand1 = cmbActionBody.Items.Count - 1;
+                }
             }
 
             if (cmbActionBody.Items.Count > 0)
             {
-                cmbActionBody.SelectedIndex = newSelection ?? 0;
+                cmbActionBody.SelectedIndex = newSelection ?? (stand1 ?? 0);
             }
 
             cmbActionBody.EndUpdate();
