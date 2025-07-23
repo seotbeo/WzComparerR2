@@ -1960,16 +1960,16 @@ namespace WzComparerR2.Avatar.UI
 
                 var code = $"20{res.Skin}, 120{res.Skin + GetPrismCode(res.SkinPrismInfo)}, {res.Face + mixFace}, {res.Hair + mixHair}," +
                     $"{res.Cap + GetPrismCode(res.CapPrismInfo)}," +
-                    $"{res.FaceAcc}," +
-                    $"{res.EyeAcc}," +
-                    $"{res.EarAcc}," +
+                    $"{res.FaceAcc + GetPrismCode(res.FaceAccPrismInfo)}," +
+                    $"{res.EyeAcc + GetPrismCode(res.EyeAccPrismInfo)}," +
+                    $"{res.EarAcc + GetPrismCode(res.EarAccPrismInfo)}," +
                     $"{res.Coat + GetPrismCode(res.CoatPrismInfo)}," +
                     $"{res.Pants + GetPrismCode(res.PantsPrismInfo)}," +
                     $"{res.Shoes + GetPrismCode(res.ShoesPrismInfo)}," +
                     $"{res.Gloves + GetPrismCode(res.GlovesPrismInfo)}," +
                     $"{res.Cape + GetPrismCode(res.CapePrismInfo)}," +
-                    $"{res.Shield}," +
-                    $"{res.Weapon}," +
+                    $"{res.Shield + GetPrismCode(res.ShieldPrismInfo)}," +
+                    $"{res.Weapon + GetPrismCode(res.WeaponPrismInfo)}," +
                     $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}";
                 LoadCode(code, 0);
 
