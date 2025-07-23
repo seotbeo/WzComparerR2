@@ -1973,6 +1973,75 @@ namespace WzComparerR2.Avatar.UI
                     $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}";
                 LoadCode(code, 0);
 
+                var curAction = this.cmbActionBody.SelectedItem.ToString();
+                switch (res.WeaponMotionType)
+                {
+                    case 0:
+                    case 1: // 한손
+                    case 3: // 건
+                        if (Regex.Match(curAction, @"^walk").Success)
+                        {
+                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                            {
+                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "walk1")
+                                {
+                                    this.cmbActionBody.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (Regex.Match(curAction, @"^stand").Success)
+                        {
+                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                            {
+                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "stand1")
+                                {
+                                    this.cmbActionBody.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (res.WeaponMotionType == 3)
+                        {
+                            for (int i = 0; i < this.cmbWeaponType.Items.Count; i++)
+                            {
+                                if ((this.cmbWeaponType.Items[i] as ComboItem).Text == "49")
+                                {
+                                    this.cmbWeaponType.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case 2: // 두손
+                        if (Regex.Match(curAction, @"^walk").Success)
+                        {
+                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                            {
+                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "walk2")
+                                {
+                                    this.cmbActionBody.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (Regex.Match(curAction, @"^stand").Success)
+                        {
+                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                            {
+                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "stand2")
+                                {
+                                    this.cmbActionBody.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
                 if (res.UnknownVer)
                 {
                     throw new Exception($"알려지지 않은 코드 버전입니다. (버전: {res.Version})");
