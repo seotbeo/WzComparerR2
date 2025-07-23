@@ -357,7 +357,7 @@ namespace WzComparerR2.OpenAPI
         public PrismInfo GetPrismInfo(string type)
         {
             var ret = new PrismInfo();
-            if (GetValue($"has{type}Prism") != 0)
+            if (GetValue($"has{type}Prism") == 1)
             {
                 ret.ColorType = (byte)GetValue($"{type.ToLower()}PrismColorType");
                 ret.Brightness = GetValue($"{type.ToLower()}PrismBrightness");
