@@ -2893,8 +2893,16 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
+            var totalCount = avatar.Actions.Count;
+            IEnumerable<AvatarCommon.Action> actionEnumerator = avatar.Actions;
+            if (MessageBoxEx.Show("주요 동작만 내보내겠습니까?", "확인", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                totalCount = avatar.Actions.Count(action => action.Level == 0);
+                actionEnumerator = avatar.Actions.Where(action => action.Level == 0);
+            }
+
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = $"내보내고자 하는 폴더를 선택하세요.\r\n - 주의 : 이 작업은 {avatar.Actions.Count}개의 이미지를 생성합니다.";
+            dlg.Description = $"내보내고자 하는 폴더를 선택하세요.\r\n - 주의 : 이 작업은 {totalCount}개의 이미지를 생성합니다.";
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -2903,6 +2911,7 @@ namespace WzComparerR2.Avatar.UI
                 var playingState2 = chkEmotionPlay.Checked;
                 var playingState3 = chkTamingPlay.Checked;
 
+                cmbActionBody.SelectedIndex = cmbActionBody.Items.Count > 0 ? 0 : -1;
                 chkBodyPlay.Checked = false;
                 chkEmotionPlay.Checked = false;
                 chkTamingPlay.Checked = false;
@@ -2936,7 +2945,7 @@ namespace WzComparerR2.Avatar.UI
 
                 async Task ExportJob(IProgressDialogContext context, CancellationToken cancellationToken)
                 {
-                    IEnumerable<AvatarCommon.Action> actionEnumerator = avatar.Actions;
+                    //IEnumerable<AvatarCommon.Action> actionEnumerator = avatar.Actions;
                     var step1 = actionEnumerator.TakeWhile(_ => !cancellationToken.IsCancellationRequested);
 
                     var step2 = step1.Select(item => ExportGif(item.Name));
@@ -2946,7 +2955,7 @@ namespace WzComparerR2.Avatar.UI
                     {
                         this.Enabled = false;
                         context.ProgressMin = 0;
-                        context.ProgressMax = avatar.Actions.Count;
+                        context.ProgressMax = totalCount;
                         foreach (var task in step2)
                         {
                             await task;
@@ -2968,7 +2977,7 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
 
-                ProgressDialog.Show(this.FindForm(), "내보내는 중...", avatar.Actions.Count + "개 동작 내보내는 중...", true, false, ExportJob);
+                ProgressDialog.Show(this.FindForm(), "내보내는 중...", totalCount + "개 동작 내보내는 중...", true, false, ExportJob);
             }
         }
 
