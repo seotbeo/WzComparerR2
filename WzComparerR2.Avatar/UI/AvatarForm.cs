@@ -1979,33 +1979,20 @@ namespace WzComparerR2.Avatar.UI
                 LoadCode(code, 0);
 
                 var curAction = this.cmbActionBody.SelectedItem.ToString();
+                var hand = 1;
                 switch (res.WeaponMotionType)
                 {
                     case 0:
                     case 1: // 한손
+                        this.cmbWeaponType.SelectedIndex = this.cmbWeaponType.Items.Count > 0 ? 0 : -1;
+                        break;
+
+                    case 2: // 두손
+                        hand = 2;
+                        this.cmbWeaponType.SelectedIndex = this.cmbWeaponType.Items.Count > 0 ? 0 : -1;
+                        break;
+
                     case 3: // 건
-                        if (Regex.Match(curAction, @"^walk").Success)
-                        {
-                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
-                            {
-                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "walk1")
-                                {
-                                    this.cmbActionBody.SelectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (Regex.Match(curAction, @"^stand").Success)
-                        {
-                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
-                            {
-                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "stand1")
-                                {
-                                    this.cmbActionBody.SelectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
                         if (res.WeaponMotionType == 3)
                         {
                             for (int i = 0; i < this.cmbWeaponType.Items.Count; i++)
@@ -2019,32 +2006,30 @@ namespace WzComparerR2.Avatar.UI
                         }
                         break;
 
-                    case 2: // 두손
-                        if (Regex.Match(curAction, @"^walk").Success)
-                        {
-                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
-                            {
-                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "walk2")
-                                {
-                                    this.cmbActionBody.SelectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (Regex.Match(curAction, @"^stand").Success)
-                        {
-                            for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
-                            {
-                                if ((this.cmbActionBody.Items[i] as ComboItem).Text == "stand2")
-                                {
-                                    this.cmbActionBody.SelectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
                     default:
                         break;
+                }
+                if (Regex.Match(curAction, @"^walk").Success)
+                {
+                    for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                    {
+                        if ((this.cmbActionBody.Items[i] as ComboItem).Text == $"walk{hand}")
+                        {
+                            this.cmbActionBody.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else if (Regex.Match(curAction, @"^stand").Success)
+                {
+                    for (int i = 0; i < this.cmbActionBody.Items.Count; i++)
+                    {
+                        if ((this.cmbActionBody.Items[i] as ComboItem).Text == $"stand{hand}")
+                        {
+                            this.cmbActionBody.SelectedIndex = i;
+                            break;
+                        }
+                    }
                 }
 
                 if (res.UnknownVer)
