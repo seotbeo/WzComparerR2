@@ -67,6 +67,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="FrmOverlaySpineOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FrmOverlayRectOptions.cs">
       <SubType>Form</SubType>
     </Compile>

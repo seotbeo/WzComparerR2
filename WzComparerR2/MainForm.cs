@@ -657,6 +657,8 @@ namespace WzComparerR2
         private void buttonItemGif2_Click(object sender, EventArgs e)
         {
             // code from buttonItemGif_Click()
+            // Todo: reimplement overall overlay feature
+            // keep each animation item instead of merge them into one
             if (advTree3.SelectedNode == null)
                 return;
 
@@ -693,26 +695,44 @@ namespace WzComparerR2
                 return;
             }
 
-            //添加到动画控件
-            if (node.Text.EndsWith(".atlas", StringComparison.OrdinalIgnoreCase))
+            var spineDetectResult = SpineLoader.Detect(node);
+            if (spineDetectResult.Success)
             {
-                /*
-                var spineData = this.pictureBoxEx1.LoadSpineAnimation(node);
+                var spineData = this.pictureBoxEx1.LoadSpineAnimation(spineDetectResult);
+
                 if (spineData != null)
                 {
-                    this.pictureBoxEx1.ShowAnimation(spineData);
-                    var aniItem = this.pictureBoxEx1.Items[0] as Animation.SpineAnimator;
-                    this.cmbItemAniNames.Items.Clear();
-                    this.cmbItemAniNames.Items.Add("");
-                    this.cmbItemAniNames.Items.AddRange(aniItem.Animations.ToArray());
-                    this.cmbItemAniNames.SelectedIndex = 0;
-                    this.cmbItemSkins.Visible = true;
-                    this.cmbItemSkins.Items.Clear();
-                    this.cmbItemSkins.Items.AddRange(aniItem.Skins.ToArray());
-                    this.cmbItemSkins.SelectedIndex = aniItem.Skins.IndexOf(aniItem.SelectedSkin);
+                    var aniItem = spineData.CreateAnimator() as AnimationItem;
+
+                    var frmOverlayAniOptions = new FrmOverlaySpineOptions((aniItem as ISpineAnimator).Animations.ToArray(), (aniItem as ISpineAnimator).Skins.ToArray());
+                    var name = "";
+                    var skin = "";
+                    var delay = 0;
+
+                    if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
+                    {
+                        frmOverlayAniOptions.GetValues(out name, out skin, out delay);
+                    }
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        (aniItem as ISpineAnimator).SelectedAnimationName = name;
+                    }
+                    if (!string.IsNullOrEmpty(skin))
+                    {
+                        (aniItem as ISpineAnimator).SelectedSkin = skin;
+                    }
+
+                    var frameData = this.pictureBoxEx1.ConvertSpineToFrameAnimation(aniItem, delay);
+
+                    if (frameData != null)
+                    {
+                        this.pictureBoxEx1.ShowOverlayAnimation(frameData);
+                        this.cmbItemAniNames.Items.Clear();
+                        this.cmbItemSkins.Visible = false;
+                        this.pictureBoxEx1.PictureName = name;
+                    }
                 }
-                */
-                MessageBoxEx.Show("스파인 애니메이션은 중첩시킬 수 없습니다.", "미지원");
                 return;
             }
             else

@@ -124,6 +124,42 @@ namespace WzComparerR2
             return FrameAnimationData.CreateFromPngNode(node, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
         }
 
+        public FrameAnimationData ConvertSpineToFrameAnimation(AnimationItem aniItem, int delay = 60)
+        {
+            var frameAnimationData = new FrameAnimationData();
+            if (delay > 0)
+            {
+                var rec = new AnimationRecoder(this.GraphicsDevice);
+
+                rec.Items.Add(aniItem);
+                int length = Math.Min(rec.GetMaxLength(), 10000); // 최대 길이 10초 제한
+                IEnumerable<int> frames = length == 0 ? new[] { 0 } : Enumerable.Range(0, Math.Max((int)Math.Ceiling(1.0 * length / delay) - 1, 0));
+
+                rec.ResetAll();
+                rec.BackgroundColor = Color.Transparent;
+                Microsoft.Xna.Framework.Rectangle bounds = aniItem.Measure();
+                bounds.Offset(aniItem.Position);
+                rec.Begin(bounds);
+
+                for (int i = 0; i < frames.Count(); i++)
+                {
+                    rec.Draw();
+                    rec.Update(TimeSpan.FromMilliseconds(delay));
+                    var t2d = rec.GetPngTexture();
+                    var frame = new Frame(t2d, new Point(-bounds.Left, -bounds.Top), 0, delay, true);
+                    frameAnimationData.Frames.Add(frame);
+                }
+                rec.End();
+            }
+
+            this.DisposeAnimationItem(aniItem);
+
+            if (frameAnimationData.Frames.Count > 0)
+                return frameAnimationData;
+            else
+                return null;
+        }
+
         public void ShowAnimation(FrameAnimationData data)
         {
             this.ShowAnimation(new FrameAnimator(data));
