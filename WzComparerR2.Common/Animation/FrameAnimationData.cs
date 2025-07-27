@@ -1,12 +1,12 @@
-﻿using System;
+﻿using DevComponents.DotNetBar;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WzComparerR2.WzLib;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using DevComponents.DotNetBar;
 using WzComparerR2.Rendering;
+using WzComparerR2.WzLib;
 
 namespace WzComparerR2.Animation
 {
@@ -399,6 +399,76 @@ namespace WzComparerR2.Animation
             graphicsDevice.SetRenderTarget(null);
 
             return renderTarget;
+        }
+
+        public static void ApplyMovement(GraphicsDevice graphicsDevice, FrameAnimationData data, int speedX, int speedY, int goX, int goY, bool fullMove, int start, ref int end)
+        {
+            var result = new List<Frame>();
+            var dispose = new List<Frame>();
+            var interval = 10;
+            var dx = speedX / 1000f * interval;
+            var dy = speedY / 1000f * interval;
+            var count = 0;
+            var e = end;
+            bool repeated = false;
+
+            for (var i = 0; i < start; i++)
+            {
+                var frame = data.Frames[i];
+                result.Add(frame);
+            }
+            for (var i = start; i < e + 1; i++)
+            {
+                var oFrame = data.Frames[i];
+                var frame = new Frame(oFrame.Texture, oFrame.Origin, oFrame.Z, oFrame.Delay, oFrame.Blend);
+                while (frame.Delay > 0)
+                {
+                    bool finishX = Math.Abs(dx * count) >= goX;
+                    bool finishY = Math.Abs(dy * count) >= goY;
+                    int x = finishX ? frame.Origin.X - (dx >= 0 ? goX : -goX) : (int)(frame.Origin.X - dx * count);
+                    int y = finishY ? frame.Origin.Y - (dy >= 0 ? goY : -goY) : (int)(frame.Origin.Y - dy * count);
+                    var temp = new Frame(CopyTexture(graphicsDevice, frame.Texture), new Point(x, y), frame.Z, interval, frame.Blend);
+                    result.Add(temp);
+
+                    frame.Delay -= interval;
+                    if (finishX && finishY)
+                    {
+                        temp = new Frame(CopyTexture(graphicsDevice, frame.Texture), new Point(x, y), frame.Z, frame.Delay, frame.Blend);
+                        result.Add(temp);
+                        e = i;
+                        break;
+                    }
+                    count++;
+                    if (i == e && fullMove && frame.Delay <= 0 && (!finishX || !finishY))
+                    {
+                        i = start - 1;
+                        repeated = true;
+                    }
+                }
+                dispose.Add(oFrame);
+            }
+            if (!repeated)
+            {
+                for (var i = e + 1; i < data.Frames.Count; i++)
+                {
+                    var frame = data.Frames[i];
+                    int x = frame.Origin.X - (dx >= 0 ? goX : -goX);
+                    int y = frame.Origin.Y - (dy >= 0 ? goY : -goY);
+                    frame.Origin = new Point(x, y);
+                    result.Add(frame);
+                }
+            }
+
+            foreach (var frame in dispose)
+            {
+                if (frame.Texture != null && !frame.Texture.IsDisposed)
+                {
+                    frame.Texture.Dispose();
+                }
+            }
+
+            end += result.Count - data.Frames.Count;
+            data.Frames = result;
         }
     }
 

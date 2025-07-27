@@ -36,12 +36,16 @@ namespace WzComparerR2
             this.txtStart.MaxValue = e;
             this.txtEnd.Value = e;
             this.txtEnd.MaxValue = e;
+            this.txtSpeedX.Value = 0;
+            this.txtSpeedY.Value = 0;
+            this.txtGoX.Value = 0;
+            this.txtGoY.Value = 0;
 
             this.colorPickerButton1.SelectedColor = config.OverlayRectColor;
             this.txtAlpha.Value = config.OverlayRectAlpha;
         }
 
-        public void GetValues(out Point lt, out Point rb, out int start, out int end, out int radius, out int alpha, out int type, ImageHandlerConfig config)
+        public void GetValues(out Point lt, out Point rb, out int start, out int end, out int radius, out int alpha, out int type, out int speedX, out int speedY, out int goX, out int goY, ImageHandlerConfig config)
         {
             lt = new Point(this.txtLeft.ValueObject as int? ?? 0, this.txtTop.ValueObject as int? ?? 0);
             rb = new Point(this.txtRight.ValueObject as int? ?? 0, this.txtBottom.ValueObject as int? ?? 0);
@@ -52,6 +56,10 @@ namespace WzComparerR2
             radius = this.txtRadius.ValueObject as int? ?? 0;
             alpha = this.txtAlpha.ValueObject as int? ?? 60;
             type = this.chkIsCircle.Checked ? 1 : 0;
+            speedX = this.txtSpeedX.ValueObject as int? ?? 0;
+            speedY = this.txtSpeedY.ValueObject as int? ?? 0;
+            goX = this.txtGoX.ValueObject as int? ?? 0;
+            goY = this.txtGoY.ValueObject as int? ?? 0;
 
             config.OverlayRectColor = this.colorPickerButton1.SelectedColor;
             config.OverlayRectAlpha = alpha;

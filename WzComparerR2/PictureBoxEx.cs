@@ -219,18 +219,23 @@ namespace WzComparerR2
 
             FrameAnimator aniItem = (FrameAnimator)animator;
 
-            var frmOverlayAniOptions = new FrmOverlayAniOptions(0, aniItem.Data.Frames.Count - 1, multiFrameInfo, isPngFrameAni);
+            var frmOverlayAniOptions = new FrmOverlayAniOptions(aniItem.Data.Frames, multiFrameInfo, isPngFrameAni);
             int delayOffset = 0;
             int moveX = 0;
             int moveY = 0;
             int frameStart = 0;
             int frameEnd = 0;
+            int speedX = 0;
+            int speedY = 0;
+            int goX = 0;
+            int goY = 0;
             int pngDelay = 120;
+            bool fullMove = false;
 
             // 정보 받아오기
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out pngDelay);
+                frmOverlayAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out speedX, out speedY, out goX, out goY, out fullMove, out pngDelay);
                 frameStart = frameStart == -1 ? 0 : frameStart;
                 frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
 
@@ -253,7 +258,10 @@ namespace WzComparerR2
                 aniItem.Data.Frames[0].Delay = pngDelay;
             }
 
-            var config = ImageHandlerConfig.Default;
+            if ((speedX != 0 && goX != 0) || (speedY != 0 && goY != 0))
+            {
+                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, speedX, speedY, goX, goY, fullMove, frameStart, ref frameEnd);
+            }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
                     this.GraphicsDevice, delayOffset, moveX, moveY, frameStart, frameEnd));
 
@@ -293,13 +301,18 @@ namespace WzComparerR2
             int startTime = 0;
             int endTime = 0;
             int radius = 0;
+            int speedX = 0;
+            int speedY = 0;
+            int goX = 0;
+            int goY = 0;
+            var frameEnd = 0;
             Point lt;
             Point rb;
             Color bgColor = System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor();
 
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime, out radius, out int alpha, out int type, config);
+                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime, out radius, out int alpha, out int type, out speedX, out speedY, out goX, out goY, config);
                 Color fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), config.OverlayRectColor.Value).ToXnaColor();
                 Color outlineColor = System.Drawing.Color.FromArgb(255, config.OverlayRectColor.Value).ToXnaColor();
 
@@ -322,8 +335,12 @@ namespace WzComparerR2
             }
             else return;
 
+            if ((speedX != 0 && goX != 0) || (speedY != 0 && goY != 0))
+            {
+                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, speedX, speedY, goX, goY, false, 0, ref frameEnd);
+            }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, startTime, 0, 0, 0, 0));
+                    this.GraphicsDevice, startTime, 0, 0, 0, frameEnd));
 
             this.Items.Clear();
             this.Items.Add(newAniItem);

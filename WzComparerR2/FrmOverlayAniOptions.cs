@@ -7,23 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DevComponents.Editors;
+using WzComparerR2.Animation;
 using WzComparerR2.Controls;
 
 namespace WzComparerR2
 {
     public partial class FrmOverlayAniOptions : DevComponents.DotNetBar.Office2007Form
     {
-        public FrmOverlayAniOptions() : this(0, 0)
-        {
-
-        }
-
-        public FrmOverlayAniOptions(int startIdx, int endIdx) : this(startIdx, endIdx, null, false)
-        {
-
-        }
-
-        public FrmOverlayAniOptions(int startIdx, int endIdx, string multiFrameInfo, bool isPngFrameAni)
+        public FrmOverlayAniOptions(List<Frame> frames, string multiFrameInfo, bool isPngFrameAni)
         {
             InitializeComponent();
 #if NET6_0_OR_GREATER
@@ -34,27 +25,53 @@ namespace WzComparerR2
             {
                 this.Text += " (멀티 프레임 : " + multiFrameInfo + ")";
             }
+            this.Frames = frames;
+            var endIdx = frames.Count - 1;
+
             this.txtDelayOffset.Value = 0;
             this.txtMoveX.Value = 0;
             this.txtMoveY.Value = 0;
-            this.txtFrameStart.Value = startIdx;
+            this.txtFrameStart.Value = 0;
             this.txtFrameEnd.Value = endIdx;
             this.txtFrameStart.MaxValue = endIdx;
             this.txtFrameEnd.MaxValue = endIdx;
+            this.txtSpeedX.Value = 0;
+            this.txtSpeedY.Value = 0;
+            this.txtGoX.Value = 0;
+            this.txtGoY.Value = 0;
+            this.chkFullMove.Checked = true;
 
             if (isPngFrameAni)
             {
                 this.txtPngDelay.Enabled = true;
             }
+
         }
 
-        public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd, out int pngDelay)
+        private List<Frame> Frames {  get; set; }
+
+        private int GetDelay(int start, int end)
+        {
+            var ret = 0;
+            for (int i = Math.Max(0, start); i < Math.Min(Frames.Count, end); i++)
+            {
+                ret += Frames[i].Delay;
+            }
+            return ret;
+        }
+
+        public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd, out int speedX, out int speedY, out int goX, out int goY, out bool fullMove, out int pngDelay)
         {
             delayOffset = this.txtDelayOffset.ValueObject as int? ?? 0;
             moveX = this.txtMoveX.ValueObject as int? ?? 0;
             moveY = this.txtMoveY.ValueObject as int? ?? 0;
             frameStart = this.txtFrameStart.ValueObject as int? ?? -1;
             frameEnd = this.txtFrameEnd.ValueObject as int? ?? -1;
+            speedX = this.txtSpeedX.ValueObject as int? ?? 0;
+            speedY = this.txtSpeedY.ValueObject as int? ?? 0;
+            goX = this.txtGoX.ValueObject as int? ?? 0;
+            goY = this.txtGoY.ValueObject as int? ?? 0;
+            fullMove = this.chkFullMove.Checked;
             pngDelay = this.txtPngDelay.ValueObject as int? ?? 0;
 
             delayOffset = delayOffset / 10 * 10;
