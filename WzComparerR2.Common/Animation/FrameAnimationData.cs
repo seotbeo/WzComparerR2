@@ -405,7 +405,7 @@ namespace WzComparerR2.Animation
         {
             var result = new List<Frame>();
             var dispose = new List<Frame>();
-            var interval = 10;
+            var interval = 30;
             var dx = speedX / 1000f * interval;
             var dy = speedY / 1000f * interval;
             var count = 0;
