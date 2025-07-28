@@ -17,6 +17,7 @@ namespace WzComparerR2.Avatar.UI
             SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.  
             SetStyle(ControlStyles.DoubleBuffer, true); // 双缓冲  
             bmpCache = new Dictionary<string, BitmapOrigin[]>();
+            this.BmpScale = 1;
         }
 
         /// <summary>
@@ -27,6 +28,7 @@ namespace WzComparerR2.Avatar.UI
         //绘图相关
         Dictionary<string, BitmapOrigin[]> bmpCache;
         string currentKey;
+        int BmpScale;
         Bitmap bg;
 
         //事件相关
@@ -65,10 +67,18 @@ namespace WzComparerR2.Avatar.UI
             this.Invalidate();
         }
 
+        public void ChangeScale()
+        {
+            this.BmpScale = this.BmpScale % 3 + 1;
+            this.Invalidate();
+        }
+
         protected override void OnPaint(PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
             DrawBackgrnd(g);
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
 
             BitmapOrigin[] layers;
             if (currentKey != null && this.bmpCache.TryGetValue(currentKey, out layers) && layers != null)
@@ -77,8 +87,9 @@ namespace WzComparerR2.Avatar.UI
                 {
                     if (bmp.Bitmap != null)
                     {
-                        Point point = new Point(this.Origin.X - bmp.Origin.X, this.Origin.Y - bmp.Origin.Y);
-                        g.DrawImage(bmp.Bitmap, point);
+                        Point point = new Point(this.Origin.X - bmp.Origin.X * this.BmpScale, this.Origin.Y - bmp.Origin.Y * this.BmpScale);
+                        Rectangle rect = new Rectangle(point.X, point.Y, (bmp.Bitmap.Width * this.BmpScale), (int)(bmp.Bitmap.Height * this.BmpScale));
+                        g.DrawImage(bmp.Bitmap, rect);
                     }
                 }
                

@@ -76,6 +76,7 @@
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
             this.btnExport = new DevComponents.DotNetBar.ButtonItem();
+            this.btnZoom = new DevComponents.DotNetBar.ButtonItem();
             this.dockSite3 = new DevComponents.DotNetBar.DockSite();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.avatarContainer1 = new WzComparerR2.Avatar.UI.AvatarContainer();
@@ -682,6 +683,7 @@
             this.btnCode,
             this.btnCharac,
             this.btnReset,
+            this.btnZoom,
             this.btnLock,
             this.btnSaveAsGif,
             this.btnExport});
@@ -734,6 +736,13 @@
             this.btnReset.Name = "btnReset";
             this.btnReset.Tooltip = "처음 위치로";
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // btnZoom
+            // 
+            this.btnZoom.Image = global::WzComparerR2.Avatar.Properties.Resources.magnify;
+            this.btnZoom.Name = "btnZoom";
+            this.btnZoom.Tooltip = "확대";
+            this.btnZoom.Click += new System.EventHandler(this.btnZoom_Click);
             // 
             // btnLock
             // 
@@ -861,6 +870,7 @@
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.ButtonItem btnExport;
+        private DevComponents.DotNetBar.ButtonItem btnZoom;
         private DevComponents.DotNetBar.LabelX labelX6;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbGroupChair;
     }

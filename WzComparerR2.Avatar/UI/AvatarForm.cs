@@ -2089,6 +2089,14 @@ namespace WzComparerR2.Avatar.UI
             this.avatarContainer1.Invalidate();
         }
 
+        private void btnZoom_Click(object sender, EventArgs e)
+        {
+            if (this.avatar.Parts.Count(p => p != null) > 0)
+            {
+                this.avatarContainer1.ChangeScale();
+            }
+        }
+
         private void btnSaveAsGif_Click(object sender, EventArgs e)
         {
             if (this.avatar.Body == null || this.avatar.Head == null)
