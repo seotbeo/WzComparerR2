@@ -198,6 +198,7 @@ namespace WzComparerR2.CharaSim
         limitedLabel,
         noPrism,
         noTradeLimitCash,
+        magicLayerWz2,
 
         //MSN专属属性
         blockUpgradeExtraOption,

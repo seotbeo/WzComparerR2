@@ -280,13 +280,18 @@ namespace WzComparerR2.CharaSimControl
             else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
             {
                 TextRenderer.DrawText(g, "LIMITED 라벨", GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
-                picH += 16;
+                picH += 15;
                 if (!string.IsNullOrEmpty(Gear.LabelGradeTooltip))
                 {
                     var limitedLabelText = Regex.Replace(Gear.LabelGradeTooltip, "%d", "0");
                     TextRenderer.DrawText(g, limitedLabelText, GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
-                    picH += 16;
+                    picH += 15;
                 }
+            }
+            else if (Gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)
+            {
+                TextRenderer.DrawText(g, "衬料", GearGraphics.EquipDetailFont, new Point(261, picH), Color.FromArgb(84, 185, 194), TextFormatFlags.HorizontalCenter);
+                picH += 15;
             }
 
             //额外属性
@@ -427,6 +432,11 @@ namespace WzComparerR2.CharaSimControl
                 else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
                 {
                     cashImg = Resource.CashShop_img_CashItem_label_15;
+                    cashOrigin = new Point(12, 12);
+                }
+                else if (Gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_100;
                     cashOrigin = new Point(12, 12);
                 }
                 if (cashImg == null) //default cashImg

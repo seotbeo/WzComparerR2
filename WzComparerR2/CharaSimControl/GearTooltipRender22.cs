@@ -306,6 +306,11 @@ namespace WzComparerR2.CharaSimControl
                     picH += 16;
                 }
             }
+            else if (Gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)
+            {
+                TextRenderer.DrawText(g, "衬料", GearGraphics.EquipMDMoris9Font, new Point(width, picH), Color.FromArgb(84, 185, 194), TextFormatFlags.HorizontalCenter);
+                picH += 16;
+            }
 
             // 기타 속성
             //额外属性
@@ -402,6 +407,11 @@ namespace WzComparerR2.CharaSimControl
                 else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
                 {
                     cashImg = Resource.CashShop_img_CashItem_label_15;
+                    cashOrigin = new Point(12, 12);
+                }
+                else if (Gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)
+                {
+                    cashImg = Resource.CashShop_img_CashItem_label_100;
                     cashOrigin = new Point(12, 12);
                 }
                 if (cashImg == null) //default cashImg
