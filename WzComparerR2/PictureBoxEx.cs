@@ -138,9 +138,19 @@ namespace WzComparerR2
                 rec.ResetAll();
                 rec.BackgroundColor = Color.Transparent;
                 Microsoft.Xna.Framework.Rectangle bounds = aniItem.Measure();
+                if (length > 0)
+                {
+                    for (int i = 0; i < frames.Count(); i++)
+                    {
+                        rec.Update(TimeSpan.FromMilliseconds(delay));
+                        var rect = aniItem.Measure();
+                        bounds = Microsoft.Xna.Framework.Rectangle.Union(bounds, rect);
+                    }
+                }
                 bounds.Offset(aniItem.Position);
-                rec.Begin(bounds);
 
+                rec.ResetAll();
+                rec.Begin(bounds);
                 for (int i = 0; i < frames.Count(); i++)
                 {
                     rec.Draw();
