@@ -7,6 +7,7 @@ namespace WzComparerR2.Animation
     {
         bool PremultipliedAlpha { get; }
         object SkeletonData { get; }
+        object Atlas { get; }
         SpineVersion SpineVersion { get; }
         ISpineAnimator CreateAnimator();
     }

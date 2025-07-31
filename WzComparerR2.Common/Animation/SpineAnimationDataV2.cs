@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using WzComparerR2.Common;
 using WzComparerR2.WzLib;
 
@@ -15,6 +16,7 @@ namespace WzComparerR2.Animation
 
         public bool PremultipliedAlpha { get; set; }
         public SkeletonData SkeletonData { get; private set; }
+        public Atlas Atlas { get; set; }
 
         public static SpineAnimationDataV2 CreateFromNode(Wz_Node atlasOrSkelNode, GraphicsDevice graphicsDevice, GlobalFindNodeFunction findNode)
         {
@@ -29,7 +31,9 @@ namespace WzComparerR2.Animation
 
         public static SpineAnimationDataV2 Create(SpineDetectionResult detectionResult, TextureLoader textureLoader)
         {
-            var skeletonData = SpineLoader.LoadSkeletonV2(detectionResult, textureLoader);
+            using var atlasReader = new StringReader((string)detectionResult.ResolvedAtlasNode.Value);
+            var atlas = new Atlas(atlasReader, "", textureLoader);
+            var skeletonData = SpineLoader.LoadSkeletonV2(detectionResult, textureLoader, atlas);
 
             if (skeletonData == null)
             {
@@ -41,12 +45,14 @@ namespace WzComparerR2.Animation
             var anime = new SpineAnimationDataV2();
             anime.SkeletonData = skeletonData;
             anime.PremultipliedAlpha = pma;
+            anime.Atlas = atlas;
             return anime;
         }
 
         #region ISpineAnimationData
         bool ISpineAnimationData.PremultipliedAlpha => this.PremultipliedAlpha;
         object ISpineAnimationData.SkeletonData => this.SkeletonData;
+        object ISpineAnimationData.Atlas => this.Atlas;
         SpineVersion ISpineAnimationData.SpineVersion => SpineVersion.V2;
         ISpineAnimator ISpineAnimationData.CreateAnimator() => new SpineAnimatorV2(this);
         #endregion

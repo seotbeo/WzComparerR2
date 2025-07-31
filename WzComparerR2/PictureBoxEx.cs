@@ -137,29 +137,23 @@ namespace WzComparerR2
 
                 rec.ResetAll();
                 rec.BackgroundColor = Color.Transparent;
-                Microsoft.Xna.Framework.Rectangle bounds = aniItem.Measure();
                 if (length > 0)
                 {
                     for (int i = 0; i < frames.Count(); i++)
                     {
-                        rec.Update(TimeSpan.FromMilliseconds(delay));
                         var rect = aniItem.Measure();
-                        bounds = Microsoft.Xna.Framework.Rectangle.Union(bounds, rect);
+
+                        rec.Begin(rect);
+                        rec.Draw();
+
+                        var t2d = rec.GetPngTexture();
+                        var frame = new Frame(t2d, new Point(-rect.Left, -rect.Top), 0, delay, true);
+                        frameAnimationData.Frames.Add(frame);
+
+                        rec.Update(TimeSpan.FromMilliseconds(delay));
+                        rec.End();
                     }
                 }
-                bounds.Offset(aniItem.Position);
-
-                rec.ResetAll();
-                rec.Begin(bounds);
-                for (int i = 0; i < frames.Count(); i++)
-                {
-                    rec.Draw();
-                    rec.Update(TimeSpan.FromMilliseconds(delay));
-                    var t2d = rec.GetPngTexture();
-                    var frame = new Frame(t2d, new Point(-bounds.Left, -bounds.Top), 0, delay, true);
-                    frameAnimationData.Frames.Add(frame);
-                }
-                rec.End();
             }
 
             this.DisposeAnimationItem(aniItem);
@@ -264,7 +258,11 @@ namespace WzComparerR2
             // png 하나의 딜레이 설정
             if (isPngFrameAni)
             {
-                if (pngDelay == 0) return;
+                if (pngDelay == 0)
+                {
+                    DisposeAnimationItem(aniItem);
+                    return;
+                }
                 aniItem.Data.Frames[0].Delay = pngDelay;
             }
 
@@ -852,6 +850,10 @@ namespace WzComparerR2
                             }
                         }
                     }
+                    if (spineV2.Data.Atlas != null)
+                    {
+                        spineV2.Data.Atlas.Dispose();
+                    }
                     break;
                 case SpineAnimatorV4 spineV4:
                     if (spineV4.Skeleton != null)
@@ -869,6 +871,10 @@ namespace WzComparerR2
                                 texture.Dispose();
                             }
                         }
+                    }
+                    if (spineV4.Data.Atlas != null)
+                    {
+                        spineV4.Data.Atlas.Dispose();
                     }
                     break;
             }
