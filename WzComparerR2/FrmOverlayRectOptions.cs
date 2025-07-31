@@ -43,6 +43,8 @@ namespace WzComparerR2
 
             this.colorPickerButton1.SelectedColor = config.OverlayRectColor;
             this.txtAlpha.Value = config.OverlayRectAlpha;
+
+            this.chkIsCircle.CheckedChanged += this.ChkIsCircle_CheckedChanged;
         }
 
         public void GetValues(out Point lt, out Point rb, out int start, out int end, out int radius, out int alpha, out int type, out int speedX, out int speedY, out int goX, out int goY, ImageHandlerConfig config)
