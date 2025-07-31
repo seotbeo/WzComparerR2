@@ -577,6 +577,7 @@ namespace WzComparerR2
             this.chkIsCircle.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkIsCircle.TabIndex = 13;
             this.chkIsCircle.Text = "원";
+            this.chkIsCircle.CheckedChanged += this.ChkIsCircle_CheckedChanged;
             // 
             // tableLayoutPanel2
             // 
