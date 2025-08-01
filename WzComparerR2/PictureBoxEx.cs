@@ -137,13 +137,14 @@ namespace WzComparerR2
 
                 rec.ResetAll();
                 rec.BackgroundColor = Color.Transparent;
+                var rect = aniItem.Measure();
+                rec.Begin(rect);
                 if (length > 0)
                 {
                     for (int i = 0; i < frames.Count(); i++)
                     {
-                        var rect = aniItem.Measure();
-
-                        rec.Begin(rect);
+                        rect = aniItem.Measure();
+                        rec.ResetRenderTarget(rect);
                         rec.Draw();
 
                         var t2d = rec.GetPngTexture();
@@ -151,9 +152,9 @@ namespace WzComparerR2
                         frameAnimationData.Frames.Add(frame);
 
                         rec.Update(TimeSpan.FromMilliseconds(delay));
-                        rec.End();
                     }
                 }
+                rec.End();
             }
 
             this.DisposeAnimationItem(aniItem);
