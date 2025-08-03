@@ -513,6 +513,7 @@ namespace WzComparerR2
                         }
                     }
                 }
+                this.pictureBoxEx1.UpdateLength(0);
             }
         }
 
@@ -526,6 +527,7 @@ namespace WzComparerR2
                     aniItem.SelectedSkin = skinName;
                     this.cmbItemSkins.Tooltip = skinName;
                 }
+                this.pictureBoxEx1.UpdateLength(0);
             }
         }
 
@@ -704,7 +706,7 @@ namespace WzComparerR2
                 {
                     var aniItem = spineData.CreateAnimator() as AnimationItem;
 
-                    var frmOverlayAniOptions = new FrmOverlaySpineOptions((aniItem as ISpineAnimator).Animations.ToArray(), (aniItem as ISpineAnimator).Skins.ToArray());
+                    var frmOverlayAniOptions = new FrmOverlaySpineOptions(aniItem);
                     var name = "";
                     var skin = "";
                     var delay = 0;
@@ -712,17 +714,17 @@ namespace WzComparerR2
                     if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
                     {
                         frmOverlayAniOptions.GetValues(out name, out skin, out delay);
+                        this.pictureBoxEx1.ShowSpineOverlayAnimation(aniItem, delay);
+                        this.cmbItemAniNames.Items.Clear();
+                        this.cmbItemSkins.Visible = false;
+                        this.pictureBoxEx1.PictureName = $"{aniName}_{name}";
+                    }
+                    else
+                    {
+                        this.pictureBoxEx1.DisposeAnimationItem(aniItem);
                     }
 
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        (aniItem as ISpineAnimator).SelectedAnimationName = name;
-                    }
-                    if (!string.IsNullOrEmpty(skin))
-                    {
-                        (aniItem as ISpineAnimator).SelectedSkin = skin;
-                    }
-
+                    /*
                     var frameData = this.pictureBoxEx1.ConvertSpineToFrameAnimation(aniItem, delay);
 
                     if (frameData != null)
@@ -732,6 +734,7 @@ namespace WzComparerR2
                         this.cmbItemSkins.Visible = false;
                         this.pictureBoxEx1.PictureName = name;
                     }
+                    */
                 }
                 return;
             }
@@ -844,7 +847,7 @@ namespace WzComparerR2
             if (this.pictureBoxEx1.ShowOverlayAni)
             {
                 this.pictureBoxEx1.ShowOverlayAni = false;
-                this.pictureBoxEx1.ClearItemList();
+                this.pictureBoxEx1.DisposeItemList();
             }
         }
 
@@ -916,9 +919,10 @@ namespace WzComparerR2
                 return;
             }
 
-            var aniItem = this.pictureBoxEx1.Items[0];
-            var frameData = (aniItem as FrameAnimator)?.Data;
-            if (frameData != null && frameData.Frames.Count == 1 
+            var aniItem = this.pictureBoxEx1.Items;
+            var aniItemTime = this.pictureBoxEx1.ItemTimes;
+            var frameData = (aniItem?.FirstOrDefault(item => item is FrameAnimator) as FrameAnimator)?.Data;
+            if (aniItem.Count == 1 && frameData != null && frameData.Frames.Count == 1 
                 && frameData.Frames[0].A0 == 255 && frameData.Frames[0].A1 == 255 && (frameData.Frames[0].Delay == 0 || pictureBoxEx1.ShowOverlayAni))
             {
                 // save still picture as png
@@ -927,7 +931,7 @@ namespace WzComparerR2
             else
             {
                 // save as gif/apng
-                this.OnSaveGifFile(aniItem, options);
+                this.OnSaveGifFile(aniItem, aniItemTime, options);
             }
         }
 
@@ -1006,7 +1010,7 @@ namespace WzComparerR2
 
         }
 
-        private void OnSaveGifFile(AnimationItem aniItem, bool options)
+        private void OnSaveGifFile(IEnumerable<AnimationItem> aniItem, IEnumerable<Tuple<int, int>> aniItemTime, bool options)
         {
             var config = ImageHandlerConfig.Default;
             using var encoder = AnimateEncoderFactory.CreateEncoder(config);
@@ -1043,8 +1047,8 @@ namespace WzComparerR2
                 aniFileName = dlg.FileName;
             }
 
-            var clonedAniItem = (AnimationItem)aniItem.Clone();
-            if (this.pictureBoxEx1.SaveAsGif(clonedAniItem, aniFileName, config, encoder, options))
+            var clonedAniItem = aniItem.Select(aniItem => (AnimationItem)aniItem.Clone());
+            if (this.pictureBoxEx1.SaveAsGif(clonedAniItem, aniItemTime, aniFileName, config, encoder, options))
             {
                 labelItemStatus.Text = "그림 저장 완료: " + aniFileName;
             }

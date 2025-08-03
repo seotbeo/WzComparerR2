@@ -156,6 +156,10 @@ namespace WzComparerR2.Animation
                     // ignore, don't know how it works
                 }
             }
+            bound.minX += skeleton.X;
+            bound.maxX += skeleton.X;
+            bound.minY += skeleton.Y;
+            bound.maxY += skeleton.Y;
         }
 
         public override object Clone()
@@ -166,6 +170,8 @@ namespace WzComparerR2.Animation
             {
                 clonedAnimator.SelectedSkin = this.SelectedSkin;
             }
+            clonedAnimator.Skeleton.X = this.Skeleton.X;
+            clonedAnimator.Skeleton.Y = this.Skeleton.Y;
             return clonedAnimator;
         }
 

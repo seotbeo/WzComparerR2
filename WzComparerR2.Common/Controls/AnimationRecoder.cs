@@ -16,10 +16,13 @@ namespace WzComparerR2.Controls
             this._device = graphicsDevice;
             this._graphics = new AnimationGraphics(_device);
             this.Items = new List<AnimationItem>();
+            this.ItemTimes = new List<Tuple<int, int>>();
             this.BackgroundColor = Color.Transparent;
+            this.CurrentTime = TimeSpan.Zero;
         }
 
         public List<AnimationItem> Items { get; private set; }
+        public List<Tuple<int, int>> ItemTimes { get; private set; }
 
         public System.Drawing.Color GdipBackgroundColor
         {
@@ -37,6 +40,7 @@ namespace WzComparerR2.Controls
         public Color BackgroundColor { get; set; }
 
         public Texture2D BackgroundImage { get; set; }
+        public TimeSpan CurrentTime { get; private set; }
 
         private GraphicsDevice _device;
         private RenderTargetBinding[] _oldBuffer;
@@ -63,9 +67,14 @@ namespace WzComparerR2.Controls
 
         public void Update(TimeSpan elapsed)
         {
-            foreach (var aniItem in this.Items)
+            CurrentTime += elapsed;
+            var playingItems = GetPlayingAni((int)CurrentTime.TotalMilliseconds);
+            foreach (var animation in playingItems)
             {
-                aniItem.Update(elapsed);
+                if (animation.Item1 != null)
+                {
+                    animation.Item1.Update(elapsed);
+                }
             }
         }
 
@@ -108,17 +117,18 @@ namespace WzComparerR2.Controls
                     1f);
             }
 
-            foreach (var animation in this.Items.Where(_ani => _ani != null))
+            var playingItems = GetPlayingAni((int)CurrentTime.TotalMilliseconds);
+            foreach (var animation in playingItems.Where(_ani => _ani != null))
             {
-                if (animation is FrameAnimator framAni)
+                if (animation.Item1 is FrameAnimator framAni)
                 {
                     _graphics.Draw(framAni, world);
                 }
-                else if (animation is ISpineAnimator spineAni)
+                else if (animation.Item1 is ISpineAnimator spineAni)
                 {
                     _graphics.Draw(spineAni, world);
                 }
-                else if (animation is MultiFrameAnimator multiFrameAni)
+                else if (animation.Item1 is MultiFrameAnimator multiFrameAni)
                 {
                     _graphics.Draw(multiFrameAni, world);
                 }
@@ -179,11 +189,24 @@ namespace WzComparerR2.Controls
             {
                 aniItem.Reset();
             }
+            this.CurrentTime = TimeSpan.Zero;
         }
 
         public int GetMaxLength()
         {
-            return this.Items.Select(aniItem => Math.Max(0, aniItem.Length)).Max();
+            //return this.Items.Select(aniItem => Math.Max(0, aniItem.Length)).Max();
+            return this.ItemTimes.Select(item => item.Item2).DefaultIfEmpty(0).Max();
+        }
+
+        private IEnumerable<Tuple<AnimationItem, int>> GetPlayingAni(int curTime)
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                if (curTime >= this.ItemTimes[i].Item1 && curTime < this.ItemTimes[i].Item2)
+                {
+                    yield return new Tuple<AnimationItem, int>(this.Items[i], i);
+                }
+            }
         }
 
         public int[] GetGifTimeLine(int preferredFrameDelay, int? maxFrameDelay = null)

@@ -161,7 +161,7 @@
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(123, 24);
             this.labelX4.TabIndex = 0;
-            this.labelX4.Text = "프레임당 딜레이";
+            this.labelX4.Text = "반복할 길이";
             // 
             // comboBoxEx1
             // 
@@ -206,13 +206,12 @@
             this.txtDelay.Increment = 30;
             this.txtDelay.Location = new System.Drawing.Point(222, 61);
             this.txtDelay.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtDelay.MaxValue = 9990;
-            this.txtDelay.MinValue = 30;
+            this.txtDelay.MaxValue = 1000000;
+            this.txtDelay.MinValue = 0;
             this.txtDelay.Name = "txtDelay";
             this.txtDelay.ShowUpDown = true;
             this.txtDelay.Size = new System.Drawing.Size(125, 21);
             this.txtDelay.TabIndex = 5;
-            this.txtDelay.Value = 60;
             // 
             // tableLayoutPanel2
             // 
