@@ -639,6 +639,7 @@ namespace WzComparerR2
             this.txtAlphaStart.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtAlphaStart.Enabled = false;
             this.txtAlphaStart.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.txtAlphaStart.Increment = 30;
             this.txtAlphaStart.Location = new System.Drawing.Point(209, 267);
             this.txtAlphaStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlphaStart.MinValue = 0;
@@ -660,6 +661,7 @@ namespace WzComparerR2
             this.txtAlphaEnd.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtAlphaEnd.Enabled = false;
             this.txtAlphaEnd.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.txtAlphaEnd.Increment = 30;
             this.txtAlphaEnd.Location = new System.Drawing.Point(304, 267);
             this.txtAlphaEnd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlphaEnd.MinValue = 0;

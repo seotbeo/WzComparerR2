@@ -352,7 +352,7 @@ namespace WzComparerR2
         {
             var ret = new List<Tuple<int, int>>();
             var totalLength = options.AniEnd - options.AniStart;
-            const int minInterval = 30;
+            const int minInterval = 60;
             if (options.RectGradation && options.RectAlphaStart <= options.RectAlphaEnd)
             {
                 if (options.AniStart < options.RectAlphaStart)

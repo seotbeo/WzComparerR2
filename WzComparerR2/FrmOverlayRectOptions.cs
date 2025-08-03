@@ -43,6 +43,7 @@ namespace WzComparerR2
             this.txtAlphaDst.Value = 0;
             this.txtAlphaStart.Value = 0;
             this.txtAlphaEnd.Value = e;
+            this.txtAlphaEnd.MaxValue = e;
 
             this.colorPickerButton1.SelectedColor = config.OverlayRectColor;
             this.txtAlpha.Value = config.OverlayRectAlpha;
@@ -58,6 +59,10 @@ namespace WzComparerR2
             var s = this.txtStart.ValueObject as int? ?? 0;
             var e = this.txtEnd.ValueObject as int? ?? 0;
             var a = this.txtAlpha.ValueObject as int? ?? 60;
+            var a_s = this.txtAlphaStart.ValueObject as int? ?? 0;
+            var a_e = this.txtAlphaEnd.ValueObject as int? ?? (s <= e ? e : s);
+            if (a_s < s) a_s = s;
+            if (a_e > e) a_e = e;
 
             var ret = new OverlayOptions()
             {
@@ -78,8 +83,8 @@ namespace WzComparerR2
 
                 RectGradation = this.chkAlphaGradation.Checked,
                 RectAlphaDst = this.txtAlphaDst.ValueObject as int? ?? a,
-                RectAlphaStart = this.txtAlphaStart.ValueObject as int? ?? 0,
-                RectAlphaEnd = this.txtAlphaEnd.ValueObject as int? ?? (s <= e ? e : s)
+                RectAlphaStart = a_s,
+                RectAlphaEnd = a_e
             };
 
             config.OverlayRectColor = this.colorPickerButton1.SelectedColor;
@@ -93,8 +98,6 @@ namespace WzComparerR2
             int value = (sender as IntegerInput).ValueObject as int? ?? 0;
 
             this.txtEnd.MinValue = value;
-            this.txtAlphaStart.MinValue = value;
-            this.txtAlphaEnd.MinValue = value;
         }
 
         private void TxtEnd_ValueChanged(object sender, EventArgs e)
@@ -102,8 +105,6 @@ namespace WzComparerR2
             int value = (sender as IntegerInput).ValueObject as int? ?? 0;
 
             this.txtStart.MaxValue = value;
-            this.txtAlphaStart.MaxValue = value;
-            this.txtAlphaEnd.MaxValue = value;
         }
 
         private void ChkIsCircle_CheckedChanged(object sender, System.EventArgs e)
