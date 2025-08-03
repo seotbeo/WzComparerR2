@@ -139,20 +139,17 @@ namespace WzComparerR2
                 rec.BackgroundColor = Color.Transparent;
                 var rect = aniItem.Measure();
                 rec.Begin(rect);
-                if (length > 0)
+                for (int i = 0; i < frames.Count(); i++)
                 {
-                    for (int i = 0; i < frames.Count(); i++)
-                    {
-                        rect = aniItem.Measure();
-                        rec.ResetRenderTarget(rect);
-                        rec.Draw();
+                    rect = aniItem.Measure();
+                    rec.ResetRenderTarget(rect);
+                    rec.Draw();
 
-                        var t2d = rec.GetPngTexture();
-                        var frame = new Frame(t2d, new Point(-rect.Left, -rect.Top), 0, delay, true);
-                        frameAnimationData.Frames.Add(frame);
+                    var t2d = rec.GetPngTexture();
+                    var frame = new Frame(t2d, new Point(-rect.Left, -rect.Top), 0, delay, true);
+                    frameAnimationData.Frames.Add(frame);
 
-                        rec.Update(TimeSpan.FromMilliseconds(delay));
-                    }
+                    rec.Update(TimeSpan.FromMilliseconds(delay));
                 }
                 rec.End();
             }
