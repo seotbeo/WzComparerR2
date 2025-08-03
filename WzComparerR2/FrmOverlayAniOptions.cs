@@ -71,24 +71,30 @@ namespace WzComparerR2
             this.chkFullMove.Enabled = false;
         }
 
-        public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd, out int speedX, out int speedY, out int goX, out int goY, out bool fullMove, out int pngDelay)
+        public OverlayOptions GetValues()
         {
-            delayOffset = this.txtDelayOffset.ValueObject as int? ?? 0;
-            moveX = this.txtMoveX.ValueObject as int? ?? 0;
-            moveY = this.txtMoveY.ValueObject as int? ?? 0;
-            frameStart = this.txtFrameStart.ValueObject as int? ?? -1;
-            frameEnd = this.txtFrameEnd.ValueObject as int? ?? -1;
-            speedX = this.txtSpeedX.ValueObject as int? ?? 0;
-            speedY = this.txtSpeedY.ValueObject as int? ?? 0;
-            goX = this.txtGoX.ValueObject as int? ?? 0;
-            goY = this.txtGoY.ValueObject as int? ?? 0;
-            fullMove = this.chkFullMove.Checked;
-            pngDelay = this.txtPngDelay.ValueObject as int? ?? 0;
+            var ret = new OverlayOptions()
+            {
+                AniOffset = this.txtDelayOffset.ValueObject as int? ?? 0,
+                AniStart = this.txtFrameStart.ValueObject as int? ?? -1,
+                AniEnd = this.txtFrameEnd.ValueObject as int? ?? -1,
+                PosX = this.txtMoveX.ValueObject as int? ?? 0,
+                PosY = this.txtMoveY.ValueObject as int? ?? 0,
 
-            delayOffset = delayOffset / 10 * 10;
-            pngDelay = pngDelay / 10 * 10;
+                PngDelay = this.txtPngDelay.ValueObject as int? ?? 0,
 
-            return;
+                FullMove = this.chkFullMove.Checked,
+
+                SpeedX = this.txtSpeedX.ValueObject as int? ?? 0,
+                SpeedY = this.txtSpeedY.ValueObject as int? ?? 0,
+                GoX = this.txtGoX.ValueObject as int? ?? 0,
+                GoY = this.txtGoY.ValueObject as int? ?? 0
+            };
+
+            ret.AniOffset = ret.AniOffset / 10 * 10;
+            ret.PngDelay = ret.PngDelay / 10 * 10;
+
+            return ret;
         }
     }
 }

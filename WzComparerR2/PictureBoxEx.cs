@@ -224,26 +224,17 @@ namespace WzComparerR2
             FrameAnimator aniItem = (FrameAnimator)animator;
 
             var frmOverlayAniOptions = new FrmOverlayAniOptions(aniItem.Data.Frames, multiFrameInfo, isPngFrameAni);
-            int delayOffset = 0;
-            int moveX = 0;
-            int moveY = 0;
-            int frameStart = 0;
+            OverlayOptions options = new OverlayOptions();
             int frameEnd = 0;
-            int speedX = 0;
-            int speedY = 0;
-            int goX = 0;
-            int goY = 0;
-            int pngDelay = 120;
-            bool fullMove = false;
 
             // 정보 받아오기
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out speedX, out speedY, out goX, out goY, out fullMove, out pngDelay);
-                frameStart = frameStart == -1 ? 0 : frameStart;
-                frameEnd = frameEnd == -1 ? aniItem.Data.Frames.Count - 1 : frameEnd;
+                options = frmOverlayAniOptions.GetValues();
+                options.AniStart = options.AniStart == -1 ? 0 : options.AniStart;
+                frameEnd = options.AniEnd == -1 ? aniItem.Data.Frames.Count - 1 : options.AniEnd;
 
-                if (frameStart > frameEnd)
+                if (options.AniStart > frameEnd)
                 {
                     DisposeAnimationItem(aniItem);
                     return;
@@ -258,20 +249,20 @@ namespace WzComparerR2
             // png 하나의 딜레이 설정
             if (isPngFrameAni)
             {
-                if (pngDelay == 0)
+                if (options.PngDelay == 0)
                 {
                     DisposeAnimationItem(aniItem);
                     return;
                 }
-                aniItem.Data.Frames[0].Delay = pngDelay;
+                aniItem.Data.Frames[0].Delay = options.PngDelay;
             }
 
-            if ((speedX != 0 && goX != 0) || (speedY != 0 && goY != 0))
+            if ((options.SpeedX != 0 && options.GoX != 0) || (options.SpeedY != 0 && options.GoY != 0))
             {
-                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, speedX, speedY, goX, goY, fullMove, frameStart, ref frameEnd);
+                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStart, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, delayOffset, moveX, moveY, frameStart, frameEnd));
+                    this.GraphicsDevice, options.AniOffset, options.PosX, options.PosY, options.AniStart, frameEnd));
             
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
@@ -311,32 +302,23 @@ namespace WzComparerR2
             var baseDelayAll = this.MaxLength;
 
             var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll, config);
-            int startTime = 0;
-            int endTime = 0;
-            int radius = 0;
-            int speedX = 0;
-            int speedY = 0;
-            int goX = 0;
-            int goY = 0;
+            OverlayOptions options = new OverlayOptions();
             var frameEnd = 0;
-            Point lt;
-            Point rb;
-            Color bgColor = System.Drawing.Color.FromArgb(config.BackgroundType.Value == ImageBackgroundType.Transparent ? 0 : 255, config.BackgroundColor.Value).ToXnaColor();
 
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out lt, out rb, out startTime, out endTime, out radius, out int alpha, out int type, out speedX, out speedY, out goX, out goY, config);
-                Color fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), config.OverlayRectColor.Value).ToXnaColor();
-                Color outlineColor = System.Drawing.Color.FromArgb(255, config.OverlayRectColor.Value).ToXnaColor();
+                options = frmOverlayAniOptions.GetValues(config);
 
                 FrameAnimationData aniItemData = null;
-                switch (type)
+                var alphaTimeline = GetAlphaTimeline(options);
+                frameEnd = alphaTimeline.Count - 1;
+                switch (options.RectType)
                 {
                     case 0:
-                        aniItemData = FrameAnimationData.CreateRectData(lt, rb, endTime - startTime, this.GraphicsDevice, fillColor, outlineColor);
+                        aniItemData = FrameAnimationData.CreateRectData(this.GraphicsDevice, options.RectLT, options.RectRB, config.OverlayRectColor.Value, alphaTimeline);
                         break;
                     case 1:
-                        aniItemData = FrameAnimationData.CreateCircleData(lt, radius, endTime - startTime, this.GraphicsDevice, fillColor, outlineColor);
+                        aniItemData = FrameAnimationData.CreateCircleData(this.GraphicsDevice, options.RectLT, options.RectRadius, config.OverlayRectColor.Value, alphaTimeline);
                         break;
                     default:
                         break;
@@ -348,12 +330,12 @@ namespace WzComparerR2
             }
             else return;
 
-            if ((speedX != 0 && goX != 0) || (speedY != 0 && goY != 0))
+            if ((options.SpeedX != 0 && options.GoX != 0) || (options.SpeedY != 0 && options.GoY != 0))
             {
-                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, speedX, speedY, goX, goY, false, 0, ref frameEnd);
+                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, false, 0, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, startTime, 0, 0, 0, frameEnd));
+                    this.GraphicsDevice, options.AniStart, 0, 0, 0, frameEnd));
 
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
@@ -366,6 +348,51 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
+        private List<Tuple<int, int>> GetAlphaTimeline(OverlayOptions options)
+        {
+            var ret = new List<Tuple<int, int>>();
+            var totalLength = options.AniEnd - options.AniStart;
+            const int minInterval = 30;
+            if (options.RectGradation && options.RectAlphaStart <= options.RectAlphaEnd)
+            {
+                if (options.AniStart < options.RectAlphaStart)
+                {
+                    ret.Add(new Tuple<int, int>(options.RectAlpha, options.RectAlphaStart - options.AniStart));
+                }
+
+                var gradationLength = options.RectAlphaEnd - options.RectAlphaStart;
+                if (gradationLength > 0)
+                {
+                    var count = gradationLength / minInterval;
+                    if (count == 0)
+                    {
+                        ret.Add(new Tuple<int, int>((options.RectAlpha + options.RectAlphaDst) / 2, gradationLength));
+                    }
+                    else
+                    {
+                        var length = minInterval;
+                        for (var i = 0; i < count; i++, length += minInterval)
+                        {
+                            var left = gradationLength - length;
+                            var alpha = (options.RectAlpha * left + options.RectAlphaDst * length) / (float)gradationLength;
+                            ret.Add(new Tuple<int, int>((int)alpha, (left < minInterval) ? (minInterval + left) : minInterval));
+                        }
+                    }
+                }
+
+                if (options.AniEnd > options.RectAlphaEnd)
+                {
+                    ret.Add(new Tuple<int, int>(options.RectAlphaDst, options.AniEnd - options.RectAlphaEnd));
+                }
+            }
+            else
+            {
+                ret.Add(new Tuple<int, int>(options.RectAlpha, totalLength));
+            }
+
+            return ret.GroupBy(t => t.Item1).Select(g => Tuple.Create(g.Key, g.Sum(t => t.Item2))).ToList();
+        }
+
         public void ShowSpineOverlayAnimation(AnimationItem aniItem, int endPoint)
         {
             if (!ShowOverlayAni)
@@ -376,22 +403,12 @@ namespace WzComparerR2
 
             var frmOverlayAniOptions = new FrmOverlayAniOptions(new List<Frame>(), null, false);
             frmOverlayAniOptions.SetSpine();
-            int delayOffset = 0;
-            int moveX = 0;
-            int moveY = 0;
-            int frameStart = 0;
-            int frameEnd = 0;
-            int speedX = 0;
-            int speedY = 0;
-            int goX = 0;
-            int goY = 0;
-            int pngDelay = 120;
-            bool fullMove = false;
+            OverlayOptions options = new OverlayOptions();
 
             // 정보 받아오기
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
-                frmOverlayAniOptions.GetValues(out delayOffset, out moveX, out moveY, out frameStart, out frameEnd, out speedX, out speedY, out goX, out goY, out fullMove, out pngDelay);
+                options = frmOverlayAniOptions.GetValues();
             }
             else
             {
@@ -401,15 +418,15 @@ namespace WzComparerR2
 
             if (aniItem is SpineAnimatorV2 spinev2)
             {
-                spinev2.Skeleton.X += moveX;
-                spinev2.Skeleton.Y += moveY;
+                spinev2.Skeleton.X += options.PosX;
+                spinev2.Skeleton.Y += options.PosY;
             }
             else if (aniItem is SpineAnimatorV4 spinev4)
             {
-                spinev4.Skeleton.X += moveX;
-                spinev4.Skeleton.Y += moveY;
+                spinev4.Skeleton.X += options.PosX;
+                spinev4.Skeleton.Y += options.PosY;
             }
-            AddItem(aniItem, delayOffset, endPoint);
+            AddItem(aniItem, options.AniOffset, endPoint);
 
             if (this.AutoAdjustPosition)
             {
