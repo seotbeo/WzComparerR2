@@ -378,18 +378,6 @@ namespace WzComparerR2.Controls
         {
             var curTime = sw.Elapsed;
             var elapsed = curTime - lastUpdateTime;
-            if (curTime.TotalMilliseconds < 0)
-            {
-                var k = 1;
-            }
-            if (lastUpdateTime.TotalMilliseconds < 0)
-            {
-                var k = 1;
-            }
-            if (elapsed.TotalMilliseconds < 0)
-            {
-                var k = 1;
-            }
             lastUpdateTime = curTime;
 
             if (this.Visible)

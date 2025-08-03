@@ -481,7 +481,7 @@ namespace WzComparerR2
             int length = rec.GetMaxLength();
             int delay = Math.Max(cap.MinFrameDelay, config.MinDelay);
             int[] timeline = null;
-            if (!cap.IsFixedFrameRate)
+            if (!cap.IsFixedFrameRate && rec.Items.Count <= 1)
             {
                 timeline = rec.GetGifTimeLine(delay, cap.MaxFrameDelay);
             }
@@ -493,15 +493,18 @@ namespace WzComparerR2
             {
                 var rect = item.Measure();
                 bounds = Microsoft.Xna.Framework.Rectangle.Union(bounds, rect);
-                if (length > 0)
-                {
-                    IEnumerable<int> delays = timeline?.Take(timeline.Length - 1)
-                        ?? Enumerable.Range(0, (int)Math.Ceiling(1.0 * length / delay) - 1);
+            }
+            if (length > 0)
+            {
+                IEnumerable<int> delays = timeline?.Take(timeline.Length - 1)
+                    ?? Enumerable.Range(0, (int)Math.Ceiling(1.0 * length / delay) - 1);
 
-                    foreach (var frameDelay in delays)
+                foreach (var frameDelay in delays)
+                {
+                    rec.Update(TimeSpan.FromMilliseconds(frameDelay));
+                    foreach (var item in rec.Items)
                     {
-                        rec.Update(TimeSpan.FromMilliseconds(frameDelay));
-                        rect = item.Measure();
+                        var rect = item.Measure();
                         bounds = Microsoft.Xna.Framework.Rectangle.Union(bounds, rect);
                     }
                 }
