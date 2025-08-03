@@ -60,6 +60,17 @@ namespace WzComparerR2
             return ret;
         }
 
+        public void SetSpine()
+        {
+            this.txtFrameStart.Enabled = false;
+            this.txtFrameEnd.Enabled = false;
+            this.txtSpeedX.Enabled = false;
+            this.txtSpeedY.Enabled = false;
+            this.txtGoX.Enabled = false;
+            this.txtGoY.Enabled = false;
+            this.chkFullMove.Enabled = false;
+        }
+
         public void GetValues(out int delayOffset, out int moveX, out int moveY, out int frameStart, out int frameEnd, out int speedX, out int speedY, out int goX, out int goY, out bool fullMove, out int pngDelay)
         {
             delayOffset = this.txtDelayOffset.ValueObject as int? ?? 0;

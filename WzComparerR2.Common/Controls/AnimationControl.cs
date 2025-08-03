@@ -23,6 +23,7 @@ namespace WzComparerR2.Controls
             this.MouseWheel += AnimationControl_MouseWheel;
 
             this.Items = new List<AnimationItem>();
+            this.ItemTimes = new List<Tuple<int, int>>();
             this.MouseDragEnabled = true;
             this.GlobalScale = 1f;
 
@@ -34,6 +35,7 @@ namespace WzComparerR2.Controls
         }
 
         public List<AnimationItem> Items { get; private set; }
+        public List<Tuple<int, int>> ItemTimes { get; private set; }
         public bool MouseDragEnabled { get; set; }
         public bool MouseDragSaveEnabled { get; set; }
         public bool ShowPositionGridOnDrag { get; set; }
@@ -65,10 +67,22 @@ namespace WzComparerR2.Controls
             set { this.timer.Interval = value; }
         }
 
+        public int MaxLength
+        {
+            get { return this.maxLength; }
+            set { this.maxLength = value; }
+        }
+
+        public int CurrentTime
+        {
+            get { return (int)this.lastUpdateTime.TotalMilliseconds; }
+        }
+
         private float globalScale;
         private Timer timer;
         private Stopwatch sw;
         private TimeSpan lastUpdateTime;
+        private int maxLength;
 
         private SpriteBatchEx sprite;
         private AnimationGraphics graphics;
@@ -86,11 +100,31 @@ namespace WzComparerR2.Controls
 
         protected virtual void Update(TimeSpan elapsed)
         {
+            /*
             foreach (var animation in this.Items)
             {
                 if (animation != null)
                 {
                     animation.Update(elapsed);
+                }
+            }
+            */
+            var curTime = (int)(this.lastUpdateTime).TotalMilliseconds;
+            var margin = this.timer.Interval; // 부자연스러운 전환 완화
+            if (curTime > maxLength - margin)
+            {
+                ResetTimer();
+                ResetAll();
+            }
+            else
+            {
+                var playingItems = GetPlayingAni(curTime);
+                foreach (var animation in playingItems)
+                {
+                    if (animation.Item1 != null)
+                    {
+                        animation.Item1.Update(elapsed);
+                    }
                 }
             }
         }
@@ -108,21 +142,23 @@ namespace WzComparerR2.Controls
             Matrix mtViewport = Matrix.CreateTranslation(this.Padding.Left, this.Padding.Top, 0);
             Matrix mtAnimation = Matrix.CreateScale(GlobalScale, GlobalScale, 1) * mtViewport;
 
-            foreach (var animation in this.Items)
+            var curTime = (int)(this.lastUpdateTime).TotalMilliseconds;
+            var playingItems = GetPlayingAni(curTime);
+            foreach (var animation in playingItems)
             {
                 if (animation != null)
                 {
-                    if (animation is FrameAnimator frameAni)
+                    if (animation.Item1 is FrameAnimator frameAni)
                     {
                         graphics.Draw(frameAni, mtAnimation);
                     }
-                    else if (animation is ISpineAnimator spineAni)
+                    else if (animation.Item1 is ISpineAnimator spineAni)
                     {
                         graphics.Draw(spineAni, mtAnimation);
                     }
-                    else if (animation is MultiFrameAnimator)
+                    else if (animation.Item1 is MultiFrameAnimator)
                     {
-                        graphics.Draw((MultiFrameAnimator)animation, mtAnimation);
+                        graphics.Draw((MultiFrameAnimator)animation.Item1, mtAnimation);
                     }
                 }
             }
@@ -157,6 +193,79 @@ namespace WzComparerR2.Controls
             return null;
         }
 
+        public virtual IEnumerable<AnimationItem> GetItemsAt(int x, int y)
+        {
+            for (int i = this.Items.Count - 1; i >= 0; i--)
+            {
+                var item = this.Items[i];
+                var bound = item.Measure();
+                var rect = new Rectangle(
+                    (int)Math.Round(item.Position.X + bound.X * this.GlobalScale),
+                    (int)Math.Round(item.Position.Y + bound.Y * this.GlobalScale),
+                    (int)Math.Round(bound.Width * this.GlobalScale),
+                    (int)Math.Round(bound.Height * this.GlobalScale));
+                if (rect.Contains(x, y))
+                {
+                    yield return item;
+                }
+            }
+            yield return null;
+        }
+
+        public void ResetTimer()
+        {
+            this.lastUpdateTime = TimeSpan.Zero;
+            this.sw.Restart();
+        }
+
+        public void ResetAll()
+        {
+            foreach (var aniItem in this.Items)
+            {
+                aniItem.Reset();
+            }
+        }
+
+        public void UpdateMaxLength()
+        {
+            this.MaxLength = this.ItemTimes.Select(item => item.Item2).DefaultIfEmpty(0).Max();
+        }
+
+        private IEnumerable<Tuple<AnimationItem, int>> GetPlayingAni(int curTime)
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                if (this.MaxLength == 0 || (curTime >= this.ItemTimes[i].Item1 && curTime < this.ItemTimes[i].Item2))
+                {
+                    yield return new Tuple<AnimationItem, int>(this.Items[i], i);
+                }
+            }
+        }
+
+        public void ClearItemList()
+        {
+            this.Items.Clear();
+            this.ItemTimes.Clear();
+            UpdateMaxLength();
+            ResetTimer();
+        }
+
+        public void RemoveTopItem()
+        {
+            this.Items.RemoveAt(this.Items.Count - 1);
+            this.ItemTimes.RemoveAt(this.ItemTimes.Count - 1);
+            UpdateMaxLength();
+        }
+
+        public void AddItem(AnimationItem item, int start = 0, int end = 0)
+        {
+            this.Items.Add(item);
+            this.ItemTimes.Add(new Tuple<int, int>(0 + start, Math.Max(item.Length, end) + start));
+            UpdateMaxLength();
+            ResetTimer();
+            ResetAll();
+        }
+
         #region EVENTS
         protected virtual void OnItemDragSave(AnimationItemEventArgs e)
         {
@@ -170,7 +279,9 @@ namespace WzComparerR2.Controls
 
             if (this.MouseDragEnabled && e.Button == MouseButtons.Left)
             {
-                var item = GetItemAt(e.X, e.Y);
+                //var item = GetItemAt(e.X, e.Y);
+                var items = GetItemsAt(e.X, e.Y);
+                foreach (var item in items)
                 if (item != null)
                 {
                     this.mouseDragContext.IsDragging = true;
@@ -178,6 +289,7 @@ namespace WzComparerR2.Controls
                     this.mouseDragContext.DraggingItem = item;
                     this.mouseDragContext.StartPosition = item.Position;
                 }
+                this.mouseDragContext.DraggingItems = items;
             }
             if ((Control.ModifierKeys & Keys.Control) != 0 && e.Button == MouseButtons.Middle)
             {
@@ -195,6 +307,7 @@ namespace WzComparerR2.Controls
 
         private void AnimationControl_MouseMove(object sender, MouseEventArgs e)
         {
+            /*
             if (this.MouseDragEnabled && this.mouseDragContext.IsDragging && this.mouseDragContext.DraggingItem != null)
             {
                 this.mouseDragContext.DraggingItem.Position = new Point(
@@ -213,6 +326,32 @@ namespace WzComparerR2.Controls
                         if (e2.Handled)
                         {
                             this.mouseDragContext.IsDragging = false;
+                        }
+                    }
+                }
+            }
+            */
+            foreach (var draggingItem in this.mouseDragContext.DraggingItems ?? Enumerable.Empty<AnimationItem>())
+            {
+                if (this.MouseDragEnabled && this.mouseDragContext.IsDragging && draggingItem != null)
+                {
+                    draggingItem.Position = new Point(
+                        e.X - mouseDragContext.MouseDownPoint.X + mouseDragContext.StartPosition.X,
+                        e.Y - mouseDragContext.MouseDownPoint.Y + mouseDragContext.StartPosition.Y);
+
+                    //处理拖拽保存
+                    if (this.MouseDragSaveEnabled && (Control.ModifierKeys & Keys.Control) != 0)
+                    {
+                        var dragSize = SystemInformation.DragSize;
+                        var dragBox = new Rectangle(mouseDragContext.MouseDownPoint, new Point(dragSize.Width, dragSize.Height));
+                        if (!dragBox.Contains(new Point(e.X, e.Y)))
+                        {
+                            var e2 = new AnimationItemEventArgs(draggingItem);
+                            this.OnItemDragSave(e2);
+                            if (e2.Handled)
+                            {
+                                this.mouseDragContext.IsDragging = false;
+                            }
                         }
                     }
                 }
@@ -239,6 +378,18 @@ namespace WzComparerR2.Controls
         {
             var curTime = sw.Elapsed;
             var elapsed = curTime - lastUpdateTime;
+            if (curTime.TotalMilliseconds < 0)
+            {
+                var k = 1;
+            }
+            if (lastUpdateTime.TotalMilliseconds < 0)
+            {
+                var k = 1;
+            }
+            if (elapsed.TotalMilliseconds < 0)
+            {
+                var k = 1;
+            }
             lastUpdateTime = curTime;
 
             if (this.Visible)
@@ -255,6 +406,7 @@ namespace WzComparerR2.Controls
             public Point MouseDownPoint;
             public Point StartPosition;
             public AnimationItem DraggingItem;
+            public IEnumerable<AnimationItem> DraggingItems;
         }
     }
 }
