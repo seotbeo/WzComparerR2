@@ -97,5 +97,13 @@ namespace WzComparerR2.Rendering
             }
         }
 
+        public void End(bool disposeSprite)
+        {
+            if (disposeSprite)
+            {
+                this.sprite.Dispose();
+            }
+            this.spineRenderer.Dispose();
+        }
     }
 }

@@ -156,8 +156,8 @@
             this.labelX1.Location = new System.Drawing.Point(4, 3);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
-            this.tableLayoutPanel1.SetRowSpan(this.labelX1, 6);
-            this.labelX1.Size = new System.Drawing.Size(55, 144);
+            this.tableLayoutPanel1.SetRowSpan(this.labelX1, 9);
+            this.labelX1.Size = new System.Drawing.Size(55, 214);
             this.labelX1.TabIndex = 0;
             this.labelX1.Text = "설정";
             // 

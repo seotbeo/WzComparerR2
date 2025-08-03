@@ -78,6 +78,15 @@ namespace WzComparerR2.Controls
             }
         }
 
+        public void ResetRenderTarget(Rectangle rect)
+        {
+            this._targetSize = rect.Size;
+            this._viewport = rect;
+            if (_rt2d != null && !_rt2d.IsDisposed) _rt2d.Dispose();
+            _rt2d = new RenderTarget2D(_device, _targetSize.X, _targetSize.Y, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            _device.SetRenderTarget(_rt2d);
+        }
+
         public void Draw()
         {
             System.Threading.Monitor.Enter(this._device);
@@ -364,6 +373,7 @@ namespace WzComparerR2.Controls
 
             _eff.Dispose();
             _sb.Dispose();
+            _graphics.End(true);
         }
     }
 }
