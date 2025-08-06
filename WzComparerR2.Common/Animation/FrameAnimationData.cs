@@ -102,6 +102,14 @@ namespace WzComparerR2.Animation
                 var rb = item.RB;
                 var width = -lt.X + rb.X;
                 var height = -lt.Y + rb.Y;
+                Point origin = new Point(-lt.X, -lt.Y);
+
+                if (length <= 0) continue;
+                if (width <= 0 || height <= 0)
+                {
+                    tmpFrameAnimationData.Frames.Add(new Frame(null, origin, 0, length, true));
+                    continue;
+                }
 
                 var fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), baseColor).ToXnaColor();
 
@@ -120,7 +128,6 @@ namespace WzComparerR2.Animation
                 spriteBatch.End();
                 graphicsDevice.SetRenderTarget(null);
 
-                Point origin = new Point(-lt.X, -lt.Y);
                 var tmpFrame = new Frame((Texture2D)renderTarget, origin, 0, length, true);
                 tmpFrameAnimationData.Frames.Add(tmpFrame);
             }
@@ -144,6 +151,14 @@ namespace WzComparerR2.Animation
                 var pos = item.LT;
                 var x = pos.X;
                 var y = pos.Y;
+                Point origin = new Point(-x + radius, -y + radius);
+
+                if (length <= 0) continue;
+                if (radius <= 0)
+                {
+                    tmpFrameAnimationData.Frames.Add(new Frame(null, origin, 0, length, true));
+                    continue;
+                }
 
                 var fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), baseColor);
 
@@ -162,7 +177,6 @@ namespace WzComparerR2.Animation
                     }
                 }
 
-                Point origin = new Point(-x + radius, -y + radius);
                 var tmpFrame = new Frame(bmp.ToTexture(graphicsDevice), origin, 0, length, true);
                 tmpFrameAnimationData.Frames.Add(tmpFrame);
             }
@@ -354,6 +368,11 @@ namespace WzComparerR2.Animation
             {
                 newOrigin = new Point(frame2.Origin.X, frame2.Origin.Y);
                 return CopyTexture(graphicsDevice, texture2);
+            }
+            else if (texture2 == null)
+            {
+                newOrigin = new Point(frame1.Origin.X, frame1.Origin.Y);
+                return CopyTexture(graphicsDevice, texture1);
             }
 
             int dl = Math.Max(frame2.Origin.X - frame1.Origin.X, 0);

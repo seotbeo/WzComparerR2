@@ -510,7 +510,7 @@ namespace WzComparerR2
                 time += frame.Delay;
             }
 
-            return ret.Where(t => (t.Delay > 0) && (-t.LT.X + t.RB.X > 0) && (-t.LT.Y + t.RB.Y > 0)).ToList();
+            return ret;
         }
 
         public void ShowSpineOverlayAnimation(AnimationItem aniItem, int endPoint)
