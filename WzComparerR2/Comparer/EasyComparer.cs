@@ -1557,7 +1557,15 @@ namespace WzComparerR2.Comparer
                         }
                         using (Bitmap bmp = png.ExtractPng())
                         {
-                            bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                            try
+                            {
+                                bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                            catch
+                            {
+                                fileName = ToHexString(MD5Hash(fileName)) + suffix;
+                                bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                            }
                         }
                         return string.Format("<img src=\"{0}/{1}\" />", isCanvas ? Path.Combine(outputDirName, canvas) : outputDirName, WebUtility.UrlEncode(fileName));
                     }
