@@ -28,6 +28,14 @@ namespace WzComparerR2.Animation
         public IStateMachineAnimationData Data { get; private set; }
 
         public event EventHandler<AnimationEndEventArgs> AnimationEnd;
+        public Point CurrentLT
+        {
+            get { return this.Data.CurrentLT; }
+        }
+        public Point CurrentRB
+        {
+            get { return this.Data.CurrentRB; }
+        }
 
 
         public void SetAnimation(string aniName)
@@ -120,6 +128,16 @@ namespace WzComparerR2.Animation
                 get { return this.selectedIndex < 0 ? null : this.States[selectedIndex]; }
             }
 
+            public Point CurrentLT
+            {
+                get { return this.selectedData.CurrentFrame.LT; }
+            }
+
+            public Point CurrentRB
+            {
+                get { return this.selectedData.CurrentFrame.RB; }
+            }
+
             public event EventHandler AnimationEnd;
 
             protected virtual void OnAnimationEnd(EventArgs e)
@@ -173,6 +191,16 @@ namespace WzComparerR2.Animation
                 {
                     throw new NotImplementedException();
                 }
+            }
+
+            public Point CurrentLT
+            {
+                get { return Point.Zero; }
+            }
+
+            public Point CurrentRB
+            {
+                get { return Point.Zero; }
             }
 
             public ReadOnlyCollection<string> States
