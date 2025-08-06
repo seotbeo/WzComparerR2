@@ -855,7 +855,9 @@ namespace WzComparerR2
         {
             if (this.pictureBoxEx1.ShowOverlayAni)
             {
-                this.pictureBoxEx1.AddHitboxOverlay();
+                Wz_Node node = advTree3.SelectedNode?.AsWzNode() ?? null;
+                var frameData = this.pictureBoxEx1.LoadFrameAnimation(node, loadTexture: false);
+                this.pictureBoxEx1.AddHitboxOverlay(frameData);
             }
         }
         

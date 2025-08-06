@@ -68,7 +68,7 @@ namespace WzComparerR2.Animation
             }
         }
 
-        public static Frame CreateFromNode(Wz_Node frameNode, GraphicsDevice graphicsDevice, GlobalFindNodeFunction findNode)
+        public static Frame CreateFromNode(Wz_Node frameNode, GraphicsDevice graphicsDevice, GlobalFindNodeFunction findNode, bool loadTexture = true)
         {
             if (frameNode == null || frameNode.Value == null)
             {
@@ -93,7 +93,7 @@ namespace WzComparerR2.Animation
                 var linkNode = frameNode.GetLinkedSourceNode(findNode);
                 Wz_Png png = linkNode?.GetValue<Wz_Png>() ?? (Wz_Png)frameNode.Value;
 
-                var frame = new Frame(png.ToTexture(graphicsDevice))
+                var frame = new Frame(loadTexture ? png.ToTexture(graphicsDevice) : null)
                 {
                     Png = png,
                 };

@@ -1,5 +1,4 @@
-﻿using DevComponents.DotNetBar;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -34,7 +33,7 @@ namespace WzComparerR2.Animation
             return bound ?? Rectangle.Empty;
         }
 
-        public static FrameAnimationData CreateFromNode(Wz_Node node, GraphicsDevice graphicsDevice, FrameAnimationCreatingOptions options, GlobalFindNodeFunction findNode)
+        public static FrameAnimationData CreateFromNode(Wz_Node node, GraphicsDevice graphicsDevice, FrameAnimationCreatingOptions options, GlobalFindNodeFunction findNode, bool loadTexture = true)
         {
             if (node == null)
                 return null;
@@ -43,7 +42,7 @@ namespace WzComparerR2.Animation
             {
                 foreach(var frameNode in node.Nodes)
                 {
-                    Frame frame = Frame.CreateFromNode(frameNode, graphicsDevice, findNode);
+                    Frame frame = Frame.CreateFromNode(frameNode, graphicsDevice, findNode, loadTexture);
                     if (frame != null)
                     {
                         anime.Frames.Add(frame);
@@ -58,7 +57,7 @@ namespace WzComparerR2.Animation
 
                     if (frameNode == null || frameNode.Value == null)
                         break;
-                    Frame frame = Frame.CreateFromNode(frameNode, graphicsDevice, findNode);
+                    Frame frame = Frame.CreateFromNode(frameNode, graphicsDevice, findNode, loadTexture);
 
                     if (frame == null)
                         break;
@@ -89,24 +88,20 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        public static FrameAnimationData CreateRectData(GraphicsDevice graphicsDevice, Point lt, Point rb, System.Drawing.Color baseColor, IEnumerable<Tuple<int, int>> alphaTimeline)
+        public static FrameAnimationData CreateRectData(GraphicsDevice graphicsDevice, System.Drawing.Color baseColor, IEnumerable<TimelineData> alphaTimeline)
         {
             var thickness = 2;
-            var width = -lt.X + rb.X;
-            var height = -lt.Y + rb.Y;
-
-            if (width <= 0 || height <= 0)
-            {
-                MessageBoxEx.Show("입력한 범위가 올바르지 않습니다.", "범위 설정 오류");
-                return null;
-            }
 
             var tmpFrameAnimationData = new FrameAnimationData();
             var outlineColor = baseColor.ToXnaColor();
             foreach (var item in alphaTimeline)
             {
-                var alpha = item.Item1;
-                var length = item.Item2;
+                var alpha = item.Alpha;
+                var length = item.Delay;
+                var lt = item.LT;
+                var rb = item.RB;
+                var width = -lt.X + rb.X;
+                var height = -lt.Y + rb.Y;
 
                 var fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), baseColor).ToXnaColor();
 
@@ -136,24 +131,19 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        public static FrameAnimationData CreateCircleData(GraphicsDevice graphicsDevice, Point pos, int radius, System.Drawing.Color baseColor, IEnumerable<Tuple<int, int>> alphaTimeline)
+        public static FrameAnimationData CreateCircleData(GraphicsDevice graphicsDevice, int radius, System.Drawing.Color baseColor, IEnumerable<TimelineData> alphaTimeline)
         {
             int thickness = 2;
-            var x = pos.X;
-            var y = pos.Y;
-
-            if (radius <= 0)
-            {
-                MessageBoxEx.Show("입력한 반지름이 올바르지 않습니다.", "범위 설정 오류");
-                return null;
-            }
 
             var tmpFrameAnimationData = new FrameAnimationData();
             var outlineColor = baseColor;
             foreach (var item in alphaTimeline)
             {
-                var alpha = item.Item1;
-                var length = item.Item2;
+                var alpha = item.Alpha;
+                var length = item.Delay;
+                var pos = item.LT;
+                var x = pos.X;
+                var y = pos.Y;
 
                 var fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), baseColor);
 
@@ -487,6 +477,14 @@ namespace WzComparerR2.Animation
 
             end += result.Count - data.Frames.Count;
             data.Frames = result;
+        }
+
+        public struct TimelineData
+        {
+            public Point LT;
+            public Point RB;
+            public int Alpha;
+            public int Delay;
         }
     }
 

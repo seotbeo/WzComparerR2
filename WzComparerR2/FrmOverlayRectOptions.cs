@@ -15,12 +15,12 @@ namespace WzComparerR2
 {
     public partial class FrmOverlayRectOptions : DevComponents.DotNetBar.Office2007Form
     {
-        public FrmOverlayRectOptions() : this(0, 0, null)
+        public FrmOverlayRectOptions() : this(0, 0, null, false)
         {
 
         }
 
-        public FrmOverlayRectOptions(int s, int e, ImageHandlerConfig config)
+        public FrmOverlayRectOptions(int s, int e, ImageHandlerConfig config, bool enableAutoArea)
         {
             InitializeComponent();
 #if NET6_0_OR_GREATER
@@ -50,8 +50,15 @@ namespace WzComparerR2
 
             this.txtStart.ValueChanged += TxtStart_ValueChanged;
             this.txtEnd.ValueChanged += TxtEnd_ValueChanged;
+            this.chkAutoArea.CheckedChanged += ChkAutoArea_CheckedChanged;
             this.chkIsCircle.CheckedChanged += this.ChkIsCircle_CheckedChanged;
             this.chkAlphaGradation.CheckedChanged += ChkAlphaGradation_CheckedChanged;
+
+            if (!enableAutoArea)
+            {
+                this.chkAutoArea.Checked = false;
+                this.chkAutoArea.Enabled = false;
+            }
         }
 
         public OverlayOptions GetValues(ImageHandlerConfig config)
@@ -74,6 +81,7 @@ namespace WzComparerR2
                 GoX = this.txtGoX.ValueObject as int? ?? 0,
                 GoY = this.txtGoY.ValueObject as int? ?? 0,
 
+                RectAutoArea = this.chkAutoArea.Checked,
                 RectLT = new Point(this.txtLeft.ValueObject as int? ?? 0, this.txtTop.ValueObject as int? ?? 0),
                 RectRB = new Point(this.txtRight.ValueObject as int? ?? 0, this.txtBottom.ValueObject as int? ?? 0),
 
@@ -107,6 +115,28 @@ namespace WzComparerR2
             this.txtStart.MaxValue = value;
         }
 
+        private void ChkAutoArea_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as CheckBoxX).Checked)
+            {
+                this.chkIsCircle.Checked = false;
+                this.txtRight.Enabled = false;
+                this.txtBottom.Enabled = false;
+                this.chkAlphaGradation.Checked = false;
+                this.chkIsCircle.Enabled = false;
+                this.chkAlphaGradation.Enabled = false;
+                this.labelX3.Text = "X,Y 위치";
+            }
+            else
+            {
+                this.txtRight.Enabled = true;
+                this.txtBottom.Enabled = true;
+                this.chkIsCircle.Enabled = true;
+                this.chkAlphaGradation.Enabled = true;
+                this.labelX3.Text = "LT";
+            }
+        }
+
         private void ChkIsCircle_CheckedChanged(object sender, System.EventArgs e)
         {
             if ((sender as CheckBoxX).Checked)
@@ -114,12 +144,14 @@ namespace WzComparerR2
                 this.txtRadius.Enabled = true;
                 this.txtRight.Enabled = false;
                 this.txtBottom.Enabled = false;
+                this.labelX3.Text = "X,Y 위치";
             }
             else
             {
                 this.txtRadius.Enabled = false;
                 this.txtRight.Enabled = true;
                 this.txtBottom.Enabled = true;
+                this.labelX3.Text = "LT";
             }
         }
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpineV2 = Spine.V2;
@@ -89,9 +90,9 @@ namespace WzComparerR2
             return new MaplestoryCanvasVideoLoader().Load(wzVideo, this.GraphicsDevice, origin);
         }
 
-        public FrameAnimationData LoadFrameAnimation(Wz_Node node, FrameAnimationCreatingOptions options = default)
+        public FrameAnimationData LoadFrameAnimation(Wz_Node node, FrameAnimationCreatingOptions options = default, bool loadTexture = true)
         {
-            return FrameAnimationData.CreateFromNode(node, this.GraphicsDevice, options, PluginBase.PluginManager.FindWz);
+            return FrameAnimationData.CreateFromNode(node, this.GraphicsDevice, options, PluginBase.PluginManager.FindWz, loadTexture);
         }
 
         public ISpineAnimationData LoadSpineAnimation(Wz_Node node)
@@ -275,7 +276,7 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
-        public void AddHitboxOverlay()
+        public void AddHitboxOverlay(FrameAnimationData autoData)
         {
             bool removeTopItem = true;
             FrameAnimator baseAniItem;
@@ -301,7 +302,7 @@ namespace WzComparerR2
             */
             var baseDelayAll = this.MaxLength;
 
-            var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll, config);
+            var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll, config, autoData != null);
             OverlayOptions options = new OverlayOptions();
             var frameEnd = 0;
 
@@ -310,18 +311,39 @@ namespace WzComparerR2
                 options = frmOverlayAniOptions.GetValues(config);
 
                 FrameAnimationData aniItemData = null;
-                var alphaTimeline = GetAlphaTimeline(options);
-                frameEnd = alphaTimeline.Count - 1;
-                switch (options.RectType)
+                if (!options.RectAutoArea)
                 {
-                    case 0:
-                        aniItemData = FrameAnimationData.CreateRectData(this.GraphicsDevice, options.RectLT, options.RectRB, config.OverlayRectColor.Value, alphaTimeline);
-                        break;
-                    case 1:
-                        aniItemData = FrameAnimationData.CreateCircleData(this.GraphicsDevice, options.RectLT, options.RectRadius, config.OverlayRectColor.Value, alphaTimeline);
-                        break;
-                    default:
-                        break;
+                    var alphaTimeline = GetAlphaTimeline(options);
+                    frameEnd = alphaTimeline.Count - 1;
+                    switch (options.RectType)
+                    {
+                        case 0:
+                            var width = -options.RectLT.X + options.RectRB.X;
+                            var height = -options.RectLT.Y + options.RectRB.Y;
+                            if (width <= 0 || height <= 0)
+                            {
+                                MessageBoxEx.Show("입력한 범위가 올바르지 않습니다.", "범위 설정 오류");
+                                return;
+                            }
+                            aniItemData = FrameAnimationData.CreateRectData(this.GraphicsDevice, config.OverlayRectColor.Value, alphaTimeline);
+                            break;
+                        case 1:
+                            if (options.RectRadius <= 0)
+                            {
+                                MessageBoxEx.Show("입력한 반지름이 올바르지 않습니다.", "범위 설정 오류");
+                                return;
+                            }
+                            aniItemData = FrameAnimationData.CreateCircleData(this.GraphicsDevice, options.RectRadius, config.OverlayRectColor.Value, alphaTimeline);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else if (autoData != null)
+                {
+                    var alphaTimeline = GetAutoAreaTimeline(options, autoData);
+                    aniItemData = FrameAnimationData.CreateRectData(this.GraphicsDevice, config.OverlayRectColor.Value, alphaTimeline);
+                    frameEnd = aniItemData?.Frames.Count - 1 ?? 0;
                 }
 
                 if (aniItemData == null) return;
@@ -348,16 +370,24 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
-        private List<Tuple<int, int>> GetAlphaTimeline(OverlayOptions options)
+        private List<FrameAnimationData.TimelineData> GetAlphaTimeline(OverlayOptions options)
         {
-            var ret = new List<Tuple<int, int>>();
+            var ret = new List<FrameAnimationData.TimelineData>();
+            var lt = options.RectLT;
+            var rb = options.RectRB;
             var totalLength = options.AniEnd - options.AniStart;
             const int minInterval = 60;
             if (options.RectGradation && options.RectAlphaStart <= options.RectAlphaEnd)
             {
                 if (options.AniStart < options.RectAlphaStart)
                 {
-                    ret.Add(new Tuple<int, int>(options.RectAlpha, options.RectAlphaStart - options.AniStart));
+                    ret.Add(new FrameAnimationData.TimelineData()
+                    {
+                        LT = lt,
+                        RB = rb,
+                        Alpha = options.RectAlpha,
+                        Delay = options.RectAlphaStart - options.AniStart
+                    });
                 }
 
                 var gradationLength = options.RectAlphaEnd - options.RectAlphaStart;
@@ -366,7 +396,13 @@ namespace WzComparerR2
                     var count = gradationLength / minInterval;
                     if (count == 0)
                     {
-                        ret.Add(new Tuple<int, int>((options.RectAlpha + options.RectAlphaDst) / 2, gradationLength));
+                        ret.Add(new FrameAnimationData.TimelineData()
+                        {
+                            LT = lt,
+                            RB = rb,
+                            Alpha = (options.RectAlpha + options.RectAlphaDst) / 2,
+                            Delay = gradationLength
+                        });
                     }
                     else
                     {
@@ -375,22 +411,106 @@ namespace WzComparerR2
                         {
                             var left = gradationLength - length;
                             var alpha = (options.RectAlpha * left + options.RectAlphaDst * length) / (float)gradationLength;
-                            ret.Add(new Tuple<int, int>((int)alpha, (left < minInterval) ? (minInterval + left) : minInterval));
+                            ret.Add(new FrameAnimationData.TimelineData()
+                            {
+                                LT = lt,
+                                RB = rb,
+                                Alpha = (int)alpha,
+                                Delay = (left < minInterval) ? (minInterval + left) : minInterval
+                            });
                         }
                     }
                 }
 
                 if (options.AniEnd > options.RectAlphaEnd)
                 {
-                    ret.Add(new Tuple<int, int>(options.RectAlphaDst, options.AniEnd - options.RectAlphaEnd));
+                    ret.Add(new FrameAnimationData.TimelineData()
+                    {
+                        LT = lt,
+                        RB = rb,
+                        Alpha = options.RectAlphaDst,
+                        Delay = options.AniEnd - options.RectAlphaEnd
+                    });
                 }
             }
             else
             {
-                ret.Add(new Tuple<int, int>(options.RectAlpha, totalLength));
+                ret.Add(new FrameAnimationData.TimelineData()
+                {
+                    LT = lt,
+                    RB = rb,
+                    Alpha = options.RectAlpha,
+                    Delay = totalLength
+                });
             }
 
-            return ret.GroupBy(t => t.Item1).Select(g => Tuple.Create(g.Key, g.Sum(t => t.Item2))).ToList();
+            return ret.GroupBy(t => new { t.Alpha, t.LT, t.RB }).Select(g => new FrameAnimationData.TimelineData()
+                {
+                    LT = g.Key.LT,
+                    RB = g.Key.RB,
+                    Alpha = g.Key.Alpha,
+                    Delay = g.Sum(t => t.Delay)
+                }).ToList();
+        }
+
+        private List<FrameAnimationData.TimelineData> GetAutoAreaTimeline(OverlayOptions options, FrameAnimationData data)
+        {
+            var ret = new List<FrameAnimationData.TimelineData>();
+            var startTime = options.AniStart;
+            var endTime = options.AniEnd;
+            var move = options.RectLT;
+            var time = 0;
+            foreach (var frame in data.Frames)
+            {
+                if (time > endTime) break;
+
+                var delay = frame.Delay;
+                if (time < startTime)
+                {
+                    if (time + frame.Delay > startTime)
+                    {
+                        if (time + frame.Delay <= endTime)
+                        {
+                            delay = time + frame.Delay - startTime;
+                        }
+                        else
+                        {
+                            delay = endTime - startTime;
+                        }
+                        ret.Add(new FrameAnimationData.TimelineData()
+                        {
+                            LT = frame.LT + move,
+                            RB = frame.RB + move,
+                            Alpha = options.RectAlpha,
+                            Delay = delay,
+                        });
+                    }
+                }
+                else if (time + frame.Delay <= endTime)
+                {
+                    ret.Add(new FrameAnimationData.TimelineData()
+                    {
+                        LT = frame.LT + move,
+                        RB = frame.RB + move,
+                        Alpha = options.RectAlpha,
+                        Delay = delay,
+                    });
+                }
+                else if (time + frame.Delay > endTime)
+                {
+                    delay = endTime - time;
+                    ret.Add(new FrameAnimationData.TimelineData()
+                    {
+                        LT = frame.LT + move,
+                        RB = frame.RB + move,
+                        Alpha = options.RectAlpha,
+                        Delay = delay,
+                    });
+                }
+                time += frame.Delay;
+            }
+
+            return ret.Where(t => (t.Delay > 0) && (-t.LT.X + t.RB.X > 0) && (-t.LT.Y + t.RB.Y > 0)).ToList();
         }
 
         public void ShowSpineOverlayAnimation(AnimationItem aniItem, int endPoint)

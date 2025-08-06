@@ -1,4 +1,5 @@
-﻿using DevComponents.DotNetBar.Controls;
+﻿using DevComponents.DotNetBar;
+using DevComponents.DotNetBar.Controls;
 
 namespace WzComparerR2
 {
@@ -31,6 +32,7 @@ namespace WzComparerR2
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOverlayRectOptions));
+            DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo1 = new DevComponents.DotNetBar.SuperTooltipInfo();
             this.buttonOK = new DevComponents.DotNetBar.ButtonX();
             this.buttonCancel = new DevComponents.DotNetBar.ButtonX();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -61,8 +63,10 @@ namespace WzComparerR2
             this.txtAlphaStart = new DevComponents.Editors.IntegerInput();
             this.txtAlphaEnd = new DevComponents.Editors.IntegerInput();
             this.colorPickerButton1 = new DevComponents.DotNetBar.ColorPickerButton();
+            this.chkAutoArea = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkIsCircle = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkAlphaGradation = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLeft)).BeginInit();
@@ -96,7 +100,7 @@ namespace WzComparerR2
             this.buttonOK.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonOK.Symbol = "";
             this.buttonOK.SymbolSize = 1F;
-            this.buttonOK.TabIndex = 18;
+            this.buttonOK.TabIndex = 19;
             this.buttonOK.Text = "OK";
             // 
             // buttonCancel
@@ -110,7 +114,7 @@ namespace WzComparerR2
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(88, 23);
             this.buttonCancel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.buttonCancel.TabIndex = 19;
+            this.buttonCancel.TabIndex = 20;
             this.buttonCancel.Text = "Cancel";
             // 
             // tableLayoutPanel1
@@ -147,6 +151,7 @@ namespace WzComparerR2
             this.tableLayoutPanel1.Controls.Add(this.txtAlphaStart, 2, 12);
             this.tableLayoutPanel1.Controls.Add(this.txtAlphaEnd, 3, 12);
             this.tableLayoutPanel1.Controls.Add(this.colorPickerButton1, 2, 10);
+            this.tableLayoutPanel1.Controls.Add(this.chkAutoArea, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.chkIsCircle, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.chkAlphaGradation, 1, 11);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -683,6 +688,23 @@ namespace WzComparerR2
             this.colorPickerButton1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.colorPickerButton1.TabIndex = 11;
             // 
+            // chkAutoArea
+            // 
+            // 
+            // 
+            // 
+            this.chkAutoArea.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkAutoArea.Location = new System.Drawing.Point(3, 55);
+            this.chkAutoArea.Name = "chkAutoArea";
+            this.chkAutoArea.Size = new System.Drawing.Size(57, 19);
+            this.chkAutoArea.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkAutoArea.TabIndex = 17;
+            this.chkAutoArea.Text = "자동";
+            superTooltipInfo1.BodyText = "현재 선택된 노드에서 하위 프레임들의 LT, RB를 찾아서 그립니다.";
+            superTooltipInfo1.Color = DevComponents.DotNetBar.eTooltipColor.System;
+            superTooltipInfo1.FooterVisible = false;
+            this.superTooltip1.SetSuperTooltip(this.chkAutoArea, superTooltipInfo1);
+            // 
             // chkIsCircle
             // 
             // 
@@ -693,7 +715,7 @@ namespace WzComparerR2
             this.chkIsCircle.Name = "chkIsCircle";
             this.chkIsCircle.Size = new System.Drawing.Size(57, 19);
             this.chkIsCircle.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkIsCircle.TabIndex = 17;
+            this.chkIsCircle.TabIndex = 18;
             this.chkIsCircle.Text = "원";
             // 
             // chkAlphaGradation
@@ -798,8 +820,10 @@ namespace WzComparerR2
         private DevComponents.DotNetBar.LabelX labelX10;
         private DevComponents.DotNetBar.LabelX labelX11;
         private DevComponents.DotNetBar.LabelX labelX12;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkAutoArea;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkIsCircle;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkAlphaGradation;
         private DevComponents.DotNetBar.ColorPickerButton colorPickerButton1;
+        private DevComponents.DotNetBar.SuperTooltip superTooltip1;
     }
 }
