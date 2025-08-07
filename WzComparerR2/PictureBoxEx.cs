@@ -582,19 +582,21 @@ namespace WzComparerR2
                 multiAniItem.Position = new Point(-rect.Left, -rect.Top);
             }
 
+            var l = (int)(-rect.Left * this.GlobalScale);
+            var t = (int)(-rect.Top * this.GlobalScale);
             foreach (var item in this.Items)
             {
                 if (item is FrameAnimator frameAni)
                 {
-                    frameAni.Position = new Point(-rect.Left, -rect.Top);
+                    frameAni.Position = new Point(l, t);
                 }
                 else if (item is AnimationItem aniItem)
                 {
-                    aniItem.Position = new Point(-rect.Left, -rect.Top);
+                    aniItem.Position = new Point(l, t);
                 }
                 else if (item is MultiFrameAnimator multiAniItem)
                 {
-                    multiAniItem.Position = new Point(-rect.Left, -rect.Top);
+                    multiAniItem.Position = new Point(l, t);
                 }
             }
         }
