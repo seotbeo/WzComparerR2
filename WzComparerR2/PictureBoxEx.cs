@@ -1073,6 +1073,24 @@ namespace WzComparerR2
                         }
                     }
                     break;
+                case MultiFrameAnimator multiFrameAni:
+                    if (multiFrameAni?.Data?.Frames != null)
+                    {
+                        foreach (var kv in multiFrameAni?.Data?.Frames)
+                        {
+                            if (kv.Value != null)
+                            {
+                                foreach (var frame in kv.Value)
+                                {
+                                    if (frame.Texture != null && !frame.Texture.IsDisposed)
+                                    {
+                                        frame.Texture.Dispose();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case SpineAnimatorV2 spineV2:
                     if (spineV2.Skeleton != null)
                     {

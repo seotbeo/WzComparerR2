@@ -756,6 +756,39 @@ namespace WzComparerR2
 
                     if (multiData != null)
                     {
+                        var aniItem = new MultiFrameAnimator(multiData);
+
+                        var frmOverlayAniOptions = new FrmOverlaySpineOptions(aniItem);
+                        var name = "";
+                        var skin = "";
+                        var delay = 0;
+
+                        if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
+                        {
+                            frmOverlayAniOptions.GetValues(out name, out skin, out delay);
+
+                            foreach (var kv_frames in aniItem.Data.Frames)
+                            {
+                                var selectedFrameData = new FrameAnimationData(kv_frames.Value);
+                                if (kv_frames.Key == name)
+                                {
+                                    this.pictureBoxEx1.ShowOverlayAnimation(new FrameAnimationData(aniItem.Data.Frames[name]), multiFrameInfo: name);
+                                    this.cmbItemAniNames.Items.Clear();
+                                    this.cmbItemSkins.Visible = false;
+                                    this.pictureBoxEx1.PictureName = $"{aniName}_{name}";
+                                }
+                                else
+                                {
+                                    this.pictureBoxEx1.DisposeAnimationItem(new FrameAnimator(selectedFrameData));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.pictureBoxEx1.DisposeAnimationItem(aniItem);
+                        }
+
+                        /*
                         foreach (var kv_frames in multiData.Frames)
                         {
                             var selectedFrameData = new FrameAnimationData(kv_frames.Value);
@@ -765,6 +798,7 @@ namespace WzComparerR2
                         this.cmbItemAniNames.Items.Clear();
                         this.cmbItemSkins.Visible = false;
                         this.pictureBoxEx1.PictureName = aniName;
+                        */
                     }
 
                     return;

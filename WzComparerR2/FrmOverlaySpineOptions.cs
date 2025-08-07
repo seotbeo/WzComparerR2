@@ -21,10 +21,23 @@ namespace WzComparerR2
             this.Font = new Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 #endif
             this.aniItem = aniItem;
-            var names = (this.aniItem as ISpineAnimator).Animations.ToArray();
-            var skins = (this.aniItem as ISpineAnimator).Skins.ToArray();
-            this.comboBoxEx1.Items.AddRange(names);
-            this.comboBoxEx2.Items.AddRange(skins);
+            bool isMultiFrameAni = aniItem is MultiFrameAnimator;
+            if (isMultiFrameAni)
+            {
+                this.Text = "멀티 프레임 애니메이션 중첩 설정";
+                var names = (this.aniItem as MultiFrameAnimator).Animations.ToArray();
+                this.comboBoxEx1.Items.AddRange(names);
+                this.comboBoxEx2.Items.Add("");
+                this.comboBoxEx2.Enabled = false;
+                this.txtDelay.Enabled = false;
+            }
+            else
+            {
+                var names = (this.aniItem as ISpineAnimator).Animations.ToArray();
+                var skins = (this.aniItem as ISpineAnimator).Skins.ToArray();
+                this.comboBoxEx1.Items.AddRange(names);
+                this.comboBoxEx2.Items.AddRange(skins);
+            }
             this.comboBoxEx1.SelectedIndexChanged += ComboBoxEx1_SelectedIndexChanged;
             this.comboBoxEx2.SelectedIndexChanged += ComboBoxEx2_SelectedIndexChanged;
             this.comboBoxEx1.SelectedIndex = 0;
@@ -39,7 +52,12 @@ namespace WzComparerR2
             var name = this.comboBoxEx1.SelectedItem as string;
             if (!string.IsNullOrEmpty(name))
             {
-                (aniItem as ISpineAnimator).SelectedAnimationName = name;
+                switch (aniItem)
+                {
+                    case ISpineAnimator spine:
+                        spine.SelectedAnimationName = name;
+                        break;
+                }
             }
             this.txtDelay.Value = aniItem.Length;
         }
@@ -49,7 +67,12 @@ namespace WzComparerR2
             var skin = this.comboBoxEx2.SelectedItem as string;
             if (!string.IsNullOrEmpty(skin))
             {
-                (aniItem as ISpineAnimator).SelectedSkin = skin;
+                switch (aniItem)
+                {
+                    case ISpineAnimator spine:
+                        spine.SelectedSkin = skin;
+                        break;
+                }
             }
             this.txtDelay.Value = aniItem.Length;
         }

@@ -2120,8 +2120,7 @@
             this.itemContainer44.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.buttonDisableOverlayAni,
             this.buttonHitboxOverlay,
-            this.buttonOverlayExtractGifEx,
-            this.buttonLoadMultiFrameAniList});
+            this.buttonOverlayExtractGifEx});
             // 
             // 
             // 
@@ -2147,7 +2146,7 @@
             this.buttonOverlayExtractGifEx.Tooltip = "0부터 순서대로가 아닌, 모든 하위 노드에서 애니메이션을 불러와서 중첩합니다.";
             this.buttonOverlayExtractGifEx.Click += new System.EventHandler(this.buttonItemGif2_Click);
             // 
-            // buttonOverlayRect
+            // buttonLoadMultiFrameAniList
             // 
             this.buttonLoadMultiFrameAniList.Name = "buttonLoadMultiFrameAniList";
             this.buttonLoadMultiFrameAniList.Text = "멀티프레임 로드";
