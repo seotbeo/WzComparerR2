@@ -21,6 +21,7 @@ namespace WzComparerR2.MapRender
             this.DefaultTagVisible = true;
             this.IlluminantClusterVisible = true;
             this.SpringPortalPathVisible = true;
+            this.PortalRangeVisible = true;
             this.ObstacleAreaVisible = true;
             this.MobHitboxVisible = true;
             this.CaptureRectVisible = true;
@@ -79,6 +80,8 @@ namespace WzComparerR2.MapRender
         public bool IlluminantClusterPathVisible { get; set; }
 
         public bool SpringPortalPathVisible { get; set; }
+
+        public bool PortalRangeVisible { get; set; }
 
         public bool ObstacleAreaVisible { get; set; }
 

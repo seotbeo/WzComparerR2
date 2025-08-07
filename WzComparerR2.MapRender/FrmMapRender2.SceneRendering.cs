@@ -491,41 +491,67 @@ namespace WzComparerR2.MapRender
                 }
             }
 
-            if (patchVisibility.SpringPortalPathVisible)
+            if (patchVisibility.PortalVisible && patchVisibility.PortalInEditMode)
             {
-                var lines = new List<Point>();
-                var portalList = this.mapData.Scene.Fly.Portal.Slots.OfType<PortalItem>().Where(p => p.IsSpring);
-                var arrowScaler = 15;
-                var barScaler = 0;
-                foreach (var item in portalList)
+                if (patchVisibility.SpringPortalPathVisible)
                 {
-                    var angle = Math.Atan2(item.VerticalImpact, item.HorizontalImpact);
-                    var sin = Math.Sin(angle);
-                    var cos = Math.Cos(angle);
-                    Point arrow1 = new Point((int)((cos + sin) * -arrowScaler), (int)((cos - sin) * -arrowScaler));
-                    Point arrow2 = new Point((int)((sin - cos) * arrowScaler), (int)((cos + sin) * arrowScaler));
-
-                    foreach (var d in new[] { -3, 0, 3 })
+                    var lines = new List<Point>();
+                    var portalList = this.mapData.Scene.Fly.Portal.Slots.OfType<PortalItem>().Where(p => p.IsSpring);
+                    var arrowScaler = 15;
+                    var barScaler = 0;
+                    foreach (var item in portalList)
                     {
-                        var d2 = Math.Abs(d) * barScaler + 1;
-                        Point start = new Point(item.X + d * 15, item.Y);
-                        Point end = new Point((int)(item.X + item.HorizontalImpact / (d2 * 5) + d * 15), (int)(item.Y - item.VerticalImpact / (d2 * 5)));
+                        var angle = Math.Atan2(item.VerticalImpact, item.HorizontalImpact);
+                        var sin = Math.Sin(angle);
+                        var cos = Math.Cos(angle);
+                        Point arrow1 = new Point((int)((cos + sin) * -arrowScaler), (int)((cos - sin) * -arrowScaler));
+                        Point arrow2 = new Point((int)((sin - cos) * arrowScaler), (int)((cos + sin) * arrowScaler));
 
-                        lines.Add(start);
-                        lines.Add(end);
-                        lines.Add(end);
-                        lines.Add(new Point((int)(end.X + arrow1.X / d2), (int)(end.Y + arrow1.Y / d2)));
-                        lines.Add(end);
-                        lines.Add(new Point((int)(end.X + arrow2.X / d2), (int)(end.Y + arrow2.Y / d2)));
+                        foreach (var d in new[] { -3, 0, 3 })
+                        {
+                            var d2 = Math.Abs(d) * barScaler + 1;
+                            Point start = new Point(item.X + d * 15, item.Y);
+                            Point end = new Point((int)(item.X + item.HorizontalImpact / (d2 * 5) + d * 15), (int)(item.Y - item.VerticalImpact / (d2 * 5)));
+
+                            lines.Add(start);
+                            lines.Add(end);
+                            lines.Add(end);
+                            lines.Add(new Point((int)(end.X + arrow1.X / d2), (int)(end.Y + arrow1.Y / d2)));
+                            lines.Add(end);
+                            lines.Add(new Point((int)(end.X + arrow2.X / d2), (int)(end.Y + arrow2.Y / d2)));
+                        }
+                    }
+
+                    if (lines.Count > 0)
+                    {
+                        var meshItem = this.batcher.MeshPop();
+                        meshItem.RenderObject = new LineListMesh(lines.ToArray(), color, 1);
+                        this.batcher.Draw(meshItem);
+                        this.batcher.MeshPush(meshItem);
                     }
                 }
-
-                if (lines.Count > 0)
+                if (patchVisibility.PortalRangeVisible)
                 {
-                    var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new LineListMesh(lines.ToArray(), color, 1);
-                    this.batcher.Draw(meshItem);
-                    this.batcher.MeshPush(meshItem);
+                    var rectList = new List<Rectangle>();
+                    var portalList = this.mapData.Scene.Fly.Portal.Slots.OfType<PortalItem>().Where(p => p.HRange > 0 && p.VRange > 0);
+                    foreach (var portal in portalList)
+                    {
+                        var x = portal.X;
+                        var y = portal.Y;
+                        var w = portal.HRange;
+                        var h = portal.VRange;
+
+                        Rectangle rect = new Rectangle(x - w / 2, y - h / 2, w, h);
+                        rectList.Add(rect);
+                    }
+
+                    foreach (var rect in rectList)
+                    {
+                        var meshItem = this.batcher.MeshPop();
+                        meshItem.RenderObject = new RectMesh(rect, color, 1, alpha: 0.3);
+                        this.batcher.Draw(meshItem);
+                        this.batcher.MeshPush(meshItem);
+                    }
                 }
             }
 

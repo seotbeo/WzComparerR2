@@ -14,11 +14,11 @@ namespace WzComparerR2.MapRender
         {
         }
 
-        public RectMesh(Rectangle rect, Color color, int thickness)
+        public RectMesh(Rectangle rect, Color color, int thickness, double alpha = 0.5)
         {
             this.Rect = rect;
             this.Color = color;
-            this.FillColor = new Color(color, (int)(color.A * 0.6));
+            this.FillColor = new Color(color, (int)(color.A * alpha));
             this.Thickness = thickness;
         }
 

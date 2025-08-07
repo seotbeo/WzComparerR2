@@ -50,6 +50,7 @@ namespace WzComparerR2.MapRender
             this.patchVisibility.SkyWhaleVisible = false;
             this.patchVisibility.IlluminantClusterPathVisible = false;
             this.patchVisibility.SpringPortalPathVisible = false;
+            this.patchVisibility.PortalRangeVisible = false;
             this.patchVisibility.ObstacleAreaVisible = false;
             this.patchVisibility.MobHitboxVisible = false;
             this.patchVisibility.CaptureRectVisible = false;
@@ -272,6 +273,7 @@ namespace WzComparerR2.MapRender
                 this.patchVisibility.SkyWhaleVisible = !visible;
                 this.patchVisibility.IlluminantClusterPathVisible = !visible;
                 this.patchVisibility.SpringPortalPathVisible = !visible;
+                this.patchVisibility.PortalRangeVisible = !visible;
                 this.patchVisibility.ObstacleAreaVisible = !visible;
             }), KeyCode.D7, ModifierKeys.Control));
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ =>

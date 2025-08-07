@@ -15,6 +15,8 @@ namespace WzComparerR2.MapRender.Patches2
         public int Y { get; set; }
         public int HorizontalImpact { get; set; }
         public int VerticalImpact { get; set; }
+        public int HRange { get; set; }
+        public int VRange { get; set; }
         public int? ToMap { get; set; }
         public string ToName { get; set; }
         //Graph.img에 따른 이동경로 출력
@@ -44,6 +46,8 @@ namespace WzComparerR2.MapRender.Patches2
                 Y = node.Nodes["y"].GetValueEx(0),
                 HorizontalImpact = node.Nodes["horizontalImpact"].GetValueEx(0),
                 VerticalImpact = node.Nodes["verticalImpact"].GetValueEx(0),
+                HRange = node.Nodes["hRange"].GetValueEx(0),
+                VRange = node.Nodes["vRange"].GetValueEx(0),
                 ToMap = node.Nodes["tm"].GetValueEx<int>(),
                 ToName = node.Nodes["tn"].GetValueEx<string>(null),
                 Script = node.Nodes["script"].GetValueEx<string>(null),

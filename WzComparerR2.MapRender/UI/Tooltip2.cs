@@ -247,6 +247,11 @@ namespace WzComparerR2.MapRender.UI
                 }
             }
 
+            if (item.HRange > 0 && item.VRange > 0)
+            {
+                sb.AppendLine($"범위: {item.HRange}×{item.VRange}");
+            }
+
             sb.Length -= 2;
 
             blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, sb.ToString(), ref current, Color.White, ref size.X));
