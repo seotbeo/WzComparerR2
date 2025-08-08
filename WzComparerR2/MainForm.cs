@@ -985,6 +985,7 @@ namespace WzComparerR2
                 }
                 else
                 {
+                    pngFileName = string.Join("_", pngFileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.None));
                     var dlg = new SaveFileDialog();
                     dlg.Filter = "PNG (*.png)|*.png|모든 파일 (*.*)|*.*";
                     dlg.FileName = pngFileName;
@@ -1013,6 +1014,7 @@ namespace WzComparerR2
                 }
                 else
                 {
+                    pngFileName = string.Join("_", pngFileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.None));
                     var dlg = new SaveFileDialog();
                     dlg.Filter = "PNG (*.png)|*.png|모든 파일 (*.*)|*.*";
                     dlg.FileName = pngFileName;
@@ -1071,6 +1073,7 @@ namespace WzComparerR2
             }
             else
             {
+                aniFileName = string.Join("_", aniFileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.None));
                 var dlg = new SaveFileDialog();
                 string extensionFilter = string.Join(";", cap.SupportedExtensions.Select(ext => $"*{ext}"));
                 dlg.Filter = string.Format("{0} 지원 파일({1})|{1}|모든 파일(*.*)|*.*", encoder.Name, extensionFilter);
