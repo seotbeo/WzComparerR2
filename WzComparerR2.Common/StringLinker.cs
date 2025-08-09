@@ -18,26 +18,34 @@ namespace WzComparerR2.Common
             stringSkill = new Dictionary<int, StringResult>();
             stringSkill2 = new Dictionary<string, StringResult>();
             stringSetItem = new Dictionary<int, StringResult>();
+            stringQuest = new Dictionary<int, StringResult>();
         }
 
-        public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode)
+        public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
         {
             if (stringNode == null || itemNode == null || etcNode == null)
                 return false;
 
-            return Load(stringNode, itemNode, etcNode, update: true);
+            return Load(stringNode, itemNode, etcNode, questNode, update: true);
         }
 
         public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz)
         {
-            if (stringWz == null || stringWz.Node == null || itemWz == null || itemWz.Node == null || etcWz == null || etcWz.Node == null)
+            return Load(stringWz, itemWz, etcWz, null);
+        }
+
+        public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz)
+        {
+            if (stringWz == null || stringWz.Node == null ||
+                itemWz == null || itemWz.Node == null ||
+                etcWz == null || etcWz.Node == null)
                 return false;
             this.Clear();
 
-            return Load(stringWz.Node, itemWz.Node, etcWz.Node);
+            return Load(stringWz.Node, itemWz.Node, etcWz.Node, questWz.Node);
         }
 
-        public bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, bool update = false)
+        public bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, bool update = false)
         {
             int id;
             foreach (Wz_Node node in stringNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
@@ -354,6 +362,49 @@ namespace WzComparerR2.Common
                 }
             }
 
+            Wz_Node qDataNode = questNode?.FindNodeByPath("QuestData");
+            Wz_Node qInfoNode = null;
+            bool newQuestDir = true;
+            if (qDataNode == null)
+            {
+                qDataNode = questNode?.FindNodeByPath("QuestInfo.img");
+                Wz_Image image = qDataNode.Value as Wz_Image;
+                if (image != null && image.TryExtract())
+                {
+                    qDataNode = image.Node;
+                    newQuestDir = false;
+                }
+            }
+            foreach (Wz_Node node in qDataNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            {
+                Wz_Node tree = node;
+                if (node.Value is Wz_Image image)
+                {
+                    if (image == null)
+                        continue;
+
+                    if (!image.TryExtract()) continue;
+                    tree = image.Node;
+                }
+                qInfoNode = newQuestDir ? tree.FindNodeByPath("QuestInfo") : tree;
+                if (Int32.TryParse(tree.Text.Replace(".img", ""), out id) && qInfoNode.ResolveUol() is Wz_Node linkNode && linkNode != null)
+                {
+                    StringResult strResult = null;
+                    if (update)
+                    {
+                        try { strResult = stringQuest[id]; }
+                        catch { }
+                    }
+                    if (strResult == null) strResult = new StringResult();
+
+                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                    strResult.FullPath = (newQuestDir ? "QuestData\\" : "") + tree.FullPath;
+
+                    AddAllValue(strResult, linkNode);
+                    stringQuest[id] = strResult;
+                }
+            }
+
             return this.HasValues;
         }
 
@@ -367,6 +418,7 @@ namespace WzComparerR2.Common
             stringSkill.Clear();
             stringSkill2.Clear();
             stringSetItem.Clear();
+            stringQuest.Clear();
         }
 
         public bool HasValues
@@ -374,7 +426,7 @@ namespace WzComparerR2.Common
             get
             {
                 return (stringEqp.Count + stringItem.Count + stringMap.Count +
-                    stringMob.Count + stringNpc.Count + stringSkill.Count + stringSetItem.Count > 0);
+                    stringMob.Count + stringNpc.Count + stringSkill.Count + stringSetItem.Count + stringQuest.Count > 0);
             }
         }
 
@@ -386,6 +438,7 @@ namespace WzComparerR2.Common
         private Dictionary<int, StringResult> stringSkill;
         private Dictionary<string, StringResult> stringSkill2;
         private Dictionary<int, StringResult> stringSetItem;
+        private Dictionary<int, StringResult> stringQuest;
 
         private string GetDefaultString(Wz_Node node, string searchNodeText)
         {
@@ -444,5 +497,9 @@ namespace WzComparerR2.Common
             get { return stringSetItem; }
         }
 
+        public Dictionary<int, StringResult> StringQuest
+        {
+            get { return stringQuest; }
+        }
     }
 }

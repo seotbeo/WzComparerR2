@@ -65,6 +65,12 @@ namespace WzComparerR2.Config
             get { return (CharaSimNpcConfig)this["npc"]; }
         }
 
+        [ConfigurationProperty("quest")]
+        public CharaSimQuestConfig Quest
+        {
+            get { return (CharaSimQuestConfig)this["quest"]; }
+        }
+
         [ConfigurationProperty("misc")]
         public CharaSimMiscConfig Misc
         {

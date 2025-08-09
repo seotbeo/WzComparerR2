@@ -50,7 +50,7 @@ namespace WzComparerR2.Rendering
             return regions;
         }
 
-        protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID)
+        protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string ImageID)
         {
             var color = this.GetColor(colorID);
             var pos = new Microsoft.Xna.Framework.Vector2(x, y);

@@ -30,6 +30,7 @@ namespace WzComparerR2.CharaSimControl
             this.MapRender = new MapTooltipRenderer();
             this.MobRender = new MobTooltipRenderer();
             this.NpcRender = new NpcTooltipRenderer();
+            this.QuestRender = new QuestTooltipRenderer();
             this.HelpRender = new HelpTooltipRender();
             this.SetItemRender = new SetItemTooltipRender();
             this.SetItemRender22 = new SetItemTooltipRender22();
@@ -63,6 +64,7 @@ namespace WzComparerR2.CharaSimControl
         public MapTooltipRenderer MapRender { get; private set; }
         public MobTooltipRenderer MobRender { get; private set; }
         public NpcTooltipRenderer NpcRender { get; private set; }
+        public QuestTooltipRenderer QuestRender { get; private set; }
         public HelpTooltipRender HelpRender { get; private set; }
         public SetItemTooltipRender SetItemRender { get; private set; }
         public SetItemTooltipRender22 SetItemRender22 { get; private set; }
@@ -81,6 +83,7 @@ namespace WzComparerR2.CharaSimControl
                 this.GearRender22.ShowObjectID = value;
                 this.ItemRender.ShowObjectID = value;
                 this.ItemRender22.ShowObjectID = value;
+                this.QuestRender.ShowObjectID = value;
                 this.SkillRender.ShowObjectID = value;
                 this.RecipeRender.ShowObjectID = value;
             }
@@ -263,6 +266,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 renderer = NpcRender;
                 NpcRender.NpcInfo = this.item as Npc;
+            }
+            else if (item is Quest)
+            {
+                renderer = QuestRender;
+                QuestRender.Quest = this.item as Quest;
             }
             else if (item is TooltipHelp)
             {

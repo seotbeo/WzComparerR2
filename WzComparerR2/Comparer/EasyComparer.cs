@@ -118,7 +118,8 @@ namespace WzComparerR2.Comparer
                         this.StringLinkerNewOld[i] = new StringLinker();
                         this.StringLinkerNewOld[i].Load(WzNewOld[i]?.FindNodeByPath("String").GetNodeWzFile(),
                             WzNewOld[i]?.FindNodeByPath("Item").GetNodeWzFile(),
-                            WzNewOld[i]?.FindNodeByPath("Etc").GetNodeWzFile());
+                            WzNewOld[i]?.FindNodeByPath("Etc").GetNodeWzFile(),
+                            WzNewOld[i]?.FindNodeByPath("Quest").GetNodeWzFile());
                     }
                 }
 

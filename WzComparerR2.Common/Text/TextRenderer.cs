@@ -54,9 +54,16 @@ namespace WzComparerR2.Text
                 if (elem is Span)
                 {
                     var span = (Span)elem;
-                    int start = sb.Length;
-                    sb.Append(span.Text);
-                    runs.Add(new Run(start, sb.Length - start) { ColorID = span.ColorID });
+                    if (!span.IsImage)
+                    {
+                        int start = sb.Length;
+                        sb.Append(span.Text);
+                        runs.Add(new Run(start, sb.Length - start) { ColorID = span.ColorID, FontID = span.FontID });
+                    }
+                    else
+                    {
+                        runs.Add(new Run(sb.Length, 0) { ColorID = span.ColorID, FontID = span.FontID, ImageID = span.ImageID, ImageWidth = Math.Max(span.ImageWidth, 32) });
+                    }
                 }
                 else if (elem is LineBreak)
                 {
@@ -94,6 +101,10 @@ namespace WzComparerR2.Text
             {
                 runs.Add(run);
             }
+            else if (run.IsImage)
+            {
+                runs.Add(run);
+            }
             else
             {
                 for (int i = run.StartIndex, i0 = run.StartIndex + run.Length; i < i0; i++)
@@ -111,7 +122,7 @@ namespace WzComparerR2.Text
                                 }
                             }
                             len = (i--) - start;
-                            runs.Add(new Run(start, len) { IsWhiteSpace = true, ColorID = run.ColorID });
+                            runs.Add(new Run(start, len) { IsWhiteSpace = true, ColorID = run.ColorID, FontID = run.FontID });
                             break;
 
                         case '\r':
@@ -143,11 +154,11 @@ namespace WzComparerR2.Text
                                 }
 
                                 len = (i--) - start;
-                                runs.Add(new Run(start, len) { ColorID = run.ColorID });
+                                runs.Add(new Run(start, len) { ColorID = run.ColorID, FontID = run.FontID });
                             }
                             else
                             {
-                                runs.Add(new Run(start, 1) { ColorID = run.ColorID });
+                                runs.Add(new Run(start, 1) { ColorID = run.ColorID, FontID = run.FontID });
                             }
                             break;
                     }
@@ -166,7 +177,7 @@ namespace WzComparerR2.Text
 
         protected abstract Rectangle[] MeasureChars(int startIndex, int length);
 
-        protected abstract void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string ColorID);
+        protected abstract void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string ColorID, string FontID, string ImageID);
 
         private List<PositionedText> LayoutRuns(List<Run> runs, int width, ref int y, int lineHeight, TextAlignment alignment)
         {
@@ -177,8 +188,10 @@ namespace WzComparerR2.Text
 
             int curX = drawX;
             string colorID = null;
+            string fontID = null;
             List<PositionedText> result = new();
             int lastLineStartIndex = 0;
+            bool applyImageHeightOnThisLine = true;
 
             bool hasContent() => start > -1 && end > start;
             void flush(bool isNewLine)
@@ -191,7 +204,8 @@ namespace WzComparerR2.Text
                         Length = end - start,
                         X = drawX,
                         Y = drawY,
-                        ColorID = colorID
+                        ColorID = colorID,
+                        FontID = fontID
                     });
                 }
                 if (isNewLine)
@@ -214,6 +228,7 @@ namespace WzComparerR2.Text
                     drawX = curX = 0;
                     drawY += lineHeight;
                     lastLineStartIndex = result.Count;
+                    applyImageHeightOnThisLine = true;
                 }
                 else
                 {
@@ -251,6 +266,13 @@ namespace WzComparerR2.Text
                         flush(false);
                         colorID = run.ColorID;
                     }
+                    if (!run.IsWhiteSpace && run.FontID != fontID)
+                    {
+                        end = run.StartIndex;
+                        curX = run.X - xOffset;
+                        flush(false);
+                        fontID = run.FontID;
+                    }
 
                     if (start < 0)
                     {
@@ -265,7 +287,7 @@ namespace WzComparerR2.Text
                             if (curX > 0) //(hasContent())
                             { //有内容
                                 // 判断行尾标点是否追加
-                                if (run.ColorID == colorID && run.Length == 1 && ",.".IndexOf(this.sb[run.StartIndex]) > -1)
+                                if ((run.ColorID == colorID || run.FontID == fontID) && run.Length == 1 && ",.".IndexOf(this.sb[run.StartIndex]) > -1)
                                 {
                                     end = run.StartIndex + run.Length;
                                     if (++r >= runs.Count)
@@ -274,7 +296,8 @@ namespace WzComparerR2.Text
                                     }
                                     run = runs[r];
                                 }
-                                if (run.ColorID == colorID && run.ColorID == "" && run.Length == 1 && this.sb[run.StartIndex] == ' ')
+                                if (((run.ColorID == colorID && run.ColorID == "") || (run.FontID == fontID && run.FontID == ""))
+                                    && run.Length == 1 && this.sb[run.StartIndex] == ' ')
                                 {
                                     end = run.StartIndex + run.Length;
                                     if (++r >= runs.Count)
@@ -296,6 +319,7 @@ namespace WzComparerR2.Text
                                 {
                                     start = run.StartIndex;
                                     colorID = run.ColorID;
+                                    fontID = run.FontID;
                                 }
                                 xOffset = run.X;
                             }
@@ -342,6 +366,33 @@ namespace WzComparerR2.Text
                         }
                     }
 
+                    if (run.IsImage)
+                    {
+                        if (applyImageHeightOnThisLine)
+                        {
+                            applyImageHeightOnThisLine = false;
+                            var dy = Math.Max(32 - lineHeight, 0);
+                            drawY += dy;
+                            for (int i = lastLineStartIndex; i < result.Count; i++)
+                            {
+                                result[i].Y = drawY;
+                            }
+                        }
+                        flush(false);
+                        result.Add(new PositionedText()
+                        {
+                            StartIndex = 0,
+                            Length = 0,
+                            X = drawX,
+                            Y = drawY,
+                            ColorID = colorID,
+                            FontID = fontID,
+                            ImageID = run.ImageID
+                        });
+                        curX += run.Width;
+                        drawX = curX;
+                    }
+
                     //正常绘制
                     end = run.StartIndex + run.Length;
                     curX = run.X + run.Width - xOffset;
@@ -358,7 +409,7 @@ namespace WzComparerR2.Text
         {
             foreach (PositionedText text in texts)
             {
-                this.Flush(sb, text.StartIndex, text.Length, text.X, text.Y, text.ColorID);
+                this.Flush(sb, text.StartIndex, text.Length, text.X, text.Y, text.ColorID, text.FontID, text.ImageID);
             }
         }
 
@@ -369,6 +420,8 @@ namespace WzComparerR2.Text
             public int X;
             public int Y;
             public string ColorID;
+            public string FontID;
+            public string ImageID;
         }
     }
 
@@ -387,5 +440,12 @@ namespace WzComparerR2.Text
         public int X;
         public int Width;
         public string ColorID;
+        public string FontID;
+        public string ImageID;
+        public int ImageWidth;
+        public bool IsImage
+        {
+            get { return !string.IsNullOrEmpty(this.ImageID); }
+        }
     }
 }

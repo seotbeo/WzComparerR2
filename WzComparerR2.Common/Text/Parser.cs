@@ -16,7 +16,9 @@ namespace WzComparerR2.Text
             var elements = new List<DocElement>();
             var sb = new StringBuilder();
             var colorStack = new Stack<string>();
+            var fontStack = new Stack<string>();
             colorStack.Push("");
+            fontStack.Push("");
 
             int strPos = 0;
             char curChar;
@@ -30,9 +32,45 @@ namespace WzComparerR2.Text
                     elements.Add(new Span()
                     {
                         Text = sb.ToString(offset, sb.Length - offset),
-                        ColorID = colorStack.Peek()
+                        ColorID = colorStack.Peek(),
+                        FontID = fontStack.Peek(),
                     });
                     offset = sb.Length;
+                }
+            };
+
+            Action<string> appendImage = (str) =>
+            {
+                var split = str.Split('/');
+                int id = 0;
+                int width = 0;
+                if (split.Length == 1)
+                {
+                    if (int.TryParse(split[0], out id))
+                    {
+                        elements.Add(new Span()
+                        {
+                            Text = "",
+                            ColorID = colorStack.Peek(),
+                            FontID = fontStack.Peek(),
+                            ImageID = id.ToString(),
+                            ImageWidth = 32,
+                        });
+                    }
+                }
+                else if (split.Length > 1)
+                {
+                    if (int.TryParse(split[0], out id) && int.TryParse(split[1], out width))
+                    {
+                        elements.Add(new Span()
+                        {
+                            Text = "",
+                            ColorID = colorStack.Peek(),
+                            FontID = fontStack.Peek(),
+                            ImageID = id.ToString(),
+                            ImageWidth = width,
+                        });
+                    }
                 }
             };
 
@@ -71,11 +109,46 @@ namespace WzComparerR2.Text
                             strPos++;
                         }
                         else if (strPos < format.Length && format[strPos] == '$'
-                            && strPos + 1 < format.Length )//遇到#$(自定义) 更换为自定义颜色表
+                            && strPos + 1 < format.Length)//遇到#$(自定义) 更换为自定义颜色表
                         {
+                            if (strPos + 2 < format.Length)// 폰트 #$^(key)#$$
+                            {
+                                if (format[strPos + 1] == '^')
+                                {
+                                    flushRun();
+                                    fontStack.Push(format.Substring(strPos + 1, 2));
+                                    strPos += 3;
+                                    break;
+                                }
+                                else if (format[strPos + 1] == '$')
+                                {
+                                    flushRun();
+                                    fontStack.Pop();
+                                    strPos += 2;
+                                    break;
+                                }
+                            }
                             flushRun();
                             colorStack.Push(format.Substring(strPos, 2));
                             strPos += 2;
+                        }
+                        else if (strPos < format.Length && format[strPos] == '@'
+                            && strPos + 2 < format.Length) // 이미지 #@(id)/(width)@   구분자 /
+                        {
+                            string id = format[strPos + 1].ToString();
+                            strPos += 2;
+                            while (format[strPos] != '@')
+                            {
+                                id += format[strPos].ToString();
+                                if (strPos + 1 < format.Length)
+                                {
+                                    strPos++;
+                                }
+                                else break;
+                            }
+                            strPos++;
+                            flushRun();
+                            appendImage(id);
                         }
                         else if (colorStack.Count == 1) //同#c
                         {

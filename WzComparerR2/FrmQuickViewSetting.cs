@@ -242,6 +242,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public int Quest_DefaultState
+        {
+            get { return comboBoxExQuestState.SelectedIndex; }
+            set { comboBoxExQuestState.SelectedIndex = value; }
+        }
+
+        [Link]
         public bool Misc_Enable22AniStyle
         {
             get { return chkEnable22AniStyle.Checked; }

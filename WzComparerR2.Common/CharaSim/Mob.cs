@@ -6,7 +6,7 @@ using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
 {
-    public class Mob
+    public class Mob : IDisposable
     {
         public Mob()
         {
@@ -176,6 +176,12 @@ namespace WzComparerR2.CharaSim
             }
 
             return mobInfo;
+        }
+
+        public void Dispose()
+        {
+            if (this.Default.Bitmap != null)
+                this.Default.Bitmap.Dispose();
         }
     }
 }

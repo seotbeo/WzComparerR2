@@ -214,6 +214,13 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Brush Equip22BrushExceptional = new SolidBrush(Color.FromArgb(255, 51, 51));
         public static readonly Brush Equip22BrushEmphasisBright = new SolidBrush(Color.FromArgb(255, 245, 77));
 
+        public static readonly Brush QuestBrushDefault = new SolidBrush(Color.FromArgb(171, 181, 187));
+        public static readonly Brush QuestBrushNpc = new SolidBrush(Color.FromArgb(102, 255, 255));
+        public static readonly Brush QuestBrushMob = new SolidBrush(Color.FromArgb(255, 0, 102));
+        public static readonly Brush QuestBrushMap = new SolidBrush(Color.FromArgb(221, 254, 1));
+        public static readonly Brush QuestBrushItem = new SolidBrush(Color.FromArgb(204, 143, 255));
+        public static readonly Brush QuestBrushEnd = new SolidBrush(Color.FromArgb(101, 117, 120));
+
         public static readonly Brush BarrierArcBrush = new SolidBrush(Color.FromArgb(218, 161, 255));
         public static readonly Brush BarrierAutBrush = new SolidBrush(Color.FromArgb(218, 161, 255));
 
@@ -291,7 +298,13 @@ namespace WzComparerR2.CharaSimControl
             DrawString(g, s, font, null, x, x1, ref y, height, alignment);
         }
 
-        public static void DrawString(Graphics g, string s, Font font, IDictionary<string, Color> fontColorTable, int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, int strictlyAlignLeft = 0)
+        public static void DrawString(Graphics g, string s, Font font, IDictionary<string, Color> fontColorTable, int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, int strictlyAlignLeft = 0, Color defaultColor = default)
+        {
+            DrawString(g, s, font, fontColorTable, null, null, x, x1, ref y, height, alignment, strictlyAlignLeft, defaultColor);
+        }
+
+        public static void DrawString(Graphics g, string s, Font font, IDictionary<string, Color> fontColorTable, IDictionary<string, Font> fontTable, IDictionary<string, Bitmap> imageTable,
+            int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, int strictlyAlignLeft = 0, Color defaultColor = default)
         {
             if (s == null)
                 return;
@@ -301,8 +314,10 @@ namespace WzComparerR2.CharaSimControl
                 r.WordWrapEnabled = false;
                 r.UseGDIRenderer = true;
                 r.FontColorTable = fontColorTable;
+                r.FontTable = fontTable;
+                r.ImageTable = imageTable;
                 r.StrictlyAlignLeft = strictlyAlignLeft;
-                r.DrawString(g, s, font, x, x1, ref y, height, alignment);
+                r.DrawString(g, s, font, x, x1, ref y, height, alignment, defaultColor);
             }
         }
 
@@ -454,6 +469,21 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(bitmap, x, y);
                         x += bitmap.Width + 1;
                         break;
+                }
+            }
+        }
+
+        public static void DrawItemCountNumber(Graphics g, int x, int y, string num)
+        {
+            Bitmap bitmap;
+            for (int i = 0; i < num.Length; i++)
+            {
+                string resourceName = $"Basic_img_ItemNo_{num[i]}";
+                bitmap = (Bitmap)Resource.ResourceManager.GetObject(resourceName);
+                if (bitmap != null)
+                {
+                    g.DrawImage(bitmap, x, y);
+                    x += bitmap.Width;
                 }
             }
         }
@@ -911,6 +941,8 @@ namespace WzComparerR2.CharaSimControl
 
             public bool UseGDIRenderer { get; set; }
             public IDictionary<string, Color> FontColorTable { get; set; }
+            public IDictionary<string, Font> FontTable { get; set; }
+            public IDictionary<string, Bitmap> ImageTable { get; set; }
 
             const int MAX_RANGES = 32;
             StringFormat fmt;
@@ -920,12 +952,12 @@ namespace WzComparerR2.CharaSimControl
             int drawX;
             Color defaultColor;
 
-            public void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left)
+            public void DrawString(Graphics g, string s, Font font, int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, Color defaultColor = default)
             {
                 //初始化环境
                 this.g = g;
                 this.drawX = x;
-                this.defaultColor = Color.White;
+                this.defaultColor = defaultColor == default ? Color.White : defaultColor;
                 float fontLineHeight = GetFontLineHeight(font);
                 this.infinityRect = new RectangleF(0, 0, ushort.MaxValue, fontLineHeight);
 
@@ -963,18 +995,25 @@ namespace WzComparerR2.CharaSimControl
             protected override void MeasureRuns(List<Run> runs)
             {
                 List<Run> tempRuns = new List<Run>(MAX_RANGES);
+                int imageWidth = 0;
+                int tmpWidth = 0;
 
                 foreach (var run in runs)
                 {
                     tempRuns.Add(run);
+                    if (run.IsImage)
+                    {
+                        tmpWidth += run.ImageWidth;
+                    }
                     if (tempRuns.Count >= MAX_RANGES)
                     {
-                        MeasureBatch(tempRuns);
+                        MeasureBatch(tempRuns, imageWidth);
                         tempRuns.Clear();
+                        imageWidth = tmpWidth;
                     }
                 }
 
-                MeasureBatch(tempRuns);
+                MeasureBatch(tempRuns, imageWidth);
 
                 //failed
                 if (runs.Where(run => !run.IsBreakLine && run.Length > 0)
@@ -996,7 +1035,7 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            private void MeasureBatch(List<Run> runs)
+            private void MeasureBatch(List<Run> runs, int imageWidth = 0)
             {
                 string text = sb.ToString();
                 Func<int, bool> isSingleKoreanChar = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '가' && text[runs[i].StartIndex] <= '힣';
@@ -1017,16 +1056,24 @@ namespace WzComparerR2.CharaSimControl
                             var prefixLayout = new Point();
                             if (isSingleKoreanChar(i - 1))
                                 prefixLayout = new Point(runs[i - 1].X + koreanSize.Width, 0);
+                            else if (i > 0 && runs[i - 1].IsImage)
+                                prefixLayout = new Point(runs[i - 1].X + runs[i - 1].ImageWidth, 0);
                             else if (isSpace(i - 1))
                                 prefixLayout = new Point(runs[i - 1].X + spaceSize.Width, 0);
                             else if (isNumber(i - 1))
                                 prefixLayout = new Point(runs[i - 1].X + numberSize.Width, 0);
                             else
-                                prefixLayout = new Point(TR.MeasureText(g, text.Substring(0, runs[i].StartIndex), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width, 0);
+                                prefixLayout = new Point(TR.MeasureText(g, text.Substring(0, runs[i].StartIndex), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width
+                                    + imageWidth, 0);
 
                             var currentLayout = new Size();
                             if (isSingleKoreanChar(i))
                                 currentLayout = koreanSize;
+                            else if (runs[i].IsImage)
+                            {
+                                currentLayout = new Size(runs[i].ImageWidth, 32); ;
+                                imageWidth += currentLayout.Width;
+                            }
                             else if (isSpace(i))
                                 currentLayout = spaceSize;
                             else if (isNumber(i))
@@ -1095,11 +1142,15 @@ namespace WzComparerR2.CharaSimControl
                 return rects;
             }
 
-            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID)
+            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string imageID)
             {
                 string content = sb.ToString(startIndex, length);
                 colorID = colorID ?? string.Empty;
+                fontID = fontID ?? string.Empty;
+                imageID = imageID ?? string.Empty;
                 Color color = Color.Transparent; // VS2019 fix
+                Font font = this.font;
+                Bitmap bmp = null;
                 if (!(this.FontColorTable?.TryGetValue(colorID, out color) ?? false))
                 {
                     switch (colorID)
@@ -1109,6 +1160,21 @@ namespace WzComparerR2.CharaSimControl
                         default: color = this.defaultColor; break;
                     }
                 }
+                if (!(this.FontTable?.TryGetValue(fontID, out font) ?? false))
+                {
+                    switch (fontID)
+                    {
+                        default: font = this.font; break;
+                    }
+                }
+                if ((this.ImageTable?.TryGetValue(imageID, out bmp) ?? false) && bmp != null) // ImageTable로 전달된 이미지 그리기
+                {
+                    var dx = Math.Max((32 - bmp.Width) / 2, 0);
+                    var dy = -Math.Max(Math.Min(bmp.Height, 32) - font.Height, 0);
+                    g.DrawImage(bmp, this.drawX + x + dx, y + dy);
+                    return;
+                }
+
                 if (this.UseGDIRenderer)
                 {
                     TR.DrawText(g, content, font, new Point(this.drawX + x, y), color, TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding);

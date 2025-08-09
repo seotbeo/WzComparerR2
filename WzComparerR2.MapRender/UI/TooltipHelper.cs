@@ -152,7 +152,7 @@ namespace WzComparerR2.MapRender.UI
                 return this.blocks.ToArray();
             }
 
-            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID)
+            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string ImageID)
             {
                 this.blocks.Add(new TextBlock()
                 {

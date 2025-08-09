@@ -67,7 +67,10 @@ namespace WzComparerR2.MapRender
                     if (!sl.HasValues) //生成默认stringLinker
                     {
                         sl = new StringLinker();
-                        sl.Load(PluginManager.FindWz(Wz_Type.String).GetValueEx<Wz_File>(null), PluginManager.FindWz(Wz_Type.Item).GetValueEx<Wz_File>(null), PluginManager.FindWz(Wz_Type.Etc).GetValueEx<Wz_File>(null));
+                        sl.Load(PluginManager.FindWz(Wz_Type.String).GetValueEx<Wz_File>(null),
+                            PluginManager.FindWz(Wz_Type.Item).GetValueEx<Wz_File>(null),
+                            PluginManager.FindWz(Wz_Type.Etc).GetValueEx<Wz_File>(null),
+                            PluginManager.FindWz(Wz_Type.Quest).GetValueEx<Wz_File>(null));
                     }
 
                     //开始绘制

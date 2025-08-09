@@ -6,7 +6,7 @@ using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
 {
-    public class Npc
+    public class Npc : IDisposable
     {
         public Npc()
         {
@@ -95,6 +95,12 @@ namespace WzComparerR2.CharaSim
             }
 
             return npcInfo;
+        }
+
+        public void Dispose()
+        {
+            if (this.Default.Bitmap != null)
+                this.Default.Bitmap.Dispose();
         }
     }
 }

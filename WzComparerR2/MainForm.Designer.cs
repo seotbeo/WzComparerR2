@@ -108,7 +108,8 @@
             this.comboItem7 = new DevComponents.Editors.ComboItem();
             this.comboItem8 = new DevComponents.Editors.ComboItem();
             this.comboItem9 = new DevComponents.Editors.ComboItem();
-            this.comboItem19 = new DevComponents.Editors.ComboItem();
+            this.comboItemSearchSetItem = new DevComponents.Editors.ComboItem();
+            this.comboItemSearchQuest = new DevComponents.Editors.ComboItem();
             this.itemContainer12 = new DevComponents.DotNetBar.ItemContainer();
             this.checkBoxItemRegex2 = new DevComponents.DotNetBar.CheckBoxItem();
             this.buttonItemSearchString = new DevComponents.DotNetBar.ButtonItem();
@@ -1174,7 +1175,7 @@
             // comboBoxItem2
             // 
             this.comboBoxItem2.ComboWidth = 85;
-            this.comboBoxItem2.DropDownHeight = 106;
+            this.comboBoxItem2.DropDownHeight = 144;
             this.comboBoxItem2.ItemHeight = 16;
             this.comboBoxItem2.Items.AddRange(new object[] {
             this.comboItem3,
@@ -1183,8 +1184,9 @@
             this.comboItem6,
             this.comboItem7,
             this.comboItem8,
+            this.comboItemSearchQuest,
             this.comboItem9,
-            this.comboItem19});
+            this.comboItemSearchSetItem});
             this.comboBoxItem2.Name = "comboBoxItem2";
             this.comboBoxItem2.SelectedIndex = 0;
             // 
@@ -1212,13 +1214,17 @@
             // 
             this.comboItem8.Text = "NPC";
             // 
+            // comboItemSearchQuest
+            // 
+            this.comboItemSearchQuest.Text = "퀘스트";
+            // 
             // comboItem9
             // 
             this.comboItem9.Text = "스킬";
             // 
-            // comboItem19
+            // comboItemSearchSetItem
             // 
-            this.comboItem19.Text = "세트 아이템";
+            this.comboItemSearchSetItem.Text = "세트 아이템";
             // 
             // itemContainer12
             // 
@@ -3516,6 +3522,8 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
         private DevComponents.Editors.ComboItem comboItem12_2;
+        private DevComponents.Editors.ComboItem comboItemSearchSetItem;
+        private DevComponents.Editors.ComboItem comboItemSearchQuest;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
         private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;
