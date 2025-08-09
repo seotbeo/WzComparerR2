@@ -904,27 +904,62 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static string GetExtraJobReqString(IEnumerable<int> specJobs)
+        public static string GetExtraJobReqString(IEnumerable<int> specJobs, bool isMsnMode = false)
         {
-            return string.Join(", ", GetExtraJobReqStringList(specJobs)) + " 착용 가능";
+            return string.Join(", ", GetExtraJobReqStringList(specJobs, isMsnMode)) + " 착용 가능";
         }
 
-        public static List<string> GetExtraJobReqStringList(IEnumerable<int> specJobs)
+        public static List<string> GetExtraJobReqStringList(IEnumerable<int> specJobs, bool isMsnMode = false)
         {
             List<string> extraJobNames = new List<string>();
-            foreach (int specJob in specJobs)
+            if (isMsnMode)
             {
-                switch (specJob)
+                if (string.Join(",", specJobs) == "11,12,13,14,15,51")
                 {
-                    case 1: extraJobNames.AddRange(new[] { "히어로", "팔라딘" }); break;
-                    case 2: extraJobNames.AddRange(new[] { "아크메이지(썬,콜)", "아크메이지(불,독)", "비숍" }); break;
-                    case 4: extraJobNames.Add("섀도어"); break;
-                    case 11: extraJobNames.Add("소울마스터"); break;
-                    case 12: extraJobNames.Add("플레임위자드"); break;
-                    case 22: extraJobNames.Add("에반"); break;
-                    case 32: extraJobNames.Add("배틀메이지"); break;
-                    case 172: extraJobNames.Add("린"); break;
-                    default: extraJobNames.Add(specJob.ToString()); break;
+                    extraJobNames.Add("시그너스 기사단 직업군");
+                }
+                else
+                {
+                    int classBranch = 0;
+                    int count = 0;
+                    foreach (int job in specJobs)
+                    {
+                        classBranch += job / 10;
+                        count++;
+                    }
+                    classBranch = classBranch / count;
+                    switch (classBranch)
+                    {
+                        case 0: extraJobNames.Add("모험가 직업군"); break;
+                        case 1: extraJobNames.Add("시그너스 기사단 직업군"); break;
+                        case 2: extraJobNames.Add("영웅 직업군"); break;
+                        case 3: extraJobNames.Add("레지스탕스 직업군"); break;
+                        case 4: extraJobNames.Add("새벽의 진 직업군"); break;
+                        case 6: extraJobNames.Add("노바 직업군"); break;
+                        //case 12: extraJobNames.Add("アニメコラボ職業"); break;
+                        case 15: extraJobNames.Add("레프 직업군"); break;
+                        case 16: extraJobNames.Add("아니마 직업군"); break;
+                        case 17: extraJobNames.Add("강호 직업군"); break;
+                        case 18: extraJobNames.Add("샤인 직업군"); break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (int specJob in specJobs)
+                {
+                    switch (specJob)
+                    {
+                        case 1: extraJobNames.AddRange(new[] { "히어로", "팔라딘" }); break;
+                        case 2: extraJobNames.AddRange(new[] { "아크메이지(썬,콜)", "아크메이지(불,독)", "비숍" }); break;
+                        case 4: extraJobNames.Add("섀도어"); break;
+                        case 11: extraJobNames.Add("소울마스터"); break;
+                        case 12: extraJobNames.Add("플레임위자드"); break;
+                        case 22: extraJobNames.Add("에반"); break;
+                        case 32: extraJobNames.Add("배틀메이지"); break;
+                        case 172: extraJobNames.Add("린"); break;
+                        default: extraJobNames.Add(specJob.ToString()); break;
+                    }
                 }
             }
             if (extraJobNames.Count == 0)

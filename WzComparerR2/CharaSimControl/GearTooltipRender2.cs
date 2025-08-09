@@ -56,6 +56,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowCosmetic { get; set; }
         public bool IsCombineProperties { get; set; } = true;
         public bool CompareMode { get; set; } = false;
+        private bool isMsnClient { get; set; }
 
         public TooltipRender SetItemRender { get; set; }
 
@@ -66,6 +67,7 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
 
+            this.isMsnClient = StringLinker?.StringEqp?.ContainsKey(1006514) ?? false;
             int[] picH = new int[4];
             Bitmap left = RenderBase(out picH[0]);
             Bitmap add = RenderAddition(out picH[1]);
@@ -1722,7 +1724,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else
                 {
-                    extraReq = ItemStringHelper.GetExtraJobReqString(Gear.ReqSpecJobs);
+                    extraReq = ItemStringHelper.GetExtraJobReqString(Gear.ReqSpecJobs, isMsnClient);
                 }
             }
 

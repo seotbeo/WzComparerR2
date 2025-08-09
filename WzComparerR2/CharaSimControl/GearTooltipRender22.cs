@@ -65,6 +65,7 @@ namespace WzComparerR2.CharaSimControl
         private bool WillDrawMedal {  get; set; }
         private bool WillDrawChatBalloon { get; set; }
         private bool WillDrawNameTag { get; set; }
+        private bool isMsnClient { get; set; }
         private Wz_Node MedalResNode { get; set; }
         private Wz_Node ChatBalloonResNode { get; set; }
         private Wz_Node NameTagResNode { get; set; }
@@ -82,6 +83,8 @@ namespace WzComparerR2.CharaSimControl
             }
 
             InitSampleResources();
+            this.isMsnClient = StringLinker?.StringEqp?.ContainsKey(1006514) ?? false;
+
             int[] picH = new int[4];
             linePos = new List<int>();
             Bitmap left = RenderBase(out picH[0]);
@@ -464,7 +467,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else
                 {
-                    reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(Gear.ReqSpecJobs), 210);
+                    reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(Gear.ReqSpecJobs, isMsnClient), 210);
                 }
             }
             if (reqJobString == null)
