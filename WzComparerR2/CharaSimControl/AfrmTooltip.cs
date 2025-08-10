@@ -314,15 +314,20 @@ namespace WzComparerR2.CharaSimControl
         public object GetPairByPoint(Point point)
         {
             Point p = point;
-            if ((this.QuestRender?.RewardRectnItems?.Count ?? 0) > 0)
+            switch (this.item)
             {
-                foreach (var ri in this.QuestRender.RewardRectnItems)
-                {
-                    if (ri.Item1.Contains(p))
+                case Quest:
+                    if ((this.QuestRender?.RewardRectnItems?.Count ?? 0) > 0)
                     {
-                        return ri.Item2;
+                        foreach (var ri in this.QuestRender.RewardRectnItems)
+                        {
+                            if (ri.Item1.Contains(p))
+                            {
+                                return ri.Item2;
+                            }
+                        }
                     }
-                }
+                    break;
             }
             return null;
         }
