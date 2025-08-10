@@ -2070,7 +2070,7 @@ namespace WzComparerR2
                 case "QuestInfo.img":
                     wzPath.Add("Quest");
                     wzPath.Add("QuestInfo.img");
-                    wzPath.Add($"{id}");
+                    imagePath.Add($"{id}");
                     addPath();
                     break;
 
@@ -3907,6 +3907,7 @@ namespace WzComparerR2
                     comparer.OutputMapTooltip = chkOutputMapTooltip.Checked;
                     comparer.OutputMobTooltip = chkOutputMobTooltip.Checked;
                     comparer.OutputNpcTooltip = chkOutputNpcTooltip.Checked;
+                    comparer.OutputQuestTooltip = chkOutputQuestTooltip.Checked;
                     comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);

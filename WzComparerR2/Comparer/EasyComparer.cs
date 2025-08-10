@@ -32,6 +32,7 @@ namespace WzComparerR2.Comparer
         private SortedSet<int> OutputMapTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputMobTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputNpcTooltipIDs { get; set; } = new SortedSet<int>();
+        private SortedSet<int> OutputQuestTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputSkillTooltipIDs { get; set; } = new SortedSet<int>();
         private List<int> ExceptionTooltipIDs { get; set; } = new List<int>();
         private Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
@@ -49,6 +50,7 @@ namespace WzComparerR2.Comparer
         public bool OutputMapTooltip { get; set; }
         public bool OutputMobTooltip { get; set; }
         public bool OutputNpcTooltip { get; set; }
+        public bool OutputQuestTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
 
@@ -105,7 +107,7 @@ namespace WzComparerR2.Comparer
                 WzFileComparer comparer = new WzFileComparer();
                 comparer.IgnoreWzFile = true;
 
-                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip)
+                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip || OutputMobTooltip || OutputNpcTooltip || OutputQuestTooltip)
                 {
                     this.WzNewOld[0] = fileNew.Node;
                     this.WzNewOld[1] = fileOld.Node;
@@ -624,6 +626,16 @@ namespace WzComparerR2.Comparer
                     SaveNpcTooltip(tooltipPath);
                     HandleSaveTooltipException("NPC");
                 }
+                if (OutputQuestTooltip && OutputQuestTooltipIDs != null)
+                {
+                    string tooltipPath = Path.Combine(outputDir, "퀘스트 툴팁");
+                    if (!Directory.Exists(tooltipPath))
+                    {
+                        Directory.CreateDirectory(tooltipPath);
+                    }
+                    SaveQuestTooltip(tooltipPath);
+                    HandleSaveTooltipException("퀘스트");
+                }
 
                 for (var i = 0; i < 2; i++)
                 {
@@ -1025,9 +1037,117 @@ namespace WzComparerR2.Comparer
             OutputNpcTooltipIDs.Clear();
         }
 
-        private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType, int typePicH = 13)
+        // 변경된 퀘스트 툴팁 출력
+        private void SaveQuestTooltip(string tooltipPath)
         {
-            // 툴팁 이미지 합치기
+            QuestTooltipRenderer[] tooltipRenderNewOld = new QuestTooltipRenderer[2];
+            int count = 0;
+            int allCount = OutputQuestTooltipIDs.Count;
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                tooltipRenderNewOld[i] = new QuestTooltipRenderer();
+                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+            }
+
+            foreach (var questID in OutputQuestTooltipIDs)
+            {
+                try
+                {
+                    StateInfo = string.Format("{0}/{1} 퀘스트: {2}", ++count, allCount, questID);
+                    StateDetail = "퀘스트 변경점을 툴팁 이미지로 출력중...";
+
+                    string nodePath = $@"{questID}";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Quest quest = Quest.CreateFromNode(PluginManager.FindWz($@"Quest\QuestData\{nodePath}.img", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i])
+                            ?? Quest.CreateFromNode(PluginManager.FindWz($@"Quest\QuestInfo.img\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i], questID);
+
+                        if (quest == null)
+                        {
+                            nullIdx |= i + 1;
+                        }
+                        tooltipRenderNewOld[i].Quest = quest;
+                    }
+
+                    int index = -1;
+                    int width = 0;
+                    int height = 0;
+                    int? typePicH = null;
+                    string type = "추가";
+                    List<Bitmap> images = new List<Bitmap>();
+                    switch (nullIdx)
+                    {
+                        case 0:// 퀘스트는 추가/삭제만 확인함
+                            continue;
+
+                        case 1:
+                            index = 1;
+                            type = "삭제";
+                            break;
+                        case 2:
+                            index = 0;
+                            break;
+
+                        default:
+                            continue;
+                    }
+                    if (tooltipRenderNewOld[index].Quest != null)
+                    {
+                        for (int s = 0; s <= 2; s++)
+                        {
+                            tooltipRenderNewOld[index].Quest.State = s;
+                            Bitmap image = tooltipRenderNewOld[index].Render();
+                            if (image != null && typePicH == null)
+                            {
+                                typePicH = tooltipRenderNewOld[index].Margin_top;
+                            }
+
+                            images.Add(image);
+                            width += image?.Width ?? 0;
+                            height = Math.Max(image?.Height ?? 0, height);
+                        }
+                    }
+                    if (width <= 0 && height <= 0) continue;
+
+                    using Bitmap resultImage = new Bitmap(width, height);
+                    using Graphics g = Graphics.FromImage(resultImage);
+                    var x = 0;
+                    foreach (var bmp in images)
+                    {
+                        if (bmp != null)
+                        {
+                            g.DrawImage(bmp, x, 0);
+                            x += bmp.Width;
+                            bmp.Dispose();
+                        }
+                    }
+
+                    var picH = (typePicH ?? 0) + 13;
+                    string imageName = Path.Combine(tooltipPath, $"퀘스트_{questID}_{type}.png");
+                    GearGraphics.DrawPlainText(g, type, GearGraphics.EquipMDMoris9Font, Color.FromArgb(255, 255, 255), 2, 100, ref picH, 10);
+                    if (!File.Exists(imageName))
+                    {
+                        resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
+                catch
+                {
+                    ExceptionTooltipIDs.Add(questID);
+                    continue;
+                }
+            }
+            OutputQuestTooltipIDs.Clear();
+        }
+
+        // 툴팁 이미지 합치기
+        private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType, string infoText = null, int typePicH = 13)
+        {
             Bitmap resultImage = null;
             Graphics g = null;
             string type = "";
@@ -1088,10 +1208,13 @@ namespace WzComparerR2.Comparer
             int picH = typePicH;
             GearGraphics.DrawPlainText(g, type, GearGraphics.EquipMDMoris9Font, Color.FromArgb(255, 255, 255), 2, 100, ref picH, 10);
 
-            string add = tooltipType == "스킬" ? $"[{(ItemStringHelper.GetJobName(ID / 10000) ?? "기타")}]"
-                : tooltipType == "장비" ? $"[{(ItemStringHelper.GetGearTypeString(Gear.GetGearType(ID)) ?? (ID / 10000 == 170 ? "무기" : "기타"))}]"
-                : tooltipType == "아이템" ? $"[{ItemStringHelper.GetItemCategoryName(Item.GetItemType(ID)) ?? "?"}]" : "";
-            string imageName = Path.Combine(tooltipPath, $"{tooltipType}_{ID}{add}_{type}.png");
+            if (infoText == null)
+            {
+                infoText = tooltipType == "스킬" ? $"[{(ItemStringHelper.GetJobName(ID / 10000) ?? "기타")}]"
+                    : tooltipType == "장비" ? $"[{(ItemStringHelper.GetGearTypeString(Gear.GetGearType(ID)) ?? (ID / 10000 == 170 ? "무기" : "기타"))}]"
+                    : tooltipType == "아이템" ? $"[{ItemStringHelper.GetItemCategoryName(Item.GetItemType(ID)) ?? "?"}]" : "";
+            }
+            string imageName = Path.Combine(tooltipPath, $"{tooltipType}_{ID}{infoText}_{type}.png");
             if (!File.Exists(imageName))
             {
                 resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
@@ -1140,9 +1263,8 @@ namespace WzComparerR2.Comparer
             {
                 string skillID = match.Groups[1].ToString();
 
-                if (skillID != null)
+                if (skillID != null && int.TryParse(skillID, out var id))
                 {
-                    var id = int.Parse(skillID);
                     if (!OutputSkillTooltipIDs.Contains(id))
                     {
                         OutputSkillTooltipIDs.Add(id);
@@ -1178,9 +1300,8 @@ namespace WzComparerR2.Comparer
             {
                 string itemID = match.Groups[1].ToString();
 
-                if (itemID != null)
+                if (itemID != null && int.TryParse(itemID, out var id))
                 {
-                    var id = int.Parse(itemID);
                     if (!OutputItemTooltipIDs.Contains(id))
                     {
                         OutputItemTooltipIDs.Add(id);
@@ -1210,9 +1331,8 @@ namespace WzComparerR2.Comparer
             {
                 string gearID = match.Groups[1].ToString();
 
-                if (gearID != null)
+                if (gearID != null && int.TryParse(gearID, out var id))
                 {
-                    var id = int.Parse(gearID);
                     if (!OutputGearTooltipIDs.Contains(id))
                     {
                         OutputGearTooltipIDs.Add(id);
@@ -1252,9 +1372,8 @@ namespace WzComparerR2.Comparer
             {
                 string mapID = match.Groups[1].ToString();
 
-                if (mapID != null)
+                if (mapID != null && int.TryParse(mapID, out var id))
                 {
-                    var id = int.Parse(mapID);
                     if (!OutputMapTooltipIDs.Contains(id))
                     {
                         OutputMapTooltipIDs.Add(id);
@@ -1293,9 +1412,8 @@ namespace WzComparerR2.Comparer
             {
                 string mobID = match.Groups[1].ToString();
 
-                if (mobID != null)
+                if (mobID != null && int.TryParse(mobID, out var id))
                 {
-                    var id = int.Parse(mobID);
                     if (!OutputMobTooltipIDs.Contains(id))
                     {
                         OutputMobTooltipIDs.Add(id);
@@ -1331,9 +1449,8 @@ namespace WzComparerR2.Comparer
             {
                 string npcID = match.Groups[1].ToString();
 
-                if (npcID != null)
+                if (npcID != null && int.TryParse(npcID, out var id))
                 {
-                    var id = int.Parse(npcID);
                     if (!OutputNpcTooltipIDs.Contains(id))
                     {
                         OutputNpcTooltipIDs.Add(id);
@@ -1342,6 +1459,31 @@ namespace WzComparerR2.Comparer
             }
         }
 
+        // 노드에서 퀘스트 ID 얻기
+        private void GetQuestID(Wz_Node node, bool change)
+        {
+            if (node == null || change) return; // 변경은 확인하지 않음 // 추가,삭제만 확인
+
+            Match match = Regex.Match(node.FullPathToFile, @"^Quest\\QuestInfo.img\\(\d+)$");
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Quest\\QuestData\\(\d+).img$");
+            }
+
+            if (match.Success)
+            {
+                var questID = match.Groups[1].Value;
+
+                if (questID != null && int.TryParse(questID, out var id))
+                {
+                    if (!OutputQuestTooltipIDs.Contains(id))
+                    {
+                        OutputQuestTooltipIDs.Add(id);
+                    }
+                }
+            }
+        }
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
             StateDetail = "img 구조 분석중";
@@ -1413,6 +1555,11 @@ namespace WzComparerR2.Comparer
                     GetNpcID(diff.NodeNew, idx == 0 ? true : false);
                     GetNpcID(diff.NodeOld, idx == 0 ? true : false);
                 }
+                if (OutputQuestTooltip && (imgName.Contains("QuestInfo") || imgName.Contains("QuestData")))
+                {
+                    GetQuestID(diff.NodeNew, idx == 0 ? true : false);
+                    GetQuestID(diff.NodeOld, idx == 0 ? true : false);
+                }
             }
             StateDetail = "문서 출력중";
             bool noChange = diffList.Count <= 0;
@@ -1482,6 +1629,10 @@ namespace WzComparerR2.Comparer
                     if (OutputNpcTooltip && (imgName.Contains("Etc") || imgName.Contains("Npc") || imgName.Contains("String")))
                     {
                         GetNpcID(node, idx == 0 ? true : false);
+                    }
+                    if (OutputQuestTooltip && (imgName.Contains("QuestInfo") || imgName.Contains("QuestData")))
+                    {
+                        GetQuestID(node, idx == 0 ? true : false);
                     }
 
                     if (node.Nodes.Count > 0)

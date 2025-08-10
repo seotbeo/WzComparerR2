@@ -1,5 +1,4 @@
 ﻿using CharaSimResource;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -36,9 +35,13 @@ namespace WzComparerR2.CharaSimControl
             this.sourceWzFile = null;
             this.ImageTable = new Dictionary<string, Bitmap>();
             this.DefaultState = 0;
+            this.Margin_top = 0;
+            this.Margin_right = 0;
         }
 
-        public int DefaultState;
+        public int DefaultState { get; set; }
+        public int Margin_top { get; set; }
+        public int Margin_right { get; set; }
         public Quest Quest { get; set; }
         public Wz_File sourceWzFile { get; set; }
         public Dictionary<string, Bitmap> ImageTable { get; set; }
@@ -74,6 +77,8 @@ namespace WzComparerR2.CharaSimControl
             var picH = 135;
             var left = 29;
             var state = this.Quest.State;
+            this.Margin_top = 0;
+            this.Margin_right = 0;
 
             var questColorTable = new Dictionary<string, Color>()
             {
@@ -123,15 +128,13 @@ namespace WzComparerR2.CharaSimControl
             }
             // npc 이미지 계산
             BitmapOrigin npcImage = new BitmapOrigin();
-            var margin_top = 0;
-            var margin_right = 0;
             if (this.Quest.Check0Npc != null)
             {
                 npcImage = this.Quest.Check0Npc.Default;
                 if (npcImage.Bitmap != null)
                 {
-                    margin_top = Math.Max(npcImage.Origin.Y - 108, margin_top);
-                    margin_right = Math.Max(npcImage.Bitmap.Width + (263 - npcImage.Origin.X) - width, margin_right);
+                    Margin_top = Math.Max(npcImage.Origin.Y - 108, Margin_top);
+                    Margin_right = Math.Max(npcImage.Bitmap.Width + (263 - npcImage.Origin.X) - width, Margin_right);
                     g.DrawImage(Resource.Quest_img_Main_questInfo_title_layer_npcShadow, 242, 103);
                 }
             }
@@ -218,25 +221,25 @@ namespace WzComparerR2.CharaSimControl
             picH += 49;
 
             // 배경
-            Bitmap bg = new Bitmap(width + margin_right, picH + margin_top);
+            Bitmap bg = new Bitmap(width + Margin_right, picH + Margin_top);
             using Graphics g2 = Graphics.FromImage(bg);
-            g2.DrawImage(res["top"].Image, 0, margin_top);
-            FillRect(g2, res["center"], 0, 166 + margin_top, bottomPoint + margin_top);
-            g2.DrawImage(res["bottom"].Image, 0, bottomPoint + margin_top);
+            g2.DrawImage(res["top"].Image, 0, Margin_top);
+            FillRect(g2, res["center"], 0, 166 + Margin_top, bottomPoint + Margin_top);
+            g2.DrawImage(res["bottom"].Image, 0, bottomPoint + Margin_top);
 
 
             // 중첩
-            g2.DrawImage(fg, 0, 0 + margin_top);
+            g2.DrawImage(fg, 0, 0 + Margin_top);
             // npc 이미지
             if (npcImage.Bitmap != null)
             {
-                g2.DrawImage(npcImage.Bitmap, 263 - npcImage.Origin.X, (108 + margin_top) - npcImage.Origin.Y);
+                g2.DrawImage(npcImage.Bitmap, 263 - npcImage.Origin.X, (108 + Margin_top) - npcImage.Origin.Y);
             }
 
             // ID 표시
             if (this.ShowObjectID)
             {
-                GearGraphics.DrawGearDetailNumber(g2, 3, 3 + margin_top, this.Quest.ID.ToString(), true);
+                GearGraphics.DrawGearDetailNumber(g2, 3, 3 + Margin_top, this.Quest.ID.ToString(), true);
             }
             // 상태
             var stateText = new string[] { "시작 가능", "진행 중", "완료" };
