@@ -33,6 +33,7 @@ namespace WzComparerR2.CharaSimControl
         public QuestTooltipRenderer()
         {
             this.sourceWzFile = null;
+            this.RewardRectnItems = new List<Tuple<Rectangle, object>>();
             this.ImageTable = new Dictionary<string, Bitmap>();
             this.DefaultState = 0;
             this.Margin_top = 0;
@@ -42,8 +43,10 @@ namespace WzComparerR2.CharaSimControl
         public int DefaultState { get; set; }
         public int Margin_top { get; set; }
         public int Margin_right { get; set; }
+        public bool CompareMode { get; set; } = false;
         public Quest Quest { get; set; }
         public Wz_File sourceWzFile { get; set; }
+        public List<Tuple<Rectangle, object>> RewardRectnItems { get; set; }
         public Dictionary<string, Bitmap> ImageTable { get; set; }
 
         public override object TargetItem
@@ -79,6 +82,7 @@ namespace WzComparerR2.CharaSimControl
             var state = this.Quest.State;
             this.Margin_top = 0;
             this.Margin_right = 0;
+            this.RewardRectnItems.Clear();
 
             var questColorTable = new Dictionary<string, Color>()
             {
@@ -290,25 +294,50 @@ namespace WzComparerR2.CharaSimControl
             if (r.Exp > 0)
             {
                 var bmp = Resource.Quest_img_Main_questInfo_summary_reward_icon_exp;
-                g.DrawImage(bmp, 65 + dx * hcount++, h - 23);
+                var x = 65 + dx * hcount++;
+                var y = h;
+                g.DrawImage(bmp, x, y - 23);
+                if (!CompareMode)
+                {
+                    var rectW = Math.Max(bmp.Width, 32);
+                    var rectH = Math.Max(bmp.Height, 32);
+                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, rectW, rectH), new TooltipHelp("", r.ExpString, true)));
+                }
             }
             if (r.Meso > 0)
             {
                 var bmp = Resource.Quest_img_Main_questInfo_summary_reward_icon_meso;
-                g.DrawImage(bmp, 65 + dx * hcount++, h - 32);
+                var x = 65 + dx * hcount++;
+                var y = h;
+                g.DrawImage(bmp, x, y - 32);
+                if (!CompareMode)
+                {
+                    var rectW = Math.Max(bmp.Width, 32);
+                    var rectH = Math.Max(bmp.Height, 32);
+                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, Math.Max(bmp.Width, 32), rectH), new TooltipHelp("", r.MesoString, true)));
+                }
             }
             if (r.Items.Count > 0)
             {
                 foreach (var item in r.Items)
                 {
-                    var bmp = GetIcon(item.ID, raw: true);
+                    var node = FindItemNode(item.ID);
+                    var bmp = GetIcon(item.ID, itemNode: node, raw: true);
                     if (bmp.Bitmap != null)
                     {
-                        g.DrawImage(bmp.Bitmap, 64 + dx * hcount++ - bmp.Origin.X, h + dy * vcount - bmp.Origin.Y);
+                        var x = 65 + dx * hcount++;
+                        var y = h + dy * vcount;
+                        g.DrawImage(bmp.Bitmap, x - bmp.Origin.X - 1, y - bmp.Origin.Y);
+                        if (!CompareMode)
+                        {
+                            var rectW = Math.Min(Math.Max(bmp.Bitmap.Width, 32), dx -1);
+                            var rectH = Math.Max(bmp.Bitmap.Height, 32);
+                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, rectW, rectH), GetItemBase(item.ID, node)));
+                        }
                         bmp.Bitmap.Dispose();
                         if (item.ID >= 2000000)
                         {
-                            GearGraphics.DrawItemCountNumber(g, 65 + dx * (hcount - 1), h + dy * vcount - 12, item.Count.ToString());
+                            GearGraphics.DrawItemCountNumber(g, x, y - 12, item.Count.ToString());
                         }
                     }
                     if (hcount >= 6)
@@ -435,12 +464,26 @@ namespace WzComparerR2.CharaSimControl
             return text;
         }
 
-        private Bitmap GetIconBitmap(int id, bool raw = false)
+        private Bitmap GetIconBitmap(int id, Wz_Node itemNode = null, bool raw = false)
         {
-            return GetIcon(id, raw).Bitmap;
+            return GetIcon(id, null, raw).Bitmap;
         }
 
-        private BitmapOrigin GetIcon(int id, bool raw = false)
+        private BitmapOrigin GetIcon(int id, Wz_Node itemNode = null, bool raw = false)
+        {
+            if (itemNode == null)
+                itemNode = FindItemNode(id);
+
+            Wz_Node iconNode = itemNode?.FindNodeByPath($@"info\icon{(raw ? "Raw" : "")}");
+            if (iconNode != null)
+            {
+                return BitmapOrigin.CreateFromNode(iconNode, PluginManager.FindWz, this.SourceWzFile);
+            }
+
+            return new BitmapOrigin();
+        }
+
+        private Wz_Node FindItemNode(int id)
         {
             if (id >= 2000000)
             {
@@ -450,11 +493,7 @@ namespace WzComparerR2.CharaSimControl
                     : (id / 1000 == 3015) ? $@"{(id / 100):D6}.img\{id:D8}"
                     : (id / 10000 == 301) ? $@"{(id / 1000):D5}.img\{id:D8}"
                     : $@"{(id / 10000):D4}.img\{id:D8}";
-                Wz_Node itemNode = PluginManager.FindWz($@"Item\{itemType}\{nodePath}\info\icon{(raw ? "Raw" : "")}", this.SourceWzFile);
-                if (itemNode != null)
-                {
-                    return BitmapOrigin.CreateFromNode(itemNode, PluginManager.FindWz, this.SourceWzFile);
-                }
+                return PluginManager.FindWz($@"Item\{itemType}\{nodePath}", this.SourceWzFile);
             }
             else
             {
@@ -473,8 +512,7 @@ namespace WzComparerR2.CharaSimControl
                         {
                             gearNode = img.TryExtract() ? img.Node : null;
                         }
-                        gearNode = gearNode.FindNodeByPath($@"info\icon{(raw ? "Raw" : "")}");
-                        break;
+                        return gearNode;
                     }
 
                     gearNode = category.FindNodeByPath(nodePath);
@@ -485,17 +523,11 @@ namespace WzComparerR2.CharaSimControl
                         {
                             gearNode = img.TryExtract() ? img.Node : null;
                         }
-                        gearNode = gearNode.FindNodeByPath($@"info\icon{(raw ? "Raw" : "")}");
-                        break;
+                        return gearNode;
                     }
                 }
-                if (gearNode != null)
-                {
-                    return BitmapOrigin.CreateFromNode(gearNode, PluginManager.FindWz, this.SourceWzFile);
-                }
             }
-
-            return new BitmapOrigin();
+            return null;
         }
 
         private Bitmap GetIconByPath(string path)
@@ -507,6 +539,32 @@ namespace WzComparerR2.CharaSimControl
             }
 
             return null;
+        }
+
+        private object GetItemBase(int id, Wz_Node node)
+        {
+            if (id >= 2000000)
+            {
+                // item
+                return Item.CreateFromNode(node, PluginManager.FindWz, this.SourceWzFile);
+            }
+            else
+            {
+                // eqp
+                return Gear.CreateFromNode(node, PluginManager.FindWz, this.SourceWzFile);
+            }
+
+            return null;
+        }
+
+        private string GetGearOrItemName(int id)
+        {
+            StringResult sr;
+            if (this.StringLinker == null || !(this.StringLinker.StringItem.TryGetValue(id, out sr) || this.StringLinker.StringEqp.TryGetValue(id, out sr)))
+            {
+                return null;
+            }
+            return sr.Name;
         }
 
         private string GetNpcName(int npcID)

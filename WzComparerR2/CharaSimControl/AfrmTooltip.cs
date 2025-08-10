@@ -73,6 +73,9 @@ namespace WzComparerR2.CharaSimControl
 
         private ToolStripMenuItem SaveSample {  get; set; }
 
+        public event ObjectMouseEventHandler ObjectMouseMove;
+        public event EventHandler ObjectMouseLeave;
+
         public bool ShowID
         {
             get { return this.showID; }
@@ -306,6 +309,45 @@ namespace WzComparerR2.CharaSimControl
             {
                 this.menu.Show(this, e.Location);
             }
+        }
+
+        public object GetPairByPoint(Point point)
+        {
+            Point p = point;
+            if ((this.QuestRender?.RewardRectnItems?.Count ?? 0) > 0)
+            {
+                foreach (var ri in this.QuestRender.RewardRectnItems)
+                {
+                    if (ri.Item1.Contains(p))
+                    {
+                        return ri.Item2;
+                    }
+                }
+            }
+            return null;
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            object obj = GetPairByPoint(e.Location);
+            if (obj != null)
+                this.OnObjectMouseMove(new ObjectMouseEventArgs(e, obj));
+            else
+                this.OnObjectMouseLeave(EventArgs.Empty);
+        }
+
+        protected virtual void OnObjectMouseMove(ObjectMouseEventArgs e)
+        {
+            if (this.ObjectMouseMove != null)
+                this.ObjectMouseMove(this, e);
+        }
+
+        protected virtual void OnObjectMouseLeave(EventArgs e)
+        {
+            if (this.ObjectMouseLeave != null)
+                this.ObjectMouseLeave(this, e);
         }
 
         void tsmiCopy_Click(object sender, EventArgs e)

@@ -64,6 +64,13 @@ namespace WzComparerR2.Controls
                     }
                     break;
 
+                case 0x00A0: /*WM_NCMOUSEMOVE*/
+                    {
+                        Point hitPoint = this.PointToClient(new Point((int)m.LParam));
+                        OnMouseMove(new MouseEventArgs(MouseButtons.None, 0, hitPoint.X, hitPoint.Y, 0));
+                    }
+                    break;
+
                 case 0x00A5: /*WM_NCRBUTTONUP*/
                     {
                         Point hitPoint = this.PointToClient(new Point((int)m.LParam));

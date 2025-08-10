@@ -1050,6 +1050,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].CompareMode = true;
             }
 
             foreach (var questID in OutputQuestTooltipIDs)

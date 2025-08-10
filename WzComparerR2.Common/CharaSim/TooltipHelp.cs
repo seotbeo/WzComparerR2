@@ -12,8 +12,21 @@ namespace WzComparerR2.CharaSim
             this.Desc = desc;
         }
 
+        public TooltipHelp(string title, string desc, bool flexibleWidth) : this(title, desc)
+        {
+            FlexibleWidth = flexibleWidth;
+        }
+
         public string Title { get; set; }
         public string Desc { get; set; }
+        public bool FlexibleWidth { get; set; }
+        public bool Empty
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.Title) || string.IsNullOrEmpty(this.Desc);
+            }
+        }
 
         public virtual object Clone()
         {

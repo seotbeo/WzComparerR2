@@ -80,12 +80,15 @@ namespace WzComparerR2
             stringLinker = new StringLinker();
             historyNodeList = new HistoryList<Node>();
 
+            /*
+            tooltipQuickView = new AfrmTooltip();
             tooltipQuickView = new AfrmTooltip();
             tooltipQuickView.Visible = false;
             tooltipQuickView.StringLinker = this.stringLinker;
             tooltipQuickView.KeyDown += new KeyEventHandler(afrm_KeyDown);
             tooltipQuickView.ShowID = true;
             tooltipQuickView.ShowMenu = true;
+            */
 
             charaSimCtrl = new CharaSimControlGroup();
             charaSimCtrl.StringLinker = this.stringLinker;
@@ -97,6 +100,13 @@ namespace WzComparerR2
             charaSimCtrl.UIStat.VisibleChanged += new EventHandler(afrm_VisibleChanged);
             charaSimCtrl.UIEquip.Visible = false;
             charaSimCtrl.UIEquip.VisibleChanged += new EventHandler(afrm_VisibleChanged);
+
+            tooltipQuickView = charaSimCtrl.TooltipQuickView;
+            tooltipQuickView.Visible = false;
+            tooltipQuickView.StringLinker = this.stringLinker;
+            tooltipQuickView.KeyDown += new KeyEventHandler(afrm_KeyDown);
+            tooltipQuickView.ShowID = true;
+            tooltipQuickView.ShowMenu = true;
 
             string[] images = new string[] { "dir", "mp3", "num", "png", "str", "uol", "vector", "img", "rawdata", "convex", "video" };
             foreach (string img in images)

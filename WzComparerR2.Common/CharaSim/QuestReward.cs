@@ -28,6 +28,16 @@ namespace WzComparerR2.CharaSim
             get { return this.Count > 0; }
         }
 
+        public string ExpString
+        {
+            get { return "경험치 " + this.Exp.ToString("N0"); }
+        }
+
+        public string MesoString
+        {
+            get { return "메소 " + this.Meso.ToString("N0"); }
+        }
+
         public static QuestReward CreateFromNode(Wz_Node rewardNode)
         {
             if (rewardNode == null) return null;
