@@ -407,7 +407,7 @@ namespace WzComparerR2.CharaSimControl
                         return id.ToString();
                 }
             });
-            text = Regex.Replace(text, @"#(questorder|j|c|R|x|M|u|f|fs|fn|a)(.+?)#", match =>
+            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|f|a)(.+?)#", match =>
             {
                 string tag = match.Groups[1].Value;
                 string info = match.Groups[2].Value;
@@ -436,6 +436,11 @@ namespace WzComparerR2.CharaSimControl
 
                     case "M":
                         return "몬스터";
+
+                    case "MD":
+                        Wz_Node stringNode = PluginManager.FindWz($@"String\mirrorDungeon.img\{info}\name", this.SourceWzFile);
+                        var retMD = stringNode.GetValueEx<string>(null);
+                        return retMD ?? "거울세계";
 
                     case "f":
                         var bmp = GetIconByPath(info);
