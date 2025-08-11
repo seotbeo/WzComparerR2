@@ -62,7 +62,7 @@ namespace WzComparerR2.Text
                     }
                     else
                     {
-                        runs.Add(new Run(sb.Length, 0) { ColorID = span.ColorID, FontID = span.FontID, ImageID = span.ImageID, ImageWidth = Math.Max(span.ImageWidth, 32), ImageHeight = Math.Max(span.ImageHeight, 32) });
+                        runs.Add(new Run(sb.Length, 0) { ColorID = span.ColorID, FontID = span.FontID, ImageID = span.ImageID, ImageWidth = span.ImageWidth, ImageHeight = span.ImageHeight });
                     }
                 }
                 else if (elem is LineBreak)

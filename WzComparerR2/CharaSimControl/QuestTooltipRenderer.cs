@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -247,22 +248,36 @@ namespace WzComparerR2.CharaSimControl
             }
 
             // 보상
-            if (this.Quest.Reward.HasValues && state != 2)
+            if (state != 2)
             {
-                var rewardPos = picH;
-                if (this.Quest.Reward.Count <= 6)
+                if (this.Quest.Reward.HasValues)
                 {
-                    g.DrawImage(Resource.Quest_img_Main_questInfo_summary_box_layer_boxS, 16, rewardPos);
-                    g.DrawImage(Resource.Quest_img_Main_questInfo_summary_reward_layer_reward, 30, rewardPos + 19);
-                    picH += 46;
+                    var rewardPos = picH;
+                    if (this.Quest.Reward.Count <= 6)
+                    {
+                        g.DrawImage(Resource.Quest_img_Main_questInfo_summary_box_layer_boxS, 16, rewardPos);
+                        g.DrawImage(Resource.Quest_img_Main_questInfo_summary_reward_layer_reward, 30, rewardPos + 19);
+                        picH += 46;
+                    }
+                    else
+                    {
+                        g.DrawImage(Resource.Quest_img_Main_questInfo_summary_box_layer_boxL, 16, rewardPos);
+                        g.DrawImage(Resource.Quest_img_Main_questInfo_summary_reward_layer_reward, 30, rewardPos + 19);
+                        picH += 126;
+                    }
+                    DrawRewardItems(g, this.Quest.Reward, rewardPos + 42);
                 }
-                else
+                else if (!string.IsNullOrEmpty(this.Quest.RewardSummary))
                 {
-                    g.DrawImage(Resource.Quest_img_Main_questInfo_summary_box_layer_boxL, 16, rewardPos);
-                    g.DrawImage(Resource.Quest_img_Main_questInfo_summary_reward_layer_reward, 30, rewardPos + 19);
-                    picH += 126;
+                    /*
+                    var replaced = ReplaceQuestString(this.Quest.RewardSummary);
+                    var rewardIcon = Resource.UIWindow2_img_Quest_quest_info_summary_icon_reward;
+                    replaced = $"\n#@{this.ImageTable.Count}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@\n" + replaced;
+                    this.ImageTable.Add(this.ImageTable.Count.ToString(), rewardIcon);
+                    GearGraphics.DrawString(g, replaced, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref picH, 18, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color);
+                    ClearImageTable();
+                    */
                 }
-                DrawRewardItems(g, this.Quest.Reward, rewardPos + 42);
             }
             var bottomPoint = picH;
             picH += 49;
@@ -450,7 +465,7 @@ namespace WzComparerR2.CharaSimControl
                         return id.ToString();
                 }
             });
-            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|f|a)(.+?)#", match =>
+            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|f|a|W)(.+?)#", match =>
             {
                 string tag = match.Groups[1].Value;
                 string info = match.Groups[2].Value;
@@ -485,9 +500,16 @@ namespace WzComparerR2.CharaSimControl
                         var retMD = stringNode.GetValueEx<string>(null);
                         return retMD ?? "거울세계";
 
+                    case "W":
+                        var path = $"UIWindow2_img_Quest_quest_info_summary_icon_{info}";
+                        var bmpW = (Bitmap)Resource.ResourceManager.GetObject(path);
+                        var retW = $"#@{this.ImageTable.Count}/{bmpW?.Width ?? 0}/{bmpW?.Height ?? 0}@";
+                        this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpW);
+                        return retW;
+
                     case "f":
                         var bmp = GetIconByPath(info);
-                        var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
+                        var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}/{bmp?.Height ?? 0}@";
                         this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
                         return ret;
 

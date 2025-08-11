@@ -31,6 +31,7 @@ namespace WzComparerR2.CharaSim
         public string DemandBase { get; set; }
         public string DemandSummary { get; set; }
         public string PlaceSummary { get; set; }
+        public string RewardSummary { get; set; }
         public string Summary { get; set; }
         public string[] Desc { get; set; }
         public Npc Check0Npc { get; set; }
@@ -112,6 +113,8 @@ namespace WzComparerR2.CharaSim
                             quest.DemandSummary = propNode.GetValueEx<string>(null); break;
                         case "placeSummary":
                             quest.PlaceSummary = propNode.GetValueEx<string>(null); break;
+                        case "rewardSummary":
+                            quest.RewardSummary = propNode.GetValueEx<string>(null); break;
                         case "summary":
                             quest.Summary = propNode.GetValueEx<string>(null); break;
                     }
