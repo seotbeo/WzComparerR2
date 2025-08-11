@@ -410,7 +410,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
-            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s?(\d+?)[:;]?#", match =>
+            text = Regex.Replace(text, @$"#(p|o|o9101069f|m|t|a{this.Quest.ID}|i|v|y)\s?(\d+?)[:;]?#", match =>
             {
                 string tag = match.Groups[1].Value;
                 int id = int.Parse(match.Groups[2].Value);
@@ -424,6 +424,14 @@ namespace WzComparerR2.CharaSimControl
                     case "o":
                         StringLinker.StringMob.TryGetValue(id, out sr);
                         return $"#$o{sr?.Name ?? id.ToString()}#";
+
+                    case "o9101069f":
+                        Wz_Node stringNodeMF = PluginManager.FindWz($@"String\MobFilter.img\{id}", this.SourceWzFile);
+                        var retMF = stringNodeMF.GetValueEx<string>(null);
+                        if (retMF != null) return $"#$o{retMF}#";
+
+                        StringLinker.StringMob.TryGetValue(9101069, out sr);
+                        return $"#$o{sr?.Name ?? "9101069"}#";
 
                     case "m":
                         StringLinker.StringMap.TryGetValue(id, out sr);
