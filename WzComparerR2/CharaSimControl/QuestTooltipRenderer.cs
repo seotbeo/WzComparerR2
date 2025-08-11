@@ -286,7 +286,7 @@ namespace WzComparerR2.CharaSimControl
             // ID 표시
             if (this.ShowObjectID)
             {
-                GearGraphics.DrawGearDetailNumber(g2, 3, 3 + Margin_top, this.Quest.ID.ToString(), true);
+                GearGraphics.DrawGearDetailNumber(g2, 3, 3 + Margin_top, $"{this.Quest.ID.ToString()}-{this.Quest.State}", true);
             }
             // 상태
             var stateText = new string[] { "시작 가능", "진행 중", "완료" };
