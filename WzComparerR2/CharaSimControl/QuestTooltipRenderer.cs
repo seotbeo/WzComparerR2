@@ -348,7 +348,7 @@ namespace WzComparerR2.CharaSimControl
             var hcount = 0;
             var vcount = 0;
             var dx = 35;
-            var dy = 50;
+            var dy = 35;
             if (r.Exp > 0)
             {
                 var bmp = Resource.Quest_img_Main_questInfo_summary_reward_icon_exp;
@@ -403,7 +403,7 @@ namespace WzComparerR2.CharaSimControl
                         hcount = 0;
                         vcount++;
                     }
-                    if (vcount >= 2) break;
+                    if (vcount >= 3) break;
                 }
             }
         }
