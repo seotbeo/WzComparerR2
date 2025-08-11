@@ -225,7 +225,7 @@ namespace WzComparerR2.CharaSimControl
             picH += 49;
 
             // 배경
-            Bitmap bg = new Bitmap(width + Margin_right, picH + Margin_top);
+            Bitmap bg = new Bitmap(width + Margin_right, Math.Max(picH + Margin_top, npcImage.Bitmap?.Height ?? 0));
             using Graphics g2 = Graphics.FromImage(bg);
             g2.DrawImage(res["top"].Image, 0, Margin_top);
             FillRect(g2, res["center"], 0, 166 + Margin_top, bottomPoint + Margin_top);
