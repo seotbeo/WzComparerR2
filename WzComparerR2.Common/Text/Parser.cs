@@ -44,33 +44,31 @@ namespace WzComparerR2.Text
                 var split = str.Split('/');
                 int id = 0;
                 int width = 0;
-                if (split.Length == 1)
+                int height = 0;
+                bool addImage = false;
+                switch (split.Length)
                 {
-                    if (int.TryParse(split[0], out id))
-                    {
-                        elements.Add(new Span()
-                        {
-                            Text = "",
-                            ColorID = colorStack.Peek(),
-                            FontID = fontStack.Peek(),
-                            ImageID = id.ToString(),
-                            ImageWidth = 32,
-                        });
-                    }
+                    case 1:
+                        addImage = int.TryParse(split[0], out id);
+                        break;
+                    case 2:
+                        addImage = int.TryParse(split[0], out id) && int.TryParse(split[1], out width);
+                        break;
+                    case 3:
+                        addImage = int.TryParse(split[0], out id) && int.TryParse(split[1], out width) && int.TryParse(split[2], out height);
+                        break;
                 }
-                else if (split.Length > 1)
+                if (addImage)
                 {
-                    if (int.TryParse(split[0], out id) && int.TryParse(split[1], out width))
+                    elements.Add(new Span()
                     {
-                        elements.Add(new Span()
-                        {
-                            Text = "",
-                            ColorID = colorStack.Peek(),
-                            FontID = fontStack.Peek(),
-                            ImageID = id.ToString(),
-                            ImageWidth = width,
-                        });
-                    }
+                        Text = "",
+                        ColorID = colorStack.Peek(),
+                        FontID = fontStack.Peek(),
+                        ImageID = id.ToString(),
+                        ImageWidth = width,
+                        ImageHeight = height
+                    });
                 }
             };
 
@@ -133,7 +131,7 @@ namespace WzComparerR2.Text
                             strPos += 2;
                         }
                         else if (strPos < format.Length && format[strPos] == '@'
-                            && strPos + 2 < format.Length) // 이미지 #@(id)/(width)@   구분자 /
+                            && strPos + 2 < format.Length) // 이미지 #@(id)/(width)/(height)@   구분자 /
                         {
                             string id = format[strPos + 1].ToString();
                             strPos += 2;

@@ -1071,7 +1071,7 @@ namespace WzComparerR2.CharaSimControl
                                 currentLayout = koreanSize;
                             else if (runs[i].IsImage)
                             {
-                                currentLayout = new Size(runs[i].ImageWidth, 32); ;
+                                currentLayout = new Size(runs[i].ImageWidth, runs[i].ImageHeight); ;
                                 imageWidth += currentLayout.Width;
                             }
                             else if (isSpace(i))
@@ -1142,7 +1142,7 @@ namespace WzComparerR2.CharaSimControl
                 return rects;
             }
 
-            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string imageID)
+            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string imageID, int imageHeight)
             {
                 string content = sb.ToString(startIndex, length);
                 colorID = colorID ?? string.Empty;
@@ -1170,7 +1170,7 @@ namespace WzComparerR2.CharaSimControl
                 if ((this.ImageTable?.TryGetValue(imageID, out bmp) ?? false) && bmp != null) // ImageTable로 전달된 이미지 그리기
                 {
                     var dx = Math.Max((32 - bmp.Width) / 2, 0);
-                    var dy = -Math.Max(Math.Min(bmp.Height, 32) - font.Height, 0);
+                    var dy = -Math.Max(Math.Min(bmp.Height, imageHeight) - font.Height, 0);
                     g.DrawImage(bmp, this.drawX + x + dx, y + dy);
                     return;
                 }

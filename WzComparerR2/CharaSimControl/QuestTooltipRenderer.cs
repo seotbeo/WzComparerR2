@@ -430,7 +430,7 @@ namespace WzComparerR2.CharaSimControl
                             StringLinker.StringEqp.TryGetValue(id, out sr);
                         }
                         var bmp = GetIconBitmap(id);
-                        var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}@";
+                        var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
                         this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
                         return ret;
 
@@ -487,7 +487,7 @@ namespace WzComparerR2.CharaSimControl
 
                     case "f":
                         var bmp = GetIconByPath(info);
-                        var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}@";
+                        var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
                         this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
                         return ret;
 
