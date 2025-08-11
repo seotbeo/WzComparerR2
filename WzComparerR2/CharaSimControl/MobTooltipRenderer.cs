@@ -243,6 +243,10 @@ namespace WzComparerR2.CharaSimControl
                 var img = this.avatar.GetBitmapOrigin();
                 if (img.Bitmap != null)
                 {
+                    if (MobInfo.Default.Bitmap != null)
+                    {
+                        MobInfo.Default.Bitmap.Dispose();
+                    }
                     MobInfo.Default = img;
                     mobImg = img.Bitmap;
                 }
