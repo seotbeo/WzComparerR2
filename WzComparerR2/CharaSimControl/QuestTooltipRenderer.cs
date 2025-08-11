@@ -410,7 +410,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
-            text = Regex.Replace(text, @$"#(p|o|o9101069f|m|t|a{this.Quest.ID}|i|v|y)\s?(\d+?)[:;]?#", match =>
+            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s?(\d+?)[:;]?#", match =>
             {
                 string tag = match.Groups[1].Value;
                 int id = int.Parse(match.Groups[2].Value);
@@ -424,14 +424,6 @@ namespace WzComparerR2.CharaSimControl
                     case "o":
                         StringLinker.StringMob.TryGetValue(id, out sr);
                         return $"#$o{sr?.Name ?? id.ToString()}#";
-
-                    case "o9101069f":
-                        Wz_Node stringNodeMF = PluginManager.FindWz($@"String\MobFilter.img\{id}", this.SourceWzFile);
-                        var retMF = stringNodeMF.GetValueEx<string>(null);
-                        if (retMF != null) return $"#$o{retMF}#";
-
-                        StringLinker.StringMob.TryGetValue(9101069, out sr);
-                        return $"#$o{sr?.Name ?? "9101069"}#";
 
                     case "m":
                         StringLinker.StringMap.TryGetValue(id, out sr);
@@ -473,10 +465,11 @@ namespace WzComparerR2.CharaSimControl
                         return id.ToString();
                 }
             });
-            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|f|a|W)(.+?)#", match =>
+            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|f|a|W|o9101069f)(.+?)#", match =>
             {
                 string tag = match.Groups[1].Value;
                 string info = match.Groups[2].Value;
+                StringResult sr;
                 switch (tag)
                 {
                     case "questorder":
@@ -499,6 +492,14 @@ namespace WzComparerR2.CharaSimControl
 
                     case "u":
                         return "미완";
+
+                    case "o9101069f":
+                        Wz_Node stringNodeMF = PluginManager.FindWz($@"String\MobFilter.img\{info}", this.SourceWzFile);
+                        var retMF = stringNodeMF.GetValueEx<string>(null);
+                        if (retMF != null) return $"#$o{retMF}#";
+
+                        StringLinker.StringMob.TryGetValue(9101069, out sr);
+                        return $"#$o{sr?.Name ?? "9101069"}#";
 
                     case "M":
                         return "몬스터";
