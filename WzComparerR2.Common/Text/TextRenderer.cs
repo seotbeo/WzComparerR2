@@ -191,7 +191,7 @@ namespace WzComparerR2.Text
             string fontID = null;
             List<PositionedText> result = new();
             int lastLineStartIndex = 0;
-            bool applyImageHeightOnThisLine = true;
+            int baseDrawY = drawY;
 
             bool hasContent() => start > -1 && end > start;
             void flush(bool isNewLine)
@@ -228,7 +228,7 @@ namespace WzComparerR2.Text
                     drawX = curX = 0;
                     drawY += lineHeight;
                     lastLineStartIndex = result.Count;
-                    applyImageHeightOnThisLine = true;
+                    baseDrawY = drawY;
                 }
                 else
                 {
@@ -368,15 +368,11 @@ namespace WzComparerR2.Text
 
                     if (run.IsImage)
                     {
-                        if (applyImageHeightOnThisLine)
+                        var dy = Math.Max(run.ImageHeight - lineHeight, 0);
+                        drawY = Math.Max(drawY, baseDrawY + dy);
+                        for (int i = lastLineStartIndex; i < result.Count; i++)
                         {
-                            applyImageHeightOnThisLine = false;
-                            var dy = Math.Max(run.ImageHeight - lineHeight, 0);
-                            drawY += dy;
-                            for (int i = lastLineStartIndex; i < result.Count; i++)
-                            {
-                                result[i].Y = drawY;
-                            }
+                            result[i].Y = drawY;
                         }
                         flush(false);
                         result.Add(new PositionedText()
