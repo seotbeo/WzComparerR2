@@ -305,7 +305,7 @@ namespace WzComparerR2.CharaSimControl
             }
             // 상태
             var stateText = new string[] { "시작 가능", "진행 중", "완료" };
-            TextRenderer.DrawText(g2, $"상태: {stateText[state]}" + (this.Quest.Blocked ? " / 퀘스트 시작 불가" : ""), GearGraphics.EquipMDMoris9Font, new Point(21, bg.Height - 26), ((SolidBrush)GearGraphics.QuestBrushEnd).Color, TextFormatFlags.NoPadding);
+            TextRenderer.DrawText(g2, $"상태: {stateText[state]}" + (this.Quest.Blocked ? " / 퀘스트 시작 불가" : ""), GearGraphics.EquipMDMoris9Font, new Point(21, bg.Height - 26), ((SolidBrush)GearGraphics.QuestBrushDefault).Color, TextFormatFlags.NoPadding);
 
             return bg;
         }
