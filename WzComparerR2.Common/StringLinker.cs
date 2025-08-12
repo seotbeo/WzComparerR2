@@ -398,6 +398,7 @@ namespace WzComparerR2.Common
                     if (strResult == null) strResult = new StringResult();
 
                     strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                    strResult.Desc = GetDefaultString(linkNode, "0") ?? strResult.Desc;
                     strResult.FullPath = (newQuestDir ? "QuestData\\" : "") + tree.FullPath;
 
                     AddAllValue(strResult, linkNode);
