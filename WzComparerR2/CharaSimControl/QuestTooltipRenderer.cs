@@ -468,10 +468,10 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
-            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s*(\d+?)\s*[:;]?\s*#", match =>
+            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
             {
                 string tag = match.Groups[1].Value;
-                int id = int.Parse(match.Groups[2].Value);
+                if (!int.TryParse(match.Groups[2].Value, out int id)) id = -1;
                 StringResult sr;
                 switch (tag)
                 {
