@@ -40,12 +40,15 @@ namespace WzComparerR2.CharaSimControl
             this.DefaultState = 0;
             this.Margin_top = 0;
             this.Margin_right = 0;
+            this.npcImage = new BitmapOrigin();
         }
 
         public int DefaultState { get; set; }
         public int Margin_top { get; set; }
         public int Margin_right { get; set; }
         public bool CompareMode { get; set; } = false;
+        public bool ShowAllStates { get; set; }
+        public BitmapOrigin npcImage { get; set; }
         public Quest Quest { get; set; }
         public Wz_File sourceWzFile { get; set; }
         public List<Tuple<Rectangle, object>> RewardRectnItems { get; set; }
@@ -72,6 +75,48 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
 
+            this.Margin_top = 0;
+            this.Margin_right = 0;
+            this.RewardRectnItems.Clear();
+            SetNpcImage();
+
+            if (this.ShowAllStates)
+            {
+                var cnt = 0;
+                var height = 0;
+                Bitmap[] bmps = new Bitmap[3];
+                for (int i = 0; i < bmps.Length; i++)
+                {
+                    this.Quest.State = i;
+                    bmps[i] = RenderBase();
+                    if (bmps[i] != null)
+                    {
+                        cnt++;
+                        height = Math.Max(height, bmps[i].Height);
+                    }
+                }
+
+                var res = new Bitmap(322 * cnt + Margin_right, height);
+                using Graphics g = Graphics.FromImage(res);
+                for (int i = 0; i < bmps.Length; i++)
+                {
+                    if (bmps[i] != null)
+                    {
+                        g.DrawImage(bmps[i], 322 * i, 0);
+                        bmps[i].Dispose();
+                    }
+                }
+                if (npcImage.Bitmap != null)
+                {
+                    for (int i = 0; i < cnt; i++)
+                    {
+                        g.DrawImage(npcImage.Bitmap, 263 - npcImage.Origin.X + 322 * i, (108 + Margin_top) - npcImage.Origin.Y);
+                    }
+                }
+
+                return res;
+            }
+
             var bmp = RenderBase();
 
             return bmp;
@@ -83,9 +128,6 @@ namespace WzComparerR2.CharaSimControl
             var picH = 135;
             var left = 29;
             var state = this.Quest.State;
-            this.Margin_top = 0;
-            this.Margin_right = 0;
-            this.RewardRectnItems.Clear();
 
             var questColorTable = new Dictionary<string, Color>()
             {
@@ -133,58 +175,9 @@ namespace WzComparerR2.CharaSimControl
                     TextRenderer.DrawText(g, $"권장 레벨 : {this.Quest.Lvmin} ~ {lvMax}", GearGraphics.EquipMDMoris9Font, new Point(left, 90), ((SolidBrush)GearGraphics.QuestBrushDefault).Color, TextFormatFlags.NoPadding);
                 }
             }
-            // npc 이미지 계산
-            BitmapOrigin npcImage = new BitmapOrigin();
-            if (this.Quest.Check0Npc != null)
+            if (npcImage.Bitmap != null)
             {
-                if (this.Quest.Check0Npc.IsComponentNPC)
-                {
-                    if (this.avatar == null)
-                    {
-                        this.avatar = new AvatarCanvasManager();
-                    }
-
-                    foreach (var node in this.Quest.Check0Npc.Component.Nodes)
-                    {
-                        switch (node.Text)
-                        {
-                            case "skin":
-                                var skin = node.GetValueEx<int>(0);
-                                this.avatar.AddBodyFromSkin(skin);
-                                break;
-
-                            case "ear":
-                                var type = node.GetValueEx<int>(0);
-                                this.avatar.SetEarType(type);
-                                break;
-
-                            default:
-                                var gearID = node.GetValueEx<int>(0);
-                                this.avatar.AddGear(gearID);
-                                break;
-                        }
-                    }
-
-                    var img = this.avatar.GetBitmapOrigin();
-                    if (img.Bitmap != null)
-                    {
-                        if (this.Quest.Check0Npc.Default.Bitmap != null)
-                        {
-                            this.Quest.Check0Npc.Default.Bitmap.Dispose();
-                        }
-                        this.Quest.Check0Npc.Default = img;
-                    }
-
-                    this.avatar.ClearCanvas();
-                }
-
-                npcImage = this.Quest.Check0Npc.Default;
-                if (npcImage.Bitmap != null)
-                {
-                    Margin_top = Math.Max(npcImage.Origin.Y - 108, Margin_top);
-                    Margin_right = Math.Max(npcImage.Bitmap.Width + (263 - npcImage.Origin.X) - width, Margin_right);
-                    g.DrawImage(Resource.Quest_img_Main_questInfo_title_layer_npcShadow, 242, 103);
-                }
+                g.DrawImage(Resource.Quest_img_Main_questInfo_title_layer_npcShadow, 242, 103);
             }
 
             // 내용
@@ -283,7 +276,7 @@ namespace WzComparerR2.CharaSimControl
             picH += 49;
 
             // 배경
-            Bitmap bg = new Bitmap(width + Margin_right, Math.Max(picH + Margin_top, (108 + Margin_top) - npcImage.Origin.Y + (npcImage.Bitmap?.Height ?? 0)));
+            Bitmap bg = new Bitmap(width + (this.ShowAllStates ? 0 : Margin_right), Math.Max(picH + Margin_top, (108 + Margin_top) - npcImage.Origin.Y + (npcImage.Bitmap?.Height ?? 0)));
             using Graphics g2 = Graphics.FromImage(bg);
             g2.DrawImage(res["top"].Image, 0, Margin_top);
             FillRect(g2, res["center"], 0, 166 + Margin_top, bottomPoint + Margin_top);
@@ -293,7 +286,7 @@ namespace WzComparerR2.CharaSimControl
             // 중첩
             g2.DrawImage(fg, 0, 0 + Margin_top);
             // npc 이미지
-            if (npcImage.Bitmap != null)
+            if (npcImage.Bitmap != null && !this.ShowAllStates)
             {
                 g2.DrawImage(npcImage.Bitmap, 263 - npcImage.Origin.X, (108 + Margin_top) - npcImage.Origin.Y);
             }
@@ -305,7 +298,7 @@ namespace WzComparerR2.CharaSimControl
             }
             // 상태
             var stateText = new string[] { "시작 가능", "진행 중", "완료" };
-            TextRenderer.DrawText(g2, $"상태: {stateText[state]}" + (this.Quest.Blocked ? " / 퀘스트 시작 불가" : ""), GearGraphics.EquipMDMoris9Font, new Point(21, bg.Height - 26), ((SolidBrush)GearGraphics.QuestBrushDefault).Color, TextFormatFlags.NoPadding);
+            TextRenderer.DrawText(g2, $"상태: {stateText[state]}" + (this.Quest.Blocked ? " / 퀘스트 시작 불가" : ""), GearGraphics.EquipMDMoris9Font, new Point(21, picH + Margin_top - 26), ((SolidBrush)GearGraphics.QuestBrushDefault).Color, TextFormatFlags.NoPadding);
 
             return bg;
         }
@@ -315,6 +308,62 @@ namespace WzComparerR2.CharaSimControl
             brush.ResetTransform();
             brush.TranslateTransform(x, y0);
             g.FillRectangle(brush, x, y0, brush.Image.Width, y1 - y0);
+        }
+
+        private void SetNpcImage()
+        {
+            // npc 이미지 계산
+            this.npcImage = new BitmapOrigin();
+            if (this.Quest.Check0Npc != null)
+            {
+                if (this.Quest.Check0Npc.IsComponentNPC)
+                {
+                    if (this.avatar == null)
+                    {
+                        this.avatar = new AvatarCanvasManager();
+                    }
+
+                    foreach (var node in this.Quest.Check0Npc.Component.Nodes)
+                    {
+                        switch (node.Text)
+                        {
+                            case "skin":
+                                var skin = node.GetValueEx<int>(0);
+                                this.avatar.AddBodyFromSkin(skin);
+                                break;
+
+                            case "ear":
+                                var type = node.GetValueEx<int>(0);
+                                this.avatar.SetEarType(type);
+                                break;
+
+                            default:
+                                var gearID = node.GetValueEx<int>(0);
+                                this.avatar.AddGear(gearID);
+                                break;
+                        }
+                    }
+
+                    var img = this.avatar.GetBitmapOrigin();
+                    if (img.Bitmap != null)
+                    {
+                        if (this.Quest.Check0Npc.Default.Bitmap != null)
+                        {
+                            this.Quest.Check0Npc.Default.Bitmap.Dispose();
+                        }
+                        this.Quest.Check0Npc.Default = img;
+                    }
+
+                    this.avatar.ClearCanvas();
+                }
+
+                npcImage = this.Quest.Check0Npc.Default;
+                if (npcImage.Bitmap != null)
+                {
+                    Margin_top = Math.Max(npcImage.Origin.Y - 108, Margin_top);
+                    Margin_right = Math.Max(npcImage.Bitmap.Width + (263 - npcImage.Origin.X) - 322, Margin_right);
+                }
+            }
         }
 
         private Bitmap GetCategoryResource()
@@ -359,7 +408,10 @@ namespace WzComparerR2.CharaSimControl
                 {
                     var rectW = Math.Max(bmp.Width, 32);
                     var rectH = Math.Max(bmp.Height, 32);
-                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, rectW, rectH), new TooltipHelp("", r.ExpString, true)));
+                    var rect = new Rectangle(x, y - rectH + this.Margin_top, rectW, rectH);
+                    if (this.ShowAllStates)
+                        rect.Offset(322 * this.Quest.State, 0);
+                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(rect, new TooltipHelp("", r.ExpString, true)));
                 }
             }
             if (r.Meso > 0)
@@ -372,7 +424,10 @@ namespace WzComparerR2.CharaSimControl
                 {
                     var rectW = Math.Max(bmp.Width, 32);
                     var rectH = Math.Max(bmp.Height, 32);
-                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, Math.Max(bmp.Width, 32), rectH), new TooltipHelp("", r.MesoString, true)));
+                    var rect = new Rectangle(x, y - rectH + this.Margin_top, rectW, rectH);
+                    if (this.ShowAllStates)
+                        rect.Offset(322 * this.Quest.State, 0);
+                    this.RewardRectnItems.Add(new Tuple<Rectangle, object>(rect, new TooltipHelp("", r.MesoString, true)));
                 }
             }
             if (r.Items.Count > 0)
@@ -390,7 +445,10 @@ namespace WzComparerR2.CharaSimControl
                         {
                             var rectW = Math.Min(Math.Max(bmp.Bitmap.Width, 32), dx -1);
                             var rectH = Math.Max(bmp.Bitmap.Height, 32);
-                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH + this.Margin_top, rectW, rectH), GetItemBase(item.ID, node)));
+                            var rect = new Rectangle(x, y - rectH + this.Margin_top, rectW, rectH);
+                            if (this.ShowAllStates)
+                                rect.Offset(322 * this.Quest.State, 0);
+                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(rect, GetItemBase(item.ID, node)));
                         }
                         bmp.Bitmap.Dispose();
                         if (item.ID >= 2000000)

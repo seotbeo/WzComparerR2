@@ -249,6 +249,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Quest_ShowAllStates
+        {
+            get { return chkQAS.Checked; }
+            set { chkQAS.Checked = value; }
+        }
+
+        [Link]
         public bool Misc_Enable22AniStyle
         {
             get { return chkEnable22AniStyle.Checked; }
@@ -298,6 +305,13 @@ namespace WzComparerR2
             this.chkShowMiniMapMob.Enabled = this.chkShowMiniMap.Checked;
             this.chkShowMiniMapNpc.Enabled = this.chkShowMiniMap.Checked;
             this.chkShowMiniMapPortal.Enabled = this.chkShowMiniMap.Checked;
+        }
+
+        private void ChkQAS_CheckedChanged(object sender, System.EventArgs e)
+        {
+            this.comboBoxExQuestState.Enabled = !this.chkQAS.Checked;
+            this.labelXQS.Enabled = !this.chkQAS.Checked;
+            this.labelXQSHint.Enabled = !this.chkQAS.Checked;
         }
 
         private sealed class LinkAttribute : Attribute

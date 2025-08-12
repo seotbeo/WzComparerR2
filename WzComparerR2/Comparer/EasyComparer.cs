@@ -1051,6 +1051,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].CompareMode = true;
+                tooltipRenderNewOld[i].ShowAllStates = true;
             }
 
             foreach (var questID in OutputQuestTooltipIDs)
@@ -1076,66 +1077,7 @@ namespace WzComparerR2.Comparer
                         tooltipRenderNewOld[i].Quest = quest;
                     }
 
-                    int index = -1;
-                    int width = 0;
-                    int height = 0;
-                    int? typePicH = null;
-                    string type = "추가";
-                    List<Bitmap> images = new List<Bitmap>();
-                    switch (nullIdx)
-                    {
-                        case 0:// 퀘스트는 추가/삭제만 확인함
-                            continue;
-
-                        case 1:
-                            index = 1;
-                            type = "삭제";
-                            break;
-                        case 2:
-                            index = 0;
-                            break;
-
-                        default:
-                            continue;
-                    }
-                    if (tooltipRenderNewOld[index].Quest != null)
-                    {
-                        for (int s = 0; s <= 2; s++)
-                        {
-                            tooltipRenderNewOld[index].Quest.State = s;
-                            Bitmap image = tooltipRenderNewOld[index].Render();
-                            if (image != null && typePicH == null)
-                            {
-                                typePicH = tooltipRenderNewOld[index].Margin_top;
-                            }
-
-                            images.Add(image);
-                            width += image?.Width ?? 0;
-                            height = Math.Max(image?.Height ?? 0, height);
-                        }
-                    }
-                    if (width <= 0 && height <= 0) continue;
-
-                    using Bitmap resultImage = new Bitmap(width, height);
-                    using Graphics g = Graphics.FromImage(resultImage);
-                    var x = 0;
-                    foreach (var bmp in images)
-                    {
-                        if (bmp != null)
-                        {
-                            g.DrawImage(bmp, x, 0);
-                            x += bmp.Width;
-                            bmp.Dispose();
-                        }
-                    }
-
-                    var picH = (typePicH ?? 0) + 13;
-                    string imageName = Path.Combine(tooltipPath, $"퀘스트_{questID}_{type}.png");
-                    GearGraphics.DrawPlainText(g, type, GearGraphics.EquipMDMoris9Font, Color.FromArgb(255, 255, 255), 2, 100, ref picH, 10);
-                    if (!File.Exists(imageName))
-                    {
-                        resultImage.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
-                    }
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, questID, "퀘스트");
                 }
                 catch
                 {
@@ -1207,6 +1149,14 @@ namespace WzComparerR2.Comparer
             }
 
             int picH = typePicH;
+            if (RenderNew is QuestTooltipRenderer)
+            {
+                picH = Math.Max(picH, typePicH + (RenderNew as QuestTooltipRenderer).Margin_top);
+            }
+            if (RenderOld is QuestTooltipRenderer)
+            {
+                picH = Math.Max(picH, typePicH + (RenderOld as QuestTooltipRenderer).Margin_top);
+            }
             GearGraphics.DrawPlainText(g, type, GearGraphics.EquipMDMoris9Font, Color.FromArgb(255, 255, 255), 2, 100, ref picH, 10);
 
             if (infoText == null)

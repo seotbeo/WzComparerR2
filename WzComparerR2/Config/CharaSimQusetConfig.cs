@@ -21,5 +21,12 @@ namespace WzComparerR2.Config
             get { return Math.Min(Math.Max((int)this["defaultState"], 0), 2); }
             set { this["defaultState"] = Math.Min(Math.Max(value, 0), 2); }
         }
+
+        [ConfigurationProperty("showAllStates", DefaultValue = false)]
+        public bool ShowAllStates
+        {
+            get { return (bool)this["showAllStates"]; }
+            set { this["showAllStates"] = value; }
+        }
     }
 }
