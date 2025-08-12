@@ -390,7 +390,7 @@ namespace WzComparerR2.CharaSimControl
                         {
                             var rectW = Math.Min(Math.Max(bmp.Bitmap.Width, 32), dx -1);
                             var rectH = Math.Max(bmp.Bitmap.Height, 32);
-                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH, rectW, rectH), GetItemBase(item.ID, node)));
+                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(new Rectangle(x, y - rectH + this.Margin_top, rectW, rectH), GetItemBase(item.ID, node)));
                         }
                         bmp.Bitmap.Dispose();
                         if (item.ID >= 2000000)
