@@ -410,7 +410,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
-            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s?(\d+?)[:;]?#", match =>
+            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s*(\d+?)\s*[:;]?\s*#", match =>
             {
                 string tag = match.Groups[1].Value;
                 int id = int.Parse(match.Groups[2].Value);
