@@ -225,6 +225,7 @@
             this.chkOutputQuestTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAchvTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputSkillTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkOutputAll = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputRemovedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAddedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
@@ -2487,6 +2488,7 @@
             this.superTabControlPanel2.Controls.Add(this.chkOutputQuestTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputAchvTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputSkillTooltip);
+            this.superTabControlPanel2.Controls.Add(this.chkOutputAll);
             this.superTabControlPanel2.Controls.Add(this.chkResolvePngLink);
             this.superTabControlPanel2.Controls.Add(this.chkOutputRemovedImg);
             this.superTabControlPanel2.Controls.Add(this.chkOutputAddedImg);
@@ -2657,6 +2659,21 @@
             this.superTooltip1.SetSuperTooltip(this.chkOutputAchvTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputAchvTooltip", "", "추가/삭제/변경된 업적의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkOutputAchvTooltip.TabIndex = 17;
             this.chkOutputAchvTooltip.Text = "업적 툴팁 저장";
+            // 
+            // chkOutputAll
+            // 
+            // 
+            // 
+            // 
+            this.chkOutputAll.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputAll.Location = new System.Drawing.Point(484, 89);
+            this.chkOutputAll.Name = "chkOutputAll";
+            this.chkOutputAll.Size = new System.Drawing.Size(140, 23);
+            this.chkOutputAll.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputAll, new DevComponents.DotNetBar.SuperTooltipInfo("chkOutputAll", "", "모든 변경점 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputAll.TabIndex = 18;
+            this.chkOutputAll.Text = "모든 툴팁 저장";
+            this.chkOutputAll.CheckedChanged += new System.EventHandler(this.chkOutputAll_CheckedChanged);
             // 
             // chkOutputRemovedImg
             // 
@@ -3559,6 +3576,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputQuestTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputAchvTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputSkillTooltip;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputAll;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
         private DevComponents.Editors.ComboItem comboItem12_2;

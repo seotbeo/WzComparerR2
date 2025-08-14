@@ -3939,14 +3939,28 @@ namespace WzComparerR2
                     comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                     comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
                     comparer.EnableDarkMode = chkEnableDarkMode.Checked;
-                    comparer.OutputGearTooltip = chkOutputGearTooltip.Checked;
-                    comparer.OutputItemTooltip = chkOutputItemTooltip.Checked;
-                    comparer.OutputMapTooltip = chkOutputMapTooltip.Checked;
-                    comparer.OutputMobTooltip = chkOutputMobTooltip.Checked;
-                    comparer.OutputNpcTooltip = chkOutputNpcTooltip.Checked;
-                    comparer.OutputQuestTooltip = chkOutputQuestTooltip.Checked;
-                    comparer.OutputAchvTooltip = chkOutputAchvTooltip.Checked;
-                    comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
+                    if (chkOutputAll.Checked)
+                    {
+                        comparer.OutputGearTooltip = true;
+                        comparer.OutputItemTooltip = true;
+                        comparer.OutputMapTooltip = true;
+                        comparer.OutputMobTooltip = true;
+                        comparer.OutputNpcTooltip = true;
+                        comparer.OutputQuestTooltip = true;
+                        comparer.OutputAchvTooltip = true;
+                        comparer.OutputSkillTooltip = true;
+                    }
+                    else
+                    {
+                        comparer.OutputGearTooltip = chkOutputGearTooltip.Checked;
+                        comparer.OutputItemTooltip = chkOutputItemTooltip.Checked;
+                        comparer.OutputMapTooltip = chkOutputMapTooltip.Checked;
+                        comparer.OutputMobTooltip = chkOutputMobTooltip.Checked;
+                        comparer.OutputNpcTooltip = chkOutputNpcTooltip.Checked;
+                        comparer.OutputQuestTooltip = chkOutputQuestTooltip.Checked;
+                        comparer.OutputAchvTooltip = chkOutputAchvTooltip.Checked;
+                        comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
+                    }
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);
                     comparer.StateDetailChanged += new EventHandler(comparer_StateDetailChanged);
@@ -4001,6 +4015,19 @@ namespace WzComparerR2
                 compareThread.Priority = ThreadPriority.Highest;
                 compareThread.Start();
             }
+        }
+
+        private void chkOutputAll_CheckedChanged(object sender, EventArgs e)
+        {
+            bool enable = !this.chkOutputAll.Checked;
+            this.chkOutputGearTooltip.Enabled = enable;
+            this.chkOutputItemTooltip.Enabled = enable;
+            this.chkOutputMapTooltip.Enabled = enable;
+            this.chkOutputMobTooltip.Enabled = enable;
+            this.chkOutputNpcTooltip.Enabled = enable;
+            this.chkOutputQuestTooltip.Enabled = enable;
+            this.chkOutputAchvTooltip.Enabled = enable;
+            this.chkOutputSkillTooltip.Enabled = enable;
         }
 
         void comparer_StateDetailChanged(object sender, EventArgs e)
