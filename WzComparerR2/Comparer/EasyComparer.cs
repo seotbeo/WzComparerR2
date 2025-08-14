@@ -33,6 +33,7 @@ namespace WzComparerR2.Comparer
         private SortedSet<int> OutputMobTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputNpcTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputQuestTooltipIDs { get; set; } = new SortedSet<int>();
+        private SortedSet<int> OutputAchvTooltipIDs { get; set; } = new SortedSet<int>();
         private SortedSet<int> OutputSkillTooltipIDs { get; set; } = new SortedSet<int>();
         private List<int> ExceptionTooltipIDs { get; set; } = new List<int>();
         private Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
@@ -51,6 +52,7 @@ namespace WzComparerR2.Comparer
         public bool OutputMobTooltip { get; set; }
         public bool OutputNpcTooltip { get; set; }
         public bool OutputQuestTooltip { get; set; }
+        public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
 
@@ -107,7 +109,7 @@ namespace WzComparerR2.Comparer
                 WzFileComparer comparer = new WzFileComparer();
                 comparer.IgnoreWzFile = true;
 
-                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip || OutputMobTooltip || OutputNpcTooltip || OutputQuestTooltip)
+                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip || OutputMobTooltip || OutputNpcTooltip || OutputQuestTooltip || OutputAchvTooltip)
                 {
                     this.WzNewOld[0] = fileNew.Node;
                     this.WzNewOld[1] = fileOld.Node;
@@ -636,6 +638,16 @@ namespace WzComparerR2.Comparer
                     SaveQuestTooltip(tooltipPath);
                     HandleSaveTooltipException("퀘스트");
                 }
+                if (OutputAchvTooltip && OutputAchvTooltipIDs != null)
+                {
+                    string tooltipPath = Path.Combine(outputDir, "업적 툴팁");
+                    if (!Directory.Exists(tooltipPath))
+                    {
+                        Directory.CreateDirectory(tooltipPath);
+                    }
+                    SaveAchvTooltip(tooltipPath);
+                    HandleSaveTooltipException("업적");
+                }
 
                 for (var i = 0; i < 2; i++)
                 {
@@ -1088,6 +1100,55 @@ namespace WzComparerR2.Comparer
             OutputQuestTooltipIDs.Clear();
         }
 
+        // 변경된 업적 툴팁 출력
+        private void SaveAchvTooltip(string tooltipPath)
+        {
+            AchievementTooltipRenderer[] tooltipRenderNewOld = new AchievementTooltipRenderer[2];
+            int count = 0;
+            int allCount = OutputAchvTooltipIDs.Count;
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                tooltipRenderNewOld[i] = new AchievementTooltipRenderer();
+                tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
+                tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].CompareMode = true;
+            }
+
+            foreach (var achvID in OutputAchvTooltipIDs)
+            {
+                try
+                {
+                    StateInfo = string.Format("{0}/{1} 업적: {2}", ++count, allCount, achvID);
+                    StateDetail = "업적 변경점을 툴팁 이미지로 출력중...";
+
+                    string nodePath = $@"{achvID}";
+                    int nullIdx = 0;
+
+                    // 변경 전후 툴팁 이미지 생성
+                    for (int i = 0; i < 2; i++) // 0: New, 1: Old
+                    {
+                        Achievement achv = Achievement.CreateFromNode(PluginManager.FindWz($@"Etc\Achievement\AchievementData\{nodePath}.img", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]);
+
+                        if (achv == null)
+                        {
+                            nullIdx |= i + 1;
+                        }
+                        tooltipRenderNewOld[i].Achievement = achv;
+                    }
+
+                    SaveTooltip(tooltipRenderNewOld[0], tooltipRenderNewOld[1], nullIdx, tooltipPath, achvID, "업적");
+                }
+                catch
+                {
+                    ExceptionTooltipIDs.Add(achvID);
+                    continue;
+                }
+            }
+            OutputAchvTooltipIDs.Clear();
+        }
+
         // 툴팁 이미지 합치기
         private void SaveTooltip(TooltipRender RenderNew, TooltipRender RenderOld, int nullIdx, string tooltipPath, int ID, string tooltipType, string infoText = null, int typePicH = 13)
         {
@@ -1435,6 +1496,42 @@ namespace WzComparerR2.Comparer
                 }
             }
         }
+
+        // 노드에서 업적 ID 얻기
+        private void GetAchvID(Wz_Node node, bool change)
+        {
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img$");
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img\\info\\(name|desc|difficulty|score|mainCategory).*$");
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img\\mission\\\d+\\(name).*$");
+            }
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img\\reward\\0\\(desc).*$");
+            }
+
+            if (match.Success)
+            {
+                var achvID = match.Groups[1].Value;
+
+                if (achvID != null && int.TryParse(achvID, out var id))
+                {
+                    if (!OutputAchvTooltipIDs.Contains(id))
+                    {
+                        OutputAchvTooltipIDs.Add(id);
+                    }
+                }
+            }
+        }
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
             StateDetail = "img 구조 분석중";
@@ -1511,6 +1608,11 @@ namespace WzComparerR2.Comparer
                     GetQuestID(diff.NodeNew, idx == 0 ? true : false);
                     GetQuestID(diff.NodeOld, idx == 0 ? true : false);
                 }
+                if (OutputAchvTooltip && (imgName.Contains("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
+                {
+                    GetAchvID(diff.NodeNew, idx == 0 ? true : false);
+                    GetAchvID(diff.NodeOld, idx == 0 ? true : false);
+                }
             }
             StateDetail = "문서 출력중";
             bool noChange = diffList.Count <= 0;
@@ -1584,6 +1686,10 @@ namespace WzComparerR2.Comparer
                     if (OutputQuestTooltip && (imgName.Contains("QuestInfo") || imgName.Contains("QuestData")))
                     {
                         GetQuestID(node, idx == 0 ? true : false);
+                    }
+                    if (OutputAchvTooltip && (imgName.Contains("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
+                    {
+                        GetAchvID(node, idx == 0 ? true : false);
                     }
 
                     if (node.Nodes.Count > 0)

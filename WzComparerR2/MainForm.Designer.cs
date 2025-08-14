@@ -110,6 +110,7 @@
             this.comboItem9 = new DevComponents.Editors.ComboItem();
             this.comboItemSearchSetItem = new DevComponents.Editors.ComboItem();
             this.comboItemSearchQuest = new DevComponents.Editors.ComboItem();
+            this.comboItemSearchAchievement = new DevComponents.Editors.ComboItem();
             this.itemContainer12 = new DevComponents.DotNetBar.ItemContainer();
             this.checkBoxItemRegex2 = new DevComponents.DotNetBar.CheckBoxItem();
             this.buttonItemSearchString = new DevComponents.DotNetBar.ButtonItem();
@@ -222,6 +223,7 @@
             this.chkOutputMobTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputNpcTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputQuestTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkOutputAchvTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputSkillTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputRemovedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAddedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -1176,7 +1178,7 @@
             // comboBoxItem2
             // 
             this.comboBoxItem2.ComboWidth = 85;
-            this.comboBoxItem2.DropDownHeight = 144;
+            this.comboBoxItem2.DropDownHeight = 160;
             this.comboBoxItem2.ItemHeight = 16;
             this.comboBoxItem2.Items.AddRange(new object[] {
             this.comboItem3,
@@ -1187,7 +1189,8 @@
             this.comboItem8,
             this.comboItemSearchQuest,
             this.comboItem9,
-            this.comboItemSearchSetItem});
+            this.comboItemSearchSetItem,
+            this.comboItemSearchAchievement});
             this.comboBoxItem2.Name = "comboBoxItem2";
             this.comboBoxItem2.SelectedIndex = 0;
             // 
@@ -1226,6 +1229,10 @@
             // comboItemSearchSetItem
             // 
             this.comboItemSearchSetItem.Text = "세트 아이템";
+            // 
+            // comboItemSearchQuest
+            // 
+            this.comboItemSearchAchievement.Text = "업적";
             // 
             // itemContainer12
             // 
@@ -2478,6 +2485,7 @@
             this.superTabControlPanel2.Controls.Add(this.chkOutputMobTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputNpcTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputQuestTooltip);
+            this.superTabControlPanel2.Controls.Add(this.chkOutputAchvTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputSkillTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkResolvePngLink);
             this.superTabControlPanel2.Controls.Add(this.chkOutputRemovedImg);
@@ -2635,6 +2643,20 @@
             this.superTooltip1.SetSuperTooltip(this.chkOutputQuestTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputQuestTooltip", "", "추가/삭제된 퀘스트의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
             this.chkOutputQuestTooltip.TabIndex = 16;
             this.chkOutputQuestTooltip.Text = "퀘스트 툴팁 저장";
+            // 
+            // chkOutputAchvTooltip
+            // 
+            // 
+            // 
+            // 
+            this.chkOutputAchvTooltip.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkOutputAchvTooltip.Location = new System.Drawing.Point(174, 145);
+            this.chkOutputAchvTooltip.Name = "chkOutputAchvTooltip";
+            this.chkOutputAchvTooltip.Size = new System.Drawing.Size(140, 23);
+            this.chkOutputAchvTooltip.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.chkOutputAchvTooltip, new DevComponents.DotNetBar.SuperTooltipInfo("OutputAchvTooltip", "", "추가/삭제/변경된 업적의 툴팁을 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
+            this.chkOutputAchvTooltip.TabIndex = 17;
+            this.chkOutputAchvTooltip.Text = "업적 툴팁 저장";
             // 
             // chkOutputRemovedImg
             // 
@@ -3535,12 +3557,14 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputMobTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputNpcTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputQuestTooltip;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputAchvTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputSkillTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkHashPngFileName;
         private DevComponents.Editors.ComboItem comboItem19;
         private DevComponents.Editors.ComboItem comboItem12_2;
         private DevComponents.Editors.ComboItem comboItemSearchSetItem;
         private DevComponents.Editors.ComboItem comboItemSearchQuest;
+        private DevComponents.Editors.ComboItem comboItemSearchAchievement;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
         private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;

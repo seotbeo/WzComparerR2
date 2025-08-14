@@ -52,6 +52,7 @@ namespace WzComparerR2
             createStyleItems();
             initFields();
             loadUIState();
+            GearGraphics.LoadFonts();
         }
 
         List<Wz_Structure> openedWz;
@@ -2085,6 +2086,14 @@ namespace WzComparerR2
                     addPath();
                     break;
 
+                case "AchievementData":
+                    wzPath.Add("Etc");
+                    wzPath.Add("Achievement");
+                    wzPath.Add("AchievementData");
+                    wzPath.Add($"{id}.img");
+                    addPath();
+                    break;
+
                 default:
                     break;
             }
@@ -2629,6 +2638,7 @@ namespace WzComparerR2
                     dicts.Add(stringLinker.StringQuest);
                     dicts.Add(stringLinker.StringSkill);
                     dicts.Add(stringLinker.StringSetItem);
+                    dicts.Add(stringLinker.StringAchievement);
                     break;
                 case 1:
                     dicts.Add(stringLinker.StringEqp);
@@ -2653,6 +2663,9 @@ namespace WzComparerR2
                     break;
                 case 8:
                     dicts.Add(stringLinker.StringSetItem);
+                    break;
+                case 9:
+                    dicts.Add(stringLinker.StringAchievement);
                     break;
             }
 
@@ -3521,6 +3534,18 @@ namespace WzComparerR2
                             fileName = setItem.SetItemID + ".png";
                         }
                     }
+                    else if (Regex.IsMatch(selectedNode.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img$"))
+                    {
+                        if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
+                            return;
+                        Achievement achievement = Achievement.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+
+                        obj = achievement;
+                        if (achievement != null)
+                        {
+                            fileName = achievement.ID + ".png";
+                        }
+                    }
                     break;
             }
             if (obj != null)
@@ -3919,6 +3944,7 @@ namespace WzComparerR2
                     comparer.OutputMobTooltip = chkOutputMobTooltip.Checked;
                     comparer.OutputNpcTooltip = chkOutputNpcTooltip.Checked;
                     comparer.OutputQuestTooltip = chkOutputQuestTooltip.Checked;
+                    comparer.OutputAchvTooltip = chkOutputAchvTooltip.Checked;
                     comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);

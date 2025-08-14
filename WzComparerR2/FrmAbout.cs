@@ -72,7 +72,8 @@ namespace WzComparerR2
                 Tuple.Create("[KMS] 패치와 함께 비교시 오류 제보", "@lowrt"),
                 Tuple.Create("[KMS] 아바타 모두 내보내기 오류 제보", "@pid011"),
                 Tuple.Create("[KMS] 툴팁 관련 기능 추가, 오류 수정 및 제보", "@sh-cho"),
-                Tuple.Create("[KMS] 훈장 미리보기 오류 제보, 스크립트 연결 맵 기능 추가", "@seotbeo"),
+                //Tuple.Create("[KMS] 훈장 미리보기 오류 제보, 스크립트 연결 맵 기능 추가", "@seotbeo"),
+                Tuple.Create("[KMS] 각종 기능 추가", "섣버@seotbeo"),
                 Tuple.Create("[KMS] 아바타 믹스 색 조합 방법 구현", "snlt7d"),
             })
             {
@@ -99,6 +100,12 @@ namespace WzComparerR2
             {
                 string nodeTxt = "<font color=\"#808080\">연결된 플러그인 없음</font>";
                 Node node = new Node(nodeTxt);
+                this.advTree1.Nodes.Add(node);
+            }
+
+            {
+                var NANUMGOTHIC_SOURCEINFO = "\r\n이 프로그램 일부에는 네이버에서 제공한 나눔글꼴이 적용되어 있습니다.\r\n";
+                Node node = new Node(NANUMGOTHIC_SOURCEINFO);
                 this.advTree1.Nodes.Add(node);
             }
         }

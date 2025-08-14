@@ -19,6 +19,7 @@ namespace WzComparerR2.Common
             stringSkill2 = new Dictionary<string, StringResult>();
             stringSetItem = new Dictionary<int, StringResult>();
             stringQuest = new Dictionary<int, StringResult>();
+            stringAchievement = new Dictionary<int, StringResult>();
         }
 
         public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
@@ -362,6 +363,33 @@ namespace WzComparerR2.Common
                 }
             }
 
+            var achievementNode = etcNode.FindNodeByPath("Achievement\\AchievementData");
+            foreach (Wz_Node node in achievementNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            {
+                Wz_Image image = node.Value as Wz_Image;
+                if (image == null || !image.TryExtract())
+                    continue;
+                Wz_Node tree = image.Node;
+                Wz_Node infoNode = tree.FindNodeByPath("info");
+                if (Int32.TryParse(tree.Text.Replace(".img", ""), out id) && infoNode.ResolveUol() is Wz_Node linkNode && linkNode != null)
+                {
+                    StringResult strResult = null;
+                    if (update)
+                    {
+                        try { strResult = stringAchievement[id]; }
+                        catch { }
+                    }
+                    if (strResult == null) strResult = new StringResult();
+
+                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                    strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
+                    strResult.FullPath = "AchievementData\\" + tree.FullPath;
+
+                    //AddAllValue(strResult, linkNode);
+                    stringAchievement[id] = strResult;
+                }
+            }
+
             Wz_Node qDataNode = questNode?.FindNodeByPath("QuestData");
             Wz_Node qInfoNode = null;
             bool newQuestDir = true;
@@ -420,6 +448,7 @@ namespace WzComparerR2.Common
             stringSkill2.Clear();
             stringSetItem.Clear();
             stringQuest.Clear();
+            stringAchievement.Clear();
         }
 
         public bool HasValues
@@ -427,7 +456,7 @@ namespace WzComparerR2.Common
             get
             {
                 return (stringEqp.Count + stringItem.Count + stringMap.Count +
-                    stringMob.Count + stringNpc.Count + stringSkill.Count + stringSetItem.Count + stringQuest.Count > 0);
+                    stringMob.Count + stringNpc.Count + stringSkill.Count + stringSetItem.Count + stringQuest.Count + stringAchievement.Count > 0);
             }
         }
 
@@ -440,6 +469,7 @@ namespace WzComparerR2.Common
         private Dictionary<string, StringResult> stringSkill2;
         private Dictionary<int, StringResult> stringSetItem;
         private Dictionary<int, StringResult> stringQuest;
+        private Dictionary<int, StringResult> stringAchievement;
 
         private string GetDefaultString(Wz_Node node, string searchNodeText)
         {
@@ -501,6 +531,11 @@ namespace WzComparerR2.Common
         public Dictionary<int, StringResult> StringQuest
         {
             get { return stringQuest; }
+        }
+
+        public Dictionary<int, StringResult> StringAchievement
+        {
+            get { return stringAchievement; }
         }
     }
 }
