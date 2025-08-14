@@ -122,6 +122,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Skill_ShowReqSkill
+        {
+            get { return chkShowReqSkill.Checked; }
+            set { chkShowReqSkill.Checked = value; }
+        }
+
+        [Link]
         public bool Gear_ShowID
         {
             get { return checkBoxX3.Checked; }

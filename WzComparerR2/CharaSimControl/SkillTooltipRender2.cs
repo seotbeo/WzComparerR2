@@ -28,7 +28,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowProperties { get; set; } = true;
         public bool ShowDelay { get; set; }
         public bool ShowArea { get; set; }
-        public bool ShowReqSkill { get; set; } = true;
+        public bool ShowReqSkill { get; set; }
         public bool DisplayCooltimeMSAsSec { get; set; } = true;
         public bool DisplayPermyriadAsPercent { get; set; } = true;
         public bool IgnoreEvalError { get; set; } = false;
@@ -185,6 +185,22 @@ namespace WzComparerR2.CharaSimControl
             {
                 string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, SummaryParams.Default);
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
+                if (ShowReqSkill && Skill.ReqSkill.Count > 0)
+                {
+                    foreach (var kv in Skill.ReqSkill)
+                    {
+                        string skillName;
+                        if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr))
+                        {
+                            skillName = sr.Name;
+                        }
+                        else
+                        {
+                            skillName = kv.Key.ToString();
+                        }
+                        hdesc += $"\n필요 스킬 : #c{skillName} {kv.Value}레벨 이상#";
+                    }
+                }
                 GearGraphics.DrawString(g, hdesc, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.TimeLimited)
@@ -408,23 +424,6 @@ namespace WzComparerR2.CharaSimControl
                     }
                     skillDescEx.Add("#c[범위" + kv.Key + "(px)] " + colortag + "좌: " + kv.Value.X + ", 우: " + Skill.Rb[kv.Key].X + ", 상: " + kv.Value.Y + ", 하: " + Skill.Rb[kv.Key].Y + "" +
                         ", 영역: " + Math.Abs(Skill.Rb[kv.Key].X - kv.Value.X) + " x " + Math.Abs(kv.Value.Y - Skill.Rb[kv.Key].Y) + "#");
-                }
-            }
-
-            if (ShowReqSkill && Skill.ReqSkill.Count > 0)
-            {
-                foreach (var kv in Skill.ReqSkill)
-                {
-                    string skillName;
-                    if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr))
-                    {
-                        skillName = sr.Name;
-                    }
-                    else
-                    {
-                        skillName = kv.Key.ToString();
-                    }
-                    skillDescEx.Add("#c[필요 스킬] " + skillName + ": " + kv.Value + " 이상#");
                 }
             }
 

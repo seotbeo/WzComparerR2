@@ -672,6 +672,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowDelay = true;
                 tooltipRenderNewOld[i].ShowArea = true;
+                tooltipRenderNewOld[i].ShowReqSkill = CharaSimConfig.Default.Skill.ShowReqSkill;
                 tooltipRenderNewOld[i].SourceWzNode = WzNewOld[i];
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffSkillTags = this.DiffSkillTags;
