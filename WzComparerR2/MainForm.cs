@@ -4096,7 +4096,7 @@ namespace WzComparerR2
                     continue;
                 }
 
-                if (node1.Text == "Weapon")
+                if (node1.Text == "Accessory")
                 {
                     wpNode = node1;
                     foreach (var imgNode in wpNode.Nodes)
@@ -4104,14 +4104,10 @@ namespace WzComparerR2
                         Wz_Image img = imgNode.GetValue<Wz_Image>();
                         if (img != null && img.TryExtract())
                         {
-                            var c = img.Node?.FindNodeByPath("info")?.FindNodeByPath("reqJob");
-                            if (c != null)
+                            var c = img.Node?.FindNodeByPath("info")?.FindNodeByPath("reissueBan").GetValueEx<int>(0);
+                            if (c > 0)
                             {
-                                var d = c.GetValueEx<int>() ?? 0;
-                                if (!(d % 2 == 0 || d == 1 || d == 0))
-                                {
-                                    Debug.WriteLine($"{img.Node.Text}, {d}");
-                                }
+                                Debug.WriteLine($"{img.Node.Text}, {c}");
                             }
                         }
                     }
