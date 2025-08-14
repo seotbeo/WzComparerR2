@@ -283,6 +283,8 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi2CopyFullPath = new System.Windows.Forms.ToolStripMenuItem();
             this.comboItem19 = new DevComponents.Editors.ComboItem();
+            this.btnRootNode = new DevComponents.DotNetBar.ButtonX();
+            this.clbRootNode = new System.Windows.Forms.CheckedListBox();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -2498,6 +2500,8 @@
             this.superTabControlPanel2.Controls.Add(this.labelXComp2);
             this.superTabControlPanel2.Controls.Add(this.labelXComp1);
             this.superTabControlPanel2.Controls.Add(this.btnEasyCompare);
+            this.superTabControlPanel2.Controls.Add(this.btnRootNode);
+            this.superTabControlPanel2.Controls.Add(this.clbRootNode);
             this.superTabControlPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel2.Location = new System.Drawing.Point(0, 0);
             this.superTabControlPanel2.Name = "superTabControlPanel2";
@@ -3268,6 +3272,26 @@
             this.panelDockContainer2.Style.GradientAngle = 90;
             this.panelDockContainer2.TabIndex = 2;
             // 
+            // btnRootNode
+            // 
+            this.btnRootNode.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnRootNode.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnRootNode.Location = new System.Drawing.Point(105, 3);
+            this.btnRootNode.Name = "btnRootNode";
+            this.btnRootNode.Size = new System.Drawing.Size(130, 30);
+            this.btnRootNode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btnRootNode.TabIndex = 25;
+            this.btnRootNode.Text = "비교할 Wz 선택 ▼";
+            this.btnRootNode.Click += new System.EventHandler(this.btnRootNode_Click);
+            //
+            // clbRootNode
+            //
+            this.clbRootNode.CheckOnClick = true;
+            this.clbRootNode.Location = new System.Drawing.Point(btnRootNode.Location.X, btnRootNode.Location.Y + btnRootNode.Size.Height);
+            this.clbRootNode.Size = new System.Drawing.Size(130, 250);
+            this.clbRootNode.Visible = false;
+            this.clbRootNode.BringToFront();
+            //
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
@@ -3328,7 +3352,6 @@
             this.bar1.ResumeLayout(false);
             this.panelDockContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -3586,5 +3609,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
         private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;
+        private DevComponents.DotNetBar.ButtonX btnRootNode;
+        private System.Windows.Forms.CheckedListBox clbRootNode;
     }
 }

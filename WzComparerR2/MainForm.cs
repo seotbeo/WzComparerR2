@@ -132,6 +132,14 @@ namespace WzComparerR2
                 cmbComparePng.Items.Add(comp);
             }
             cmbComparePng.SelectedItem = WzPngComparison.SizeAndDataLength;
+
+            foreach (var i in Enum.GetValues(typeof(Wz_Type)))
+            {
+                if (i is Wz_Type wzType && wzType != Wz_Type.Unknown)
+                {
+                    this.clbRootNode.Items.Add(wzType.ToString(), true);
+                }
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -3929,10 +3937,19 @@ namespace WzComparerR2
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
+                Dictionary<string, bool> selectedNodes = new Dictionary<string, bool>();
+                for (int i = 0; i < clbRootNode.Items.Count; i++)
+                {
+                    string item = clbRootNode.Items[i].ToString();
+                    bool isChecked = clbRootNode.GetItemChecked(i);
+                    selectedNodes[item] = isChecked;
+                }
+                clbRootNode.Visible = false;
                 compareThread = new Thread(() =>
                 {
                     System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
                     EasyComparer comparer = new EasyComparer();
+                    comparer.selectedNodes = selectedNodes;
                     comparer.Comparer.PngComparison = (WzPngComparison)cmbComparePng.SelectedItem;
                     comparer.Comparer.ResolvePngLink = chkResolvePngLink.Checked;
                     comparer.OutputPng = chkOutputPng.Checked;
@@ -4046,6 +4063,11 @@ namespace WzComparerR2
             {
                 labelXComp2.Text = comp.StateDetail;
             }
+        }
+
+        private void btnRootNode_Click(object sender, EventArgs e)
+        {
+            clbRootNode.Visible = !clbRootNode.Visible;
         }
 
         private void buttonItemAbout_Click(object sender, EventArgs e)

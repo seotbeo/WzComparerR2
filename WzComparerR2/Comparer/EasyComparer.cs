@@ -55,6 +55,7 @@ namespace WzComparerR2.Comparer
         public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
+        public Dictionary<string, bool> selectedNodes { get; set; }
 
         public string StateInfo
         {
@@ -160,6 +161,7 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("<tr><th>파일명</th><th>신버전 용량</th><th>구버전 용량</th><th>변경</th><th>추가</th><th>제거</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
+                        if (!selectedNodes[wzType.ToString()]) continue;
                         var vNodeNew = dictNew[wzType];
                         var vNodeOld = dictOld[wzType];
                         var cmp = comparer.Compare(vNodeNew, vNodeOld);
@@ -222,6 +224,7 @@ namespace WzComparerR2.Comparer
 
             foreach (var wzType in wzTypeList)
             {
+                if (!selectedNodes[wzType.ToString()]) continue;
                 var vNodeNew = dictNew[wzType];
                 var vNodeOld = dictOld[wzType];
                 var cmp = comparer.Compare(vNodeNew, vNodeOld);
