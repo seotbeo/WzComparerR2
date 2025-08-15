@@ -98,18 +98,29 @@ namespace WzComparerR2.CharaSimControl
 
         private static void LoadAchvTitleFont()
         {
-            if (AchievementTitleFont != null)
+            try
             {
-                AchievementTitleFont.Dispose();
-                AchievementTitleFont = null;
+                if (AchievementTitleFont != null)
+                {
+                    AchievementTitleFont.Dispose();
+                    AchievementTitleFont = null;
+                }
+                var bytes = Resource.NanumGothicExtraBold;
+                IntPtr ptr = Marshal.AllocCoTaskMem(bytes.Length);
+                Marshal.Copy(bytes, 0, ptr, bytes.Length);
+                _pfc.AddMemoryFont(ptr, bytes.Length);
+
+                var fm = _pfc.Families.LastOrDefault();
+                if (fm != null)
+                {
+                    AchievementTitleFont = new Font(fm, 16f, FontStyle.Regular, GraphicsUnit.Pixel);
+                }
+                else throw new Exception();
             }
-            var bytes = Resource.NanumGothicExtraBold;
-            IntPtr ptr = Marshal.AllocCoTaskMem(bytes.Length);
-            Marshal.Copy(bytes, 0, ptr, bytes.Length);
-            _pfc.AddMemoryFont(ptr, bytes.Length);
-            
-            var fm = _pfc.Families.FirstOrDefault(f => string.Equals(f.Name, "나눔고딕 ExtraBold", StringComparison.OrdinalIgnoreCase));
-            AchievementTitleFont = new Font(fm, 16f, FontStyle.Regular, GraphicsUnit.Pixel);
+            catch
+            {
+                AchievementTitleFont = new Font("Noto Sans KR", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
+            }
         }
 
         public static void LoadFonts()

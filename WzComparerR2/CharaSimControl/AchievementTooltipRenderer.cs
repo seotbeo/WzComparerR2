@@ -59,6 +59,7 @@ namespace WzComparerR2.CharaSimControl
 
             // 리소스 준비
             this.RewardRectnItems.Clear();
+            StringFormat format = (StringFormat)StringFormat.GenericTypographic.Clone();
             var bg_top = Resource.UIAchievement_img_achievement_pages_normalCategory_achievementForm_all_incomplete_top;
             var bg_pattern = Resource.UIAchievement_img_achievement_pages_normalCategory_achievementForm_all_incomplete_pattern;
             var bg_bottom = this.Achievement.HasRewards ? Resource.UIAchievement_img_achievement_pages_normalCategory_achievementForm_all_incomplete_bottom
@@ -89,15 +90,16 @@ namespace WzComparerR2.CharaSimControl
                 sr.Name = "(null)";
             }
             var name = sr.Name;
-            //g.DrawString(sr.Name, GearGraphics.AchievementTitleFont, new SolidBrush(Color.White), new Point(84, 12));
-            TextRenderer.DrawText(g, sr.Name, GearGraphics.AchievementTitleFont, new Point(84, 12), Color.White, TextFormatFlags.NoPadding);
+            g.DrawString(sr.Name, GearGraphics.AchievementTitleFont, new SolidBrush(Color.White), new Point(84, 12), format);
+            //TextRenderer.DrawText(g, sr.Name, GearGraphics.AchievementTitleFont, new Point(84, 12), Color.White, TextFormatFlags.NoPadding);
 
             // 등급
-            var gradePath = $"UIAchievement_img_achievement_pages_normalCategory_achievementForm_basic_difficultyIcon_{this.Achievement.Difficulty}";
+            var difficulty = !string.IsNullOrEmpty(this.Achievement.Difficulty) ? this.Achievement.Difficulty : "normal";
+            var gradePath = $"UIAchievement_img_achievement_pages_normalCategory_achievementForm_basic_difficultyIcon_{difficulty}";
             Bitmap grade = (Bitmap)Resource.ResourceManager.GetObject(gradePath);
             if (grade != null)
             {
-                if (this.Achievement.Difficulty == "normal")
+                if (difficulty == "normal")
                 {
                     g.DrawImage(grade, 28, 18);
                 }
