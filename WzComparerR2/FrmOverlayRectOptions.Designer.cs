@@ -518,8 +518,8 @@ namespace WzComparerR2
             this.txtSpeedX.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtSpeedX.Location = new System.Drawing.Point(209, 153);
             this.txtSpeedX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSpeedX.MaxValue = 8192;
-            this.txtSpeedX.MinValue = -8192;
+            this.txtSpeedX.MaxValue = 100000;
+            this.txtSpeedX.MinValue = -100000;
             this.txtSpeedX.Name = "txtSpeedX";
             this.txtSpeedX.ShowUpDown = true;
             this.txtSpeedX.Size = new System.Drawing.Size(87, 21);
@@ -539,8 +539,8 @@ namespace WzComparerR2
             this.txtSpeedY.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtSpeedY.Location = new System.Drawing.Point(304, 153);
             this.txtSpeedY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSpeedY.MaxValue = 8192;
-            this.txtSpeedY.MinValue = -8192;
+            this.txtSpeedY.MaxValue = 100000;
+            this.txtSpeedY.MinValue = -100000;
             this.txtSpeedY.Name = "txtSpeedY";
             this.txtSpeedY.ShowUpDown = true;
             this.txtSpeedY.Size = new System.Drawing.Size(88, 21);

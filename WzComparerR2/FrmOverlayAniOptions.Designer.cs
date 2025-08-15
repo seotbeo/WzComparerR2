@@ -410,8 +410,8 @@
             this.txtSpeedX.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtSpeedX.Location = new System.Drawing.Point(207, 97);
             this.txtSpeedX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSpeedX.MaxValue = 8192;
-            this.txtSpeedX.MinValue = -8192;
+            this.txtSpeedX.MaxValue = 100000;
+            this.txtSpeedX.MinValue = -100000;
             this.txtSpeedX.Name = "txtSpeedX";
             this.txtSpeedX.ShowUpDown = true;
             this.txtSpeedX.Size = new System.Drawing.Size(69, 21);
@@ -431,8 +431,8 @@
             this.txtSpeedY.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtSpeedY.Location = new System.Drawing.Point(309, 97);
             this.txtSpeedY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtSpeedY.MaxValue = 8192;
-            this.txtSpeedY.MinValue = -8192;
+            this.txtSpeedY.MaxValue = 100000;
+            this.txtSpeedY.MinValue = -100000;
             this.txtSpeedY.Name = "txtSpeedY";
             this.txtSpeedY.ShowUpDown = true;
             this.txtSpeedY.Size = new System.Drawing.Size(70, 21);
