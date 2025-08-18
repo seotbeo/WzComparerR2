@@ -31,6 +31,8 @@ namespace WzComparerR2.AvatarCommon
             this.CapType = "";
             this.WeaponIndex = 0;
             this.GroupChair = "0";
+            this.ShowWeaponEffect = true;
+            this.ShowWeaponJumpEffect = true;
         }
 
         public List<string> ZMap { get; private set; }
@@ -49,7 +51,8 @@ namespace WzComparerR2.AvatarCommon
 
         public bool HairCover { get; set; }
         public bool ShowHairShade { get; set; }
-
+        public bool ShowWeaponEffect { get; set; }
+        public bool ShowWeaponJumpEffect { get; set; }
         public bool ApplyBRM { get; set; }
         public int WeaponIndex { get; set; }
         public int WeaponType { get; set; }
@@ -1280,6 +1283,18 @@ namespace WzComparerR2.AvatarCommon
                             case "backHairBelowCapNarrow": if (capType.Contains("H5") || capType == defaultCapType) continue; break;
                             case "backHairOverCape": if (capType.Contains("Hc")) continue; break;
                             case "hairShade": if (capType.Contains("Hs")) continue; break;
+                            case "effect":
+                                if (childNode.FullPathToFile.StartsWith("Character\\Weapon"))
+                                {
+                                    if (childNode.FullPathToFile.Contains("jump"))
+                                    {
+                                        if (!this.ShowWeaponJumpEffect)
+                                            continue;
+                                    }
+                                    else if (!this.ShowWeaponEffect)
+                                        continue;
+                                }
+                                break;
                             default:
                                 if (childNode.Text.StartsWith("weapon"))
                                 {

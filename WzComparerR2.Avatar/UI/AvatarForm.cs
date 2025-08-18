@@ -47,6 +47,8 @@ namespace WzComparerR2.Avatar.UI
                 cmbActionEffects[i] = t2;
             }
             this.panelDockContainer2.Controls.Remove(this.chkHairShade); // disable chkHairShade
+            this.chkShowWeaponEffect.Checked = true;
+            this.chkShowWeaponJumpEffect.Checked = true;
             btnReset_Click(btnReset, EventArgs.Empty);
             FillWeaponIdx();
             FillEarSelection();
@@ -526,7 +528,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11},{12}:{13}:{14}",
+            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}:{15}:{16}",
                 this.avatar.ActionName,
                 bodyFrame,
                 this.avatar.EmotionName,
@@ -535,6 +537,8 @@ namespace WzComparerR2.Avatar.UI
                 tamingFrame,
                 this.avatar.HairCover ? 1 : 0,
                 this.avatar.ShowHairShade ? 1 : 0,
+                this.avatar.ShowWeaponEffect ? 1 : 0,
+                this.avatar.ShowWeaponJumpEffect ? 1 : 0,
                 this.avatar.EarType,
                 this.avatar.WeaponType,
                 this.avatar.WeaponIndex,
@@ -1737,6 +1741,18 @@ namespace WzComparerR2.Avatar.UI
         private void chkHairShade_CheckedChanged(object sender, EventArgs e)
         {
             avatar.ShowHairShade = chkHairShade.Checked;
+            UpdateDisplay();
+        }
+
+        private void chkShowWeaponEffect_CheckedChanged(object sender, EventArgs e)
+        {
+            avatar.ShowWeaponEffect = chkShowWeaponEffect.Checked;
+            UpdateDisplay();
+        }
+
+        private void chkShowWeaponJumpEffect_CheckedChanged(object sender, EventArgs e)
+        {
+            avatar.ShowWeaponJumpEffect = chkShowWeaponJumpEffect.Checked;
             UpdateDisplay();
         }
 
