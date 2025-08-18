@@ -313,6 +313,31 @@ namespace WzComparerR2
             Wz_Structure.DefaultWzVersionVerifyMode = config.WzVersionVerifyMode;
         }
 
+        private void UpdateClbRootNode()
+        {
+            clbRootNode.SuspendLayout();
+            var containList = Enumerable.Repeat(false, clbRootNode.Items.Count).ToList();
+            foreach (var wzs in this.openedWz)
+            {
+                foreach (Wz_File file in wzs.wz_files)
+                {
+                    if (file.Node.Nodes.Count > 0)
+                    {
+                        var idx = clbRootNode.Items.IndexOf(file.Type.ToString());
+                        if (idx >= 0 && idx < containList.Count)
+                        {
+                            containList[idx] = true;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < containList.Count; i++)
+            {
+                clbRootNode.SetItemChecked(i, containList[i]);
+            }
+            clbRootNode.ResumeLayout();
+        }
+
         async Task<bool> AutomaticCheckUpdate()
         {
             return await FrmUpdater.QueryUpdate();
@@ -1205,6 +1230,7 @@ namespace WzComparerR2
             finally
             {
                 advTree1.EndUpdate();
+                UpdateClbRootNode();
             }
         }
 
@@ -3949,7 +3975,7 @@ namespace WzComparerR2
                 {
                     System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
                     EasyComparer comparer = new EasyComparer();
-                    comparer.selectedNodes = selectedNodes;
+                    comparer.SelectedNodes = selectedNodes;
                     comparer.Comparer.PngComparison = (WzPngComparison)cmbComparePng.SelectedItem;
                     comparer.Comparer.ResolvePngLink = chkResolvePngLink.Checked;
                     comparer.OutputPng = chkOutputPng.Checked;
@@ -4068,6 +4094,22 @@ namespace WzComparerR2
         private void btnRootNode_Click(object sender, EventArgs e)
         {
             clbRootNode.Visible = !clbRootNode.Visible;
+        }
+
+        private void clbRootNode_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.Index == clbRootNode.Items.IndexOf("Base"))
+            {
+                if (e.NewValue == CheckState.Unchecked)
+                    ToastNotification.Show(this, "Base.wz는 선택 해제할 수 없습니다.", null, 1000, eToastGlowColor.Red, eToastPosition.TopCenter);
+                e.NewValue = CheckState.Checked;
+            }
+
+            if (e.Index == clbRootNode.Items.IndexOf("String"))
+            {
+                if (e.NewValue == CheckState.Unchecked)
+                    ToastNotification.Show(this, "String.wz 선택 해제 시 툴팁이 출력되지 않습니다.", null, 1000, eToastGlowColor.Green, eToastPosition.TopCenter);
+            }
         }
 
         private void buttonItemAbout_Click(object sender, EventArgs e)

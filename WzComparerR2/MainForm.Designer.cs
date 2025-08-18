@@ -3291,6 +3291,7 @@
             this.clbRootNode.Size = new System.Drawing.Size(130, 250);
             this.clbRootNode.Visible = false;
             this.clbRootNode.BringToFront();
+            this.clbRootNode.ItemCheck += this.clbRootNode_ItemCheck;
             //
             // toolStripMenuItem4
             // 

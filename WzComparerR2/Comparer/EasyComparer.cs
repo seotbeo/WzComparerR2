@@ -55,7 +55,19 @@ namespace WzComparerR2.Comparer
         public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
-        public Dictionary<string, bool> selectedNodes { get; set; }
+        public Dictionary<string, bool> SelectedNodes { get; set; }
+
+        public bool OutputTooltips
+        {
+            get
+            {
+                return OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip || OutputMobTooltip || OutputNpcTooltip || OutputQuestTooltip || OutputAchvTooltip;
+            }
+            set
+            {
+                OutputSkillTooltip = OutputItemTooltip = OutputGearTooltip = OutputMapTooltip = OutputMobTooltip = OutputNpcTooltip = OutputQuestTooltip = OutputAchvTooltip = value;
+            }
+        }
 
         public string StateInfo
         {
@@ -110,7 +122,11 @@ namespace WzComparerR2.Comparer
                 WzFileComparer comparer = new WzFileComparer();
                 comparer.IgnoreWzFile = true;
 
-                if (OutputSkillTooltip || OutputItemTooltip || OutputGearTooltip || OutputMapTooltip || OutputMobTooltip || OutputNpcTooltip || OutputQuestTooltip || OutputAchvTooltip)
+                if (SelectedNodes.TryGetValue("String", out bool s) && !s)
+                {
+                    OutputTooltips = false; 
+                }
+                if (OutputTooltips)
                 {
                     this.WzNewOld[0] = fileNew.Node;
                     this.WzNewOld[1] = fileOld.Node;
@@ -161,7 +177,7 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("<tr><th>파일명</th><th>신버전 용량</th><th>구버전 용량</th><th>변경</th><th>추가</th><th>제거</th></tr>");
                     foreach (var wzType in wzTypeList)
                     {
-                        if (!selectedNodes[wzType.ToString()]) continue;
+                        if (SelectedNodes.TryGetValue(wzType.ToString(), out bool select) && !select) continue;
                         var vNodeNew = dictNew[wzType];
                         var vNodeOld = dictOld[wzType];
                         var cmp = comparer.Compare(vNodeNew, vNodeOld);
@@ -224,7 +240,7 @@ namespace WzComparerR2.Comparer
 
             foreach (var wzType in wzTypeList)
             {
-                if (!selectedNodes[wzType.ToString()]) continue;
+                if (SelectedNodes.TryGetValue(wzType.ToString(), out bool select) && !select) continue;
                 var vNodeNew = dictNew[wzType];
                 var vNodeOld = dictOld[wzType];
                 var cmp = comparer.Compare(vNodeNew, vNodeOld);
@@ -1577,32 +1593,32 @@ namespace WzComparerR2.Comparer
                 count[idx]++;
 
                 // 변경된 툴팁 출력
-                if (OutputSkillTooltip && (imgName.Contains("Skill") || imgName.Contains("String")))
+                if (OutputSkillTooltip && (imgName.StartsWith("Skill") || imgName.StartsWith("String")))
                 {
                     GetSkillID(diff.NodeNew, idx == 0 ? true : false);
                     GetSkillID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputItemTooltip && (imgName.Contains("Item") || imgName.Contains("String")))
+                if (OutputItemTooltip && (imgName.StartsWith("Item") || imgName.StartsWith("String")))
                 {
                     GetItemID(diff.NodeNew, idx == 0 ? true : false);
                     GetItemID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputGearTooltip && (imgName.Contains("Character") || imgName.Contains("String")))
+                if (OutputGearTooltip && (imgName.StartsWith("Character") || imgName.StartsWith("String")))
                 {
                     GetGearID(diff.NodeNew, idx == 0 ? true : false);
                     GetGearID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputMapTooltip && (imgName.Contains("Etc") || imgName.Contains("Map") || imgName.Contains("String")))
+                if (OutputMapTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Map") || imgName.StartsWith("String")))
                 {
                     GetMapID(diff.NodeNew, idx == 0 ? true : false);
                     GetMapID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputMobTooltip && (imgName.Contains("Etc") || imgName.Contains("Mob") || imgName.Contains("String")))
+                if (OutputMobTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Mob") || imgName.StartsWith("String")))
                 {
                     GetMobID(diff.NodeNew, idx == 0 ? true : false);
                     GetMobID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputNpcTooltip && (imgName.Contains("Etc") || imgName.Contains("Npc") || imgName.Contains("String")))
+                if (OutputNpcTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Npc") || imgName.StartsWith("String")))
                 {
                     GetNpcID(diff.NodeNew, idx == 0 ? true : false);
                     GetNpcID(diff.NodeOld, idx == 0 ? true : false);
@@ -1612,7 +1628,7 @@ namespace WzComparerR2.Comparer
                     GetQuestID(diff.NodeNew, idx == 0 ? true : false);
                     GetQuestID(diff.NodeOld, idx == 0 ? true : false);
                 }
-                if (OutputAchvTooltip && (imgName.Contains("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
+                if (OutputAchvTooltip && (imgName.StartsWith("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
                 {
                     GetAchvID(diff.NodeNew, idx == 0 ? true : false);
                     GetAchvID(diff.NodeOld, idx == 0 ? true : false);
@@ -1663,27 +1679,27 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("</tr>");
 
                     // 변경된 툴팁 출력
-                    if (OutputSkillTooltip && (imgName.Contains("Skill") || imgName.Contains("String")))
+                    if (OutputSkillTooltip && (imgName.StartsWith("Skill") || imgName.StartsWith("String")))
                     {
                         GetSkillID(node, idx == 0 ? true : false);
                     }
-                    if (OutputItemTooltip && (imgName.Contains("Item") || imgName.Contains("String")))
+                    if (OutputItemTooltip && (imgName.StartsWith("Item") || imgName.StartsWith("String")))
                     {
                         GetItemID(node, idx == 0 ? true : false);
                     }
-                    if (OutputGearTooltip && (imgName.Contains("Character") || imgName.Contains("String")))
+                    if (OutputGearTooltip && (imgName.StartsWith("Character") || imgName.StartsWith("String")))
                     {
                         GetGearID(node, idx == 0 ? true : false);
                     }
-                    if (OutputMapTooltip && (imgName.Contains("Etc") || imgName.Contains("Map") || imgName.Contains("String")))
+                    if (OutputMapTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Map") || imgName.StartsWith("String")))
                     {
                         GetMapID(node, idx == 0 ? true : false);
                     }
-                    if (OutputMobTooltip && (imgName.Contains("Etc") || imgName.Contains("Mob") || imgName.Contains("String")))
+                    if (OutputMobTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Mob") || imgName.StartsWith("String")))
                     {
                         GetMobID(node, idx == 0 ? true : false);
                     }
-                    if (OutputNpcTooltip && (imgName.Contains("Etc") || imgName.Contains("Npc") || imgName.Contains("String")))
+                    if (OutputNpcTooltip && (imgName.StartsWith("Etc") || imgName.StartsWith("Npc") || imgName.StartsWith("String")))
                     {
                         GetNpcID(node, idx == 0 ? true : false);
                     }
@@ -1691,7 +1707,7 @@ namespace WzComparerR2.Comparer
                     {
                         GetQuestID(node, idx == 0 ? true : false);
                     }
-                    if (OutputAchvTooltip && (imgName.Contains("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
+                    if (OutputAchvTooltip && (imgName.StartsWith("Etc") && imgName.Contains("Achievement") && !imgName.Contains("_Canvas")))
                     {
                         GetAchvID(node, idx == 0 ? true : false);
                     }
