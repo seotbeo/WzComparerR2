@@ -90,7 +90,7 @@ namespace WzComparerR2.CharaSimControl
                 sr.Name = "(null)";
             }
             var name = sr.Name;
-            g.DrawString(sr.Name, GearGraphics.AchievementTitleFont, new SolidBrush(Color.White), new Point(84, 12), format);
+            g.DrawString(Compact(g, name, 450, GearGraphics.AchievementTitleFont), GearGraphics.AchievementTitleFont, new SolidBrush(Color.White), new Point(84, 12), format);
             //TextRenderer.DrawText(g, sr.Name, GearGraphics.AchievementTitleFont, new Point(84, 12), Color.White, TextFormatFlags.NoPadding);
 
             // 등급
@@ -120,12 +120,12 @@ namespace WzComparerR2.CharaSimControl
                 && DateTime.TryParseExact(this.Achievement.End, timeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var end))
             {
                 var time = $"{start.ToString(timeConvertFormat)} ~ {end.ToString(timeConvertFormat)}";
-                GearGraphics.DrawString(g, time, GearGraphics.EquipMDMoris9Font, null, 84, 550, ref picHD, 15, defaultColor: ((SolidBrush)GearGraphics.AchievementPeriodBrush).Color);
+                GearGraphics.DrawString(g, time, GearGraphics.EquipMDMoris9Font, null, 84, 530, ref picHD, 15, defaultColor: ((SolidBrush)GearGraphics.AchievementPeriodBrush).Color);
             }
             var desc = sr.Desc;
             if (!string.IsNullOrEmpty(desc))
             {
-                GearGraphics.DrawString(g, desc, GearGraphics.EquipMDMoris9Font, null, 84, 550, ref picHD, 15, defaultColor: GearGraphics.GrayColor2);
+                GearGraphics.DrawString(g, desc, GearGraphics.EquipMDMoris9Font, null, 84, 530, ref picHD, 15, defaultColor: GearGraphics.GrayColor2);
             }
 
             /************/
@@ -161,7 +161,7 @@ namespace WzComparerR2.CharaSimControl
             if (!string.IsNullOrEmpty(category))
             {
                 g.DrawImage(checkIncomplete, 16, picH);
-                GearGraphics.DrawString(g, $"카테고리: {category}", GearGraphics.EquipMDMoris9Font, null, 32, 550, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
+                GearGraphics.DrawString(g, $"카테고리: {category}", GearGraphics.EquipMDMoris9Font, null, 32, 530, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
             }
 
             // 선행 업적
@@ -176,14 +176,14 @@ namespace WzComparerR2.CharaSimControl
                         sr.Name = "null";
                     }
                     return $"{sr.Name}({id:D5})";
-                }))}", 520), GearGraphics.EquipMDMoris9Font, null, 32, 550, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
+                }))}", 500), GearGraphics.EquipMDMoris9Font, null, 32, 530, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
             }
 
             // hide
             if (this.Achievement.Hide)
             {
                 g.DrawImage(checkIncomplete, 16, picH);
-                GearGraphics.DrawString(g, "업적창에 표시되지 않음", GearGraphics.EquipMDMoris9Font, null, 32, 550, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
+                GearGraphics.DrawString(g, "업적창에 표시되지 않음", GearGraphics.EquipMDMoris9Font, null, 32, 530, ref picH, bg_pattern.Height, defaultColor: GearGraphics.GrayColor2);
             }
 
             /************/
@@ -321,9 +321,10 @@ namespace WzComparerR2.CharaSimControl
             return null;
         }
 
-        private static string Compact(Graphics g, string text, int width) // https://www.codeproject.com/Articles/37503/Auto-Ellipsis
+        private static string Compact(Graphics g, string text, int width, Font font = null) // https://www.codeproject.com/Articles/37503/Auto-Ellipsis
         {
-            Size s = TextRenderer.MeasureText(g, text, GearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+            if (font == null) font = GearGraphics.EquipMDMoris9Font;
+            Size s = TextRenderer.MeasureText(g, text, font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
 
             // control is large enough to display the whole text 
             if (s.Width <= width)
@@ -347,7 +348,7 @@ namespace WzComparerR2.CharaSimControl
                 // build and measure a candidate string with ellipsis
                 string tst = text.Substring(0, left) + "..";
 
-                s = TextRenderer.MeasureText(g, tst, GearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+                s = TextRenderer.MeasureText(g, tst, font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
 
                 // candidate string fits into control boundaries, 
                 // try a longer string
