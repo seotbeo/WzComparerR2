@@ -187,12 +187,13 @@ namespace WzComparerR2.CharaSimControl
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
+                    StringResult sr2 = null;
                     foreach (var kv in Skill.ReqSkill)
                     {
                         string skillName;
-                        if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr))
+                        if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr2))
                         {
-                            skillName = sr.Name;
+                            skillName = sr2.Name;
                         }
                         else
                         {
