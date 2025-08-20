@@ -50,14 +50,15 @@ namespace WzComparerR2.AvatarCommon
                     }
                     if (convert)
                     {
-                        RGB addRGB = new RGB(0, 0, 0);
-                        bool[] breakUpperBound = [isEffect || rgb.R > 238, isEffect || rgb.G > 238, isEffect || rgb.B > 238];
 
                         if (hue > 0)
                         {
                             hsv.Hue = (hsv.Hue + hue) % 360;
                             SetRGBfromHSV(ref rgb, ref hsv, isEffect);
                         }
+
+                        RGB addRGB = new RGB(0, 0, 0);
+                        bool[] breakUpperBound = [isEffect || rgb.R > 238, isEffect || rgb.G > 238, isEffect || rgb.B > 238];
 
                         if (saturation != 100 && hsv.Saturation != 0)
                         {
