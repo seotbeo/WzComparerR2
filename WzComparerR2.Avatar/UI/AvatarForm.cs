@@ -2048,6 +2048,9 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
 
+                this.chkShowWeaponEffect.Checked = res.ShowWeaponEffect;
+                this.chkShowWeaponJumpEffect.Checked = res.ShowWeaponJumpEffect;
+
                 if (res.UnknownVer)
                 {
                     throw new Exception($"알려지지 않은 코드 버전입니다. (버전: {res.Version})");

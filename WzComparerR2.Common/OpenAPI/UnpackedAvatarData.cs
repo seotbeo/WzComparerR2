@@ -354,6 +354,11 @@ namespace WzComparerR2.OpenAPI
             return GetValue("mixFaceInfo").ToString().PadLeft(3, '0').Substring(0, 1);
         }
 
+        public int GetShowEffectFlags()
+        {
+            return GetValue("showEffectFlags");
+        }
+
         public PrismInfo GetPrismInfo(string type)
         {
             var ret = new PrismInfo();
@@ -408,6 +413,8 @@ namespace WzComparerR2.OpenAPI
             MixFaceRatio = GetMixFaceRatio();
             MixFaceColor = GetMixFaceColor();
 
+            ShowEffectFlags = GetShowEffectFlags();
+
             CapPrismInfo = GetPrismInfo("Cap");
             FaceAccPrismInfo = GetPrismInfo("FaceAcc");
             EyeAccPrismInfo = GetPrismInfo("EyeAcc");
@@ -452,6 +459,11 @@ namespace WzComparerR2.OpenAPI
         public string MixHairColor { get; set; }
         public string MixFaceRatio { get; set; }
         public string MixFaceColor { get; set; }
+        public int ShowEffectFlags { get; set; }
+        public bool ShowWeaponEffect { get { return (ShowEffectFlags & 1) != 0; } }
+        public bool ShowWeaponJumpEffect { get { return (ShowEffectFlags & (1 << 1)) != 0; } }
+        public bool ShowWeaponSpecialEffect { get { return (ShowEffectFlags & (1 << 2)) != 0; } }
+        public bool ShowCapeEffect { get { return (ShowEffectFlags & (1 << 3)) != 0; } }
         public PrismInfo CapPrismInfo { get; set; }
         public PrismInfo FaceAccPrismInfo { get; set; }
         public PrismInfo EyeAccPrismInfo { get; set; }
