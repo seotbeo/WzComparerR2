@@ -1994,6 +1994,7 @@ namespace WzComparerR2.Avatar.UI
                     $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}";
                 LoadCode(code, 0);
 
+                this.SuspendUpdateDisplay();
                 var curAction = this.cmbActionBody.SelectedItem.ToString();
                 var hand = 1;
                 switch (res.WeaponMotionType)
@@ -2050,6 +2051,22 @@ namespace WzComparerR2.Avatar.UI
 
                 this.chkShowWeaponEffect.Checked = res.ShowWeaponEffect;
                 this.chkShowWeaponJumpEffect.Checked = res.ShowWeaponJumpEffect;
+                foreach (var item in this.itemPanel1.Items)
+                {
+                    if (item is AvatarPartButtonItem button && button.Tag is AvatarPart part)
+                    {
+                        if (part != null && part == this.avatar.Cape)
+                        {
+                            if (part.EffectVisible != res.ShowCapeEffect)
+                            {
+                                button.chkShowEffect.Checked = res.ShowCapeEffect;
+                                part.EffectVisible = res.ShowCapeEffect;
+                                this.avatar.EffectVisibles[11] = res.ShowCapeEffect;
+                            }
+                        }
+                    }
+                }
+                this.ResumeUpdateDisplay();
 
                 if (res.UnknownVer)
                 {
