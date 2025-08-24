@@ -63,6 +63,7 @@
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.labelX6 = new DevComponents.DotNetBar.LabelX();
             this.cmbGroupChair = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.btnBodyFloating = new DevComponents.DotNetBar.ButtonX();
             this.dockContainerItem2 = new DevComponents.DotNetBar.DockContainerItem();
             this.dockSite8 = new DevComponents.DotNetBar.DockSite();
             this.dockSite5 = new DevComponents.DotNetBar.DockSite();
@@ -269,6 +270,7 @@
             this.panelDockContainer2.Controls.Add(this.labelX5);
             this.panelDockContainer2.Controls.Add(this.labelX6);
             this.panelDockContainer2.Controls.Add(this.cmbGroupChair);
+            this.panelDockContainer2.Controls.Add(this.btnBodyFloating);
             this.panelDockContainer2.DisabledBackColor = System.Drawing.Color.Empty;
             this.panelDockContainer2.Location = new System.Drawing.Point(3, 23);
             this.panelDockContainer2.Name = "panelDockContainer2";
@@ -289,11 +291,11 @@
             this.cmbEar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEar.FormattingEnabled = true;
             this.cmbEar.ItemHeight = 15;
-            this.cmbEar.Location = new System.Drawing.Point(173, 103);
+            this.cmbEar.Location = new System.Drawing.Point(173, 105);
             this.cmbEar.Name = "cmbEar";
             this.cmbEar.Size = new System.Drawing.Size(39, 21);
             this.cmbEar.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cmbEar.TabIndex = 14;
+            this.cmbEar.TabIndex = 15;
             this.cmbEar.SelectedIndexChanged += new System.EventHandler(this.cmbEar_SelectedIndexChanged);
             // 
             // cmbWeaponIdx
@@ -304,11 +306,11 @@
             this.cmbWeaponIdx.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbWeaponIdx.FormattingEnabled = true;
             this.cmbWeaponIdx.ItemHeight = 15;
-            this.cmbWeaponIdx.Location = new System.Drawing.Point(89, 103);
+            this.cmbWeaponIdx.Location = new System.Drawing.Point(89, 105);
             this.cmbWeaponIdx.Name = "cmbWeaponIdx";
             this.cmbWeaponIdx.Size = new System.Drawing.Size(50, 21);
             this.cmbWeaponIdx.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cmbWeaponIdx.TabIndex = 11;
+            this.cmbWeaponIdx.TabIndex = 12;
             this.cmbWeaponIdx.SelectedIndexChanged += new System.EventHandler(this.cmbWeaponIdx_SelectedIndexChanged);
             // 
             // cmbWeaponType
@@ -319,11 +321,11 @@
             this.cmbWeaponType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbWeaponType.FormattingEnabled = true;
             this.cmbWeaponType.ItemHeight = 15;
-            this.cmbWeaponType.Location = new System.Drawing.Point(35, 103);
+            this.cmbWeaponType.Location = new System.Drawing.Point(35, 105);
             this.cmbWeaponType.Name = "cmbWeaponType";
             this.cmbWeaponType.Size = new System.Drawing.Size(50, 21);
             this.cmbWeaponType.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cmbWeaponType.TabIndex = 10;
+            this.cmbWeaponType.TabIndex = 11;
             this.cmbWeaponType.SelectedIndexChanged += new System.EventHandler(this.cmbWeaponType_SelectedIndexChanged);
             // 
             // labelX4
@@ -334,11 +336,11 @@
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(3, 106);
+            this.labelX4.Location = new System.Drawing.Point(3, 108);
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(31, 18);
             this.labelX4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.labelX4.TabIndex = 13;
+            this.labelX4.TabIndex = 14;
             this.labelX4.Text = "무기";
             // 
             // chkTamingPlay
@@ -565,6 +567,18 @@
             this.chkHairCover.Text = "머리눌림";
             this.chkHairCover.CheckedChanged += new System.EventHandler(this.chkHairCover_CheckedChanged);
             // 
+            // btnBodyFloating
+            // 
+            this.btnBodyFloating.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnBodyFloating.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnBodyFloating.Location = new System.Drawing.Point(190, 82);
+            this.btnBodyFloating.Name = "btnBodyFloating";
+            this.btnBodyFloating.Size = new System.Drawing.Size(70, 20);
+            this.btnBodyFloating.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btnBodyFloating.TabIndex = 10;
+            this.btnBodyFloating.Text = "부유효과";
+            this.btnBodyFloating.Click += new System.EventHandler(this.btnBodyFloating_Click);
+            // 
             // chkApplyBRM
             // 
             this.chkApplyBRM.AutoSize = true;
@@ -573,11 +587,11 @@
             // 
             // 
             this.chkApplyBRM.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkApplyBRM.Location = new System.Drawing.Point(5, 205);
+            this.chkApplyBRM.Location = new System.Drawing.Point(5, 207);
             this.chkApplyBRM.Name = "chkApplyBRM";
             this.chkApplyBRM.Size = new System.Drawing.Size(172, 18);
             this.chkApplyBRM.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkApplyBRM.TabIndex = 17;
+            this.chkApplyBRM.TabIndex = 18;
             this.chkApplyBRM.Text = "플레이어 위치 조정 (의자)";
             this.chkApplyBRM.CheckedChanged += new System.EventHandler(this.chkApplyBRM_CheckedChanged);
             // 
@@ -589,11 +603,11 @@
             // 
             // 
             this.chkShowWeaponEffect.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowWeaponEffect.Location = new System.Drawing.Point(5, 130);
+            this.chkShowWeaponEffect.Location = new System.Drawing.Point(5, 132);
             this.chkShowWeaponEffect.Name = "chkShowWeaponEffect";
             this.chkShowWeaponEffect.Size = new System.Drawing.Size(76, 20);
             this.chkShowWeaponEffect.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkShowWeaponEffect.TabIndex = 12;
+            this.chkShowWeaponEffect.TabIndex = 13;
             this.chkShowWeaponEffect.Text = "무기 기본 이펙트";
             this.chkShowWeaponEffect.CheckedChanged += new System.EventHandler(this.chkShowWeaponEffect_CheckedChanged);
             // 
@@ -605,11 +619,11 @@
             // 
             // 
             this.chkShowWeaponJumpEffect.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowWeaponJumpEffect.Location = new System.Drawing.Point(5, 155);
+            this.chkShowWeaponJumpEffect.Location = new System.Drawing.Point(5, 157);
             this.chkShowWeaponJumpEffect.Name = "chkShowWeaponJumpEffect";
             this.chkShowWeaponJumpEffect.Size = new System.Drawing.Size(76, 20);
             this.chkShowWeaponJumpEffect.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkShowWeaponJumpEffect.TabIndex = 13;
+            this.chkShowWeaponJumpEffect.TabIndex = 14;
             this.chkShowWeaponJumpEffect.Text = "무기 점프 이펙트";
             this.chkShowWeaponJumpEffect.CheckedChanged += new System.EventHandler(this.chkShowWeaponJumpEffect_CheckedChanged);
             // 
@@ -621,11 +635,11 @@
             // 
             // 
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX5.Location = new System.Drawing.Point(149, 106);
+            this.labelX5.Location = new System.Drawing.Point(149, 108);
             this.labelX5.Name = "labelX5";
             this.labelX5.Size = new System.Drawing.Size(19, 18);
             this.labelX5.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.labelX5.TabIndex = 15;
+            this.labelX5.TabIndex = 16;
             this.labelX5.Text = "귀";
             // 
             // labelX6
@@ -636,11 +650,11 @@
             // 
             // 
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX6.Location = new System.Drawing.Point(3, 181);
+            this.labelX6.Location = new System.Drawing.Point(3, 183);
             this.labelX6.Name = "labelX6";
             this.labelX6.Size = new System.Drawing.Size(60, 18);
             this.labelX6.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.labelX6.TabIndex = 16;
+            this.labelX6.TabIndex = 17;
             this.labelX6.Text = "다인 의자";
             // 
             // cmbGroupChair
@@ -651,11 +665,11 @@
             this.cmbGroupChair.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbGroupChair.FormattingEnabled = true;
             this.cmbGroupChair.ItemHeight = 15;
-            this.cmbGroupChair.Location = new System.Drawing.Point(70, 179);
+            this.cmbGroupChair.Location = new System.Drawing.Point(70, 181);
             this.cmbGroupChair.Name = "cmbGroupChair";
             this.cmbGroupChair.Size = new System.Drawing.Size(50, 21);
             this.cmbGroupChair.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cmbGroupChair.TabIndex = 16;
+            this.cmbGroupChair.TabIndex = 17;
             this.cmbGroupChair.Enabled = false;
             this.cmbGroupChair.SelectedIndexChanged += new System.EventHandler(this.cmbGroupChair_SelectedIndexChanged);
             // 
@@ -911,5 +925,6 @@
         private DevComponents.DotNetBar.ButtonItem btnZoom;
         private DevComponents.DotNetBar.LabelX labelX6;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbGroupChair;
+        private DevComponents.DotNetBar.ButtonX btnBodyFloating;
     }
 }

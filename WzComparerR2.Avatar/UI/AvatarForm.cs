@@ -1764,6 +1764,47 @@ namespace WzComparerR2.Avatar.UI
             UpdateDisplay();
         }
 
+        private void btnBodyFloating_Click(object sender, EventArgs e)
+        {
+            if (this.cmbActionBody.Items.Count <= 0 || this.avatar.Body == null || this.avatar.Head == null)
+            {
+                //ToastNotification.Show(this, $"캐릭터가 없습니다", null, 2000, eToastGlowColor.Red, eToastPosition.TopCenter);
+                return;
+            }
+
+            var btn = sender as ButtonX;
+            var curAction = this.cmbActionBody.SelectedItem.ToString();
+            var nextAction = "";
+            switch (curAction)
+            {
+                case "stand1_floating":
+                    nextAction = "stand1";
+                    break;
+                case "stand2_floating":
+                    nextAction = "stand2";
+                    break;
+
+                case "stand2":
+                case "walk2":
+                    nextAction = "stand2_floating";
+                    break;
+
+                default:
+                    nextAction = "stand1_floating";
+                    break;
+            }
+
+            var index = this.cmbActionBody.FindString(nextAction);
+            if (index > -1)
+            {
+                this.cmbActionBody.SelectedIndex = index;
+            }
+            else
+            {
+                ToastNotification.Show(this, $"{nextAction} 동작을 찾을 수 없습니다.", null, 2000, eToastGlowColor.Red, eToastPosition.TopCenter);
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             this.animator.Elapse(timer1.Interval);
