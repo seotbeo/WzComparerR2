@@ -309,7 +309,7 @@ namespace WzComparerR2.Text
                                 flush(true);
                                 if (this.StrictlyAlignLeft >= 2)
                                 {
-                                    while (r < runs.Count && runs[r].IsWhiteSpace)
+                                    while (r < runs.Count - 1 && runs[r].IsWhiteSpace)
                                     {
                                         r += 1;
                                         run = runs[r];
