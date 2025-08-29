@@ -364,7 +364,7 @@ namespace WzComparerR2.Common
             }
 
             var achievementNode = etcNode.FindNodeByPath("Achievement\\AchievementData");
-            foreach (Wz_Node node in achievementNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            foreach (Wz_Node node in achievementNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
                 Wz_Image image = node.Value as Wz_Image;
                 if (image == null || !image.TryExtract())
@@ -396,11 +396,14 @@ namespace WzComparerR2.Common
             if (qDataNode == null)
             {
                 qDataNode = questNode?.FindNodeByPath("QuestInfo.img");
-                Wz_Image image = qDataNode.Value as Wz_Image;
-                if (image != null && image.TryExtract())
+                if (qDataNode != null)
                 {
-                    qDataNode = image.Node;
-                    newQuestDir = false;
+                    Wz_Image image = qDataNode.Value as Wz_Image;
+                    if (image != null && image.TryExtract())
+                    {
+                        qDataNode = image.Node;
+                        newQuestDir = false;
+                    }
                 }
             }
             foreach (Wz_Node node in qDataNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
