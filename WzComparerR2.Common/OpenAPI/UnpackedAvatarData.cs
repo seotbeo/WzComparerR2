@@ -314,6 +314,26 @@ namespace WzComparerR2.OpenAPI
             }
         }
 
+        public byte GetEventJob()
+        {
+            return (byte)GetValue("eventJob");
+        }
+
+        public string GetEventJobString()
+        {
+            switch (this.EventJob)
+            {
+                case 1:
+                    return "?";
+                case 2:
+                    return "?";
+                case 3:
+                    return "카마도 탄지로";
+                default:
+                    return null;
+            }
+        }
+
         public byte GetWeaponMotionType()
         {
             return (byte)GetValue("weaponMotionType");
@@ -406,6 +426,7 @@ namespace WzComparerR2.OpenAPI
             EarType = GetEarType();
             JobWingTailType = GetJobWingTailType();
             JobWingTailTypeDetail = GetJobWingTailTypeDetail();
+            EventJob = GetEventJob();
             WeaponMotionType = GetWeaponMotionType();
 
             MixHairRatio = GetMixHairRatio();
@@ -453,6 +474,8 @@ namespace WzComparerR2.OpenAPI
         public byte JobWingTailType { get; set; }
         public byte JobWingTailTypeDetail { get; set; }
         public string JobWingTailTypeString { get { return this.GetJobWingTailTypeString(); } }
+        public byte EventJob { get; set; }
+        public string EventJobString { get { return this.GetEventJobString(); } }
         public byte WeaponMotionType { get; set; }
         public string WeaponMotionTypeString { get { return this.GetWeaponMotionTypeString(); } }
         public string MixHairRatio { get; set; }
