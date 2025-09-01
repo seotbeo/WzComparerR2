@@ -4178,31 +4178,22 @@ namespace WzComparerR2
         private void buttonItem1_Click(object sender, EventArgs e)
         {
 #if DEBUG
-            var characWz = PluginManager.FindWz(Wz_Type.Character);
-            Wz_Node wpNode = null;
-            foreach (var node1 in characWz.Nodes)
+            var wz = PluginManager.FindWz(Wz_Type.Npc);
+            foreach (var node1 in wz.Nodes)
             {
                 if (node1.Text.Contains("_Canvas"))
                 {
                     continue;
                 }
 
-                if (node1.Text == "Accessory")
+                Wz_Image img = node1.GetValue<Wz_Image>();
+                if (img != null && img.TryExtract())
                 {
-                    wpNode = node1;
-                    foreach (var imgNode in wpNode.Nodes)
+                    var c = img.Node?.FindNodeByPath("info")?.FindNodeByPath("component")?.FindNodeByPath("hair").GetValueEx<int>(0);
+                    if (c > 99999)
                     {
-                        Wz_Image img = imgNode.GetValue<Wz_Image>();
-                        if (img != null && img.TryExtract())
-                        {
-                            var c = img.Node?.FindNodeByPath("info")?.FindNodeByPath("reissueBan").GetValueEx<int>(0);
-                            if (c > 0)
-                            {
-                                Debug.WriteLine($"{img.Node.Text}, {c}");
-                            }
-                        }
+                        Debug.WriteLine($"{img.Node.Text}, {c}");
                     }
-                    break;
                 }
             }
 #endif
