@@ -469,7 +469,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
-            text = Regex.Replace(text, @$"#(p|o|m|t|a{this.Quest.ID}|i|v|y)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
+            text = Regex.Replace(text, @$"#(p|o|m|t|q|a{this.Quest.ID}|i|v|y)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
             {
                 string tag = match.Groups[1].Value;
                 if (!int.TryParse(match.Groups[2].Value, out int id)) id = -1;
@@ -495,6 +495,10 @@ namespace WzComparerR2.CharaSimControl
                             StringLinker.StringEqp.TryGetValue(id, out sr);
                         }
                         return $"#$t{sr?.Name ?? id.ToString()}#";
+
+                    case "q":
+                        StringLinker.StringSkill.TryGetValue(id, out sr);
+                        return $"{sr?.Name ?? id.ToString()}";
 
                     case "i":
                     case "v":
