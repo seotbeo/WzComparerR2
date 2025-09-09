@@ -512,12 +512,12 @@ namespace WzComparerR2.CharaSimControl
                             this.avatar = new AvatarCanvasManager(this.SourceWzFile);
                         }
 
-                        var skin = costume?.Nodes["skin"]?.Nodes["0"].GetValueEx<int>(2015);
-                        var hair = costume?.Nodes["hair"]?.Nodes["0"].GetValueEx<int>(30000);
-                        var face = costume?.Nodes["face"]?.Nodes["0"].GetValueEx<int>(20000);
+                        var skin = costume?.Nodes["skin"]?.Nodes["0"].GetValueEx<int?>(null);
+                        var hair = costume?.Nodes["hair"]?.Nodes["0"].GetValueEx<int?>(null);
+                        var face = costume?.Nodes["face"]?.Nodes["0"].GetValueEx<int?>(null);
 
-                        this.avatar.AddBodyFromSkin((int)skin);
-                        this.avatar.AddGears([(int)hair, (int)face]);
+                        this.avatar.AddBodyFromSkin(skin.GetValueOrDefault(2015));
+                        this.avatar.AddGears([hair.GetValueOrDefault(30000), face.GetValueOrDefault(20000)]);
 
                         if (basic != null)
                         {
