@@ -471,6 +471,55 @@ namespace WzComparerR2.CharaSimControl
 
         private string ReplaceQuestString(string text)
         {
+            // 미사용 태그
+            text = text.Replace("#eqp#", "");
+            var stack = new Stack<char>();
+            var unusedTags = "brgeE"; // 시작태그; 아래 Regex와 겹칠 경우 스택 수정 필요
+            var closingTags = "kKnl"; // 종료태그
+            var sb = new StringBuilder();
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == '#')
+                {
+                    if (i + 1 < text.Length)
+                    {
+                        char tag = text[i + 1];
+
+                        if (closingTags.Contains(tag))
+                        {
+                            if (stack.Count > 0)
+                                stack.Pop();
+                            i += 1;
+                            continue;
+                        }
+                        else if (!unusedTags.Contains(tag))
+                        {
+                            sb.Append(text[i]);
+                            while (i + 1 < text.Length && text[++i] != '#')
+                            {
+                                sb.Append(text[i]);
+                            }
+                            sb.Append(text[i]);
+                            continue;
+                        }
+                        else
+                        {
+                            stack.Push(tag);
+                            i += 1;
+                            continue;
+                        }
+                    }
+                }
+                else if (text[i] == '\\')
+                {
+                    stack.Clear();
+                }
+
+                sb.Append(text[i]);
+            }
+            sb.Append('#');
+            text = sb.ToString();
+
             text = Regex.Replace(text, @$"#(p|o|m|t|q|a{this.Quest.ID}|i|v|y|illu)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
             {
                 string tag = match.Groups[1].Value;
@@ -613,19 +662,6 @@ namespace WzComparerR2.CharaSimControl
                 }
                 return info;
             });
-
-            // 미사용 태그
-            text = text.Replace("#b", ""); // 파란색
-            text = text.Replace("#k", ""); // 기본색
-            text = text.Replace("#kk", "");
-            text = text.Replace("#K", "");
-            text = text.Replace("#r", ""); // 빨간색
-            text = text.Replace("#g", "");
-            text = text.Replace("#l", "");
-            text = text.Replace("#eqp#", "");
-            text = text.Replace("#e", "");
-            text = text.Replace("#E", "");
-            text = text.Replace("#n", " ");
 
             return text;
         }
