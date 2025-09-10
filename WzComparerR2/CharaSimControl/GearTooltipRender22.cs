@@ -1217,23 +1217,35 @@ namespace WzComparerR2.CharaSimControl
                     TextRenderer.DrawText(g, $"일일제한, 최대치 초과 시 제외", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.Equip22BrushGray).Color, TextFormatFlags.NoPadding);
                     picH += 16;
                 }
+            }
 
-                // 일루전 링 미리보기
-                if (Gear.IllusionRingPreview.Bitmap != null)
-                {
-                    AddLines(0, 7, ref picH, condition: secondLineNeeded);
-                    secondLineNeeded = false;
-                    hasThirdContents = true;
-                    hasDescPart = true;
+            // 일루전 링 미리보기
+            if (Gear.IllusionRingPreview.Bitmap != null)
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                hasThirdContents = true;
+                hasDescPart = true;
 
-                    picH += 2;
-                    g.DrawImage(Gear.IllusionRingPreview.Bitmap, (bitmap.Width - Gear.IllusionRingPreview.Bitmap.Width) / 2, picH);
-                    picH += Gear.IllusionRingPreview.Bitmap.Height;
-                    picH += 6;
-                }
+                picH += 2;
+                g.DrawImage(Gear.IllusionRingPreview.Bitmap, (bitmap.Width - Gear.IllusionRingPreview.Bitmap.Width) / 2, picH);
+                picH += Gear.IllusionRingPreview.Bitmap.Height;
+                picH += 6;
             }
             if (hasDescPart)
                 picH += 4;
+
+            //突破上限
+            if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0)
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                hasThirdContents = true;
+
+                TextRenderer.DrawText(g, $"데미지 상한 돌파량 {ItemStringHelper.ToChineseNumberExpr(value)}", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
+                picH += 16;
+                picH += 4;
+            }
 
             // ----------------------------------------------------------------------
             bool thirdLineNeeded = hasThirdContents;
@@ -1520,13 +1532,6 @@ namespace WzComparerR2.CharaSimControl
                     GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16);
                 }
             }
-            /*
-            if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0)
-            {
-                TextRenderer.DrawText(g, "突破上限武器", GearGraphics.EquipDetailFont, new Point(width, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.HorizontalCenter);
-                picH += 16;
-            }
-            */
 
             /*
             if (Gear.Props.TryGetValue(GearPropType.@sealed, out value))
@@ -1536,13 +1541,6 @@ namespace WzComparerR2.CharaSimControl
                 picH += 15;
                 TextRenderer.DrawText(g, "封印解除经验值 : " + (max ? "MAX" : "0%"), GearGraphics.EquipDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.OrangeBrush3).Color, TextFormatFlags.NoPadding);
                 picH += 15;
-            }
-
-            if (Gear.Props.TryGetValue(GearPropType.limitBreak, out value) && value > 0) //突破上限
-            {
-                TextRenderer.DrawText(g, ItemStringHelper.GetGearPropString(GearPropType.limitBreak, value), GearGraphics.EquipDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
-                picH += 15;
-                hasPart2 = true;
             }
             */
 

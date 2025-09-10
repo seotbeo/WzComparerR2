@@ -1511,7 +1511,7 @@ namespace WzComparerR2.CharaSim
             return null;
         }
 
-        private static string ToChineseNumberExpr(long value)
+        public static string ToChineseNumberExpr(long value)
         {
             var sb = new StringBuilder(16);
             bool firstPart = true;
@@ -1523,7 +1523,7 @@ namespace WzComparerR2.CharaSim
             if (value >= 1_0000_0000)
             {
                 long part = value / 1_0000_0000;
-                sb.AppendFormat("{0}亿", part);
+                sb.AppendFormat("{0}억", part);
                 value -= part * 1_0000_0000;
                 firstPart = false;
             }
@@ -1531,7 +1531,7 @@ namespace WzComparerR2.CharaSim
             {
                 long part = value / 1_0000;
                 sb.Append(firstPart ? null : " ");
-                sb.AppendFormat("{0}万", part);
+                sb.AppendFormat("{0}만", part);
                 value -= part * 1_0000;
                 firstPart = false;
             }
