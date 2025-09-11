@@ -44,6 +44,7 @@ namespace WzComparerR2.CharaSim
         public string EpicHs { get; internal set; }
         public string LabelGradeTooltip { get; internal set; }
         public BitmapOrigin ToolTIpPreview { get; set; }
+        public BitmapOrigin IllusionRingPreview { get; set; }
 
         public bool FixLevel { get; internal set; }
         public List<GearLevelInfo> Levels { get; internal set; }
@@ -1196,6 +1197,16 @@ namespace WzComparerR2.CharaSim
                 gear.Star = value;
             }
             */
+
+            if (gear.Props.TryGetValue(GearPropType.illusionGrade, out value) && value > 0)
+            {
+                Wz_Node previewNode = node.FindNodeByPath("stand1")?.FindNodeByPath("0").ResolveUol();
+
+                if (previewNode != null)
+                {
+                    gear.IllusionRingPreview = BitmapOrigin.CreateFromNode(previewNode, findNode, wzf);
+                }
+            }
 
             return gear;
         }
