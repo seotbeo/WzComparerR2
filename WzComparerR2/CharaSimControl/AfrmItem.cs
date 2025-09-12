@@ -558,6 +558,10 @@ namespace WzComparerR2.CharaSimControl
                             cashImg = Resource.CashShop_img_CashItem_label_14;
                             cashOrigin = new Point(cashImg.Width, cashImg.Height);
                             break;
+                        case 4:
+                            cashImg = Resource.CashShop_img_CashItem_label_16;
+                            cashOrigin = new Point(cashImg.Width, cashImg.Height);
+                            break;
                     }
                 }
                 else if (gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
