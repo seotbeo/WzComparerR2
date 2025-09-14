@@ -256,7 +256,7 @@ namespace WzComparerR2.AvatarCommon
             return node.GetValueEx<int>(0);
         }
 
-        private string GetStandardEmotion()
+        public string GetStandardEmotion()
         {
             if (this.canvas.Emotions.Contains("default"))
             {

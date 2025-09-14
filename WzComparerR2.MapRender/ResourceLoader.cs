@@ -417,7 +417,7 @@ namespace WzComparerR2.MapRender
 
                 for (int i = 0; i < avatar.GetActionFrameCount(action + "1"); i++)
                 {
-                    var frame = avatar.GetTexture2DFrame(action + "1", "default", i, 0, 0, this.GraphicsDevice);
+                    var frame = avatar.GetTexture2DFrame(action + "1", avatar.GetStandardEmotion(), i, 0, 0, this.GraphicsDevice);
                     frames.Add(frame);
                 }
 
