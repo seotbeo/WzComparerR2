@@ -84,6 +84,10 @@ namespace WzComparerR2.AvatarCommon
                     part.MixColor = mixColor;
                     part.MixOpacity = mixRatio;
                 }
+                if (part == this.canvas.Face)
+                {
+                    this.canvas.LoadEmotions();
+                }
             }
         }
 
@@ -120,6 +124,10 @@ namespace WzComparerR2.AvatarCommon
                     part.MixColor = mixColor;
                     part.MixOpacity = mixRatio;
                 }
+                if (part == this.canvas.Face)
+                {
+                    this.canvas.LoadEmotions();
+                }
             }
         }
 
@@ -133,7 +141,7 @@ namespace WzComparerR2.AvatarCommon
 
         public BitmapOrigin GetBitmapOrigin()
         {
-            return GetBitmapOrigin("stand1", "default", 0, 0, 0);
+            return GetBitmapOrigin("stand1", GetStandardEmotion(), 0, 0, 0);
         }
 
         public BitmapOrigin GetBitmapOrigin(string actionName, string emotionName, int bodyFrame, int faceFrame, int tamingFrame)
@@ -246,6 +254,19 @@ namespace WzComparerR2.AvatarCommon
             }
 
             return node.GetValueEx<int>(0);
+        }
+
+        private string GetStandardEmotion()
+        {
+            if (this.canvas.Emotions.Contains("default"))
+            {
+                return "default";
+            }
+            else if (this.canvas.Emotions.Contains("blink"))
+            {
+                return "blink";
+            }
+            else return this.canvas.Emotions.FirstOrDefault("");
         }
 
         public void ClearCanvas()
