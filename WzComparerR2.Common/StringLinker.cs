@@ -73,7 +73,7 @@ namespace WzComparerR2.Common
                                 }
                                 if (strResult == null) strResult = new StringResult();
 
-                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                 strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                                 strResult.AutoDesc = GetDefaultString(linkNode, "autodesc") ?? strResult.AutoDesc;
                                 strResult.FullPath = tree.FullPath; // always use the original node path
@@ -99,7 +99,7 @@ namespace WzComparerR2.Common
                                     }
                                     if (strResult == null) strResult = new StringResult();
 
-                                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                     strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                                     strResult.FullPath = tree.FullPath;
 
@@ -123,7 +123,7 @@ namespace WzComparerR2.Common
                                 }
                                 if (strResult == null) strResult = new StringResult();
 
-                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                 strResult.FullPath = tree.FullPath;
 
                                 AddAllValue(strResult, linkNode);
@@ -145,7 +145,7 @@ namespace WzComparerR2.Common
                                 }
                                 if (strResult == null) strResult = new StringResult();
 
-                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                 strResult.Desc = GetDefaultString(linkNode, "func") ?? strResult.Desc;
                                 strResult.FullPath = tree.FullPath;
 
@@ -175,8 +175,8 @@ namespace WzComparerR2.Common
                                     strResult.Name = string.Format("{0} : {1}",
                                         streetName,
                                         mapName) ?? strResult.Name;
-                                    strResult.StreetName = streetName ?? strResult.StreetName;
-                                    strResult.MapName = mapName ?? strResult.MapName;
+                                    strResult.StreetName = streetName ?? strResult.StreetName ?? string.Empty;
+                                    strResult.MapName = mapName ?? strResult.MapName ?? string.Empty;
                                     strResult.Desc = GetDefaultString(linkNode, "mapDesc") ?? strResult.Desc;
                                     strResult.FullPath = tree.FullPath;
 
@@ -209,7 +209,7 @@ namespace WzComparerR2.Common
                             }
                             if (strResult == null) strResult = new StringResultSkill();
 
-                            strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;//?? GetDefaultString(tree, "bookName");
+                            strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;//?? GetDefaultString(tree, "bookName");
                             strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                             strResult.Pdesc = GetDefaultString(linkNode, "pdesc") ?? strResult.Pdesc;
 
@@ -284,7 +284,7 @@ namespace WzComparerR2.Common
                                         }
                                         if (strResult == null) strResult = new StringResult();
 
-                                        strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                        strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                         strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                                         strResult.FullPath = tree.FullPath;
 
@@ -319,7 +319,7 @@ namespace WzComparerR2.Common
                                 }
                                 if (strResult == null) strResult = new StringResult();
 
-                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                                strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                                 strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                                 strResult.FullPath = tree.FullPath;
 
@@ -352,7 +352,7 @@ namespace WzComparerR2.Common
                                 }
                                 if (strResult == null) strResult = new StringResult();
 
-                                strResult.Name = GetDefaultString(linkNode, "setItemName") ?? strResult.Name;
+                                strResult.Name = GetDefaultString(linkNode, "setItemName") ?? strResult.Name ?? string.Empty;
                                 strResult.FullPath = tree.FullPath;
 
                                 AddAllValue(strResult, linkNode);
@@ -381,7 +381,7 @@ namespace WzComparerR2.Common
                     }
                     if (strResult == null) strResult = new StringResult();
 
-                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                     strResult.Desc = GetDefaultString(linkNode, "desc") ?? strResult.Desc;
                     strResult.FullPath = "AchievementData\\" + tree.FullPath;
 
@@ -428,7 +428,7 @@ namespace WzComparerR2.Common
                     }
                     if (strResult == null) strResult = new StringResult();
 
-                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name;
+                    strResult.Name = GetDefaultString(linkNode, "name") ?? strResult.Name ?? string.Empty;
                     strResult.Desc = GetDefaultString(linkNode, "0") ?? strResult.Desc;
                     strResult.FullPath = (newQuestDir ? "QuestData\\" : "") + tree.FullPath;
 
