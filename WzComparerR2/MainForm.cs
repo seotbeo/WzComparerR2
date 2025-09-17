@@ -1149,7 +1149,7 @@ namespace WzComparerR2
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 dlg.Title = "Wz 열기";
-                dlg.Filter = "MapleStory Data File(Base.wz, *.wz, *.ms)|*.wz;*.ms";
+                dlg.Filter = "MapleStory Data File(Base.wz, *.wz, *.ms, *.mn)|*.wz;*.ms;*.mn";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     openWz(dlg.FileName);
@@ -1176,7 +1176,8 @@ namespace WzComparerR2
             advTree1.BeginUpdate();
             try
             {
-                if (string.Equals(Path.GetExtension(wzFilePath), ".ms", StringComparison.OrdinalIgnoreCase))
+                string[] msFileExtensions = { "*.ms", "*.mn" };
+                if (msFileExtensions.Any(ext => string.Equals(Path.GetExtension(wzFilePath), ext, StringComparison.OrdinalIgnoreCase)))
                 {
                     wz.LoadMsFile(wzFilePath);
                 }
@@ -1188,9 +1189,12 @@ namespace WzComparerR2
                         string packsDir = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(wzFilePath)), "Packs");
                         if (Directory.Exists(packsDir))
                         {
-                            foreach (var msFile in Directory.GetFiles(packsDir, "*.ms"))
+                            foreach (var extFilter in msFileExtensions)
                             {
-                                wz.LoadMsFile(msFile);
+                                foreach (var msFile in Directory.GetFiles(packsDir, extFilter))
+                                {
+                                    wz.LoadMsFile(msFile);
+                                }
                             }
                         }
                     }
