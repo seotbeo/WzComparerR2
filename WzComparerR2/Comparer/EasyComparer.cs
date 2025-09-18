@@ -713,10 +713,10 @@ namespace WzComparerR2.Comparer
                     // 변경 전후 툴팁 이미지 생성
                     for (int i = 0; i < 2; i++) // 0: New, 1: Old
                     {
-                        Skill skill = Skill.CreateFromNode(PluginManager.FindWz($@"Skill\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill001\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill002\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i]) ??
-                            Skill.CreateFromNode(PluginManager.FindWz($@"Skill003\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, WzFileNewOld[i])));
+                        Skill skill = Skill.CreateFromNode(PluginManager.FindWz($@"Skill\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill001\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]) ??
+                            (Skill.CreateFromNode(PluginManager.FindWz($@"Skill002\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i]) ??
+                            Skill.CreateFromNode(PluginManager.FindWz($@"Skill003\{nodePath}", WzFileNewOld[i]), PluginManager.FindWz, PluginManager.FindWz, WzFileNewOld[i])));
 
                         if (skill != null)
                         {
