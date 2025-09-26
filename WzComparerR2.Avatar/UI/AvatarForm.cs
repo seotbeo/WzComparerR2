@@ -2032,7 +2032,8 @@ namespace WzComparerR2.Avatar.UI
                     $"{res.Cape + GetPrismCode(res.CapePrismInfo)}," +
                     $"{res.Shield + GetPrismCode(res.ShieldPrismInfo)}," +
                     $"{res.Weapon + GetPrismCode(res.WeaponPrismInfo)}," +
-                    $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}";
+                    $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}," +
+                    $"{res.Ring1},{res.Ring2},{res.Ring3},{res.Ring4}";
                 LoadCode(code, 0);
 
                 this.SuspendUpdateDisplay();

@@ -33,6 +33,22 @@ namespace WzComparerR2.AvatarCommon
             this.GroupChair = "0";
             this.ShowWeaponEffect = true;
             this.ShowWeaponJumpEffect = true;
+
+            SetRing = new Action<AvatarPart>[]
+            {
+                part => this.Ring1 = part,
+                part => this.Ring2 = part,
+                part => this.Ring3 = part,
+                part => this.Ring4 = part
+            };
+
+            GetRing = new Func<AvatarPart>[]
+            {
+                () => this.Ring1,
+                () => this.Ring2,
+                () => this.Ring3,
+                () => this.Ring4
+            };
         }
 
         public List<string> ZMap { get; private set; }
@@ -59,8 +75,10 @@ namespace WzComparerR2.AvatarCommon
         public int EarType { get; set; }
         public string CapType { get; set; }
         public string GroupChair { get; set; }
+        public Action<AvatarPart>[] SetRing { get; }
+        public Func<AvatarPart>[] GetRing { get; }
 
-        public const int PartLength = 25;
+        public const int PartLength = 29;
         public const int LayerSlotLength = PartLength + 4;
         public const int IndexChairLayer1 = 18;
         public const int IndexChairLayer2 = PartLength + 0;
@@ -401,6 +419,22 @@ namespace WzComparerR2.AvatarCommon
                 case GearType.shoulderPad: this.ShoulderPad = part; break;
                 case GearType.pocket: this.Pocket = part; break;
                 case GearType.emblem: this.Emblem = part; break;
+                case GearType.ring:
+                    bool added = false;
+                    for (var i = 0; i < 4; i++) // ring slot == 4
+                    {
+                        if (GetRing[i]() == null)
+                        {
+                            SetRing[i](part);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (!added)
+                    {
+                        SetRing[0](part);
+                    }
+                    break;
                 default:
                     if (Gear.IsWeapon(gearType))
                     {
@@ -467,6 +501,9 @@ namespace WzComparerR2.AvatarCommon
             part.GroupActionNode = GetGroupNode(imgNode);
             part.GroupCount = CheckGroupChairCount(part.GroupActionNode);
             part.LoadGroupTaming();
+
+            //part.RandomChairInfoNode = GetRandomChairInfoNode(imgNode);
+            //part.RandomChairCount = CheckRandomChairCount(part.GroupActionNode);
 
             return part;
         }
@@ -2326,12 +2363,48 @@ namespace WzComparerR2.AvatarCommon
         }
 
         /// <summary>
-        /// Pocket
+        /// Emblem
         /// </summary>
         public AvatarPart Emblem //119
         {
             get { return this.Parts[24]; }
             set { this.Parts[24] = value; }
+        }
+
+        /// <summary>
+        /// Ring1
+        /// </summary>
+        public AvatarPart Ring1 //111
+        {
+            get { return this.Parts[25]; }
+            set { this.Parts[25] = value; }
+        }
+
+        /// <summary>
+        /// Ring2
+        /// </summary>
+        public AvatarPart Ring2 //111
+        {
+            get { return this.Parts[26]; }
+            set { this.Parts[26] = value; }
+        }
+
+        /// <summary>
+        /// Ring3
+        /// </summary>
+        public AvatarPart Ring3 //111
+        {
+            get { return this.Parts[27]; }
+            set { this.Parts[27] = value; }
+        }
+
+        /// <summary>
+        /// Ring4
+        /// </summary>
+        public AvatarPart Ring4 //111
+        {
+            get { return this.Parts[28]; }
+            set { this.Parts[28] = value; }
         }
         #endregion
 
