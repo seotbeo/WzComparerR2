@@ -161,9 +161,7 @@ namespace WzComparerR2.Animation
                 }
             }
             bound.minX += skeleton.X;
-            bound.maxX += skeleton.X;
             bound.minY += skeleton.Y;
-            bound.maxY += skeleton.Y;
         }
 
         public override object Clone()

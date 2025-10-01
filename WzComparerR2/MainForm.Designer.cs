@@ -280,6 +280,7 @@
             this.chkHashPngFileName = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.btnItemOpenImg = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemSaveWithOptions = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonCaptureAni = new DevComponents.DotNetBar.ButtonItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi2CopyFullPath = new System.Windows.Forms.ToolStripMenuItem();
             this.comboItem19 = new DevComponents.Editors.ComboItem();
@@ -2038,7 +2039,8 @@
             this.itemContainer27.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.buttonItemAutoSave,
             this.buttonItemAutoSaveFolder,
-            this.buttonItemSaveWithOptions});
+            this.buttonItemSaveWithOptions,
+            this.buttonCaptureAni});
             // 
             // 
             // 
@@ -2078,6 +2080,12 @@
             this.buttonItemSaveWithOptions.Name = "buttonItemSaveWithOptions";
             this.buttonItemSaveWithOptions.Text = "사용자 지정 저장";
             this.buttonItemSaveWithOptions.Click += new System.EventHandler(this.buttonItemSaveWithOptions_Click);
+            // 
+            // buttonCaptureAni
+            // 
+            this.buttonCaptureAni.Name = "buttonCaptureAni";
+            this.buttonCaptureAni.Text = "애니메이션 캡쳐";
+            this.buttonCaptureAni.Click += new System.EventHandler(this.buttonCaptureAni_Click);
             // 
             // buttonItemGif
             // 
@@ -3588,6 +3596,7 @@
         private DevComponents.DotNetBar.ComboBoxItem cmbItemSkins;
         private DevComponents.DotNetBar.ButtonItem btnItemOpenImg;
         private DevComponents.DotNetBar.ButtonItem buttonItemSaveWithOptions;
+        private DevComponents.DotNetBar.ButtonItem buttonCaptureAni;
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex1;
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex2;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;

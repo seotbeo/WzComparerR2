@@ -125,37 +125,35 @@ namespace WzComparerR2
             return FrameAnimationData.CreateFromPngNode(node, this.GraphicsDevice, PluginBase.PluginManager.FindWz);
         }
 
-        public FrameAnimationData ConvertSpineToFrameAnimation(AnimationItem aniItem, int delay = 60)
+        public FrameAnimationData CaptureAnimation(IEnumerable<AnimationItem> aniItems, IEnumerable<Tuple<int, int>> aniItemTimes, int time = 0)
         {
             var frameAnimationData = new FrameAnimationData();
-            if (delay > 0)
+
+            var rec = new AnimationRecoder(this.GraphicsDevice);
+            rec.Items.AddRange(aniItems);
+            rec.ItemTimes.AddRange(aniItemTimes);
+            int length = rec.GetMaxLength();
+
+            if (time < 0 || time > length)
             {
-                var rec = new AnimationRecoder(this.GraphicsDevice);
-
-                rec.Items.Add(aniItem);
-                int length = Math.Min(rec.GetMaxLength(), 10000); // 최대 길이 10초 제한
-                IEnumerable<int> frames = length == 0 ? new[] { 0 } : Enumerable.Range(0, Math.Max((int)Math.Ceiling(1.0 * length / delay) - 1, 0));
-
-                rec.ResetAll();
-                rec.BackgroundColor = Color.Transparent;
-                var rect = aniItem.Measure();
-                rec.Begin(rect);
-                for (int i = 0; i < frames.Count(); i++)
-                {
-                    rect = aniItem.Measure();
-                    rec.ResetRenderTarget(rect);
-                    rec.Draw();
-
-                    var t2d = rec.GetPngTexture();
-                    var frame = new Frame(t2d, new Point(-rect.Left, -rect.Top), 0, delay, true);
-                    frameAnimationData.Frames.Add(frame);
-
-                    rec.Update(TimeSpan.FromMilliseconds(delay));
-                }
-                rec.End();
+                return null;
             }
 
-            this.DisposeAnimationItem(aniItem);
+            rec.ResetAll();
+            rec.BackgroundColor = Color.Transparent;
+            rec.Update(TimeSpan.FromMilliseconds(time));
+            Rectangle bounds = new Rectangle();
+            foreach (var aniItem in rec.Items)
+            {
+                var rect = aniItem.Measure();
+                bounds = Microsoft.Xna.Framework.Rectangle.Union(bounds, rect);
+            }
+            rec.Begin(bounds);
+            rec.Draw();
+            var t2d = rec.GetPngTexture();
+            var frame = new Frame(t2d, new Point(-bounds.Left, -bounds.Top), 0, 120, true);
+            frameAnimationData.Frames.Add(frame);
+            rec.End();
 
             if (frameAnimationData.Frames.Count > 0)
                 return frameAnimationData;

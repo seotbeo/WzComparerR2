@@ -23,6 +23,7 @@ namespace WzComparerR2.Controls
 
         public List<AnimationItem> Items { get; private set; }
         public List<Tuple<int, int>> ItemTimes { get; private set; }
+        public int MaxLength { get; private set; }
 
         public System.Drawing.Color GdipBackgroundColor
         {
@@ -204,14 +205,15 @@ namespace WzComparerR2.Controls
         public int GetMaxLength()
         {
             //return this.Items.Select(aniItem => Math.Max(0, aniItem.Length)).Max();
-            return this.ItemTimes.Select(item => item.Item2).DefaultIfEmpty(0).Max();
+            this.MaxLength = this.ItemTimes.Select(item => item.Item2).DefaultIfEmpty(0).Max();
+            return MaxLength;
         }
 
         private IEnumerable<Tuple<AnimationItem, int>> GetPlayingAni(int curTime)
         {
             for (int i = 0; i < this.Items.Count; i++)
             {
-                if (curTime >= this.ItemTimes[i].Item1 && curTime < this.ItemTimes[i].Item2)
+                if ((this.MaxLength == 0) || (curTime >= this.ItemTimes[i].Item1 && curTime < this.ItemTimes[i].Item2))
                 {
                     yield return new Tuple<AnimationItem, int>(this.Items[i], i);
                 }
