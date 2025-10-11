@@ -13,7 +13,7 @@ namespace WzComparerR2.Avatar.UI
 {
     internal partial class AvatarPartButtonItem : ButtonItem
     {
-        public AvatarPartButtonItem(int ID, int? mixColor, int? mixOpacity, PrismData prismData)
+        public AvatarPartButtonItem(int ID, int? mixColor, int? mixOpacity, bool hasWhiteMixColor, PrismData prismData)
         {
             InitializeComponent();
             this.chkShowEffect.Name += ID.ToString();
@@ -22,7 +22,10 @@ namespace WzComparerR2.Avatar.UI
             if (Gear.IsFace(type) || Gear.IsHair(type))
             {
                 CheckBoxItem[] rdoMixColors = { this.rdoMixColor0, this.rdoMixColor1, this.rdoMixColor2, this.rdoMixColor3, this.rdoMixColor4, this.rdoMixColor5, this.rdoMixColor6, this.rdoMixColor7 };
-
+                if (hasWhiteMixColor)
+                {
+                    rdoMixColors = new[] { this.rdoMixColor0, this.rdoMixColor1, this.rdoMixColor2, this.rdoMixColor3, this.rdoMixColor4, this.rdoMixColor5, this.rdoMixColor6, this.rdoMixColor7, this.rdoMixColor8 };
+                }
                 this.SubItems.AddRange(rdoMixColors);
                 this.SubItems.Add(this.sliderMixRatio);
 
@@ -33,7 +36,11 @@ namespace WzComparerR2.Avatar.UI
                 {
                     colorsRef = LensColors;
                     resourceType = "MixLens";
-                    color = (ID / 100 % 10) % 8;
+                    color = (ID / 100 % 10);
+                    if (!hasWhiteMixColor)
+                    {
+                        color %= 8;
+                    }
                 }
                 else
                 {
@@ -42,7 +49,7 @@ namespace WzComparerR2.Avatar.UI
                     color = ID % 10;
                 }
 
-                for (int i = 0; i <= 7; i++)
+                for (int i = 0; i < rdoMixColors.Length; i++)
                 {
                     rdoMixColors[i].Name = $"ID{ID}_{rdoMixColors[i].Name}";
                     rdoMixColors[i].Text += colorsRef[i];
@@ -103,21 +110,25 @@ namespace WzComparerR2.Avatar.UI
         }
 
         public static readonly string[] HairColors = new[] { "검은색", "빨간색", "주황색", "노란색", "초록색", "파란색", "보라색", "갈색" };
-        public static readonly string[] LensColors = new[] { "검은색", "파란색", "빨간색", "초록색", "갈색", "에메랄드", "보라색", "자수정색" };
+        public static readonly string[] LensColors = new[] { "검은색", "파란색", "빨간색", "초록색", "갈색", "에메랄드", "보라색", "자수정색", "흰색" };
         public static readonly string[] PrismResourceTypes = new[] { "Hair", "Hair", "Hair", "Lens", "Lens", "Hair", "Hair", };
         public static readonly int[] PrismResourceIndex = new[] { 0, 1, 3, 3, 5, 5, 6 };
 
-        public void Reset(int ID)
+        public void Reset(int ID, bool hasWhiteMixColor)
         {
             GearType type = Gear.GetGearType(ID);
             if (Gear.IsFace(type) || Gear.IsHair(type))
             {
-                CheckBoxItem[] rdoMixColors = { this.rdoMixColor0, this.rdoMixColor1, this.rdoMixColor2, this.rdoMixColor3, this.rdoMixColor4, this.rdoMixColor5, this.rdoMixColor6, this.rdoMixColor7 };
+                CheckBoxItem[] rdoMixColors = { this.rdoMixColor0, this.rdoMixColor1, this.rdoMixColor2, this.rdoMixColor3, this.rdoMixColor4, this.rdoMixColor5, this.rdoMixColor6, this.rdoMixColor7, this.rdoMixColor8 };
                 int color;
                 int mixOpacity = 0;
                 if (Gear.IsFace(type))
                 {
-                    color = (ID / 100 % 10) % 8;
+                    color = (ID / 100 % 10);
+                    if (!hasWhiteMixColor)
+                    {
+                        color %= 8;
+                    }
                 }
                 else
                 {

@@ -837,7 +837,7 @@ namespace WzComparerR2.Avatar.UI
             {
                 if (part != null)
                 {
-                    var btn = new AvatarPartButtonItem(part.ID.Value, part.IsMixing ? part.MixColor : (int?)null, part.IsMixing ? part.MixOpacity : (int?)null,
+                    var btn = new AvatarPartButtonItem(part.ID.Value, part.IsMixing ? part.MixColor : (int?)null, part.IsMixing ? part.MixOpacity : (int?)null, part.HasWhiteMixColor,
                         part.PrismData);
                     this.SetButtonText(part, btn);
                     if (part == avatar.Body || part == avatar.Head || part == avatar.Face || part == avatar.Hair)
@@ -865,6 +865,7 @@ namespace WzComparerR2.Avatar.UI
                     btn.rdoMixColor5.CheckedChanged += RadioMixColor5_CheckedChanged;
                     btn.rdoMixColor6.CheckedChanged += RadioMixColor6_CheckedChanged;
                     btn.rdoMixColor7.CheckedChanged += RadioMixColor7_CheckedChanged;
+                    btn.rdoMixColor8.CheckedChanged += RadioMixColor8_CheckedChanged;
                     btn.rdoPrismType0.CheckedChanged += RadioPrismType_CheckedChanged;
                     btn.rdoPrismType1.CheckedChanged += RadioPrismType_CheckedChanged;
                     btn.rdoPrismType2.CheckedChanged += RadioPrismType_CheckedChanged;
@@ -921,7 +922,7 @@ namespace WzComparerR2.Avatar.UI
                 this.isUpdatingBtnItem = true;
 
                 var part = btn.Tag as AvatarPart;
-                btn.Reset(part.ID ?? 0);
+                btn.Reset(part.ID ?? 0, part.HasWhiteMixColor);
 
                 this.UpdateDisplay();
                 this.SetButtonText(part, btn);
@@ -1026,6 +1027,14 @@ namespace WzComparerR2.Avatar.UI
             if ((sender as CheckBoxItem).Checked)
             {
                 RadioMixColor_CheckedChanged(sender, 7);
+            }
+        }
+
+        private void RadioMixColor8_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as CheckBoxItem).Checked)
+            {
+                RadioMixColor_CheckedChanged(sender, 8);
             }
         }
 
@@ -2529,7 +2538,7 @@ namespace WzComparerR2.Avatar.UI
         private void LoadCode(string code, int loadType)
         {
             //解析
-            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-7])\*(\d{1,2}))?(\+(\d+)h(\d+)s(\d+)v(\d+))?([,\s]|$)");
+            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-8])\*(\d{1,2}))?(\+(\d+)h(\d+)s(\d+)v(\d+))?([,\s]|$)");
             if (matches.Count <= 0)
             {
                 ToastNotification.Show(this, $"아이템 코드에 해당되는 아이템이 없습니다.", null, 3000, eToastGlowColor.Red, eToastPosition.TopCenter);

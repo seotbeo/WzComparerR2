@@ -40,6 +40,7 @@
             this.rdoMixColor5 = new DevComponents.DotNetBar.CheckBoxItem();
             this.rdoMixColor6 = new DevComponents.DotNetBar.CheckBoxItem();
             this.rdoMixColor7 = new DevComponents.DotNetBar.CheckBoxItem();
+            this.rdoMixColor8 = new DevComponents.DotNetBar.CheckBoxItem();
             this.rdoPrismType0 = new DevComponents.DotNetBar.CheckBoxItem();
             this.rdoPrismType1 = new DevComponents.DotNetBar.CheckBoxItem();
             this.rdoPrismType2 = new DevComponents.DotNetBar.CheckBoxItem();
@@ -133,6 +134,13 @@
             this.rdoMixColor7.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
             this.rdoMixColor7.Name = "rdoMixColor7";
             this.rdoMixColor7.Text = "믹스 컬러: ";
+            // 
+            // rdoMixColor8
+            // 
+            this.rdoMixColor8.AutoCollapseOnClick = false;
+            this.rdoMixColor8.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
+            this.rdoMixColor8.Name = "rdoMixColor8";
+            this.rdoMixColor8.Text = "믹스 컬러: ";
             // 
             // rdoPrismType0
             // 
@@ -259,6 +267,7 @@
         public DevComponents.DotNetBar.CheckBoxItem rdoMixColor5;
         public DevComponents.DotNetBar.CheckBoxItem rdoMixColor6;
         public DevComponents.DotNetBar.CheckBoxItem rdoMixColor7;
+        public DevComponents.DotNetBar.CheckBoxItem rdoMixColor8;
         public DevComponents.DotNetBar.CheckBoxItem rdoPrismType0;
         public DevComponents.DotNetBar.CheckBoxItem rdoPrismType1;
         public DevComponents.DotNetBar.CheckBoxItem rdoPrismType2;
