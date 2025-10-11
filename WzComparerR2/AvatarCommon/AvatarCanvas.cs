@@ -729,6 +729,17 @@ namespace WzComparerR2.AvatarCommon
                     }
                 }
             }
+            else
+            {
+                if (emotion == "default")
+                {
+                    return new ActionFrame() { Action = emotion };
+                }
+                else
+                {
+                    return new ActionFrame(emotion, 0);
+                }
+            }
 
             return null;
         }
