@@ -27,7 +27,7 @@ namespace WzComparerR2.Avatar.UI
                 //new ComboItem("GMS(북미)"){ Value = 4 },
                 //new ComboItem("GMS(유럽)"){ Value = 5 },
                 new ComboItem("MSEA"){ Value = 6 },
-                //new ComboItem("TMS"){ Value = 7 },
+                new ComboItem("TMS"){ Value = 7 },
                 //new ComboItem("MSN"){ Value = 8 },
             });
             cmbRegion.SelectedIndex = 0;
@@ -86,7 +86,7 @@ namespace WzComparerR2.Avatar.UI
             ComboItem selectedItem = cmbRegion.SelectedItem as ComboItem;
             switch ((int)selectedItem.Value)
             {
-                case 1:
+                case 1: // KMS
                     labelX1.Enabled = true;
                     checkBoxX1.Enabled = true;
                     checkBoxX2.Enabled = true;
@@ -94,6 +94,7 @@ namespace WzComparerR2.Avatar.UI
                 default:
                     labelX1.Enabled = false;
                     checkBoxX1.Enabled = false;
+                    checkBoxX1.Checked = true;
                     checkBoxX2.Enabled = false;
                     break;
             }
