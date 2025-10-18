@@ -23,7 +23,7 @@ namespace WzComparerR2.AvatarCommon
             this.GroupCount = 0;
             this.GroupTamingID = new List<int>();
             this.GroupBodyRelMove = new List<Wz_Vector>();
-            this.PrismData = new PrismData();
+            this.PrismData = new PrismDataCollection();
         }
 
         public AvatarPart(Wz_Node node, BitmapOrigin forceIcon, int forceID, bool isSkill) : this (node)
@@ -71,7 +71,7 @@ namespace WzComparerR2.AvatarCommon
         public int MixOpacity { get; set; }
         public bool IsMixing { get { return BaseColor != -1 && BaseColor != MixColor && MixOpacity > 0; } }
         public bool HasWhiteMixColor { get { return MixNodes[MixNodes.Length - 1] != null; } }
-        public PrismData PrismData { get; set; }
+        public PrismDataCollection PrismData { get; set; }
         public bool HasPrism { get { return PrismData.Valid; } }
         public Wz_Node EffectNode { get; set; }
 

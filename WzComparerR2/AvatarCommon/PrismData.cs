@@ -48,6 +48,11 @@ namespace WzComparerR2.AvatarCommon
             this.Hue = hue;
             this.Saturation = saturation;
             this.Brightness = brightness;
+
+            if (!this.Valid)
+            {
+                this.Clear();
+            }
         }
 
         public string GetColorType()

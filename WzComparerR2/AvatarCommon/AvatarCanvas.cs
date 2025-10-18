@@ -581,6 +581,39 @@ namespace WzComparerR2.AvatarCommon
         }
 
         /// <summary>
+        /// 의자 아이템이 랜덤 의자인지 확인합니다.
+        /// </summary>
+        /// <returns>랜덤 의자의 정보가 담긴 Wz_Node. (customChair/randomChairInfo)</returns>
+        private Wz_Node GetRandomChairInfoNode(Wz_Node chairNode)
+        {
+            foreach (var child in chairNode.FindNodeByPath("info").Nodes ?? Enumerable.Empty<Wz_Node>())
+            {
+                if (Regex.Match(child.Text, "customChair", RegexOptions.IgnoreCase).Success)
+                {
+                    foreach (var customChairNode in child.Nodes ?? Enumerable.Empty<Wz_Node>())
+                    {
+                        foreach (var dir in new[] { "randomChairInfo" })
+                        {
+                            if (customChairNode.Text.Contains(dir))
+                            {
+                                return customChairNode;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 랜덤 의자의 종류 개수를 찾습니다.
+        /// </summary>
+        private int CheckRandomChairCount(Wz_Node randomChairNode)
+        {
+            return randomChairNode?.Nodes?.Count ?? 0;
+        }
+
+        /// <summary>
         /// 이펙트 아이템을 추가합니다.
         /// </summary>
         /// <returns>추가된 AvatarPart.</returns>
@@ -1029,18 +1062,18 @@ namespace WzComparerR2.AvatarCommon
         public Bone CreateFrame(ActionFrame bodyAction, ActionFrame faceAction, ActionFrame tamingAction, ActionFrame[] effectActions)
         {
             //获取所有部件
-            Tuple<Wz_Node, Wz_Node, int, PrismData>[] playerNodes = LinkPlayerParts(bodyAction, faceAction);
-            Tuple<Wz_Node, Wz_Node, int, PrismData>[] tamingNodes = LinkTamingParts(tamingAction);
-            List<Tuple<Wz_Node, Wz_Node, int, PrismData>> effectNodes = []; // find effect nodes
-            List<Tuple<Wz_Node, Wz_Node, int, PrismData>> chairEffectNodes = []; // find chair effect nodes
-            List<Tuple<Wz_Node, Wz_Node, int, PrismData>> chairNodes = []; // find chair nodes
-            List<Tuple<Wz_Node, Wz_Node, int, PrismData>> groupTamingNodes = []; // find group taming nodes
+            Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>[] playerNodes = LinkPlayerParts(bodyAction, faceAction);
+            Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>[] tamingNodes = LinkTamingParts(tamingAction);
+            List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> effectNodes = []; // find effect nodes
+            List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> chairEffectNodes = []; // find chair effect nodes
+            List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> chairNodes = []; // find chair nodes
+            List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> groupTamingNodes = []; // find group taming nodes
             for (int i = 0; i < PartLength; i++)
             {
                 if (this.Parts[i] != null)
                 {
-                    List<Tuple<Wz_Node, Wz_Node, int, PrismData>> tmpNode = null;
-                    PrismData prismData = this.Parts[i].PrismData;
+                    List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> tmpNode = null;
+                    PrismDataCollection prismData = this.Parts[i].PrismData;
                     switch (i)
                     {
                         case IndexChairLayer1:
@@ -1152,11 +1185,11 @@ namespace WzComparerR2.AvatarCommon
             }
         }
 
-        private void CreateBone(Bone root, Tuple<Wz_Node, Wz_Node, int, PrismData>[] frameNodes, bool? bodyFace = null, bool groupTamingNode = false, bool effectNode = false, bool chairNode = false, bool groupTamingExists = false)
+        private void CreateBone(Bone root, Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>[] frameNodes, bool? bodyFace = null, bool groupTamingNode = false, bool effectNode = false, bool chairNode = false, bool groupTamingExists = false)
         {
             bool face = true;
 
-            foreach (Tuple<Wz_Node, Wz_Node, int, PrismData> partNode in frameNodes)
+            foreach (Tuple<Wz_Node, Wz_Node, int, PrismDataCollection> partNode in frameNodes)
             {
                 Wz_Node linkPartNode = partNode.Item1;
                 while (linkPartNode.Value is Wz_Uol)
@@ -1185,10 +1218,10 @@ namespace WzComparerR2.AvatarCommon
                     else
                     {
                         skin.Image = BitmapOrigin.CreateFromNode(linkPartNode, PluginBase.PluginManager.FindWz);
-                        PrismData prismData = partNode.Item4;
+                        PrismDataCollection prismData = partNode.Item4;
                         if (prismData.Valid)
                         {
-                            var prism = Prism.Apply(skin.Image, prismData, true);
+                            var prism = Prism.Apply(skin.Image, prismData.Get(PrismDataCollection.PrismDataType.Default), true);
                             if (prism.Bitmap != null)
                             {
                                 skin.Image.Bitmap.Dispose();
@@ -1285,6 +1318,7 @@ namespace WzComparerR2.AvatarCommon
                     }
                     if (linkNode.Value is Wz_Png)
                     {
+                        PrismDataCollection.PrismDataType pidx = 0;
                         string defaultCapType = "default";
                         string capType = (this.Cap?.Visible ?? false) ? this.CapType : defaultCapType;
 
@@ -1334,6 +1368,9 @@ namespace WzComparerR2.AvatarCommon
                             case "effect":
                                 if (childNode.FullPathToFile.StartsWith("Character\\Weapon"))
                                 {
+                                    if (partNode.Item4.IsValid(PrismDataCollection.PrismDataType.WeaponEffect))
+                                        pidx = PrismDataCollection.PrismDataType.WeaponEffect;
+
                                     if (childNode.FullPathToFile.Contains("jump"))
                                     {
                                         if (!this.ShowWeaponJumpEffect)
@@ -1412,10 +1449,10 @@ namespace WzComparerR2.AvatarCommon
                                 skin.Image.Bitmap.Dispose();
                                 skin.Image = mix;
                             }
-                            PrismData prismData = partNode.Item4;
+                            PrismDataCollection prismData = partNode.Item4;
                             if (prismData.Valid)
                             {
-                                var prism = Prism.Apply(skin.Image, prismData);
+                                var prism = Prism.Apply(skin.Image, prismData.Get(pidx));
                                 if (prism.Bitmap != null)
                                 {
                                     skin.Image.Bitmap.Dispose();
@@ -1746,10 +1783,10 @@ namespace WzComparerR2.AvatarCommon
             }
         }
 
-        private Tuple<Wz_Node, Wz_Node, int, PrismData>[] LinkPlayerParts(ActionFrame bodyAction, ActionFrame faceAction)
+        private Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>[] LinkPlayerParts(ActionFrame bodyAction, ActionFrame faceAction)
         {
             //寻找所有部件
-            List<Tuple<Wz_Node, Wz_Node, int, PrismData>> partNode = new List<Tuple<Wz_Node, Wz_Node, int, PrismData>>();
+            List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> partNode = new List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>>();
 
             //链接人
             if (this.Body != null && this.Head != null && bodyAction != null
@@ -1797,11 +1834,11 @@ namespace WzComparerR2.AvatarCommon
                     {
                         if (this.Face.IsMixing)
                         {
-                            partNode.Add(Tuple.Create(FindActionFrameNode(this.Face.Node, faceAction), FindActionFrameNode(this.Face.MixNodes[this.Face.MixColor], faceAction), this.Face.MixOpacity, new PrismData()));
+                            partNode.Add(Tuple.Create(FindActionFrameNode(this.Face.Node, faceAction), FindActionFrameNode(this.Face.MixNodes[this.Face.MixColor], faceAction), this.Face.MixOpacity, new PrismDataCollection()));
                         }
                         else
                         {
-                            partNode.Add(Tuple.Create(FindActionFrameNode(this.Face.Node, faceAction), (Wz_Node)null, 100, new PrismData()));
+                            partNode.Add(Tuple.Create(FindActionFrameNode(this.Face.Node, faceAction), (Wz_Node)null, 100, new PrismDataCollection()));
                         }
                     }
                 }
@@ -1822,11 +1859,11 @@ namespace WzComparerR2.AvatarCommon
                     }
                     if (this.Hair.IsMixing)
                     {
-                        partNode.Add(Tuple.Create(hairNode, mixHairNode, this.Hair.MixOpacity, new PrismData()));
+                        partNode.Add(Tuple.Create(hairNode, mixHairNode, this.Hair.MixOpacity, new PrismDataCollection()));
                     }
                     else
                     {
-                        partNode.Add(Tuple.Create(hairNode, (Wz_Node)null, 100, new PrismData()));
+                        partNode.Add(Tuple.Create(hairNode, (Wz_Node)null, 100, new PrismDataCollection()));
                     }
                 }
                 //cap
@@ -1875,10 +1912,10 @@ namespace WzComparerR2.AvatarCommon
             return partNode.ToArray();
         }
 
-        private Tuple<Wz_Node, Wz_Node, int, PrismData>[] LinkTamingParts(ActionFrame tamingAction)
+        private Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>[] LinkTamingParts(ActionFrame tamingAction)
         {
             List<Wz_Node> partNode = new List<Wz_Node>();
-            var prismInfo = new PrismData();
+            var prismInfo = new PrismDataCollection();
 
             //链接马
             if (this.Taming != null && this.Taming.Visible && tamingAction != null)
@@ -1897,7 +1934,7 @@ namespace WzComparerR2.AvatarCommon
             return partNode.Select(node => Tuple.Create(node, (Wz_Node)null, 100, prismInfo)).ToArray();
         }
 
-        private List<Tuple<Wz_Node, Wz_Node, int, PrismData>> LinkGroupTamingParts(ActionFrame tamingAction, PrismData prismInfo)
+        private List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> LinkGroupTamingParts(ActionFrame tamingAction, PrismDataCollection prismInfo)
         {
             List<Wz_Node> partNode = new List<Wz_Node>();
 
@@ -1922,7 +1959,7 @@ namespace WzComparerR2.AvatarCommon
             return partNode.Select(node => Tuple.Create(node, (Wz_Node)null, 100, prismInfo)).ToList();
         }
 
-        private List<Tuple<Wz_Node, Wz_Node, int, PrismData>> LinkEffectParts(ActionFrame aFrame, Wz_Node effNode, bool visible, PrismData prismInfo) // find effect nodes
+        private List<Tuple<Wz_Node, Wz_Node, int, PrismDataCollection>> LinkEffectParts(ActionFrame aFrame, Wz_Node effNode, bool visible, PrismDataCollection prismInfo) // find effect nodes
         {
             List<Wz_Node> partNode = new List<Wz_Node>();
 
