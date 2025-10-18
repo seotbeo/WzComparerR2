@@ -38,6 +38,7 @@ namespace WzComparerR2.Comparer
         private List<int> ExceptionTooltipIDs { get; set; } = new List<int>();
         private Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
         private Dictionary<int, HashSet<string>> DiffMobTags { get; set; } = new Dictionary<int, HashSet<string>>();
+        private Dictionary<string, HashSet<int>> ChangedActions { get; set; } = new Dictionary<string, HashSet<int>>();
 
         public WzFileComparer Comparer { get; protected set; }
         private string stateInfo;
@@ -678,8 +679,61 @@ namespace WzComparerR2.Comparer
         }
 
         // 변경된 스킬 툴팁 출력
+        private void UpdateActionChanges()
+        {
+            if (ChangedActions.Count <= 0) return;
+
+            StateInfo = $"딜레이 변경점 {ChangedActions.Count}개 정리중...";
+            StateDetail = "스킬 변경점을 툴팁 이미지로 출력중...";
+
+            for (int i = 0; i < 2; i++) // 0: New, 1: Old
+            {
+                var skill_wz = PluginManager.FindWz(Wz_Type.Skill, WzFileNewOld[i]);
+                foreach (var skill_img in skill_wz?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                {
+                    if (!Regex.Match(skill_img.Text, @"^\d+[.]img$").Success) continue;
+
+                    var skill_node = skill_img.FindNodeByPath("skill", true);
+                    foreach (var skill in skill_node?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                    {
+                        if (!int.TryParse(skill.Text, out int skill_id)) continue;
+
+                        var action_node = skill.FindNodeByPath("action");
+                        foreach (var action in action_node?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                        {
+                            var action_str = action.GetValueEx<string>(null);
+                            if (ChangedActions.ContainsKey(action_str))
+                            {
+                                ChangedActions[action_str].Add(skill_id);
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (var kv in ChangedActions)
+            {
+                var action = kv.Key;
+                var ids = kv.Value;
+                foreach (var id in ids)
+                {
+                    if (!OutputSkillTooltipIDs.Contains(id))
+                    {
+                        OutputSkillTooltipIDs.Add(id);
+                        DiffSkillTags[id] = new HashSet<string>();
+                    }
+
+                    if (!DiffSkillTags[id].Contains(action))
+                    {
+                        DiffSkillTags[id].Add(action);
+                    }
+                }
+            }
+            ChangedActions.Clear();
+        }
+
         private void SaveSkillTooltip(string tooltipPath)
         {
+            UpdateActionChanges();
             SkillTooltipRender2[] tooltipRenderNewOld = new SkillTooltipRender2[2];
             int count = 0;
             int allCount = OutputSkillTooltipIDs.Count;
@@ -1264,6 +1318,25 @@ namespace WzComparerR2.Comparer
             }
         }
 
+        private void GetActionChanges(Wz_Node node, bool change)
+        {
+            if (node == null) return;
+
+            Match match = Regex.Match(node.FullPathToFile, @"^Character\\00002000.img\\([^\\]+)\\\d+\\delay");
+            if (match.Success)
+            {
+                string action = match.Groups[1].ToString();
+
+                if (!string.IsNullOrEmpty(action))
+                {
+                    if (!ChangedActions.ContainsKey(action))
+                    {
+                        ChangedActions[action] = new HashSet<int>();
+                    }
+                }
+            }
+        }
+
         // 노드에서 스킬 ID 얻기
         private void GetSkillID(Wz_Node node, bool change)
         {
@@ -1306,6 +1379,15 @@ namespace WzComparerR2.Comparer
                     if (tag != null && !DiffSkillTags[id].Contains(tag))
                     {
                         DiffSkillTags[id].Add(tag);
+                    }
+
+                    if (match.Groups.Count > 2 && match.Groups[2].ToString() == "action")
+                    {
+                        var action_str = node.GetValueEx<string>(null);
+                        if (!string.IsNullOrEmpty(action_str) && !DiffSkillTags[id].Contains(action_str))
+                        {
+                            DiffSkillTags[id].Add(action_str);
+                        }
                     }
                 }
             }
@@ -1593,10 +1675,18 @@ namespace WzComparerR2.Comparer
                 count[idx]++;
 
                 // 변경된 툴팁 출력
-                if (OutputSkillTooltip && (imgName.StartsWith("Skill") || imgName.StartsWith("String")))
+                if (OutputSkillTooltip)
                 {
-                    GetSkillID(diff.NodeNew, idx == 0 ? true : false);
-                    GetSkillID(diff.NodeOld, idx == 0 ? true : false);
+                    if (imgName.StartsWith("Skill") || imgName.StartsWith("String"))
+                    {
+                        GetSkillID(diff.NodeNew, idx == 0 ? true : false);
+                        GetSkillID(diff.NodeOld, idx == 0 ? true : false);
+                    }
+                    if (imgName.StartsWith("Character\\00002000.img"))
+                    {
+                        GetActionChanges(diff.NodeNew, idx == 0 ? true : false);
+                        GetActionChanges(diff.NodeOld, idx == 0 ? true : false);
+                    }
                 }
                 if (OutputItemTooltip && (imgName.StartsWith("Item") || imgName.StartsWith("String")))
                 {
@@ -1679,9 +1769,16 @@ namespace WzComparerR2.Comparer
                     sw.WriteLine("</tr>");
 
                     // 변경된 툴팁 출력
-                    if (OutputSkillTooltip && (imgName.StartsWith("Skill") || imgName.StartsWith("String")))
+                    if (OutputSkillTooltip)
                     {
-                        GetSkillID(node, idx == 0 ? true : false);
+                        if (imgName.StartsWith("Skill") || imgName.StartsWith("String"))
+                        {
+                            GetSkillID(node, idx == 0 ? true : false);
+                        }
+                        if (imgName.StartsWith("Character\\00002000.img"))
+                        {
+                            GetActionChanges(node, idx == 0 ? true : false);
+                        }
                     }
                     if (OutputItemTooltip && (imgName.StartsWith("Item") || imgName.StartsWith("String")))
                     {
