@@ -33,6 +33,7 @@ namespace WzComparerR2.AvatarCommon
             this.GroupChair = "0";
             this.ShowWeaponEffect = true;
             this.ShowWeaponJumpEffect = true;
+            this.HideBody = false;
 
             SetRing = new Action<AvatarPart>[]
             {
@@ -69,6 +70,7 @@ namespace WzComparerR2.AvatarCommon
         public bool ShowHairShade { get; set; }
         public bool ShowWeaponEffect { get; set; }
         public bool ShowWeaponJumpEffect { get; set; }
+        public bool HideBody { get; set; }
         public bool ApplyBRM { get; set; }
         public int WeaponIndex { get; set; }
         public int WeaponType { get; set; }
@@ -1000,6 +1002,12 @@ namespace WzComparerR2.AvatarCommon
                         bodyFrame = 0;
                     }
                 }
+            }
+
+            if (this.HideBody) // hide body chkbox
+            {
+                actionName = "hideBody";
+                bodyFrame = 0;
             }
 
             if (!string.IsNullOrEmpty(actionName))

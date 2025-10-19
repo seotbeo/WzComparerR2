@@ -528,7 +528,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}:{15}:{16}",
+            string actionTag = string.Format("{0}:{1},{2}:{3},{4}:{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}:{16}:{17}",
                 this.avatar.ActionName,
                 bodyFrame,
                 this.avatar.EmotionName,
@@ -539,6 +539,7 @@ namespace WzComparerR2.Avatar.UI
                 this.avatar.ShowHairShade ? 1 : 0,
                 this.avatar.ShowWeaponEffect ? 1 : 0,
                 this.avatar.ShowWeaponJumpEffect ? 1 : 0,
+                this.avatar.HideBody ? 1 : 0,
                 this.avatar.EarType,
                 this.avatar.WeaponType,
                 this.avatar.WeaponIndex,
@@ -1808,6 +1809,12 @@ namespace WzComparerR2.Avatar.UI
         private void chkShowWeaponJumpEffect_CheckedChanged(object sender, EventArgs e)
         {
             avatar.ShowWeaponJumpEffect = chkShowWeaponJumpEffect.Checked;
+            UpdateDisplay();
+        }
+
+        private void chkHideBody_CheckedChanged(object sender, EventArgs e)
+        {
+            avatar.HideBody = chkHideBody.Checked;
             UpdateDisplay();
         }
 
