@@ -1004,6 +1004,21 @@ namespace WzComparerR2.AvatarCommon
                 }
             }
 
+            if (this.FaceAccessory != null && this.FaceAccessory.Visible)
+            {
+                var fixedEmotion = this.FaceAccessory.Node.FindNodeByPath(@"info\fixedEmotion").GetValueEx<string>(null);
+                if (!string.IsNullOrEmpty(fixedEmotion))
+                {
+                    var info = fixedEmotion.Split('/');
+                    emotionName = info[0];
+                    faceFrame = 0;
+                    if (info.Length > 1)
+                    {
+                        int.TryParse(info[1], out faceFrame);
+                    }
+                }
+            }
+
             if (this.HideBody) // hide body chkbox
             {
                 actionName = "hideBody";
