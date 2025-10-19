@@ -44,40 +44,47 @@ namespace WzComparerR2.AvatarCommon
                     SetHSVfromRGB(ref rgb, ref hsv);
 
                     bool convert = CheckColorType(type, ref hsv);
+                    bool not16bitcolor = false;
                     if ((rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
                     {
                         convert = false;
                     }
                     if (convert)
                     {
+                        if (rgb.R % 17 != 0 || rgb.G % 17 != 0 || rgb.B % 17 != 0)
+                        {
+                            not16bitcolor = true;
+                        }
 
                         if (hue > 0)
                         {
                             hsv.Hue = (hsv.Hue + hue) % 360;
-                            SetRGBfromHSV(ref rgb, ref hsv, isEffect);
+                            SetRGBfromHSV(ref rgb, ref hsv, isEffect || not16bitcolor);
                         }
 
                         RGB addRGB = new RGB(0, 0, 0);
-                        bool[] breakUpperBound = [isEffect || rgb.R > 238, isEffect || rgb.G > 238, isEffect || rgb.B > 238];
+                        bool[] breakUpperBound = [isEffect || not16bitcolor || rgb.R > 238, isEffect || not16bitcolor || rgb.G > 238, isEffect || not16bitcolor || rgb.B > 238];
 
                         if (saturation != 100 && hsv.Saturation != 0)
                         {
-                            var ds = (saturation - 100) / 100f;
-                            hsv.Saturation = Clamp(hsv.Saturation + ds, 0, 1);
+                            if (saturation > 100)
+                                hsv.Saturation = Clamp(hsv.Saturation + (saturation - 100) / 100f, 0, 1);
+                            else
+                                hsv.Saturation = hsv.Saturation * saturation / 100f;
 
                             SetRGBfromHSV(ref rgb, ref hsv, false, doRounding: false);
                         }
 
                         if (brightness != 100)
                         {
-                            addRGB = CalcBrightness(ref rgb, brightness, isEffect);
+                            addRGB = CalcBrightness(ref rgb, brightness, isEffect || not16bitcolor);
                         }
 
                         rgb.R = Clamp(rgb.R + addRGB.R, 0, breakUpperBound[0] ? 255 : 238);
                         rgb.G = Clamp(rgb.G + addRGB.G, 0, breakUpperBound[1] ? 255 : 238);
                         rgb.B = Clamp(rgb.B + addRGB.B, 0, breakUpperBound[2] ? 255 : 238);
 
-                        if (!isEffect)
+                        if (!(isEffect || not16bitcolor))
                         {
                             rgb.R = (int)ApplyStep(rgb.R);
                             rgb.G = (int)ApplyStep(rgb.G);
