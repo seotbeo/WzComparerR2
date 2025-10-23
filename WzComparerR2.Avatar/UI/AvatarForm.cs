@@ -578,13 +578,20 @@ namespace WzComparerR2.Avatar.UI
                     {
                         partsID[i] += "+" + part.MixColor + "*" + part.MixOpacity;
                     }
-                    if (part.PrismData.IsValid(PrismDataCollection.PrismDataType.Default))
+
+                    bool prismValid = part.PrismData.IsValid(PrismDataCollection.PrismDataType.Default);
+                    bool prism2Valid = part.PrismData.IsValid(PrismDataCollection.PrismDataType.WeaponEffect);
+                    if (prismValid)
                     {
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
                         partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}";
                     }
-                    if (part.PrismData.IsValid(PrismDataCollection.PrismDataType.WeaponEffect))
+                    if (prism2Valid)
                     {
+                        if (!prismValid)
+                        {
+                            partsID[i] += $"+0h0s100v100";
+                        }
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.WeaponEffect);
                         partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}";
                     }
@@ -2213,13 +2220,28 @@ namespace WzComparerR2.Avatar.UI
         }
 
 #if NET6_0_OR_GREATER
-        private string GetPrismCode(OpenAPI.PrismInfo prism)
+        private string GetPrismCode(OpenAPI.PrismInfo prism, bool alwaysReturnCode = false)
         {
             if (prism.Valid)
             {
-                return $"+{prism.ColorType}h{prism.Hue}s{prism.Saturation}v{prism.Brightness}";
+                if (prism.Brightness > 0 && prism.Saturation > 0 && prism.Hue >= 0)
+                {
+                    return $"+{prism.ColorType}h{prism.Hue}s{prism.Saturation}v{prism.Brightness}";
+                }
+                else
+                {
+                    return $"+0h0s100v100";
+                }
             }
             return "";
+        }
+
+        private string GetPrismCode(OpenAPI.PrismInfoCollection prisms)
+        {
+            var ret = "";
+            ret += GetPrismCode(prisms.Prism1, true);
+            ret += GetPrismCode(prisms.Prism2);
+            return ret;
         }
 #endif
 

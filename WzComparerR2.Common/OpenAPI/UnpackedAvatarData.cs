@@ -379,21 +379,30 @@ namespace WzComparerR2.OpenAPI
             return GetValue("showEffectFlags");
         }
 
-        public PrismInfo GetPrismInfo(string type)
+        public PrismInfo GetPrismInfo(string type, string index = "")
         {
             var ret = new PrismInfo();
             if (GetValue($"has{type}Prism") == 1)
             {
-                ret.ColorType = (byte)GetValue($"{type.ToLower()}PrismColorType");
-                ret.Brightness = GetValue($"{type.ToLower()}PrismBrightness");
-                ret.Saturation = GetValue($"{type.ToLower()}PrismSaturation");
-                ret.Hue = GetValue($"{type.ToLower()}PrismHue");
+                ret.On = (byte)GetValue($"{type.ToLower()}Prism{index}On");
+                ret.ColorType = (byte)GetValue($"{type.ToLower()}Prism{index}ColorType");
+                ret.Brightness = GetValue($"{type.ToLower()}Prism{index}Brightness");
+                ret.Saturation = GetValue($"{type.ToLower()}Prism{index}Saturation");
+                ret.Hue = GetValue($"{type.ToLower()}Prism{index}Hue");
                 ret.Valid = true;
             }
             else
             {
                 ret.Valid = false;
             }
+            return ret;
+        }
+
+        public PrismInfoCollection GetPrismInfoCollection(string type)
+        {
+            var ret = new PrismInfoCollection();
+            ret.Prism1 = GetPrismInfo(type);
+            ret.Prism2 = GetPrismInfo(type, "2");
             return ret;
         }
 
@@ -436,17 +445,17 @@ namespace WzComparerR2.OpenAPI
 
             ShowEffectFlags = GetShowEffectFlags();
 
-            CapPrismInfo = GetPrismInfo("Cap");
-            FaceAccPrismInfo = GetPrismInfo("FaceAcc");
-            EyeAccPrismInfo = GetPrismInfo("EyeAcc");
-            EarAccPrismInfo = GetPrismInfo("EarAcc");
-            CoatPrismInfo = GetPrismInfo("Coat");
-            PantsPrismInfo = GetPrismInfo("Pants");
-            ShoesPrismInfo = GetPrismInfo("Shoes");
-            GlovesPrismInfo = GetPrismInfo("Gloves");
-            CapePrismInfo = GetPrismInfo("Cape");
-            ShieldPrismInfo = GetPrismInfo("Shield");
-            WeaponPrismInfo = GetPrismInfo("Weapon");
+            CapPrismInfo = GetPrismInfoCollection("Cap");
+            FaceAccPrismInfo = GetPrismInfoCollection("FaceAcc");
+            EyeAccPrismInfo = GetPrismInfoCollection("EyeAcc");
+            EarAccPrismInfo = GetPrismInfoCollection("EarAcc");
+            CoatPrismInfo = GetPrismInfoCollection("Coat");
+            PantsPrismInfo = GetPrismInfoCollection("Pants");
+            ShoesPrismInfo = GetPrismInfoCollection("Shoes");
+            GlovesPrismInfo = GetPrismInfoCollection("Gloves");
+            CapePrismInfo = GetPrismInfoCollection("Cape");
+            ShieldPrismInfo = GetPrismInfoCollection("Shield");
+            WeaponPrismInfo = GetPrismInfoCollection("Weapon");
             SkinPrismInfo = GetPrismInfo("Skin");
         }
 
@@ -487,23 +496,30 @@ namespace WzComparerR2.OpenAPI
         public bool ShowWeaponJumpEffect { get { return (ShowEffectFlags & (1 << 1)) != 0; } }
         public bool ShowWeaponSpecialEffect { get { return (ShowEffectFlags & (1 << 2)) != 0; } }
         public bool ShowCapeEffect { get { return (ShowEffectFlags & (1 << 3)) != 0; } }
-        public PrismInfo CapPrismInfo { get; set; }
-        public PrismInfo FaceAccPrismInfo { get; set; }
-        public PrismInfo EyeAccPrismInfo { get; set; }
-        public PrismInfo EarAccPrismInfo { get; set; }
-        public PrismInfo CoatPrismInfo { get; set; }
-        public PrismInfo PantsPrismInfo { get; set; }
-        public PrismInfo ShoesPrismInfo { get; set; }
-        public PrismInfo GlovesPrismInfo { get; set; }
-        public PrismInfo ShieldPrismInfo { get; set; }
-        public PrismInfo CapePrismInfo { get; set; }
-        public PrismInfo WeaponPrismInfo { get; set; }
+        public PrismInfoCollection CapPrismInfo { get; set; }
+        public PrismInfoCollection FaceAccPrismInfo { get; set; }
+        public PrismInfoCollection EyeAccPrismInfo { get; set; }
+        public PrismInfoCollection EarAccPrismInfo { get; set; }
+        public PrismInfoCollection CoatPrismInfo { get; set; }
+        public PrismInfoCollection PantsPrismInfo { get; set; }
+        public PrismInfoCollection ShoesPrismInfo { get; set; }
+        public PrismInfoCollection GlovesPrismInfo { get; set; }
+        public PrismInfoCollection ShieldPrismInfo { get; set; }
+        public PrismInfoCollection CapePrismInfo { get; set; }
+        public PrismInfoCollection WeaponPrismInfo { get; set; }
         public PrismInfo SkinPrismInfo { get; set; }
+    }
+
+    public class PrismInfoCollection
+    {
+        public PrismInfo Prism1 { get; set; }
+        public PrismInfo Prism2 { get; set; }
     }
 
     public class PrismInfo
     {
         public bool Valid { get; set; }
+        public byte On { get; set; }
         public byte ColorType { get; set; }
         public string ColorTypeString { get { return this.GetColorType(); } }
         public int Hue { get; set; }
