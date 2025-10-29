@@ -493,7 +493,14 @@ namespace WzComparerR2.CharaSimControl
                         break;
 
                     case "item":
-                        bitmap = (tag["renderer"] as ItemTooltipRender2).GetSampleBitmap();
+                        if (this.Enable22AniStyle)
+                        {
+                            bitmap = (tag["renderer"] as ItemTooltipRender22).GetSampleBitmap();
+                        }
+                        else
+                        {
+                            bitmap = (tag["renderer"] as ItemTooltipRender2).GetSampleBitmap();
+                        }
                         break;
 
                     default:
