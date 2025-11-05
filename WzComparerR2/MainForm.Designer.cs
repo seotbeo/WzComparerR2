@@ -229,6 +229,7 @@
             this.chkOutputRemovedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputAddedImg = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
+            this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.chkOutputPng = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.cmbComparePng = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.labelXComp2 = new DevComponents.DotNetBar.LabelX();
@@ -286,6 +287,7 @@
             this.comboItem19 = new DevComponents.Editors.ComboItem();
             this.btnRootNode = new DevComponents.DotNetBar.ButtonX();
             this.clbRootNode = new System.Windows.Forms.CheckedListBox();
+            this.btnSkillTooltipExport = new DevComponents.DotNetBar.ButtonX();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -2811,8 +2813,10 @@
             // 
             // superTabControlPanel3
             // 
+            this.superTabControlPanel3.Controls.Add(this.btnSkillTooltipExport);
             this.superTabControlPanel3.Controls.Add(this.btnExportSkillOption);
             this.superTabControlPanel3.Controls.Add(this.btnExportSkill);
+            this.superTabControlPanel3.Controls.Add(this.labelX2);
             this.superTabControlPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel3.Location = new System.Drawing.Point(0, 0);
             this.superTabControlPanel3.Name = "superTabControlPanel3";
@@ -2820,13 +2824,25 @@
             this.superTabControlPanel3.TabIndex = 0;
             this.superTabControlPanel3.TabItem = this.superTabItem3;
             // 
+            // btnSkillTooltipExport
+            // 
+            this.btnSkillTooltipExport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnSkillTooltipExport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnSkillTooltipExport.Location = new System.Drawing.Point(233, 6);
+            this.btnSkillTooltipExport.Name = "btnSkillTooltipExport";
+            this.btnSkillTooltipExport.Size = new System.Drawing.Size(115, 23);
+            this.btnSkillTooltipExport.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btnSkillTooltipExport.TabIndex = 2;
+            this.btnSkillTooltipExport.Text = "스킬 툴팁 내보내기";
+            this.btnSkillTooltipExport.Click += new System.EventHandler(this.btnSkillTooltipExport_Click);
+            // 
             // btnExportSkillOption
             // 
             this.btnExportSkillOption.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnExportSkillOption.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnExportSkillOption.Location = new System.Drawing.Point(99, 6);
+            this.btnExportSkillOption.Location = new System.Drawing.Point(104, 6);
             this.btnExportSkillOption.Name = "btnExportSkillOption";
-            this.btnExportSkillOption.Size = new System.Drawing.Size(111, 23);
+            this.btnExportSkillOption.Size = new System.Drawing.Size(115, 23);
             this.btnExportSkillOption.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnExportSkillOption.TabIndex = 1;
             this.btnExportSkillOption.Text = "스킬 옵션 내보내기";
@@ -2838,11 +2854,25 @@
             this.btnExportSkill.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnExportSkill.Location = new System.Drawing.Point(6, 6);
             this.btnExportSkill.Name = "btnExportSkill";
-            this.btnExportSkill.Size = new System.Drawing.Size(75, 23);
+            this.btnExportSkill.Size = new System.Drawing.Size(84, 23);
             this.btnExportSkill.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnExportSkill.TabIndex = 0;
             this.btnExportSkill.Text = "스킬 내보내기";
             this.btnExportSkill.Click += new System.EventHandler(this.btnExportSkill_Click);
+
+            // 
+            // labelX2
+            // 
+            this.labelX2.AutoSize = true;
+            // 
+            // 
+            // 
+            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX2.Location = new System.Drawing.Point(24, 39);
+            this.labelX2.Name = "labelX2";
+            this.labelX2.Size = new System.Drawing.Size(44, 16);
+            this.labelX2.TabIndex = 2;
+            this.labelX2.Text = "";
             // 
             // superTabItem3
             // 
@@ -3561,6 +3591,7 @@
         private DevComponents.DotNetBar.ButtonX btnExportSkillOption;
         private DevComponents.DotNetBar.ButtonX btnExportSkill;
         private DevComponents.DotNetBar.LabelX labelX1;
+        private DevComponents.DotNetBar.LabelX labelX2;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputPng;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbComparePng;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputRemovedImg;
@@ -3621,5 +3652,6 @@
         private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;
         private DevComponents.DotNetBar.ButtonX btnRootNode;
         private System.Windows.Forms.CheckedListBox clbRootNode;
+        private DevComponents.DotNetBar.ButtonX btnSkillTooltipExport;
     }
 }
