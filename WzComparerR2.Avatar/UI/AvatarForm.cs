@@ -2202,7 +2202,7 @@ namespace WzComparerR2.Avatar.UI
                 if (!string.IsNullOrEmpty(res.EmotionFaceAcc))
                 {
                     Wz_Node infoRootNode = PluginManager.FindWz($@"Etc\EmotionFaceAccInfo.img");
-                    Wz_Node infoNode = infoRootNode?.FindNodeByPath($@"s{res.EmotionFaceAcc}\fixedEmotion") ?? null;
+                    Wz_Node infoNode = infoRootNode?.FindNodeByPath($@"{res.EmotionFaceAcc}\fixedEmotion") ?? null;
                     var fixedEmotion = infoNode.GetValueEx<string>("");
                     if (!string.IsNullOrEmpty(fixedEmotion))
                     {
