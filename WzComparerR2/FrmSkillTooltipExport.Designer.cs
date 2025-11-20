@@ -47,24 +47,25 @@
             this.lblSelectJobIntro.Name = "lblSelectJobIntro";
             this.lblSelectJobIntro.Size = new System.Drawing.Size(222, 16);
             this.lblSelectJobIntro.TabIndex = 0;
-            this.lblSelectJobIntro.Text = "내보낼 직업을 선택합니다.";
+            this.lblSelectJobIntro.Text = "내보낼 직업을 선택하세요.";
             // 
             // clbJobName
             // 
+            this.clbJobName.CheckOnClick = true;
             this.clbJobName.FormattingEnabled = true;
             this.clbJobName.Location = new System.Drawing.Point(10, 30);
             this.clbJobName.Name = "clbJobName";
-            this.clbJobName.Font = new System.Drawing.Font("Dotum", 12F);
+            this.clbJobName.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.clbJobName.Size = new System.Drawing.Size(430, 522);
             this.clbJobName.TabIndex = 1;
             // 
             // btnSort
             // 
-            this.btnSort.Location = new System.Drawing.Point(339, 5);
+            this.btnSort.Location = new System.Drawing.Point(359, 5);
             this.btnSort.Name = "btnSort";
-            this.btnSort.Size = new System.Drawing.Size(100, 20);
+            this.btnSort.Size = new System.Drawing.Size(80, 20);
             this.btnSort.TabIndex = 2;
-            this.btnSort.Text = "초기 주문";
+            this.btnSort.Text = "기본 순서";
             this.btnSort.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnSort.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
@@ -72,9 +73,9 @@
             // 
             // btnSelectAll
             // 
-            this.btnSelectAll.Location = new System.Drawing.Point(10, 550);
+            this.btnSelectAll.Location = new System.Drawing.Point(10, 545);
             this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(100, 35);
+            this.btnSelectAll.Size = new System.Drawing.Size(80, 25);
             this.btnSelectAll.TabIndex = 3;
             this.btnSelectAll.Text = "모두 선택";
             this.btnSelectAll.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
@@ -83,20 +84,20 @@
             // 
             // btnReverseSelect
             // 
-            this.btnReverseSelect.Location = new System.Drawing.Point(174, 550);
+            this.btnReverseSelect.Location = new System.Drawing.Point(184, 545);
             this.btnReverseSelect.Name = "btnReverseSelect";
-            this.btnReverseSelect.Size = new System.Drawing.Size(100, 35);
+            this.btnReverseSelect.Size = new System.Drawing.Size(80, 25);
             this.btnReverseSelect.TabIndex = 4;
-            this.btnReverseSelect.Text = "역 선택";
+            this.btnReverseSelect.Text = "선택 반전";
             this.btnReverseSelect.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.btnReverseSelect.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnReverseSelect.Click += new System.EventHandler(this.btnReverseSelect_Click);
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(338, 550);
+            this.btnExport.Location = new System.Drawing.Point(358, 545);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(100, 35);
+            this.btnExport.Size = new System.Drawing.Size(80, 25);
             this.btnExport.TabIndex = 5;
             this.btnExport.Text = "내보내기";
             this.btnExport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
@@ -107,7 +108,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 600);
+            this.ClientSize = new System.Drawing.Size(450, 580);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnReverseSelect);
             this.Controls.Add(this.btnSelectAll);

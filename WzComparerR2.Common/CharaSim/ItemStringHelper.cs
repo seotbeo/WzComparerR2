@@ -1546,20 +1546,20 @@ namespace WzComparerR2.CharaSim
                     {
                         switch (faction)
                         {
-                            case 0: jobName = "5차(모험자)"; break; 
+                            case 0: jobName = "5차(모험가)"; break; 
                             case 1: 
                             case 5: jobName = "5차(시그너스 기사단)"; break; 
                             case 2: jobName = "5차(영웅)"; break; 
-                            case 3: jobName = "5차(레지스턴스)"; break; 
+                            case 3: jobName = "5차(레지스탕스)"; break; 
                             case 4: jobName = "5차(새벽의 진)"; break; 
                             case 6: jobName = "5차(노바)"; break; 
                             case 10: jobName = "5차(초월자)"; break; 
-                            case 11: jobName = "5차(던베일)"; break; 
+                            case 11: jobName = "5차(비스트테이머)"; break; 
                             // case 12: jobName = "5차(애니메이션 콜라보레이션)"; break; 
                             case 13: jobName = "5차(몬스터)"; break; 
-                            case 14: jobName = "5차(프렌드 월드)"; break; 
+                            case 14: jobName = "5차(프렌즈 월드)"; break; 
                             case 15: jobName = "5차(레프)"; break; 
-                            case 16: jobName = "5차(애니마)"; break; 
+                            case 16: jobName = "5차(아니마)"; break; 
                             case 17: jobName = "5차(강호)"; break; 
                             case 18: jobName = "5차(샤인)"; break;
                         }

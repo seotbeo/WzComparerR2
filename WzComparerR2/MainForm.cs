@@ -4184,7 +4184,7 @@ namespace WzComparerR2
             }
             if (openedWz.Count > 1)
             {
-                ToastNotification.Show(this, $"오류: 이 기능을 사용하기 전에 Base.wz를 하나만 여십시오.", null, 4000, eToastGlowColor.Red, eToastPosition.TopCenter);
+                ToastNotification.Show(this, $"오류: Base.wz가 둘 이상 열려 있습니다.", null, 4000, eToastGlowColor.Red, eToastPosition.TopCenter);
                 return;
             }
             using (FrmSkillTooltipExport frm = new FrmSkillTooltipExport())
@@ -4258,7 +4258,7 @@ namespace WzComparerR2
                                     if (tooltip.StringLinker == null || !tooltip.StringLinker.StringSkill.TryGetValue(int.Parse(j.Text), out sr))
                                     {
                                         sr = new StringResultSkill();
-                                        sr.Name = "알 수없는 스킬";
+                                        sr.Name = "(null)";
                                     }
                                     skillName = sr.Name;
                                     labelX2.Text = string.Format("내보내는 중: {0} - {1}", j.Text, skillName);
@@ -4307,7 +4307,7 @@ namespace WzComparerR2
                                             if (tooltip.StringLinker == null || !tooltip.StringLinker.StringSkill.TryGetValue(int.Parse(skillNode.Text), out sr))
                                             {
                                                 sr = new StringResultSkill();
-                                                sr.Name = "알 수없는 스킬";
+                                                sr.Name = "(null)";
                                             }
                                             skillName = sr.Name;
                                             labelX2.Text = string.Format("내보내는 중: {0} - {1}", skillNode.Text, skillName);
@@ -4345,7 +4345,7 @@ namespace WzComparerR2
                     {
                         sw.Stop();
                         btnSkillTooltipExport.Enabled = true;
-                        labelX2.Text = "내보내기 완료. 시간이 경과했다: " + sw.Elapsed.ToString();
+                        labelX2.Text = "내보내기 완료. 소요 시간: " + sw.Elapsed.ToString();
                     }
                     labelItemStatus.Text = "내보내기 완료: " + exportedFolder;
 
