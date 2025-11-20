@@ -1359,6 +1359,9 @@ namespace WzComparerR2.CharaSim
                 case 12005: return "카마도 탄지로";
                 case 12100: return "카마도 탄지로";
 
+                case 12006: return "사이타마";
+                case 12200: return "사이타마";
+
                 case 13000: return "핑크빈";
                 case 13001: return "예티";
                 case 13100: return "핑크빈";
@@ -1479,11 +1482,11 @@ namespace WzComparerR2.CharaSim
                 case 18211: return "시아 아스텔(3차)";
                 case 18212: return "시아 아스텔(4차)";
                 case 18214: return "시아 아스텔(6차)";
-                case 18300: return "샤인_궁수(1차)";
-                case 18310: return "샤인_궁수(2차)";
-                case 18311: return "샤인_궁수(3차)";
-                case 18312: return "샤인_궁수(4차)";
-                case 18314: return "샤인_궁수(6차)";
+                case 18300: return "아이엘(1차)";
+                case 18310: return "아이엘(2차)";
+                case 18311: return "아이엘(3차)";
+                case 18312: return "아이엘(4차)";
+                case 18314: return "아이엘(6차)";
                 case 18400: return "샤인_도적(1차)";
                 case 18410: return "샤인_도적(2차)";
                 case 18411: return "샤인_도적(3차)";
@@ -1494,7 +1497,7 @@ namespace WzComparerR2.CharaSim
                 case 18511: return "샤인_해적(3차)";
                 case 18512: return "샤인_해적(4차)";
                 case 18514: return "샤인_해적(6차)";
-                
+
 
                 case 40000: return "5차";
                 case 40001: return "5차(전사)";
@@ -1509,6 +1512,65 @@ namespace WzComparerR2.CharaSim
                 case 50007: return "6차(헥사스탯)";
             }
             return null;
+        }
+        
+        public static string GetFifthJobName(int skillCode, List<int> jobId)
+        {
+            string jobName = "";
+            switch (jobId.Count)
+            {
+                case 0:
+                    jobName = GetJobName(skillCode / 10000);
+                    break;
+                case 1:
+                    if (jobId[0] == 0)
+                    {
+                        jobName = GetJobName(skillCode / 10000);
+                    }
+                    else
+                    {
+                        jobName = GetJobName(jobId[0]);
+                        jobName = jobName.Contains("(4") ? jobName.Replace("(4", "(5") : jobName + "(5차)";
+                    }
+                    break;
+                default:
+                    bool isSameFaction = true;
+                    int faction = jobId[0] / 1000;
+                    if (faction == 5) faction = 1;
+                    foreach (int id in jobId.Skip(1))
+                    {
+                        if (id == 0) continue;
+                        isSameFaction = isSameFaction && (id / 1000 == faction);
+                    }
+                    if (isSameFaction)
+                    {
+                        switch (faction)
+                        {
+                            case 0: jobName = "5차(모험자)"; break; 
+                            case 1: 
+                            case 5: jobName = "5차(시그너스 기사단)"; break; 
+                            case 2: jobName = "5차(영웅)"; break; 
+                            case 3: jobName = "5차(레지스턴스)"; break; 
+                            case 4: jobName = "5차(새벽의 진)"; break; 
+                            case 6: jobName = "5차(노바)"; break; 
+                            case 10: jobName = "5차(초월자)"; break; 
+                            case 11: jobName = "5차(던베일)"; break; 
+                            // case 12: jobName = "5차(애니메이션 콜라보레이션)"; break; 
+                            case 13: jobName = "5차(몬스터)"; break; 
+                            case 14: jobName = "5차(프렌드 월드)"; break; 
+                            case 15: jobName = "5차(레프)"; break; 
+                            case 16: jobName = "5차(애니마)"; break; 
+                            case 17: jobName = "5차(강호)"; break; 
+                            case 18: jobName = "5차(샤인)"; break;
+                        }
+                    }
+                    else
+                    {
+                        jobName = GetJobName(skillCode / 10000);
+                    }
+                    break;
+            }
+            return jobName;
         }
 
         public static string ToChineseNumberExpr(long value)
