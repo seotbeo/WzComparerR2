@@ -696,6 +696,26 @@ namespace WzComparerR2.Avatar.UI
             cmbEmotion.SelectedIndex = emotionIdx + 1;
         }
 
+        /// <summary>
+        /// Emotion을 선택된 프레임으로 고정합니다.
+        /// </summary>
+        /// <param name="emotionName">고정할 Emotion의 이름</param>
+        /// <param name="idx">고정할 프레임 번호</param>
+        private void FixEmotion(string emotionName, int Idx)
+        {
+            this.SelectEmotion(emotionName);
+
+            if (this.chkEmotionPlay.Checked)
+            {
+                this.chkEmotionPlay.Checked = false;
+            }
+
+            if (Idx >= 0)
+            {
+                this.cmbEmotionFrame.SelectedIndex = Idx;
+            }
+        }
+
         #region 同步界面
         private void FillBodyAction()
         {
@@ -2175,6 +2195,26 @@ namespace WzComparerR2.Avatar.UI
                                 this.avatar.EffectVisibles[11] = res.ShowCapeEffect;
                             }
                         }
+                    }
+                }
+
+                // 표정 얼굴장식
+                if (!string.IsNullOrEmpty(res.EmotionFaceAcc))
+                {
+                    Wz_Node infoRootNode = PluginManager.FindWz($@"Etc\EmotionFaceAccInfo.img");
+                    Wz_Node infoNode = infoRootNode?.FindNodeByPath($@"s{res.EmotionFaceAcc}\fixedEmotion") ?? null;
+                    var fixedEmotion = infoNode.GetValueEx<string>("");
+                    if (!string.IsNullOrEmpty(fixedEmotion))
+                    {
+                        var info = fixedEmotion.Split('/');
+                        var emotionName = info[0];
+                        var faceFrame = 0;
+                        if (info.Length > 1)
+                        {
+                            int.TryParse(info[1], out faceFrame);
+                        }
+
+                        this.FixEmotion(emotionName, faceFrame);
                     }
                 }
                 this.ResumeUpdateDisplay();
