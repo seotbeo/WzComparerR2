@@ -43,6 +43,7 @@ namespace WzComparerR2.AvatarCommon
         public string ISlot { get; private set; }
         public string VSlot { get; private set; }
         public BitmapOrigin Icon { get; private set; }
+        public BitmapOrigin IconRaw { get; private set; }
         public bool Visible { get; set; }
         public bool EffectVisible { get; set; }
         public int? ID { get; private set; }
@@ -122,7 +123,20 @@ namespace WzComparerR2.AvatarCommon
                     case "icon":
                         this.Icon = BitmapOrigin.CreateFromNode(node, PluginBase.PluginManager.FindWz);
                         break;
+
+                    case "iconRaw":
+                        this.IconRaw = BitmapOrigin.CreateFromNode(node, PluginBase.PluginManager.FindWz);
+                        break;
                 }
+            }
+
+            if (this.Icon.Bitmap == null)
+            {
+                this.Icon = new BitmapOrigin(this.IconRaw.Bitmap, this.IconRaw.Origin);
+            }
+            else if (this.IconRaw.Bitmap == null)
+            {
+                this.IconRaw = new BitmapOrigin(this.Icon.Bitmap, this.Icon.Origin);
             }
 
             if (this.Node.Nodes.Count == 1)

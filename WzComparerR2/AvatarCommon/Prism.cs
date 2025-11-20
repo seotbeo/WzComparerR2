@@ -22,8 +22,9 @@ namespace WzComparerR2.AvatarCommon
 
         public static unsafe Bitmap Apply(Bitmap src, int type, int hue, int saturation, int brightness, bool isEffect = false)
         {
+            if (src == null) return null;
             if (!Valid(type, hue, saturation, brightness))
-                return src == null ? null : new Bitmap(src);
+                return new Bitmap(src);
 
             var dst = new Bitmap(src.Width, src.Height, PixelFormat.Format32bppArgb);
             var srcData = src.LockBits(new Rectangle(0, 0, src.Width, src.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);

@@ -740,6 +740,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 return BitmapOrigin.CreateFromNode(iconNode, PluginManager.FindWz, this.SourceWzFile);
             }
+            iconNode = itemNode?.FindNodeByPath($@"info\icon{(raw ? "" : "Raw")}");
+            if (iconNode != null)
+            {
+                return BitmapOrigin.CreateFromNode(iconNode, PluginManager.FindWz, this.SourceWzFile);
+            }
 
             return new BitmapOrigin();
         }
