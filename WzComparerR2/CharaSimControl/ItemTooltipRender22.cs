@@ -233,7 +233,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.item.DamageSkinID != null && ShowDamageSkin)
             {
-                DamageSkin damageSkin = DamageSkin.CreateFromNode(PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz);
+                DamageSkin damageSkin = DamageSkin.CreateFromNode(PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz) ?? DamageSkin.CreateFromNode(PluginManager.FindWz($@"Effect\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz);
                 if (damageSkin != null)
                 {
                     setItemBmp = RenderDamageSkin(damageSkin);
