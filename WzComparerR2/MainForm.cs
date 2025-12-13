@@ -254,7 +254,7 @@ namespace WzComparerR2
 
             this.skillDefaultLevel = Setting.Skill.DefaultLevel;
             this.skillInterval = Setting.Skill.IntervalLevel;
-
+            tooltipQuickView.FamiliarRender.ShowObjectID = Setting.Gear.ShowID;
             tooltipQuickView.GearRender.ShowObjectID = Setting.Gear.ShowID;
             tooltipQuickView.GearRender.ShowSpeed = Setting.Gear.ShowWeaponSpeed;
             tooltipQuickView.GearRender.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
@@ -3481,13 +3481,25 @@ namespace WzComparerR2
                     CharaSimLoader.LoadSetItemsIfEmpty();
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty();
                     CharaSimLoader.LoadCommoditiesIfEmpty();
-                    var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
-                    obj = gear;
-                    if (gear != null)
+                    if (selectedNode.FullPathToFile.Contains("Familiar"))
                     {
-                        fileName = gear.ItemID + ".png";
+                        var familiar = Familiar.CreateFromNode(image.Node, PluginManager.FindWz);
+                        obj = familiar;
+                        if (familiar != null)
+                        {
+                            fileName = "familiar_" + familiar.FamiliarID + ".png";
+                        }
                     }
-                    break;
+                    else
+                    {
+                        var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
+                        obj = gear;
+                        if (gear != null)
+                        {
+                            fileName = gear.ItemID + ".png";
+                        }
+                    }
+                        break;
                 case Wz_Type.Item:
                     CharaSimLoader.LoadCommoditiesIfEmpty();
                     Wz_Node itemNode = selectedNode;

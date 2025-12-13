@@ -63,6 +63,7 @@ namespace WzComparerR2.CharaSimControl
         public TooltipRender LinkRecipeGearRender { get; set; }
         public TooltipRender LinkRecipeItemRender { get; set; }
         public TooltipRender LinkDamageSkinRender { get; set; }
+        public TooltipRender FamiliarRender { get; set; }
         public TooltipRender SetItemRender { get; set; }
         public TooltipRender CashPackageRender { get; set; }
         private AvatarCanvasManager avatar { get; set; }
@@ -236,6 +237,15 @@ namespace WzComparerR2.CharaSimControl
                 if (damageSkin != null)
                 {
                     setItemBmp = RenderDamageSkin(damageSkin);
+                }
+            }
+            
+            if (this.item.FamiliarID != null)
+            {
+                Familiar familiar = Familiar.CreateFromNode(PluginManager.FindWz($@"Character\Familiar\{item.FamiliarID}.img"), PluginManager.FindWz);
+                if (familiar != null)
+                {
+                    return RenderFamiliar(familiar);
                 }
             }
 
@@ -1147,6 +1157,24 @@ namespace WzComparerR2.CharaSimControl
                 defaultRenderer.DamageSkin = damageSkin;
             }
             renderer.TargetItem = damageSkin;
+            return renderer.Render();
+        }
+
+        private Bitmap RenderFamiliar(Familiar familiar)
+        {
+            TooltipRender renderer = this.FamiliarRender;
+            if (renderer == null)
+            {
+                FamiliarTooltipRender defaultRenderer = new FamiliarTooltipRender();
+                defaultRenderer.StringLinker = this.StringLinker;
+                defaultRenderer.ShowObjectID = this.ShowObjectID;
+                defaultRenderer.AllowOutOfBounds = false;
+                defaultRenderer.ItemID = this.item.ItemID;
+                defaultRenderer.FamiliarTier = this.item.Grade;
+                defaultRenderer.UseAssembleUI = false;
+                renderer = defaultRenderer;
+            }
+            renderer.TargetItem = familiar;
             return renderer.Render();
         }
 
