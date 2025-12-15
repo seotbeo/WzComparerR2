@@ -1242,7 +1242,7 @@ namespace WzComparerR2.CharaSimControl
                 secondLineNeeded = false;
                 hasThirdContents = true;
 
-                TextRenderer.DrawText(g, $"데미지 상한 돌파량 {ItemStringHelper.ToChineseNumberExpr(value)}", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, $"데미지 상한 돌파량 {ItemStringHelper.ToCJKNumberExpr(value)}", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.GreenBrush2).Color, TextFormatFlags.NoPadding);
                 picH += 16;
                 picH += 4;
             }

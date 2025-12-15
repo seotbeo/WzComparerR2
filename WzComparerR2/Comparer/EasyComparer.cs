@@ -816,6 +816,12 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).ShowDamageSkin = CharaSimConfig.Default.DamageSkin.ShowDamageSkin;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).ShowDamageSkinID = CharaSimConfig.Default.DamageSkin.ShowDamageSkinID;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).UseMiniSizeDamageSkin = CharaSimConfig.Default.DamageSkin.UseMiniSize;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).AlwaysUseMseaFormatDamageSkin = CharaSimConfig.Default.DamageSkin.AlwaysUseMseaFormat;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
                 }
                 else
                 {
@@ -829,6 +835,12 @@ namespace WzComparerR2.Comparer
                     tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).CosmeticHairColor = CharaSimConfig.Default.Item.CosmeticHairColor;
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).CosmeticFaceColor = CharaSimConfig.Default.Item.CosmeticFaceColor;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).ShowDamageSkin = CharaSimConfig.Default.DamageSkin.ShowDamageSkin;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).ShowDamageSkinID = CharaSimConfig.Default.DamageSkin.ShowDamageSkinID;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).UseMiniSizeDamageSkin = CharaSimConfig.Default.DamageSkin.UseMiniSize;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).AlwaysUseMseaFormatDamageSkin = CharaSimConfig.Default.DamageSkin.AlwaysUseMseaFormat;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
                 }
             }
 

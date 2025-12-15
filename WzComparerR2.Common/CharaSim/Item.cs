@@ -26,6 +26,8 @@ namespace WzComparerR2.CharaSim
         public ItemType type { get; set; }
 
         public List<GearLevelInfo> Levels { get; internal set; }
+        public int? FamiliarID { get; set; }
+        public int Grade { get; set; }
 
         public Dictionary<ItemPropType, long> Props { get; private set; }
         public Dictionary<ItemSpecType, long> Specs { get; private set; }
@@ -132,6 +134,14 @@ namespace WzComparerR2.CharaSim
 
                         case "damageSkinID":
                             item.DamageSkinID = Convert.ToInt32(subNode.Value);
+                            break;
+
+                        case "familiarID":
+                            item.FamiliarID = Convert.ToInt32(subNode.Value);
+                            break;
+
+                        case "grade":
+                            item.Grade = Convert.ToInt32(subNode.Value);
                             break;
 
                         case "consumableFrom":

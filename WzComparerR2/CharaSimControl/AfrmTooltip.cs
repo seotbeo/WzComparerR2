@@ -21,6 +21,7 @@ namespace WzComparerR2.CharaSimControl
 
             this.Size = new Size(1, 1);
             this.HideOnHover = true;
+            this.FamiliarRender = new FamiliarTooltipRender();
             this.GearRender = new GearTooltipRender2();
             this.GearRender22 = new GearTooltipRender22();
             this.ItemRender = new ItemTooltipRender2();
@@ -56,6 +57,8 @@ namespace WzComparerR2.CharaSimControl
         public StringLinker StringLinker { get; set; }
         public Character Character { get; set; }
 
+        
+        public FamiliarTooltipRender FamiliarRender { get; private set; }
         public GearTooltipRender2 GearRender { get; private set; }
         public GearTooltipRender22 GearRender22 { get; private set; }
         public ItemTooltipRender2 ItemRender { get; private set; }
@@ -84,6 +87,7 @@ namespace WzComparerR2.CharaSimControl
             set
             {
                 this.showID = value;
+                this.FamiliarRender.ShowObjectID = value;
                 this.GearRender.ShowObjectID = value;
                 this.GearRender22.ShowObjectID = value;
                 this.ItemRender.ShowObjectID = value;
@@ -195,6 +199,12 @@ namespace WzComparerR2.CharaSimControl
                     renderer = ItemRender;
                     ItemRender.Item = this.item as Item;
                 }
+            }
+            else if (item is Familiar)
+            {
+                renderer = FamiliarRender;
+                FamiliarRender.Familiar = this.item as Familiar;
+                // FamiliarRender.UseAssembleUI = EnableAssembleTooltip;
             }
             else if (item is Gear)
             {

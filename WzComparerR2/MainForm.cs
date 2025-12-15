@@ -254,7 +254,7 @@ namespace WzComparerR2
 
             this.skillDefaultLevel = Setting.Skill.DefaultLevel;
             this.skillInterval = Setting.Skill.IntervalLevel;
-
+            tooltipQuickView.FamiliarRender.ShowObjectID = Setting.Gear.ShowID;
             tooltipQuickView.GearRender.ShowObjectID = Setting.Gear.ShowID;
             tooltipQuickView.GearRender.ShowSpeed = Setting.Gear.ShowWeaponSpeed;
             tooltipQuickView.GearRender.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
@@ -272,12 +272,24 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
             tooltipQuickView.ItemRender.CosmeticHairColor = Setting.Item.CosmeticHairColor;
             tooltipQuickView.ItemRender.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
+            tooltipQuickView.ItemRender.ShowDamageSkin = Setting.DamageSkin.ShowDamageSkin;
+            tooltipQuickView.ItemRender.ShowDamageSkinID = Setting.DamageSkin.ShowDamageSkinID;
+            tooltipQuickView.ItemRender.UseMiniSizeDamageSkin = Setting.DamageSkin.UseMiniSize;
+            tooltipQuickView.ItemRender.AlwaysUseMseaFormatDamageSkin = Setting.DamageSkin.AlwaysUseMseaFormat;
+            tooltipQuickView.ItemRender.DisplayUnitOnSingleLine = Setting.DamageSkin.DisplayUnitOnSingleLine;
+            tooltipQuickView.ItemRender.DamageSkinNumber = Setting.DamageSkin.DamageSkinNumber;
             tooltipQuickView.ItemRender22.ShowObjectID = Setting.Item.ShowID;
             tooltipQuickView.ItemRender22.LinkRecipeInfo = Setting.Item.LinkRecipeInfo;
             tooltipQuickView.ItemRender22.LinkRecipeItem = Setting.Item.LinkRecipeItem;
             tooltipQuickView.ItemRender22.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
             tooltipQuickView.ItemRender22.CosmeticHairColor = Setting.Item.CosmeticHairColor;
             tooltipQuickView.ItemRender22.CosmeticFaceColor = Setting.Item.CosmeticFaceColor;
+            tooltipQuickView.ItemRender22.ShowDamageSkin = Setting.DamageSkin.ShowDamageSkin;
+            tooltipQuickView.ItemRender22.ShowDamageSkinID = Setting.DamageSkin.ShowDamageSkinID;
+            tooltipQuickView.ItemRender22.UseMiniSizeDamageSkin = Setting.DamageSkin.UseMiniSize;
+            tooltipQuickView.ItemRender22.AlwaysUseMseaFormatDamageSkin = Setting.DamageSkin.AlwaysUseMseaFormat;
+            tooltipQuickView.ItemRender22.DisplayUnitOnSingleLine = Setting.DamageSkin.DisplayUnitOnSingleLine;
+            tooltipQuickView.ItemRender22.DamageSkinNumber = Setting.DamageSkin.DamageSkinNumber;
 
             tooltipQuickView.MapRender.ShowMiniMap = Setting.Map.ShowMiniMap;
             tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
@@ -3469,13 +3481,25 @@ namespace WzComparerR2
                     CharaSimLoader.LoadSetItemsIfEmpty();
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty();
                     CharaSimLoader.LoadCommoditiesIfEmpty();
-                    var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
-                    obj = gear;
-                    if (gear != null)
+                    if (selectedNode.FullPathToFile.Contains("Familiar"))
                     {
-                        fileName = gear.ItemID + ".png";
+                        var familiar = Familiar.CreateFromNode(image.Node, PluginManager.FindWz);
+                        obj = familiar;
+                        if (familiar != null)
+                        {
+                            fileName = "familiar_" + familiar.FamiliarID + ".png";
+                        }
                     }
-                    break;
+                    else
+                    {
+                        var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
+                        obj = gear;
+                        if (gear != null)
+                        {
+                            fileName = gear.ItemID + ".png";
+                        }
+                    }
+                        break;
                 case Wz_Type.Item:
                     CharaSimLoader.LoadCommoditiesIfEmpty();
                     Wz_Node itemNode = selectedNode;
