@@ -31,22 +31,26 @@ namespace WzComparerR2.Animation
 
         public static SpineAnimationDataV4 Create(SpineDetectionResult detectionResult, TextureLoader textureLoader)
         {
-            using var atlasReader = new StringReader((string)detectionResult.ResolvedAtlasNode.Value);
-            var atlas = new Atlas(atlasReader, "", textureLoader);
-            var skeletonData = SpineLoader.LoadSkeletonV4(detectionResult, textureLoader, atlas);
-
-            if (skeletonData == null)
+            try
             {
-                return null;
+                using var atlasReader = new StringReader((string)detectionResult.ResolvedAtlasNode.Value);
+                var atlas = new Atlas(atlasReader, "", textureLoader);
+                var skeletonData = SpineLoader.LoadSkeletonV4(detectionResult, textureLoader, atlas);
+
+                if (skeletonData == null)
+                {
+                    return null;
+                }
+
+                bool pma = detectionResult.SourceNode.ParentNode.FindNodeByPath("PMA").GetValueEx<int>(0) != 0;
+
+                var anime = new SpineAnimationDataV4();
+                anime.SkeletonData = skeletonData;
+                anime.PremultipliedAlpha = pma;
+                anime.Atlas = atlas;
+                return anime;
             }
-
-            bool pma = detectionResult.SourceNode.ParentNode.FindNodeByPath("PMA").GetValueEx<int>(0) != 0;
-
-            var anime = new SpineAnimationDataV4();
-            anime.SkeletonData = skeletonData;
-            anime.PremultipliedAlpha = pma;
-            anime.Atlas = atlas;
-            return anime;
+            catch { return null; }
         }
 
         #region ISpineAnimationData
