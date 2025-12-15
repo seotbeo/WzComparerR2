@@ -390,7 +390,8 @@ namespace WzComparerR2.AvatarCommon
                 case GearType.face2: this.Face = part; break;
                 case GearType.hair:
                 case GearType.hair2:
-                case GearType.hair3: this.Hair = part; break;
+                case GearType.hair3:
+                case GearType.hair4: this.Hair = part; break;
                 case GearType.cap:
                     this.Cap = part;
                     this.CapType = part.VSlot;// sets CapType
