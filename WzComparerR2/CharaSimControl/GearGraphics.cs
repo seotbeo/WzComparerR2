@@ -569,11 +569,17 @@ namespace WzComparerR2.CharaSimControl
         {
             string res;
             string nickWithQR = sr["nickWithQR"];
+            string nickWithQRex = sr["nickWithQRex"];
             string nickWithWSR = sr["nickWithWSR"];
-            if (nickWithQR != null)
+            if (!string.IsNullOrEmpty(nickWithQR))
             {
                 string qrDefault = sr["qrDefault"] ?? string.Empty;
                 res = Regex.Replace(nickWithQR, "#qr.*?#", qrDefault);
+            }
+            else if (!string.IsNullOrEmpty(nickWithQRex))
+            {
+                string qrexDefault = sr["qrexDefault"] ?? string.Empty;
+                res = Regex.Replace(nickWithQRex, "#qrex.*?#", qrexDefault);
             }
             else if (!string.IsNullOrEmpty(nickWithWSR))
             {
