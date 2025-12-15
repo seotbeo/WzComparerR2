@@ -702,7 +702,7 @@ namespace WzComparerR2.Comparer
                         foreach (var action in action_node?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                         {
                             var action_str = action.GetValueEx<string>(null);
-                            if (ChangedActions.ContainsKey(action_str))
+                            if (!string.IsNullOrEmpty(action_str) && ChangedActions.ContainsKey(action_str))
                             {
                                 ChangedActions[action_str].Add(skill_id);
                             }
