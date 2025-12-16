@@ -186,6 +186,9 @@ namespace WzComparerR2.CharaSimControl
             if (this.item == null)
                 return;
 
+            if (Bitmap != null)
+                Bitmap.Dispose();
+
             TooltipRender renderer;
             if (item is Item)
             {

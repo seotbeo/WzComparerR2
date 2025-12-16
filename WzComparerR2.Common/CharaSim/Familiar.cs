@@ -4,7 +4,7 @@ using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
 {
-    public class Familiar
+    public class Familiar : IDisposable
     {
         public Familiar()
         {
@@ -22,7 +22,7 @@ namespace WzComparerR2.CharaSim
         public string FamiliarAttribute { get; set; }
         public BitmapOrigin FamiliarCover { get; set; }
 
-        public static Familiar CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static Familiar CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null)
                 return null;
@@ -81,13 +81,19 @@ namespace WzComparerR2.CharaSim
                             }
                             break;
                         case "portrait":
-                            familiar.FamiliarCover = BitmapOrigin.CreateFromNode(subNode, findNode);
+                            familiar.FamiliarCover = BitmapOrigin.CreateFromNode(subNode, findNode, wzf);
                             break;
                     }
                 }
             }
 
             return familiar;
+        }
+
+        public void Dispose()
+        {
+            if (this.FamiliarCover.Bitmap != null)
+                this.FamiliarCover.Bitmap.Dispose();
         }
     }
 }

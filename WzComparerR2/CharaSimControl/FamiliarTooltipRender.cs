@@ -32,6 +32,8 @@ namespace WzComparerR2.CharaSimControl
         public int FamiliarTier { get; set; }
         public bool AllowOutOfBounds { get; set; }
         public bool UseAssembleUI { get; set; }
+        public int DLeft { get; set; }
+        public int DTop { get; set; }
 
         public override Bitmap Render()
         {
@@ -47,7 +49,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap baseTooltip = Resource.UIFamiliar_img_familiarCard_backgrnd;
 
             // Get Mob image and name
-            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz);
+            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz, this.SourceWzFile);
             Point alignOrigin = new Point(161, 200);
             Point mobOrigin = new Point(0, 0);
             int mobXoffset = 0;
@@ -56,6 +58,8 @@ namespace WzComparerR2.CharaSimControl
             int bDelta = 0;
             int lDelta = 0;
             int rDelta = 0;
+            this.DLeft = 0;
+            this.DTop = 0;
             if (familiar.FamiliarCover.Bitmap != null)
             {
                 mobOrigin = familiar.FamiliarCover.Origin;
@@ -152,9 +156,13 @@ namespace WzComparerR2.CharaSimControl
                 // Layout
                 if (this.ShowObjectID)
                 {
-                    GearGraphics.DrawGearDetailNumber(g, 24 + lDelta, 24 + tDelta, this.ItemID != null ? $"{((int)this.ItemID).ToString("d8")}" : $"{this.familiar.FamiliarID.ToString()}", true);
+                    //GearGraphics.DrawGearDetailNumber(g, 24 + lDelta, 24 + tDelta, this.ItemID != null ? $"{((int)this.ItemID).ToString("d8")}" : $"{this.familiar.FamiliarID.ToString()}", true);
+                    GearGraphics.DrawGearDetailNumber(g, 24 + lDelta, 24 + tDelta, $"{this.familiar.FamiliarID.ToString()}", true);
                 }
             }
+            mob.Dispose();
+            this.DLeft = lDelta;
+            this.DTop = tDelta;
             return tooltip;
         }
 

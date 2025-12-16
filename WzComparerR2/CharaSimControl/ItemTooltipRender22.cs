@@ -56,6 +56,10 @@ namespace WzComparerR2.CharaSimControl
         public bool DisplayUnitOnSingleLine { get; set; }
         public long DamageSkinNumber { get; set; }
         private bool WillDrawNickTag { get; set; }
+        private int DLeft { get; set; }
+        private int DTop { get; set; }
+        private int DLeft_Set { get; set; }
+        private int DTop_Set { get; set; }
         private Wz_Node NickResNode { get; set; }
         private Bitmap ItemSample { get; set; }
 
@@ -84,6 +88,10 @@ namespace WzComparerR2.CharaSimControl
             Bitmap setItemBmp = null;
             Bitmap levelBmp = null;
             int levelHeight = 0;
+            this.DLeft = 0;
+            this.DTop = 0;
+            this.DLeft_Set = 0;
+            this.DTop_Set = 0;
             if (this.ShowLevelOrSealed)
             {
                 levelBmp = RenderLevel(out levelHeight);
@@ -243,10 +251,11 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.item.FamiliarID != null)
             {
-                Familiar familiar = Familiar.CreateFromNode(PluginManager.FindWz($@"Character\Familiar\{item.FamiliarID}.img"), PluginManager.FindWz);
+                Familiar familiar = Familiar.CreateFromNode(PluginManager.FindWz($@"Character\Familiar\{item.FamiliarID}.img", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
                 if (familiar != null)
                 {
-                    return RenderFamiliar(familiar);
+                    setItemBmp = RenderFamiliar(familiar);
+                    familiar.Dispose();
                 }
             }
 
@@ -286,7 +295,10 @@ namespace WzComparerR2.CharaSimControl
             }
             if (setItemBmp != null)
             {
-                setItemOrigin = new Point(totalSize.Width, 0);
+                this.DLeft = Math.Max(DLeft_Set - totalSize.Width, 0);
+                this.DTop = this.DTop_Set;
+
+                setItemOrigin = new Point(totalSize.Width - this.DLeft_Set, 0 - this.DTop_Set);
                 totalSize.Width += setItemBmp.Width;
                 totalSize.Height = Math.Max(totalSize.Height, setItemBmp.Height);
             }
@@ -298,13 +310,15 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //开始绘制
+            totalSize.Width += this.DLeft;
+            totalSize.Height += this.DTop;
             Bitmap tooltip = new Bitmap(totalSize.Width, totalSize.Height);
             Graphics g = Graphics.FromImage(tooltip);
 
             if (itemBmp != null)
             {
                 //绘制背景区域
-                GearGraphics.DrawNewTooltipBack(g, 0, 0, itemBmp.Width, picHeight);
+                GearGraphics.DrawNewTooltipBack(g, this.DLeft, this.DTop, itemBmp.Width, picHeight);
 
                 if (splitterH != null && splitterH.Count > 0)
                 {
@@ -312,17 +326,17 @@ namespace WzComparerR2.CharaSimControl
                     var margin = 6;
                     foreach (var y in splitterH)
                     {
-                        DrawDotline(g, margin, itemBmp.Width - margin, y);
+                        DrawDotline(g, margin + this.DLeft, itemBmp.Width - margin + this.DLeft, y + this.DTop);
                     }
                     g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                 }
 
                 //复制图像
-                g.DrawImage(itemBmp, 0, 0, new Rectangle(0, 0, itemBmp.Width, picHeight), GraphicsUnit.Pixel);
+                g.DrawImage(itemBmp, this.DLeft, this.DTop, new Rectangle(0, 0, itemBmp.Width, picHeight), GraphicsUnit.Pixel);
 
                 if (this.ShowObjectID)
                 {
-                    GearGraphics.DrawGearDetailNumber(g, 3, 3, item.ItemID.ToString("d8"), true);
+                    GearGraphics.DrawGearDetailNumber(g, 3 + this.DLeft, 3 + this.DTop, item.ItemID.ToString("d8"), true);
                 }
             }
 
@@ -331,7 +345,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 for (int i = 0, y = recipeInfoOrigin.Y; i < recipeInfoBmps.Count; i++)
                 {
-                    g.DrawImage(recipeInfoBmps[i], recipeInfoOrigin.X, y,
+                    g.DrawImage(recipeInfoBmps[i], recipeInfoOrigin.X + this.DLeft, y + this.DTop,
                         new Rectangle(Point.Empty, recipeInfoBmps[i].Size), GraphicsUnit.Pixel);
                     y += recipeInfoBmps[i].Height;
                 }
@@ -342,7 +356,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 for (int i = 0, y = recipeItemOrigin.Y; i < recipeItemBmps.Count; i++)
                 {
-                    g.DrawImage(recipeItemBmps[i], recipeItemOrigin.X, y,
+                    g.DrawImage(recipeItemBmps[i], recipeItemOrigin.X + this.DLeft, y + this.DTop,
                         new Rectangle(Point.Empty, recipeItemBmps[i].Size), GraphicsUnit.Pixel);
                     y += recipeItemBmps[i].Height;
                 }
@@ -351,16 +365,16 @@ namespace WzComparerR2.CharaSimControl
             //绘制套装
             if (setItemBmp != null)
             {
-                g.DrawImage(setItemBmp, setItemOrigin.X, setItemOrigin.Y,
+                g.DrawImage(setItemBmp, setItemOrigin.X + this.DLeft, setItemOrigin.Y + this.DTop,
                     new Rectangle(Point.Empty, setItemBmp.Size), GraphicsUnit.Pixel);
             }
 
             if (levelBmp != null)
             {
                 //绘制背景区域
-                GearGraphics.DrawNewTooltipBack(g, levelOrigin.X, levelOrigin.Y, levelBmp.Width, levelHeight);
+                GearGraphics.DrawNewTooltipBack(g, levelOrigin.X + this.DLeft, levelOrigin.Y + this.DTop, levelBmp.Width, levelHeight);
                 //复制图像
-                g.DrawImage(levelBmp, levelOrigin.X, levelOrigin.Y, new Rectangle(0, 0, levelBmp.Width, levelHeight), GraphicsUnit.Pixel);
+                g.DrawImage(levelBmp, levelOrigin.X + this.DLeft, levelOrigin.Y + this.DTop, new Rectangle(0, 0, levelBmp.Width, levelHeight), GraphicsUnit.Pixel);
             }
 
             if (itemBmp != null)
@@ -1077,7 +1091,12 @@ namespace WzComparerR2.CharaSimControl
                 renderer = defaultRenderer;
             }
             renderer.TargetItem = familiar;
-            return renderer.Render();
+
+            var ret = renderer.Render();
+            DLeft_Set = (renderer as FamiliarTooltipRender).DLeft;
+            DTop_Set = (renderer as FamiliarTooltipRender).DTop;
+
+            return ret;
         }
 
 

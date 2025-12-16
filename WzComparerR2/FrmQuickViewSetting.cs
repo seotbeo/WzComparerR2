@@ -363,8 +363,6 @@ namespace WzComparerR2
             this.labelXQSHint.Enabled = !this.chkQAS.Checked;
         }
 
-
-
         private void txtDamageSkinNumber_TextChanged(object sender, EventArgs e)
         {
             this.buttonX1.Enabled = !(string.IsNullOrEmpty(txtDamageSkinNumber.Text) || txtDamageSkinNumber.Text == "0");

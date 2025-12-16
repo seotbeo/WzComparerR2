@@ -3657,6 +3657,9 @@ namespace WzComparerR2
                         case Quest item:
                             item.Dispose();
                             break;
+                        case Familiar item:
+                            item.Dispose();
+                            break;
                     }
                 }
                 tooltipQuickView.TargetItem = obj;
