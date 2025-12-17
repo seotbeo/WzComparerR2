@@ -576,7 +576,7 @@ namespace WzComparerR2.CharaSimControl
                 Wz_Node costume = android?.Nodes["costume"];
                 Wz_Node basic = android?.Nodes["basic"];
 
-                BitmapOrigin appearance;
+                BitmapOrigin appearance = new BitmapOrigin();
                 int morphID = android?.Nodes["info"]?.Nodes["morphID"]?.GetValueEx<int>(0) ?? 0;
                 if (Gear.ToolTIpPreview.Bitmap != null)
                 {
@@ -590,7 +590,7 @@ namespace WzComparerR2.CharaSimControl
                     {
                         appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(string.Format("Morph/{0:D4}.img/stand/0", morphID), this.sourceWzFile), PluginBase.PluginManager.FindWz, this.sourceWzFile);
                     }
-                    else
+                    if (appearance.Bitmap == null)
                     {
                         if (this.avatar == null)
                         {
@@ -618,14 +618,17 @@ namespace WzComparerR2.CharaSimControl
                         this.avatar.ClearCanvas();
                     }
 
-                    var imgrect = new Rectangle(Math.Max(appearance.Origin.X - 50, 0),
+                    if (appearance.Bitmap != null)
+                    {
+                        var imgrect = new Rectangle(Math.Max(appearance.Origin.X - 50, 0),
                         Math.Max(appearance.Origin.Y - 100, 0),
                         Math.Min(appearance.Bitmap.Width, appearance.Origin.X + 50) - Math.Max(appearance.Origin.X - 50, 0),
                         Math.Min(appearance.Origin.Y, 100));
 
-                    g.DrawImage(appearance.Bitmap, 90 - Math.Min(appearance.Origin.X, 50), picH + Math.Max(80 - appearance.Origin.Y, 0), imgrect, GraphicsUnit.Pixel);
+                        g.DrawImage(appearance.Bitmap, 90 - Math.Min(appearance.Origin.X, 50), picH + Math.Max(80 - appearance.Origin.Y, 0), imgrect, GraphicsUnit.Pixel);
 
-                    picH += 102;
+                        picH += 102;
+                    }
                 }
                 //BitmapOrigin appearance = BitmapOrigin.CreateFromNode(PluginBase.PluginManager.FindWz(morphID != 0 ? string.Format("Morph/{0:D4}.img/stand/0", morphID) : "Npc/0010300.img/stand/0"), PluginBase.PluginManager.FindWz);
 
@@ -657,8 +660,11 @@ namespace WzComparerR2.CharaSimControl
                     picH += 12;
                 }
 
-                this.AvatarSample = new Bitmap(appearance.Bitmap);
-                appearance.Bitmap.Dispose();
+                if (appearance.Bitmap != null)
+                {
+                    this.AvatarSample = new Bitmap(appearance.Bitmap);
+                    appearance.Bitmap.Dispose();
+                }
             }
 
             // 세트 아이템
