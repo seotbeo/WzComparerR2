@@ -25,8 +25,8 @@ namespace WzComparerR2.Common
 
         public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
         {
-            if (stringNode == null || itemNode == null || etcNode == null)
-                return false;
+            //if (stringNode == null || itemNode == null || etcNode == null)
+                //return false;
 
             return Load(stringNode, itemNode, etcNode, questNode, update: true);
         }
@@ -38,19 +38,19 @@ namespace WzComparerR2.Common
 
         public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz)
         {
-            if (stringWz == null || stringWz.Node == null ||
-                itemWz == null || itemWz.Node == null ||
-                etcWz == null || etcWz.Node == null)
-                return false;
+            //if (stringWz == null || stringWz.Node == null ||
+                //itemWz == null || itemWz.Node == null ||
+                //etcWz == null || etcWz.Node == null)
+                //return false;
             this.Clear();
 
-            return Load(stringWz.Node, itemWz.Node, etcWz.Node, questWz.Node);
+            return Load(stringWz?.Node, itemWz?.Node, etcWz?.Node, questWz?.Node);
         }
 
         public bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, bool update = false)
         {
             int id;
-            foreach (Wz_Node node in stringNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            foreach (Wz_Node node in stringNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
                 Wz_Image image = node.Value as Wz_Image;
                 if (image == null)
@@ -324,7 +324,7 @@ namespace WzComparerR2.Common
                 }
             }
 
-            foreach (Wz_Node node in itemNode.FindNodeByPath("Special")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            foreach (Wz_Node node in itemNode?.FindNodeByPath("Special")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
                 Wz_Image image = node.Value as Wz_Image;
                 if (image == null)
@@ -357,7 +357,7 @@ namespace WzComparerR2.Common
                 }
             }
 
-            foreach (Wz_Node node in etcNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            foreach (Wz_Node node in etcNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
                 Wz_Image image = node.Value as Wz_Image;
                 if (image == null)
@@ -389,7 +389,7 @@ namespace WzComparerR2.Common
                 }
             }
 
-            var achievementNode = etcNode.FindNodeByPath("Achievement\\AchievementData");
+            var achievementNode = etcNode?.FindNodeByPath("Achievement\\AchievementData");
             foreach (Wz_Node node in achievementNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
                 Wz_Image image = node.Value as Wz_Image;
