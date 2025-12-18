@@ -256,6 +256,11 @@ namespace WzComparerR2
                 aniItem.Data.Frames[0].Delay = options.PngDelay;
             }
 
+            if (options.FlipX || options.FlipY)
+            {
+                FrameAnimationData.ApplyFlip(this.GraphicsDevice, aniItem.Data, options.FlipX, options.FlipY);
+            }
+
             if ((options.SpeedX != 0 && options.GoX != 0) || (options.SpeedY != 0 && options.GoY != 0))
             {
                 FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStart, ref frameEnd);

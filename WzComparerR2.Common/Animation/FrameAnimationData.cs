@@ -411,7 +411,7 @@ namespace WzComparerR2.Animation
             return renderTarget;
         }
 
-        private static Texture2D CopyTexture(GraphicsDevice graphicsDevice, Texture2D texture)
+        private static Texture2D CopyTexture(GraphicsDevice graphicsDevice, Texture2D texture, SpriteEffects se = SpriteEffects.None)
         {
             if (texture == null) return null;
 
@@ -420,12 +420,56 @@ namespace WzComparerR2.Animation
 
             graphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-            spriteBatch.Draw(texture, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, se, 0);
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);
 
             return renderTarget;
+        }
+
+        public static void ApplyFlip(GraphicsDevice graphicsDevice, FrameAnimationData data, bool filpX, bool flipY)
+        {
+            var result = new List<Frame>();
+            var dispose = new List<Frame>();
+
+            foreach (var frame in data.Frames)
+            {
+                if (frame.Texture == null)
+                {
+                    result.Add(frame);
+                    continue;
+                }
+
+                SpriteEffects se = SpriteEffects.None;
+                var newX = frame.Origin.X;
+                var newY = frame.Origin.Y;
+
+                if (filpX)
+                {
+                    se |= SpriteEffects.FlipHorizontally;
+                    newX = frame.Texture.Width - frame.Origin.X;
+                }
+                if (flipY)
+                {
+                    se |= SpriteEffects.FlipVertically;
+                    newY = frame.Texture.Height - frame.Origin.Y;
+                }
+                var newTexture = CopyTexture(graphicsDevice, frame.Texture, se);
+                var newFrame = new Frame(newTexture, new Point(newX, newY), frame.Z, frame.Delay, frame.Blend);
+                result.Add(newFrame);
+                dispose.Add(frame);
+            }
+
+            foreach (var frame in dispose)
+            {
+                if (frame.Texture != null && !frame.Texture.IsDisposed)
+                {
+                    frame.Texture.Dispose();
+                }
+            }
+
+            data.Frames = result;
         }
 
         public static void ApplyMovement(GraphicsDevice graphicsDevice, FrameAnimationData data, int speedX, int speedY, int goX, int goY, bool fullMove, int start, ref int end)

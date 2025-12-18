@@ -40,6 +40,8 @@ namespace WzComparerR2
             this.txtGoX.Value = 0;
             this.txtGoY.Value = 0;
             this.chkFullMove.Checked = true;
+            this.chkFlipX.Checked = false;
+            this.chkFlipY.Checked = false;
 
             if (isPngFrameAni)
             {
@@ -69,6 +71,8 @@ namespace WzComparerR2
             this.txtGoX.Enabled = false;
             this.txtGoY.Enabled = false;
             this.chkFullMove.Enabled = false;
+            this.chkFlipX.Enabled = false;
+            this.chkFlipY.Enabled = false;
         }
 
         public OverlayOptions GetValues()
@@ -84,6 +88,8 @@ namespace WzComparerR2
                 PngDelay = this.txtPngDelay.ValueObject as int? ?? 0,
 
                 FullMove = this.chkFullMove.Checked,
+                FlipX = this.chkFlipX.Checked,
+                FlipY = this.chkFlipY.Checked,
 
                 SpeedX = this.txtSpeedX.ValueObject as int? ?? 0,
                 SpeedY = this.txtSpeedY.ValueObject as int? ?? 0,

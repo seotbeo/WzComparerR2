@@ -23,6 +23,9 @@ namespace WzComparerR2.Controls
         public int GoX { get; set; }
         public int GoY { get; set; }
 
+        public bool FlipX { get; set; }
+        public bool FlipY { get; set; }
+
         public bool RectAutoArea { get; set; }
         public Point RectLT { get; set; }
         public Point RectRB { get; set; }
