@@ -291,6 +291,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Npc_ShowAllIllustAtOnce
+        {
+            get { return chkShowAllIllustAtOnce.Checked; }
+            set { chkShowAllIllustAtOnce.Checked = value; }
+        }
+
+        [Link]
         public int Quest_DefaultState
         {
             get { return comboBoxExQuestState.SelectedIndex; }

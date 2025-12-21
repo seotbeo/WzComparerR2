@@ -27,6 +27,7 @@ namespace WzComparerR2.CharaSimControl
         }
 
         public Npc NpcInfo { get; set; }
+        public bool ShowAllIllustAtOnce { get; set; }
         private AvatarCanvasManager avatar { get; set; }
 
         public override Bitmap Render()
@@ -137,6 +138,8 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
+            Bitmap illustration2Tooltip = drawIllustration2SetTooltip(NpcInfo.Illustration2Bitmaps, 8, 4, NpcInfo.IllustIndex);
+
             //布局 
             //水平排列
             int width = 0;
@@ -182,7 +185,110 @@ namespace WzComparerR2.CharaSimControl
                 DrawText(g, item, textRect.Location);
             }
             g.Dispose();
-            return bmp;
+            if (illustration2Tooltip != null)
+            {
+                Point illustration2Origin = new Point(bmp.Width, 0);
+                int totalWidth = bmp.Width + illustration2Tooltip.Width;
+                int totalHeight = Math.Max(bmp.Height, illustration2Tooltip.Height);
+                Bitmap newTooltip = new Bitmap(totalWidth, totalHeight, PixelFormat.Format32bppArgb);
+                Graphics g2 = Graphics.FromImage(newTooltip);
+                g2.DrawImage(bmp, 0, 0);
+                g2.DrawImage(illustration2Tooltip, illustration2Origin);
+                g2.Dispose();
+                return newTooltip;
+            }
+            else
+            {
+                return bmp;
+            }
+        }
+
+        private Bitmap drawIllustration2SetTooltip(List<Bitmap> bitmaps, int margin, int perLineCount, int npcIndex)
+        {
+            if (bitmaps == null || bitmaps.Count == 0)
+            {
+                return null;
+            }
+
+            if (ShowAllIllustAtOnce)
+            {
+                int requiredLines = (int)Math.Ceiling(bitmaps.Count / (double)perLineCount);
+
+                int width = 0;
+                int height = 0;
+
+                int currentLineWidth = 0;
+                int currentLineHeight = 0;
+                int lineCount = 0;
+                foreach (var bmp in bitmaps)
+                {
+                    if (bmp != null)
+                    {
+                        currentLineWidth += bmp.Width + margin;
+                        currentLineHeight = Math.Max(currentLineHeight, bmp.Height);
+                    }
+                    if (bitmaps.IndexOf(bmp) % perLineCount == perLineCount - 1)
+                    {
+                        width = Math.Max(width, currentLineWidth);
+                        height += currentLineHeight + margin;
+                        currentLineWidth = 0;
+                        currentLineHeight = 0;
+                        lineCount++;
+                    }
+                }
+                if (lineCount < requiredLines)
+                {
+                    width = Math.Max(width, currentLineWidth);
+                    height += currentLineHeight + margin;
+                    currentLineWidth = 0;
+                }
+                Bitmap result = new Bitmap(width + 30, height + 30, PixelFormat.Format32bppArgb);
+                using (Graphics g = Graphics.FromImage(result))
+                {
+                    GearGraphics.DrawNewTooltipBack(g, 0, 0, result.Width, result.Height);
+
+                    int x = 15;
+                    int y = 15;
+                    int maxLineHeight = 0;
+                    foreach (var bmp in bitmaps)
+                    {
+                        if (bmp != null)
+                        {
+                            maxLineHeight = Math.Max(maxLineHeight, bmp.Height);
+                            g.DrawImage(bmp, x, y + maxLineHeight - bmp.Height);
+                            x += bmp.Width + margin;
+                        }
+                        if (bitmaps.IndexOf(bmp) % perLineCount == perLineCount - 1)
+                        {
+                            x = 15;
+                            y += maxLineHeight + margin;
+                            maxLineHeight = 0;
+                        }
+                    }
+
+                    // Draw Illust Info
+                    int picH = 2;
+                    GearGraphics.DrawPlainText(g, $"일러스트: {bitmaps.Count}장", GearGraphics.ItemDetailFont, Color.FromArgb(255, 255, 255), 2, 80, ref picH, 13);
+                }
+                return result;
+            }
+            else
+            {
+                Bitmap targetIllust = bitmaps[npcIndex];
+                Bitmap result = new Bitmap(targetIllust.Width + 30, targetIllust.Height + 60, PixelFormat.Format32bppArgb);
+                using (Graphics g = Graphics.FromImage(result))
+                {
+                    GearGraphics.DrawNewTooltipBack(g, 0, 0, result.Width, result.Height);
+                    g.DrawImage(targetIllust, 15, 15);
+
+                    // Draw Illust Info
+                    int picH = 2;
+                    GearGraphics.DrawPlainText(g, $"일러스트: {npcIndex + 1} / {bitmaps.Count}", GearGraphics.ItemDetailFont, Color.FromArgb(255, 255, 255), 2, 130, ref picH, 13);
+                    picH += targetIllust.Height + 12;
+                    if (bitmaps.Count > 1) GearGraphics.DrawPlainText(g, $"전환하려면 [-]/[+]를 누릅니다.", GearGraphics.ItemDetailFont, Color.FromArgb(255, 255, 255), 12, 260, ref picH, 13);
+                }
+                return result;
+            }
         }
 
         private string GetNpcName(int npcID)

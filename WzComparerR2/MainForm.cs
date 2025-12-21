@@ -295,7 +295,7 @@ namespace WzComparerR2
             tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
             tooltipQuickView.MapRender.ShowMiniMapNpc = Setting.Map.ShowMiniMapNpc;
             tooltipQuickView.MapRender.ShowMiniMapPortal = Setting.Map.ShowMiniMapPortal;
-
+            tooltipQuickView.NpcRender.ShowAllIllustAtOnce = Setting.Npc.ShowAllIllustAtOnce;
             tooltipQuickView.QuestRender.ShowObjectID = Setting.Quest.ShowID;
             tooltipQuickView.QuestRender.DefaultState = Setting.Quest.DefaultState;
             tooltipQuickView.QuestRender.ShowAllStates = Setting.Quest.ShowAllStates;
@@ -3790,6 +3790,26 @@ namespace WzComparerR2
                     case Keys.OemMinus:
                     case Keys.Subtract:
                         quest.State -= 1;
+                        frm.Refresh();
+                        return;
+                }
+            }
+
+
+            Npc npc = frm.TargetItem as Npc;
+            if (npc != null)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Oemplus:
+                    case Keys.Add:
+                        npc.IllustIndex += 1;
+                        frm.Refresh();
+                        return;
+
+                    case Keys.OemMinus:
+                    case Keys.Subtract:
+                        npc.IllustIndex -= 1;
                         frm.Refresh();
                         return;
                 }

@@ -31,6 +31,7 @@
             this.superTabControl1 = new DevComponents.DotNetBar.SuperTabControl();
             this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.chkEnable22AniStyle = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkShowAllIllustAtOnce = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowMiniMap = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowMiniMapMob = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowMiniMapNpc = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -1097,6 +1098,7 @@
             // 
             // superTabControlPanel5
             // 
+            this.superTabControlPanel5.Controls.Add(this.chkShowAllIllustAtOnce);
             this.superTabControlPanel5.Controls.Add(this.chkEnable22AniStyle);
             this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel5.Location = new System.Drawing.Point(62, 0);
@@ -1128,6 +1130,21 @@
             this.chkEnable22AniStyle.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkEnable22AniStyle.TabIndex = 4;
             this.chkEnable22AniStyle.Text = "2025 UI 적용";
+            // 
+            // chkShowAllIllustAtOnce
+            // 
+            this.chkShowAllIllustAtOnce.AutoSize = true;
+            this.chkShowAllIllustAtOnce.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowAllIllustAtOnce.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowAllIllustAtOnce.Location = new System.Drawing.Point(13, 36);
+            this.chkShowAllIllustAtOnce.Name = "chkShowAllIllustAtOnce";
+            this.chkShowAllIllustAtOnce.Size = new System.Drawing.Size(145, 16);
+            this.chkShowAllIllustAtOnce.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowAllIllustAtOnce.TabIndex = 5;
+            this.chkShowAllIllustAtOnce.Text = "모든 NPC 일러스트를 한 번에 표시";
             // 
             // buttonX2
             // 
@@ -1252,6 +1269,7 @@
         private DevComponents.DotNetBar.LabelX labelCosmeticHairColor;
         private DevComponents.DotNetBar.LabelX labelCosmeticFaceColor;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkEnable22AniStyle;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkShowAllIllustAtOnce;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowDamageSkinID;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowDamageSkin;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkUseMiniSize;

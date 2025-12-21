@@ -1099,6 +1099,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i] = new NpcTooltipRenderer();
                 tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                 tooltipRenderNewOld[i].ShowObjectID = true;
+                tooltipRenderNewOld[i].ShowAllIllustAtOnce = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
             }
 
