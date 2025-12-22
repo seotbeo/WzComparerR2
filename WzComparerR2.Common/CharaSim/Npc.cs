@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.WzLib;
@@ -12,14 +13,36 @@ namespace WzComparerR2.CharaSim
         {
             this.ID = -1;
             //this.Animates = new LifeAnimateCollection();
+            this.Illustration2Bitmaps = new List<Bitmap>();
+            this.Illustration2BaseBitmap = null;
+            this.illustIndex = 0;
         }
 
         public int ID { get; set; }
         public bool Shop { get; set; }
 
         public int? Link { get; set; }
+        private int illustIndex;
+
+        public int IllustIndex
+        {
+            get { return illustIndex; }
+            set
+            {
+                if (this.Illustration2Bitmaps.Count == 0)
+                {
+                    illustIndex = 0;
+                }
+                else
+                {
+                    illustIndex = Math.Max(0, Math.Min(value, this.Illustration2Bitmaps.Count - 1));
+                }
+            }
+        }
 
         public BitmapOrigin Default { get; set; }
+        public List<Bitmap> Illustration2Bitmaps { get; set; }
+        public Bitmap Illustration2BaseBitmap { get; set; }
 
         public Wz_Node Component { get; set; }
 
@@ -48,6 +71,8 @@ namespace WzComparerR2.CharaSim
             npcInfo.ID = npcID;
             Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
 
+            Point baseOrigin = Point.Empty;
+
             //加载基础属性
             if (infoNode != null)
             {
@@ -59,6 +84,52 @@ namespace WzComparerR2.CharaSim
                         case "link": npcInfo.Link = propNode.GetValueEx<int>(0); break;
                         case "component": npcInfo.Component = propNode; break;
                         case "default": npcInfo.Default = BitmapOrigin.CreateFromNode(propNode, findNode, wzf); break;
+                        case "illustration2":
+                            foreach (var imgNode in propNode.Nodes)
+                            {
+                                switch (imgNode.Text)
+                                {
+                                    case "base":
+                                        var bmpOrigin = BitmapOrigin.CreateFromNode(imgNode, findNode, wzf);
+                                        if (bmpOrigin.Bitmap != null && bmpOrigin.Bitmap.Size != new Size(1, 1))
+                                        {
+                                            npcInfo.Illustration2BaseBitmap = bmpOrigin.Bitmap;
+                                            baseOrigin = bmpOrigin.Origin;
+                                        }
+                                        break;
+                                    case "face":
+                                        foreach (var faceNode in imgNode.Nodes)
+                                        {
+                                            try
+                                            {
+                                                var faceBmpOrigin = BitmapOrigin.CreateFromNode(faceNode, findNode, wzf);
+                                                if (faceBmpOrigin.Bitmap != null && faceBmpOrigin.Bitmap.Size != new Size(1, 1))
+                                                {
+                                                    if (baseOrigin != Point.Empty)
+                                                    {
+                                                        Bitmap combinedBmp = new Bitmap(npcInfo.Illustration2BaseBitmap.Width, npcInfo.Illustration2BaseBitmap.Height);
+                                                        using (Graphics g = Graphics.FromImage(combinedBmp))
+                                                        {
+                                                            g.DrawImageUnscaled(npcInfo.Illustration2BaseBitmap, 0, 0);
+                                                            g.DrawImageUnscaled(faceBmpOrigin.Bitmap, baseOrigin.X - faceBmpOrigin.Origin.X, baseOrigin.Y - faceBmpOrigin.Origin.Y);
+                                                        }
+                                                        npcInfo.Illustration2Bitmaps.Add(combinedBmp);
+                                                    }
+                                                    else
+                                                    {
+                                                        npcInfo.Illustration2Bitmaps.Add(faceBmpOrigin.Bitmap);
+                                                    }
+                                                }
+                                            }
+                                            catch
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
                     }
                 }
             }

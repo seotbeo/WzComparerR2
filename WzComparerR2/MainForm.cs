@@ -295,7 +295,7 @@ namespace WzComparerR2
             tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
             tooltipQuickView.MapRender.ShowMiniMapNpc = Setting.Map.ShowMiniMapNpc;
             tooltipQuickView.MapRender.ShowMiniMapPortal = Setting.Map.ShowMiniMapPortal;
-
+            tooltipQuickView.NpcRender.ShowAllIllustAtOnce = Setting.Npc.ShowAllIllustAtOnce;
             tooltipQuickView.QuestRender.ShowObjectID = Setting.Quest.ShowID;
             tooltipQuickView.QuestRender.DefaultState = Setting.Quest.DefaultState;
             tooltipQuickView.QuestRender.ShowAllStates = Setting.Quest.ShowAllStates;
@@ -3795,6 +3795,26 @@ namespace WzComparerR2
                 }
             }
 
+
+            Npc npc = frm.TargetItem as Npc;
+            if (npc != null)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Oemplus:
+                    case Keys.Add:
+                        npc.IllustIndex += 1;
+                        frm.Refresh();
+                        return;
+
+                    case Keys.OemMinus:
+                    case Keys.Subtract:
+                        npc.IllustIndex -= 1;
+                        frm.Refresh();
+                        return;
+                }
+            }
+
             switch (e.KeyCode)
             {
                 case Keys.Escape:
@@ -4235,7 +4255,7 @@ namespace WzComparerR2
 
                             // Initialize VCore Dictionary
                             Dictionary<int, List<int>> FifthJobSkillToJobID = new Dictionary<int, List<int>>();
-                            Wz_Node vCoreData = PluginManager.FindWz("Etc\\VCore.img\\CoreData", PluginManager.FindWz(Wz_Type.Base).GetNodeWzFile());
+                            Wz_Node vCoreData = PluginManager.FindWz("Etc\\VcoreNew.img\\vSkill\\CoreData", PluginManager.FindWz(Wz_Type.Base).GetNodeWzFile()) ?? PluginManager.FindWz("Etc\\VCore.img\\CoreData", PluginManager.FindWz(Wz_Type.Base).GetNodeWzFile());
                             if (vCoreData != null)
                             {
                                 foreach (Wz_Node data in vCoreData.Nodes)
@@ -4273,7 +4293,7 @@ namespace WzComparerR2
                             tooltip.Enable22AniStyle = Setting.Misc.Enable22AniStyle;
                             foreach (var i in selectedJob)
                             {
-                                var jobImg = PluginManager.FindWz($"Skill\\{i:D3}.img\\skill", PluginManager.FindWz(Wz_Type.Base).GetNodeWzFile());
+                                var jobImg = PluginManager.FindWz($"Skill\\{i:D3}.img\\skill");
                                 if (jobImg == null)
                                 {
                                     continue;
@@ -4324,7 +4344,7 @@ namespace WzComparerR2
                                     {
                                         if (kvp.Value.Contains(i))
                                         {
-                                            var skillNode = PluginManager.FindWz($"Skill\\{kvp.Key / 10000}.img\\skill\\{kvp.Key}", PluginManager.FindWz(Wz_Type.Base).GetNodeWzFile());
+                                            var skillNode = PluginManager.FindWz($"Skill\\{kvp.Key / 10000}.img\\skill\\{kvp.Key}");
                                             if (skillNode == null)
                                             {
                                                 continue;
