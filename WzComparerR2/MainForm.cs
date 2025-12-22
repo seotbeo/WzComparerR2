@@ -3584,7 +3584,7 @@ namespace WzComparerR2
                 case Wz_Type.Npc:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz, getSpineDefaultFunc: this.pictureBoxEx1.GetSpineDefault);
                     obj = npc;
                     if (npc != null)
                     {

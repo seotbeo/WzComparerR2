@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.WzLib;
@@ -9,13 +10,14 @@ namespace WzComparerR2.CharaSim
 {
     public class Npc : IDisposable
     {
-        public Npc()
+        public Npc(GetSpineDefaultFunc getSpineDefaultFunc)
         {
             this.ID = -1;
             //this.Animates = new LifeAnimateCollection();
             this.Illustration2Bitmaps = new List<Bitmap>();
             this.Illustration2BaseBitmap = null;
             this.illustIndex = 0;
+            this.GetSpineDefault = getSpineDefaultFunc;
         }
 
         public int ID { get; set; }
@@ -23,6 +25,7 @@ namespace WzComparerR2.CharaSim
 
         public int? Link { get; set; }
         private int illustIndex;
+        private GetSpineDefaultFunc GetSpineDefault { get; set; }
 
         public int IllustIndex
         {
@@ -56,7 +59,7 @@ namespace WzComparerR2.CharaSim
 
         //public LifeAnimateCollection Animates { get; private set; }
 
-        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
+        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null, GetSpineDefaultFunc getSpineDefaultFunc = null)
         {
             if (node == null) return null;
 
@@ -67,7 +70,7 @@ namespace WzComparerR2.CharaSim
                 return null;
             }
 
-            Npc npcInfo = new Npc();
+            Npc npcInfo = new Npc(getSpineDefaultFunc);
             npcInfo.ID = npcID;
             Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();
 
@@ -98,10 +101,33 @@ namespace WzComparerR2.CharaSim
                                         }
                                         break;
                                     case "face":
+                                        string spine = null;
+                                        if (npcInfo.GetSpineDefault != null)
+                                        {
+                                            spine = imgNode.Nodes["spine"]?.Value as string;
+                                        }
                                         foreach (var faceNode in imgNode.Nodes)
                                         {
                                             try
                                             {
+                                                if (!string.IsNullOrEmpty(spine))
+                                                {
+                                                    string[] suffixes = { ".atlas", ".json", ".skel" };
+                                                    if (!(faceNode.Text.StartsWith(spine) && suffixes.Any(s => faceNode.Text.EndsWith(s, StringComparison.OrdinalIgnoreCase)))) continue;
+
+                                                    List<Bitmap> spineDefault = npcInfo.GetSpineDefault(faceNode);
+                                                    if (spineDefault != null)
+                                                    {
+                                                        foreach (var bmp in npcInfo.Illustration2Bitmaps)
+                                                        {
+                                                            bmp?.Dispose();
+                                                        }
+                                                        npcInfo.Illustration2Bitmaps.Clear();
+                                                        npcInfo.Illustration2Bitmaps.AddRange(spineDefault);
+                                                        break;
+                                                    }
+                                                }
+
                                                 var faceBmpOrigin = BitmapOrigin.CreateFromNode(faceNode, findNode, wzf);
                                                 if (faceBmpOrigin.Bitmap != null && faceBmpOrigin.Bitmap.Size != new Size(1, 1))
                                                 {
@@ -172,6 +198,12 @@ namespace WzComparerR2.CharaSim
         {
             if (this.Default.Bitmap != null)
                 this.Default.Bitmap.Dispose();
+
+            foreach (var bmp in this.Illustration2Bitmaps)
+            {
+                if (bmp != null)
+                    bmp.Dispose();
+            }
         }
     }
 }

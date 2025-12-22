@@ -161,6 +161,42 @@ namespace WzComparerR2
                 return null;
         }
 
+        public List<System.Drawing.Bitmap> GetSpineDefault(Wz_Node node)
+        {
+            var ret = new List<System.Drawing.Bitmap>();
+            ISpineAnimationData spineData = this.LoadSpineAnimation(SpineLoader.Detect(node));
+            AnimationItem spineAni = spineData?.CreateAnimator() as AnimationItem;
+            if (spineAni != null)
+            {
+                var aniList = (spineAni as ISpineAnimator).Animations.ToArray();
+                foreach (var aniName in aniList)
+                {
+                    (spineAni as ISpineAnimator).SelectedAnimationName = aniName;
+                    FrameAnimationData frameData = this.CaptureAnimation([spineAni], [new Tuple<int, int>(0, spineAni.Length)], 0);
+
+                    if (frameData != null && frameData.Frames.Count == 1)
+                    {
+                        System.Drawing.Bitmap bmp;
+                        var frame = frameData.Frames[0];
+                        byte[] frameDataArray = new byte[frame.Texture.Width * frame.Texture.Height * 4];
+                        frame.Texture.GetData(frameDataArray);
+                        var targetSize = new Point(frame.Texture.Width, frame.Texture.Height);
+                        unsafe
+                        {
+                            fixed (byte* pFrameBuffer = frameDataArray)
+                            {
+                                bmp = new System.Drawing.Bitmap(targetSize.X, targetSize.Y, targetSize.X * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, new IntPtr(pFrameBuffer));
+                            }
+                        }
+                        ret.Add(bmp);
+                    }
+                    this.DisposeAnimationItem(new FrameAnimator(frameData));
+                }
+                this.DisposeAnimationItem(spineAni);
+            }
+            return ret;
+        }
+
         public void ShowAnimation(FrameAnimationData data)
         {
             this.ShowAnimation(new FrameAnimator(data));
