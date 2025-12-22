@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
 using WzComparerR2.WzLib;
+using System.Linq;
 
 namespace WzComparerR2.CharaSim
 {
