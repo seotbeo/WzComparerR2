@@ -90,7 +90,6 @@ namespace WzComparerR2.CharaSimControl
         public string QuestComplete { get; set; }
         public int NodeID { get; set; }
         public int PreferredStringCopyMethod { get; set; }
-        public bool CopyParsedSkillString { get; set; }
 
         private ToolStripMenuItem SaveSample {  get; set; }
 
@@ -429,122 +428,32 @@ namespace WzComparerR2.CharaSimControl
             if (String.IsNullOrEmpty(this.AutoDesc)) this.AutoDesc = "";
             if (String.IsNullOrEmpty(this.Hdesc)) this.Hdesc = "";
             if (String.IsNullOrEmpty(this.DescLeftAlign)) this.DescLeftAlign = "";
-            if (this.CopyParsedSkillString && item is Skill) this.Hdesc = this.SkillRender.ParsedHdesc;
 
-            if (this.item is Quest)
-            {
-                Desc = ReplaceQuestString(Desc, this.item as Quest);
-                Pdesc = ReplaceQuestString(Pdesc, this.item as Quest);
-                AutoDesc = ReplaceQuestString(AutoDesc, this.item as Quest);
-                Hdesc = ReplaceQuestString(Hdesc, this.item as Quest);
-                DescLeftAlign = ReplaceQuestString(DescLeftAlign, this.item as Quest);
-                QuestAvailable = ReplaceQuestString(QuestAvailable, this.item as Quest);
-                QuestProgress = ReplaceQuestString(QuestProgress, this.item as Quest);
-                QuestComplete = ReplaceQuestString(QuestComplete, this.item as Quest);
-            }
-            else
-            {
-                if (this.PreferredStringCopyMethod == 2) sb.AppendLine(this.NodeID.ToString());
-                if (!String.IsNullOrEmpty(this.NodeName)) sb.AppendLine(this.NodeName);
-            }
+            if (this.PreferredStringCopyMethod == 2) sb.AppendLine(this.NodeID.ToString());
+            if (!String.IsNullOrEmpty(this.NodeName)) sb.AppendLine(this.NodeName);
             switch (this.PreferredStringCopyMethod)
             {
+                // raw text
                 default:
                 case 0:
-                    if (!String.IsNullOrEmpty(this.Desc)) sb.AppendLine(this.Desc);
-                    if (!String.IsNullOrEmpty(this.Pdesc)) sb.AppendLine(this.Pdesc);
-                    if (!String.IsNullOrEmpty(this.AutoDesc)) sb.AppendLine(this.AutoDesc);
-                    if (!String.IsNullOrEmpty(this.Hdesc)) sb.AppendLine(this.Hdesc);
-                    if (!String.IsNullOrEmpty(this.DescLeftAlign)) sb.AppendLine(this.DescLeftAlign);
+                    foreach (string i in (new[] { this.Desc, this.Pdesc, this.AutoDesc, this.Hdesc, this.DescLeftAlign }).Where(t => !string.IsNullOrEmpty(t)))
+                    {
+                        sb.AppendLine(i);
+                    }
                     break;
+
+                // plain text
                 case 1:
-                    if ((this.Desc + this.Pdesc + this.AutoDesc).Contains("\\n"))
+                    var hdesc = this.Hdesc;
+                    if (this.item is Skill) hdesc = this.SkillRender.ParsedHdesc;
+                    foreach (string i in new[] { this.Desc, this.Pdesc, this.AutoDesc, hdesc, this.DescLeftAlign }.Where(t => !string.IsNullOrEmpty(t)))
                     {
-                        foreach (string i in (this.Desc + this.Pdesc + this.AutoDesc).Split(new string[] { "\\n" }, StringSplitOptions.None))
+                        var text = i;
+                        if (this.item is Quest) text = this.QuestRender.ReplaceQuestString(i, true);
+                        foreach (var j in text.Split(new[] { "\\n" }, StringSplitOptions.None))
                         {
-                            sb.AppendLine(i.Replace("\\r", "").Replace("#c", "").Replace("#", ""));
+                            sb.AppendLine(j.Replace("\\r", "").Replace("#c", "").Replace("#", ""));
                         }
-                    }
-                    else
-                    {
-                        if (!String.IsNullOrEmpty(this.Desc)) sb.AppendLine(this.Desc);
-                        if (!String.IsNullOrEmpty(this.Pdesc)) sb.AppendLine(this.Pdesc);
-                        if (!String.IsNullOrEmpty(this.AutoDesc)) sb.AppendLine(this.AutoDesc);
-                    }
-                    if (this.Hdesc.Contains("\\n"))
-                    {
-                        foreach (string i in this.Hdesc.Split(new string[] { "\\n" }, StringSplitOptions.None))
-                        {
-                            if (this.CopyParsedSkillString)
-                            {
-                                sb.AppendLine(i.Replace("\\r", "").Replace("#c", "").Replace("#", ""));
-                            }
-                            else
-                            {
-                                sb.AppendLine(i.Replace("\\r", ""));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (this.CopyParsedSkillString)
-                        {
-                            sb.AppendLine(this.Hdesc.Replace("#c", "").Replace("#", ""));
-                        }
-                        else
-                        {
-                            sb.AppendLine(this.Hdesc);
-                        }
-                    }
-                    break;
-                case 2:
-                    if (this.item is Quest)
-                    {
-                        int check0npcID = (this.item as Quest).Check0Npc != null ? (this.item as Quest).Check0Npc.ID : 0;
-                        int check1npcID = (this.item as Quest).Check1NpcID;
-                        string check0npcName = "(null)";
-                        string check1npcName = "(null)";
-                        if (StringLinker.StringNpc.TryGetValue(check0npcID, out StringResult sr))
-                        {
-                            check0npcName = sr?.Name;
-                        }
-                        if (StringLinker.StringNpc.TryGetValue(check1npcID, out sr))
-                        {
-                            check1npcName = sr?.Name;
-                        }
-                        sb.AppendLine($"{{{{DISPLAYTITLE|{this.NodeName}}}}}");
-                        sb.AppendLine($"{{{{Quest<!--{this.NodeID}-->");
-                        sb.AppendLine($"|name={this.NodeName}");
-                        sb.AppendLine($"|npc={check0npcName}");
-                        sb.AppendLine((check0npcName == "(null)") ? "|npcimg=" : $"|npcimg=[[File:NPC {check0npcName}.png]]");
-                        sb.AppendLine($"|repeat=");
-                        sb.AppendLine($"|req=");
-                        sb.AppendLine($"|cat=");
-                        sb.AppendLine($"|type=");
-                        sb.AppendLine(string.IsNullOrEmpty(this.QuestAvailable) ? $"|avail={this.Desc}" : $"|avail={this.QuestAvailable}");
-                        sb.AppendLine($"|prog={this.QuestProgress}");
-                        sb.AppendLine($"|comp={this.QuestComplete}");
-                        sb.AppendLine($"|pro={this.Hdesc}");
-                        sb.AppendLine($"|reward={this.Pdesc}");
-                        sb.AppendLine($"|select=");
-                        sb.AppendLine($"|prob=");
-                        sb.AppendLine($"|nextquest={this.AutoDesc}");
-                        sb.AppendLine($"}}}}");
-                    }
-                    else
-                    {
-                        if (!String.IsNullOrEmpty(this.Desc)) sb.AppendLine(this.Desc.Replace("\\r", "").Replace("\\n", "<br />").Replace("#c", "<span class=\"darkorange-text\">").Replace("#", "</span>"));
-                        if (!String.IsNullOrEmpty(this.Pdesc)) sb.AppendLine(this.Pdesc.Replace("\\r", "").Replace("\\n", "<br />").Replace("#c", "<span class=\"darkorange-text\">").Replace("#", "</span>"));
-                        if (!String.IsNullOrEmpty(this.AutoDesc)) sb.AppendLine(this.AutoDesc.Replace("\\r", "").Replace("\\n", "<br />").Replace("#c", "<span class=\"darkorange-text\">").Replace("#", "</span>"));
-                        if (this.CopyParsedSkillString)
-                        {
-                            if (!String.IsNullOrEmpty(this.Hdesc)) sb.AppendLine(this.Hdesc.Replace("\\r", "").Replace("\\n", "<br />").Replace("#c", "<span class=\"darkorange-text\">").Replace("#", "</span>"));
-                        }
-                        else
-                        {
-                            if (!String.IsNullOrEmpty(this.Hdesc)) sb.AppendLine(this.Hdesc.Replace("\\r", "").Replace("\\n", "<br />"));
-                        }
-                        if (!String.IsNullOrEmpty(this.DescLeftAlign)) sb.AppendLine(this.DescLeftAlign.Replace("\\r", "").Replace("\\n", "<br />").Replace("#c", "<span class=\"darkorange-text\">").Replace("#", "</span>"));
                     }
                     break;
             }
@@ -688,213 +597,6 @@ namespace WzComparerR2.CharaSimControl
         {
             if (this.Bitmap != null)
                 this.SetClientSizeCore(this.Bitmap.Width, this.Bitmap.Height);
-        }
-
-        private string ReplaceQuestString(string text, Quest quest)
-        {
-            bool isMapleWiki = (this.PreferredStringCopyMethod == 2);
-            text = Regex.Replace(text, @$"#(p|o|m|t|q|a{this.NodeID}|i|v|y|illu)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
-            {
-                string tag = match.Groups[1].Value;
-                if (!int.TryParse(match.Groups[2].Value, out int id)) id = -1;
-                StringResult sr;
-                switch (tag)
-                {
-                    case "p":
-                        StringLinker.StringNpc.TryGetValue(id, out sr);
-                        return isMapleWiki ? $"{{{{QuestTextHighlight|npc|{sr?.Name ?? id.ToString()}}}}}" : $"{sr?.Name ?? id.ToString()}";
-
-                    case "o":
-                        if (id >= 100000000)
-                        {
-                            StringLinker.StringMap.TryGetValue(id, out sr);
-                            return isMapleWiki ? $"{{{{QuestTextHighlight|map|{sr?.MapName ?? id.ToString()}}}}}" : $"{sr?.MapName ?? id.ToString()}";
-                        }
-                        else
-                        {
-                            StringLinker.StringMob.TryGetValue(id, out sr);
-                            return isMapleWiki ? $"{{{{QuestTextHighlight|mob|{sr?.Name ?? id.ToString()}}}}}" : $"{sr?.Name ?? id.ToString()}";
-                        }
-
-                    case "m":
-                        StringLinker.StringMap.TryGetValue(id, out sr);
-                        return isMapleWiki ? $"{{{{QuestTextHighlight|map|{sr?.MapName ?? id.ToString()}}}}}" : $"{sr?.MapName ?? id.ToString()}";
-
-                    case "t":
-                        StringLinker.StringItem.TryGetValue(id, out sr);
-                        if (sr == null)
-                        {
-                            StringLinker.StringEqp.TryGetValue(id, out sr);
-                        }
-                        return isMapleWiki ? $"{{{{QuestTextHighlight|item|{sr?.Name ?? id.ToString()}}}}}" : $"{sr?.Name ?? id.ToString()}";
-
-                    case "q":
-                        StringLinker.StringSkill.TryGetValue(id, out sr);
-                        return $"{sr?.Name ?? id.ToString()}";
-
-                    case "i":
-                    case "v":
-                        string itemIconPrefix = "[[File:Item ";
-                        StringLinker.StringItem.TryGetValue(id, out sr);
-                        if (sr == null)
-                        {
-                            StringLinker.StringEqp.TryGetValue(id, out sr);
-                            itemIconPrefix = "[[File:Eqp ";
-                        }
-                        return isMapleWiki ? itemIconPrefix + $"{sr?.Name ?? id.ToString()}.png]] " : $"{sr?.Name ?? id.ToString()}";
-
-                    case "y":
-                        StringLinker.StringQuest.TryGetValue(id, out sr);
-                        return isMapleWiki ? $"[[{sr?.Name ?? id.ToString()}]]" : $"{sr?.Name ?? id.ToString()}";
-
-                    default:
-                        if (tag.StartsWith("a"))
-                        {
-                            if (quest.Check1Items.TryGetValue($"mob{id - 1}", out var value))
-                            {
-                                return $"0 / {value.Count.ToString()}";
-                            }
-                            return $"0 / 0";
-                        }
-                        return id.ToString();
-                }
-            });
-            text = Regex.Replace(text, @"#(questorder|j|c|R|x|MD|M|u|fs|fn|fc|f|a|W|o9101069f|DL|h0)(.+?)#", match =>
-            {
-                string tag = match.Groups[1].Value;
-                string info = match.Groups[2].Value;
-                StringResult sr;
-                switch (tag)
-                {
-                    case "questorder":
-                        if (int.TryParse(info, out int cnt) && cnt > 1)
-                        {
-                            return "> ";
-                        }
-                        return "";
-
-                    case "j":
-                        return info;
-
-                    case "x":
-                        return "x%";
-
-                    case "c":
-                    case "R":
-                        return "0";
-                    //return "미완";
-
-                    case "u":
-                        return "未完";
-
-                    case "h0":
-                        return "プレイヤー";
-
-                    case "o9101069f":
-                        Wz_Node stringNodeMF = PluginManager.FindWz($@"String\MobFilter.img\{info}");
-                        var retMF = stringNodeMF.GetValueEx<string>(null);
-                        if (retMF != null) return $"#$o{retMF}#";
-
-                        StringLinker.StringMob.TryGetValue(9101069, out sr);
-                        return $"#$o{sr?.Name ?? "9101069"}#";
-
-                    case "M":
-                        return "モンスター";
-
-                    case "MD":
-                        Wz_Node stringNode = PluginManager.FindWz($@"String\mirrorDungeon.img\{info}\name");
-                        var retMD = stringNode.GetValueEx<string>(null);
-                        return retMD ?? "鏡の世界";
-
-                    case "fc":
-                    case "fs":
-                    case "fn":
-                        return "";
-
-                    case "a":
-                        return $"#$^b#$w0# / 0#$$";
-
-                    case "DL":
-                        return ConvertDateWZ2(info);
-                }
-                return info;
-            });
-
-            // 미사용 태그
-            text = text.Replace("#b", ""); // 파란색
-            text = text.Replace("#k", ""); // 기본색
-            text = text.Replace("#kk", "");
-            text = text.Replace("#K", "");
-            text = text.Replace("#r", ""); // 빨간색
-            text = text.Replace("#g", "");
-            text = text.Replace("#l", "");
-            text = text.Replace("#eqp#", "");
-            text = text.Replace("#es", "#ＥＳ"); // plural suffix for English region
-            text = text.Replace("#e", "");
-            text = text.Replace("ＥＳ", "es");
-            text = text.Replace("#E", "");
-            text = text.Replace("#n", " ");
-
-            return text;
-        }
-
-        private string ConvertDateWZ2(string info)
-        {
-            var para = info.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-            if (para.Length < 2)
-            {
-                return info;
-            }
-
-            var timeParseFormat = "yyyyMMddHHmm";
-            string timeConvertFormat = null;
-            Wz_Node datelistNode = PluginManager.FindWz($@"Etc\DateListWZ2.img");
-            Wz_Node datetimeNode = datelistNode?.FindNodeByPath($@"DateList\{para[0]}\{para[1]}") ?? null;
-            var datetime = datetimeNode.GetValueEx<string>(null);
-            if (datetime == null || !DateTime.TryParseExact(datetime, timeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
-            {
-                return info;
-            }
-
-            if (para.Length == 3)
-            {
-                var returnType = para[2];
-                Wz_Node returnTypeNode = datelistNode?.FindNodeByPath($@"returnType\{returnType}") ?? null;
-                timeConvertFormat = returnTypeNode.GetValueEx<string>(null);
-            }
-            if (string.IsNullOrEmpty(timeConvertFormat))
-            {
-                timeConvertFormat = "{YYYY}年 {MM}月 {DD}日 {hh}時 {mm}分";
-            }
-
-            var datedict = new Dictionary<string, string>
-            {
-                { "YYYY", "yyyy" },
-                { "YY", "yy" },
-                { "MM", "MM" },
-                { "M", "M" },
-                { "DD", "dd" },
-                { "D", "d" },
-                { "hh", "HH" },
-                { "h", "H" },
-                { "mm", "mm" },
-                { "m", "m" },
-            };
-
-            timeConvertFormat = Regex.Replace(timeConvertFormat, @"\{(.*?)\}|([^{}]+)", match =>
-            {
-                if (match.Value.StartsWith("{") && match.Value.EndsWith("}"))
-                {
-                    string format = match.Groups[1].Value;
-                    return datedict.ContainsKey(format) ? datedict[format] : match.Value;
-                }
-                else
-                {
-                    return $@"'{match.Value}'";
-                }
-            });
-
-            return time.ToString(timeConvertFormat);
         }
     }
 }

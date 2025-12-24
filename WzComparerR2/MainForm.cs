@@ -243,8 +243,7 @@ namespace WzComparerR2
         {
             var Setting = CharaSimConfig.Default;
             this.buttonItemAutoQuickView.Checked = Setting.AutoQuickView;
-            tooltipQuickView.PreferredStringCopyMethod = Setting.PreferredStringCopyMethod;
-            tooltipQuickView.CopyParsedSkillString = Setting.CopyParsedSkillString;
+            tooltipQuickView.PreferredStringCopyMethod = Setting.Misc.PreferredStringCopyMethod;
             tooltipQuickView.SkillRender.ShowProperties = Setting.Skill.ShowProperties;
             tooltipQuickView.SkillRender.ShowObjectID = Setting.Skill.ShowID;
             tooltipQuickView.SkillRender.ShowDelay = Setting.Skill.ShowDelay;
@@ -3474,9 +3473,6 @@ namespace WzComparerR2
             }
 
             object obj = null;
-            string fileName = null;
-            StringResult sr = new StringResult();
-            string altAutoDesc = null;
             switch (wzf.Type)
             {
                 case Wz_Type.Character:
@@ -3489,31 +3485,11 @@ namespace WzComparerR2
                     {
                         var familiar = Familiar.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = familiar;
-                        if (stringLinker == null || !stringLinker.StringMob.TryGetValue(familiar.MobID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知のファミリア";
-                        }
-                        if (familiar != null)
-                        {
-                            fileName = "familiar_" + familiar.FamiliarID + ".png";
-                            tooltipQuickView.NodeID = familiar.FamiliarID;
-                        }
                     }
                     else
                     {
                         var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = gear;
-                        if (stringLinker == null || !stringLinker.StringEqp.TryGetValue(gear.ItemID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知の装備";
-                        }
-                        if (gear != null)
-                        {
-                            fileName = gear.ItemID + ".png";
-                            tooltipQuickView.NodeID = gear.ItemID;
-                        }
                     }
                         break;
                 case Wz_Type.Item:
@@ -3523,16 +3499,6 @@ namespace WzComparerR2
                     {
                         var item = Item.CreateFromNode(itemNode, PluginManager.FindWz);
                         obj = item;
-                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知のアイテム";
-                        }
-                        if (item != null)
-                        {
-                            fileName = item.ItemID + ".png";
-                            tooltipQuickView.NodeID = item.ItemID;
-                        }
                     }
                     else if (Regex.IsMatch(itemNode.FullPathToFile, @"^Item\\Pet\\\d{7}.img"))
                     {
@@ -3544,16 +3510,6 @@ namespace WzComparerR2
                             return;
                         var item = Item.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = item;
-                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知のペット";
-                        }
-                        if (item != null)
-                        {
-                            fileName = item.ItemID + ".png";
-                            tooltipQuickView.NodeID = item.ItemID;
-                        }
                     }
 
                     break;
@@ -3564,38 +3520,11 @@ namespace WzComparerR2
                     {
                         Recipe recipe = Recipe.CreateFromNode(skillNode);
                         obj = recipe;
-                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(recipe.RecipeID, out sr))
-                        {
-                            sr = new StringResultSkill();
-                            sr.Name = "未知のレシピ";
-                        }
-                        if (recipe != null)
-                        {
-                            fileName = "recipe_" + recipe.RecipeID + ".png";
-                            tooltipQuickView.NodeID = recipe.RecipeID;
-                        }
                     }
                     else if (Regex.IsMatch(skillNode.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\\d+$"))
                     {
                         Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, PluginManager.FindWz);
-                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(skill.SkillID, out sr))
-                        {
-                            sr = new StringResultSkill();
-                            sr.Name = "未知のスキル";
-                        }
-                        if (skill != null)
-                        {
-                            switch (this.skillDefaultLevel)
-                            {
-                                case DefaultLevel.Level0: skill.Level = 0; break;
-                                case DefaultLevel.Level1: skill.Level = 1; break;
-                                case DefaultLevel.LevelMax: skill.Level = skill.MaxLevel; break;
-                                case DefaultLevel.LevelMaxWithCO: skill.Level = skill.MaxLevel + 2; break;
-                            }
-                            obj = skill;
-                            fileName = "skill_" + skill.SkillID + ".png";
-                            tooltipQuickView.NodeID = skill.SkillID;
-                        }
+                        obj = skill;
                     }
                     break;
 
@@ -3604,16 +3533,6 @@ namespace WzComparerR2
                         return;
                     var map = Map.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = map;
-                    if (stringLinker == null || !stringLinker.StringMap.TryGetValue(map.MapID, out sr))
-                    {
-                        sr = new StringResult();
-                        sr.Name = "未知のマップ";
-                    }
-                    if (map != null)
-                    {
-                        fileName = map.MapID + ".png";
-                        tooltipQuickView.NodeID = map.MapID;
-                    }
                     break;
 
                 case Wz_Type.Mob:
@@ -3621,16 +3540,6 @@ namespace WzComparerR2
                         return;
                     var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
                     obj = mob;
-                    if (stringLinker == null || !stringLinker.StringMob.TryGetValue(mob.ID, out sr))
-                    {
-                        sr = new StringResult();
-                        sr.Name = "未知のモンスター";
-                    }
-                    if (mob != null)
-                    {
-                        fileName = mob.ID + ".png";
-                        tooltipQuickView.NodeID = mob.ID;
-                    }
                     break;
 
                 case Wz_Type.Npc:
@@ -3638,16 +3547,6 @@ namespace WzComparerR2
                         return;
                     var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz, getSpineDefaultFunc: this.pictureBoxEx1.GetSpineDefault);
                     obj = npc;
-                    if (stringLinker == null || !stringLinker.StringNpc.TryGetValue(npc.ID, out sr))
-                    {
-                        sr = new StringResult();
-                        sr.Name = "未知のNPC";
-                    }
-                    if (npc != null)
-                    {
-                        fileName = npc.ID + ".png";
-                        tooltipQuickView.NodeID = npc.ID;
-                    }
                     break;
 
                 case Wz_Type.Quest:
@@ -3665,30 +3564,6 @@ namespace WzComparerR2
                         }
                     }
                     obj = quest;
-                    if (quest != null)
-                    {
-                        tooltipQuickView.NodeName = quest.Name;
-                        tooltipQuickView.Desc = string.Join("\r\n", quest.Desc);
-                        if (quest.Desc.Count() == 3)
-                        {
-                            tooltipQuickView.QuestAvailable = quest.Desc[0];
-                            tooltipQuickView.QuestProgress = quest.Desc[1];
-                            tooltipQuickView.QuestComplete = quest.Desc[2];
-                        }
-                        else
-                        {
-                            tooltipQuickView.QuestAvailable = "";
-                            tooltipQuickView.QuestProgress = "";
-                            tooltipQuickView.QuestComplete = "";
-                        }
-                        tooltipQuickView.Pdesc = quest.DemandBase;
-                        tooltipQuickView.Hdesc = quest.DemandSummary;
-                        tooltipQuickView.AutoDesc = quest.PlaceSummary;
-                        tooltipQuickView.DescLeftAlign = quest.Summary;
-                        tooltipQuickView.NodeID = quest.ID;
-                        fileName = quest.ID + ".png";
-                        quest.State = tooltipQuickView.QuestRender.DefaultState;
-                    }
                     break;
 
                 case Wz_Type.Etc:
@@ -3700,39 +3575,27 @@ namespace WzComparerR2
                         if (!CharaSimLoader.LoadedSetItems.TryGetValue(Convert.ToInt32(selectedNode.Text), out setItem))
                             return;
                         obj = setItem;
-                        if (stringLinker == null || !stringLinker.StringSetItem.TryGetValue(setItem.SetItemID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知のセット";
-                        }
-                        if (setItem != null)
-                        {
-                            fileName = setItem.SetItemID + ".png";
-                            tooltipQuickView.NodeID = setItem.SetItemID;
-                        }
                     }
                     else if (Regex.IsMatch(selectedNode.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img$"))
                     {
                         if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                             return;
                         Achievement achievement = Achievement.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
-                        if (stringLinker == null || !stringLinker.StringAchievement.TryGetValue(achievement.ID, out sr))
-                        {
-                            sr = new StringResult();
-                            sr.Name = "未知の業績";
-                        }
                         obj = achievement;
-                        if (achievement != null)
-                        {
-                            fileName = achievement.ID + ".png";
-                            altAutoDesc = string.Join("\r\n", achievement.Missions);
-                            tooltipQuickView.NodeID = achievement.ID;
-                        }
                     }
                     break;
             }
+
             if (obj != null)
             {
+                bool alreadySetTexts = false;
+                int node_id = -1;
+                string fileName = null;
+                string altAutoDesc = null;
+                StringResult sr = new StringResult();
+                Dictionary<int, StringResult> sr_dict = null;
+
+                // dispose bitmaps no longer in use
                 if (tooltipQuickView.TargetItem != null)
                 {
                     switch (tooltipQuickView.TargetItem)
@@ -3751,9 +3614,114 @@ namespace WzComparerR2
                             break;
                     }
                 }
+                switch (obj)
+                {
+                    case Familiar familiar:
+                        sr_dict = stringLinker.StringMob;
+                        node_id = familiar.FamiliarID;
+                        fileName = "familiar_" + node_id + ".png";
+                        break;
+
+                    case Gear gear:
+                        sr_dict = stringLinker.StringEqp;
+                        node_id = gear.ItemID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Item item:
+                        sr_dict = stringLinker.StringItem;
+                        node_id = item.ItemID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Recipe recipe:
+                        sr_dict = stringLinker.StringSkill;
+                        node_id = recipe.RecipeID;
+                        fileName = "recipe_" + node_id + ".png";
+                        break;
+
+                    case Skill skill:
+                        switch (this.skillDefaultLevel)
+                        {
+                            case DefaultLevel.Level0: skill.Level = 0; break;
+                            case DefaultLevel.Level1: skill.Level = 1; break;
+                            case DefaultLevel.LevelMax: skill.Level = skill.MaxLevel; break;
+                            case DefaultLevel.LevelMaxWithCO: skill.Level = skill.MaxLevel + 2; break;
+                        }
+
+                        sr_dict = stringLinker.StringSkill;
+                        node_id = skill.SkillID;
+                        fileName = "skill_" + node_id + ".png";
+                        break;
+
+                    case Map map:
+                        sr_dict = stringLinker.StringMap;
+                        node_id = map.MapID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Mob mob:
+                        sr_dict = stringLinker.StringMob;
+                        node_id = mob.ID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Npc npc:
+                        sr_dict = stringLinker.StringNpc;
+                        node_id = npc.ID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Quest quest:
+                        quest.State = tooltipQuickView.QuestRender.DefaultState;
+
+                        tooltipQuickView.NodeName = quest.Name;
+                        tooltipQuickView.Desc = string.Join("\r\n", quest.Desc.Where(t => !string.IsNullOrEmpty(t)));
+                        if (quest.Desc.Count() == 3)
+                        {
+                            tooltipQuickView.QuestAvailable = quest.Desc[0];
+                            tooltipQuickView.QuestProgress = quest.Desc[1];
+                            tooltipQuickView.QuestComplete = quest.Desc[2];
+                        }
+                        else
+                        {
+                            tooltipQuickView.QuestAvailable = "";
+                            tooltipQuickView.QuestProgress = "";
+                            tooltipQuickView.QuestComplete = "";
+                        }
+                        tooltipQuickView.Pdesc = quest.DemandBase;
+                        tooltipQuickView.Hdesc = quest.DemandSummary;
+                        tooltipQuickView.AutoDesc = quest.PlaceSummary;
+                        tooltipQuickView.DescLeftAlign = quest.Summary;
+                        alreadySetTexts = true;
+
+                        node_id = quest.ID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case SetItem setItem:
+                        sr_dict = stringLinker.StringSetItem;
+                        node_id = setItem.SetItemID;
+                        fileName = node_id + ".png";
+                        break;
+
+                    case Achievement achievement:
+                        sr_dict = stringLinker.StringAchievement;
+                        node_id = achievement.ID;
+                        fileName = node_id + ".png";
+                        altAutoDesc = string.Join("\r\n", achievement.Missions);
+                        break;
+                }
+                if (stringLinker == null || !(sr_dict?.TryGetValue(node_id, out sr) ?? false))
+                {
+                    sr = new StringResult();
+                    sr.Name = "(null)";
+                }
+
                 tooltipQuickView.TargetItem = obj;
                 tooltipQuickView.ImageFileName = fileName;
-                if (wzf.Type is not Wz_Type.Quest)
+                tooltipQuickView.NodeID = node_id;
+                if (!alreadySetTexts)
                 {
                     tooltipQuickView.NodeName = sr.Name;
                     tooltipQuickView.Desc = sr.Desc;
@@ -3762,6 +3730,7 @@ namespace WzComparerR2
                     tooltipQuickView.Hdesc = sr["h"];
                     tooltipQuickView.DescLeftAlign = sr["desc_leftalign"];
                 }
+
                 tooltipQuickView.Refresh();
                 tooltipQuickView.HideOnHover = false;
                 tooltipQuickView.Show();

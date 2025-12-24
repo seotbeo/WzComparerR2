@@ -469,8 +469,13 @@ namespace WzComparerR2.CharaSimControl
             }
         }
 
-        private string ReplaceQuestString(string text)
+        public string ReplaceQuestString(string text, bool outputPlainTexts = false)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return string.Empty;
+            }
+
             // 미사용 태그
             text = text.Replace("#eqp#", "");
             var stack = new Stack<char>();
@@ -520,6 +525,7 @@ namespace WzComparerR2.CharaSimControl
             sb.Append('#');
             text = sb.ToString();
 
+            string name;
             text = Regex.Replace(text, @$"#(p|o|m|t|q|a{this.Quest.ID}|i|v|y|illu)\s*(\d{{1,9}}).*?#", match => // id should be less than 1,000,000,000
             {
                 string tag = match.Groups[1].Value;
@@ -529,15 +535,18 @@ namespace WzComparerR2.CharaSimControl
                 {
                     case "p":
                         StringLinker.StringNpc.TryGetValue(id, out sr);
-                        return $"#$p{sr?.Name ?? id.ToString()}#";
+                        name = sr?.Name ?? id.ToString();
+                        return outputPlainTexts ? $"{name}" : $"#$p{name}#";
 
                     case "o":
                         StringLinker.StringMob.TryGetValue(id, out sr);
-                        return $"#$o{sr?.Name ?? id.ToString()}#";
+                        name = sr?.Name ?? id.ToString();
+                        return outputPlainTexts ? $"{name}" : $"#$o{name}#";
 
                     case "m":
                         StringLinker.StringMap.TryGetValue(id, out sr);
-                        return $"#$m{sr?.MapName ?? id.ToString()}#";
+                        name = sr?.MapName ?? id.ToString();
+                        return outputPlainTexts ? $"{name}" : $"#$m{name}#";
 
                     case "t":
                         StringLinker.StringItem.TryGetValue(id, out sr);
@@ -545,11 +554,13 @@ namespace WzComparerR2.CharaSimControl
                         {
                             StringLinker.StringEqp.TryGetValue(id, out sr);
                         }
-                        return $"#$t{sr?.Name ?? id.ToString()}#";
+                        name = sr?.Name ?? id.ToString();
+                        return outputPlainTexts ? $"{name}" : $"#$t{name}#";
 
                     case "q":
                         StringLinker.StringSkill.TryGetValue(id, out sr);
-                        return $"{sr?.Name ?? id.ToString()}";
+                        name = sr?.Name ?? id.ToString();
+                        return $"{name}";
 
                     case "i":
                     case "v":
@@ -558,14 +569,22 @@ namespace WzComparerR2.CharaSimControl
                         {
                             StringLinker.StringEqp.TryGetValue(id, out sr);
                         }
-                        var bmp = GetIconBitmap(id);
-                        var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
-                        this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
-                        return ret;
+                        if (!outputPlainTexts)
+                        {
+                            var bmp = GetIconBitmap(id);
+                            var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
+                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
+                            return ret;
+                        }
+                        else
+                        {
+                            name = sr?.Name ?? id.ToString();
+                            return $"{name}";
+                        }
 
                     case "illu":
                         var bmpIllu = GetIconByPath($@"Etc\illustration.img\{id}\0");
-                        if (bmpIllu != null)
+                        if (bmpIllu != null && !outputPlainTexts)
                         {
                             var retIllu = $"#@{this.ImageTable.Count}/{bmpIllu?.Width ?? 0}/{bmpIllu?.Height ?? 0}@";
                             this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpIllu);
@@ -575,16 +594,17 @@ namespace WzComparerR2.CharaSimControl
 
                     case "y":
                         StringLinker.StringQuest.TryGetValue(id, out sr);
-                        return $"{sr?.Name ?? id.ToString()}";
+                        name = sr?.Name ?? id.ToString();
+                        return $"{name}";
 
                     default:
                         if (tag.StartsWith("a"))
                         {
                             if (this.Quest.Check1Items.TryGetValue($"mob{id - 1}", out var value))
                             {
-                                return $"#$^b#$w0# / {value.Count.ToString()}#$$";
+                                return outputPlainTexts ? $"0 / {value.Count.ToString()}" : $"#$^b#$w0# / {value.Count.ToString()}#$$";
                             }
-                            return $"#$^b#$w0# / 0#$$";
+                            return outputPlainTexts ? $"0 / 0" : $"#$^b#$w0# / 0#$$";
                         }
                         return id.ToString();
                 }
@@ -623,10 +643,11 @@ namespace WzComparerR2.CharaSimControl
                     case "o9101069f":
                         Wz_Node stringNodeMF = PluginManager.FindWz($@"String\MobFilter.img\{info}", this.SourceWzFile);
                         var retMF = stringNodeMF.GetValueEx<string>(null);
-                        if (retMF != null) return $"#$o{retMF}#";
+                        if (retMF != null) return outputPlainTexts ? $"{retMF}" : $"#$o{retMF}#";
 
                         StringLinker.StringMob.TryGetValue(9101069, out sr);
-                        return $"#$o{sr?.Name ?? "9101069"}#";
+                        name = sr?.Name ?? "9101069";
+                        return outputPlainTexts ? $"{name}" : $"#$o{name}#";
 
                     case "M":
                         return "몬스터";
@@ -637,17 +658,25 @@ namespace WzComparerR2.CharaSimControl
                         return retMD ?? "거울세계";
 
                     case "W":
-                        var path = $"UIWindow2_img_Quest_quest_info_summary_icon_{info}";
-                        var bmpW = (Bitmap)Resource.ResourceManager.GetObject(path);
-                        var retW = $"#@{this.ImageTable.Count}/{bmpW?.Width ?? 0}/{bmpW?.Height ?? 0}@";
-                        this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpW);
-                        return retW;
+                        if (!outputPlainTexts)
+                        {
+                            var path = $"UIWindow2_img_Quest_quest_info_summary_icon_{info}";
+                            var bmpW = (Bitmap)Resource.ResourceManager.GetObject(path);
+                            var retW = $"#@{this.ImageTable.Count}/{bmpW?.Width ?? 0}/{bmpW?.Height ?? 0}@";
+                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpW);
+                            return retW;
+                        }
+                        else return info;
 
                     case "f":
-                        var bmp = GetIconByPath(info);
-                        var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}/{bmp?.Height ?? 0}@";
-                        this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
-                        return ret;
+                        if (!outputPlainTexts)
+                        {
+                            var bmp = GetIconByPath(info);
+                            var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}/{bmp?.Height ?? 0}@";
+                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
+                            return ret;
+                        }
+                        else return info;
 
                     case "fc":
                     case "fs":
@@ -655,7 +684,7 @@ namespace WzComparerR2.CharaSimControl
                         return "";
 
                     case "a":
-                        return $"#$^b#$w0# / 0#$$";
+                        return outputPlainTexts ? $"0 / 0" : $"#$^b#$w0# / 0#$$";
 
                     case "DL":
                         return ConvertDateWZ2(info);

@@ -325,7 +325,8 @@ namespace WzComparerR2
             set { chkEnable22AniStyle.Checked = value; }
         }
 
-        public int PreferredStringCopyMethod
+        [Link]
+        public int Misc_PreferredStringCopyMethod
         {
             get
             {
@@ -341,16 +342,8 @@ namespace WzComparerR2
             }
         }
 
-        public bool CopyParsedSkillString
-        {
-            get { return chkCopyParsedSkillString.Checked; }
-            set { chkCopyParsedSkillString.Checked = value; }
-        }
-
         public void Load(CharaSimConfig config)
         {
-            this.PreferredStringCopyMethod = config.PreferredStringCopyMethod;
-            this.CopyParsedSkillString = config.CopyParsedSkillString;
             var linkProp = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(prop => prop.GetCustomAttributes(typeof(LinkAttribute), false).Length > 0);
 
@@ -370,8 +363,6 @@ namespace WzComparerR2
 
         public void Save(CharaSimConfig config)
         {
-            config.PreferredStringCopyMethod = this.PreferredStringCopyMethod;
-            config.CopyParsedSkillString = this.CopyParsedSkillString;
             var linkProp = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(prop => prop.GetCustomAttributes(typeof(LinkAttribute), false).Length > 0);
 

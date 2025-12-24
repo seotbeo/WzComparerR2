@@ -14,5 +14,12 @@ namespace WzComparerR2.Config
             get { return (bool)this["enable22AniStyle"]; }
             set { this["enable22AniStyle"] = value; }
         }
+
+        [ConfigurationProperty("PreferredStringCopyMethod", DefaultValue = 1)]
+        public int PreferredStringCopyMethod
+        {
+            get { return (int)this["PreferredStringCopyMethod"]; }
+            set { this["PreferredStringCopyMethod"] = value; }
+        }
     }
 }
