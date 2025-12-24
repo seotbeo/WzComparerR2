@@ -26,6 +26,13 @@ namespace WzComparerR2
             this.comboBoxEx1.SelectedIndex = 0;
             this.comboBoxEx2.SelectedIndex = 0;
 
+            cmbPreferredStringCopyMethod.Items.AddRange(new[]
+                {
+                new ComboItem("Raw String") { Value = 0 },
+                new ComboItem("Plain String") { Value = 1 },
+                //new ComboItem("MapleWiki Optimized") { Value = 2 },
+            });
+
             this.comboBoxEx3.Items.AddRange(AvatarCanvas.HairColor.Select(color =>
             {
                 var comboBoxItem = new DevComponents.DotNetBar.ComboBoxItem();
@@ -318,8 +325,32 @@ namespace WzComparerR2
             set { chkEnable22AniStyle.Checked = value; }
         }
 
+        public int PreferredStringCopyMethod
+        {
+            get
+            {
+                return ((cmbPreferredStringCopyMethod.SelectedItem as ComboItem)?.Value as int?) ?? 0;
+            }
+            set
+            {
+                var items = cmbPreferredStringCopyMethod.Items.Cast<ComboItem>();
+                var item = items.FirstOrDefault(_item => _item.Value as int? == value)
+                    ?? items.Last();
+                item.Value = value;
+                cmbPreferredStringCopyMethod.SelectedItem = item;
+            }
+        }
+
+        public bool CopyParsedSkillString
+        {
+            get { return chkCopyParsedSkillString.Checked; }
+            set { chkCopyParsedSkillString.Checked = value; }
+        }
+
         public void Load(CharaSimConfig config)
         {
+            this.PreferredStringCopyMethod = config.PreferredStringCopyMethod;
+            this.CopyParsedSkillString = config.CopyParsedSkillString;
             var linkProp = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(prop => prop.GetCustomAttributes(typeof(LinkAttribute), false).Length > 0);
 
@@ -339,6 +370,8 @@ namespace WzComparerR2
 
         public void Save(CharaSimConfig config)
         {
+            config.PreferredStringCopyMethod = this.PreferredStringCopyMethod;
+            config.CopyParsedSkillString = this.CopyParsedSkillString;
             var linkProp = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(prop => prop.GetCustomAttributes(typeof(LinkAttribute), false).Length > 0);
 

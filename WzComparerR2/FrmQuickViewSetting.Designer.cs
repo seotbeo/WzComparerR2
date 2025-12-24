@@ -106,6 +106,9 @@
             this.labelXQSHint = new DevComponents.DotNetBar.LabelX();
             this.chkQAS = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowReqSkill = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.labelX4 = new DevComponents.DotNetBar.LabelX();
+            this.cmbPreferredStringCopyMethod = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.chkCopyParsedSkillString = new DevComponents.DotNetBar.Controls.CheckBoxX();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
@@ -1100,6 +1103,9 @@
             // 
             this.superTabControlPanel5.Controls.Add(this.chkShowAllIllustAtOnce);
             this.superTabControlPanel5.Controls.Add(this.chkEnable22AniStyle);
+            this.superTabControlPanel5.Controls.Add(this.chkCopyParsedSkillString);
+            this.superTabControlPanel5.Controls.Add(this.labelX4);
+            this.superTabControlPanel5.Controls.Add(this.cmbPreferredStringCopyMethod);
             this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel5.Location = new System.Drawing.Point(62, 0);
             this.superTabControlPanel5.Name = "superTabControlPanel5";
@@ -1145,6 +1151,49 @@
             this.chkShowAllIllustAtOnce.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkShowAllIllustAtOnce.TabIndex = 5;
             this.chkShowAllIllustAtOnce.Text = "모든 NPC 일러스트를 한 번에 표시";
+            // 
+            // chkCopyParsedSkillString
+            // 
+            this.chkCopyParsedSkillString.AutoSize = true;
+            this.chkCopyParsedSkillString.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkCopyParsedSkillString.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkCopyParsedSkillString.Location = new System.Drawing.Point(13, 60);
+            this.chkCopyParsedSkillString.Name = "chkCopyParsedSkillString";
+            this.chkCopyParsedSkillString.Size = new System.Drawing.Size(124, 16);
+            this.chkCopyParsedSkillString.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkCopyParsedSkillString.TabIndex = 6;
+            this.chkCopyParsedSkillString.Text = "스킬 텍스트 파싱";
+            // 
+            // labelX4
+            // 
+            this.labelX4.AutoSize = true;
+            this.labelX4.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX4.Location = new System.Drawing.Point(13, 84);
+            this.labelX4.Name = "labelX4";
+            this.labelX4.Size = new System.Drawing.Size(87, 16);
+            this.labelX4.TabIndex = 7;
+            this.labelX4.Text = "텍스트 복사 방식";
+            // 
+            // cmbPreferredStringCopyMethod
+            // 
+            this.cmbPreferredStringCopyMethod.DisplayMember = "Text";
+            this.cmbPreferredStringCopyMethod.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPreferredStringCopyMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPreferredStringCopyMethod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbPreferredStringCopyMethod.FormattingEnabled = true;
+            this.cmbPreferredStringCopyMethod.ItemHeight = 13;
+            this.cmbPreferredStringCopyMethod.Location = new System.Drawing.Point(120, 84);
+            this.cmbPreferredStringCopyMethod.Name = "cmbPreferredStringCopyMethod";
+            this.cmbPreferredStringCopyMethod.Size = new System.Drawing.Size(160, 19);
+            this.cmbPreferredStringCopyMethod.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.cmbPreferredStringCopyMethod.TabIndex = 7;
             // 
             // buttonX2
             // 
@@ -1289,5 +1338,8 @@
         private DevComponents.DotNetBar.LabelX labelXQSHint;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkQAS;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowReqSkill;
+        private DevComponents.DotNetBar.LabelX labelX4;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx cmbPreferredStringCopyMethod;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkCopyParsedSkillString;
     }
 }

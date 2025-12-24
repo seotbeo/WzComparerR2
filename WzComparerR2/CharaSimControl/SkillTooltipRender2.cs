@@ -38,6 +38,7 @@ namespace WzComparerR2.CharaSimControl
         public Wz_Node SourceWzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
+        public string ParsedHdesc { get; set; }
 
         public override Bitmap Render()
         {
@@ -282,6 +283,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 if (hStr != null)
                 {
+                    ParsedHdesc = hStr;
                     GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
             }

@@ -243,6 +243,8 @@ namespace WzComparerR2
         {
             var Setting = CharaSimConfig.Default;
             this.buttonItemAutoQuickView.Checked = Setting.AutoQuickView;
+            tooltipQuickView.PreferredStringCopyMethod = Setting.PreferredStringCopyMethod;
+            tooltipQuickView.CopyParsedSkillString = Setting.CopyParsedSkillString;
             tooltipQuickView.SkillRender.ShowProperties = Setting.Skill.ShowProperties;
             tooltipQuickView.SkillRender.ShowObjectID = Setting.Skill.ShowID;
             tooltipQuickView.SkillRender.ShowDelay = Setting.Skill.ShowDelay;
@@ -3473,6 +3475,8 @@ namespace WzComparerR2
 
             object obj = null;
             string fileName = null;
+            StringResult sr = new StringResult();
+            string altAutoDesc = null;
             switch (wzf.Type)
             {
                 case Wz_Type.Character:
@@ -3485,18 +3489,30 @@ namespace WzComparerR2
                     {
                         var familiar = Familiar.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = familiar;
+                        if (stringLinker == null || !stringLinker.StringMob.TryGetValue(familiar.MobID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知のファミリア";
+                        }
                         if (familiar != null)
                         {
                             fileName = "familiar_" + familiar.FamiliarID + ".png";
+                            tooltipQuickView.NodeID = familiar.FamiliarID;
                         }
                     }
                     else
                     {
                         var gear = Gear.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = gear;
+                        if (stringLinker == null || !stringLinker.StringEqp.TryGetValue(gear.ItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知の装備";
+                        }
                         if (gear != null)
                         {
                             fileName = gear.ItemID + ".png";
+                            tooltipQuickView.NodeID = gear.ItemID;
                         }
                     }
                         break;
@@ -3507,9 +3523,15 @@ namespace WzComparerR2
                     {
                         var item = Item.CreateFromNode(itemNode, PluginManager.FindWz);
                         obj = item;
+                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知のアイテム";
+                        }
                         if (item != null)
                         {
                             fileName = item.ItemID + ".png";
+                            tooltipQuickView.NodeID = item.ItemID;
                         }
                     }
                     else if (Regex.IsMatch(itemNode.FullPathToFile, @"^Item\\Pet\\\d{7}.img"))
@@ -3522,9 +3544,15 @@ namespace WzComparerR2
                             return;
                         var item = Item.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = item;
+                        if (stringLinker == null || !stringLinker.StringItem.TryGetValue(item.ItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知のペット";
+                        }
                         if (item != null)
                         {
                             fileName = item.ItemID + ".png";
+                            tooltipQuickView.NodeID = item.ItemID;
                         }
                     }
 
@@ -3536,14 +3564,25 @@ namespace WzComparerR2
                     {
                         Recipe recipe = Recipe.CreateFromNode(skillNode);
                         obj = recipe;
+                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(recipe.RecipeID, out sr))
+                        {
+                            sr = new StringResultSkill();
+                            sr.Name = "未知のレシピ";
+                        }
                         if (recipe != null)
                         {
                             fileName = "recipe_" + recipe.RecipeID + ".png";
+                            tooltipQuickView.NodeID = recipe.RecipeID;
                         }
                     }
                     else if (Regex.IsMatch(skillNode.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\\d+$"))
                     {
                         Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, PluginManager.FindWz);
+                        if (stringLinker == null || !stringLinker.StringSkill.TryGetValue(skill.SkillID, out sr))
+                        {
+                            sr = new StringResultSkill();
+                            sr.Name = "未知のスキル";
+                        }
                         if (skill != null)
                         {
                             switch (this.skillDefaultLevel)
@@ -3555,6 +3594,7 @@ namespace WzComparerR2
                             }
                             obj = skill;
                             fileName = "skill_" + skill.SkillID + ".png";
+                            tooltipQuickView.NodeID = skill.SkillID;
                         }
                     }
                     break;
@@ -3564,9 +3604,15 @@ namespace WzComparerR2
                         return;
                     var map = Map.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = map;
+                    if (stringLinker == null || !stringLinker.StringMap.TryGetValue(map.MapID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "未知のマップ";
+                    }
                     if (map != null)
                     {
                         fileName = map.MapID + ".png";
+                        tooltipQuickView.NodeID = map.MapID;
                     }
                     break;
 
@@ -3575,9 +3621,15 @@ namespace WzComparerR2
                         return;
                     var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
                     obj = mob;
+                    if (stringLinker == null || !stringLinker.StringMob.TryGetValue(mob.ID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "未知のモンスター";
+                    }
                     if (mob != null)
                     {
                         fileName = mob.ID + ".png";
+                        tooltipQuickView.NodeID = mob.ID;
                     }
                     break;
 
@@ -3586,9 +3638,15 @@ namespace WzComparerR2
                         return;
                     var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz, getSpineDefaultFunc: this.pictureBoxEx1.GetSpineDefault);
                     obj = npc;
+                    if (stringLinker == null || !stringLinker.StringNpc.TryGetValue(npc.ID, out sr))
+                    {
+                        sr = new StringResult();
+                        sr.Name = "未知のNPC";
+                    }
                     if (npc != null)
                     {
                         fileName = npc.ID + ".png";
+                        tooltipQuickView.NodeID = npc.ID;
                     }
                     break;
 
@@ -3609,6 +3667,25 @@ namespace WzComparerR2
                     obj = quest;
                     if (quest != null)
                     {
+                        tooltipQuickView.NodeName = quest.Name;
+                        tooltipQuickView.Desc = string.Join("\r\n", quest.Desc);
+                        if (quest.Desc.Count() == 3)
+                        {
+                            tooltipQuickView.QuestAvailable = quest.Desc[0];
+                            tooltipQuickView.QuestProgress = quest.Desc[1];
+                            tooltipQuickView.QuestComplete = quest.Desc[2];
+                        }
+                        else
+                        {
+                            tooltipQuickView.QuestAvailable = "";
+                            tooltipQuickView.QuestProgress = "";
+                            tooltipQuickView.QuestComplete = "";
+                        }
+                        tooltipQuickView.Pdesc = quest.DemandBase;
+                        tooltipQuickView.Hdesc = quest.DemandSummary;
+                        tooltipQuickView.AutoDesc = quest.PlaceSummary;
+                        tooltipQuickView.DescLeftAlign = quest.Summary;
+                        tooltipQuickView.NodeID = quest.ID;
                         fileName = quest.ID + ".png";
                         quest.State = tooltipQuickView.QuestRender.DefaultState;
                     }
@@ -3623,9 +3700,15 @@ namespace WzComparerR2
                         if (!CharaSimLoader.LoadedSetItems.TryGetValue(Convert.ToInt32(selectedNode.Text), out setItem))
                             return;
                         obj = setItem;
+                        if (stringLinker == null || !stringLinker.StringSetItem.TryGetValue(setItem.SetItemID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知のセット";
+                        }
                         if (setItem != null)
                         {
                             fileName = setItem.SetItemID + ".png";
+                            tooltipQuickView.NodeID = setItem.SetItemID;
                         }
                     }
                     else if (Regex.IsMatch(selectedNode.FullPathToFile, @"^Etc\\Achievement\\AchievementData\\(\d+).img$"))
@@ -3633,11 +3716,17 @@ namespace WzComparerR2
                         if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                             return;
                         Achievement achievement = Achievement.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
-
+                        if (stringLinker == null || !stringLinker.StringAchievement.TryGetValue(achievement.ID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "未知の業績";
+                        }
                         obj = achievement;
                         if (achievement != null)
                         {
                             fileName = achievement.ID + ".png";
+                            altAutoDesc = string.Join("\r\n", achievement.Missions);
+                            tooltipQuickView.NodeID = achievement.ID;
                         }
                     }
                     break;
@@ -3664,6 +3753,15 @@ namespace WzComparerR2
                 }
                 tooltipQuickView.TargetItem = obj;
                 tooltipQuickView.ImageFileName = fileName;
+                if (wzf.Type is not Wz_Type.Quest)
+                {
+                    tooltipQuickView.NodeName = sr.Name;
+                    tooltipQuickView.Desc = sr.Desc;
+                    tooltipQuickView.Pdesc = sr.Pdesc;
+                    tooltipQuickView.AutoDesc = altAutoDesc ?? sr.AutoDesc;
+                    tooltipQuickView.Hdesc = sr["h"];
+                    tooltipQuickView.DescLeftAlign = sr["desc_leftalign"];
+                }
                 tooltipQuickView.Refresh();
                 tooltipQuickView.HideOnHover = false;
                 tooltipQuickView.Show();
