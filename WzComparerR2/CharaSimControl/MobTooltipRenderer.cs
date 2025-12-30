@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using WzComparerR2.CharaSim;
 using WzComparerR2.Common;
+using WzComparerR2.PluginBase;
 using WzComparerR2.WzLib;
 using WzComparerR2.AvatarCommon;
 using static WzComparerR2.CharaSimControl.RenderHelper;
@@ -27,8 +28,14 @@ namespace WzComparerR2.CharaSimControl
         }
 
         public Mob MobInfo { get; set; }
+        public int MaxWidth { get; set; }
+        public bool ShowAllSubMobAtOnce { get; set; }
+        public bool MseaMode {get; set;}
+        public bool EnableWorldArchive { get; set; }
+        public bool EnableMonsterBook { get; set; } = false; // Disable Monster Book Feature
         private AvatarCanvasManager avatar { get; set; }
         public Dictionary<int, HashSet<string>> DiffMobTags { get; set; } = new Dictionary<int, HashSet<string>>();
+        private WorldArchiveTooltipRender WorldArchiveRender { get; set; }
 
         public override Bitmap Render()
         {
@@ -212,6 +219,7 @@ namespace WzComparerR2.CharaSimControl
             Rectangle textRect = Measure(propBlocks);
             Rectangle locRect = Measure(locBlocks);
             Bitmap mobImg = MobInfo.Default.Bitmap;
+            Bitmap mobIcon = GetMobIcon(MobInfo.ID);
             if (MobInfo.IsAvatarLook)
             {
                 if (this.avatar == null)
@@ -297,29 +305,52 @@ namespace WzComparerR2.CharaSimControl
             imgRect.Offset(10, 10);
             textRect.Offset(10, 10);
             locRect.Offset(10, 10);
-            g = Graphics.FromImage(bmp);
-            //绘制背景
-            GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
-            //绘制标题
-            foreach (var item in titleBlocks)
+            using (g = Graphics.FromImage(bmp))
             {
-                DrawText(g, item, titleRect.Location);
+                //绘制背景
+                GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
+                //绘制标题
+                foreach (var item in titleBlocks)
+                {
+                    DrawText(g, item, titleRect.Location);
+                }
+                //Attempt Draw Mob Icon
+                if (mobIcon != null)
+                {
+                    g.DrawImage(mobIcon, titleRect.Location.X - mobIcon.Width - 4, titleRect.Y - (mobIcon.Height - titleRect.Height) / 2, new Rectangle(0, 0, mobIcon.Width, mobIcon.Height), GraphicsUnit.Pixel);
+                }
+                //绘制图像
+                if (mobImg != null && !imgRect.IsEmpty)
+                {
+                    g.DrawImage(mobImg, imgRect);
+                }
+                //绘制文本
+                foreach (var item in propBlocks)
+                {
+                    DrawText(g, item, textRect.Location);
+                }
+                foreach (var item in locBlocks)
+                {
+                    DrawText(g, item, locRect.Location);
+                }
             }
-            //绘制图像
-            if (mobImg != null && !imgRect.IsEmpty)
+            string monsterBookDesc = EnableMonsterBook ? GetMobDesc(MobInfo.ID) : null;
+            string worldArchiveDesc = EnableWorldArchive ? GetWorldArchiveDesc(MobInfo.ID) : null;
+            if (!string.IsNullOrEmpty(worldArchiveDesc) || !string.IsNullOrEmpty(monsterBookDesc) && EnableWorldArchive)
             {
-                g.DrawImage(mobImg, imgRect);
+                WorldArchiveRender = new WorldArchiveTooltipRender();
+                WorldArchiveRender.WorldArchiveMessage = worldArchiveDesc;
+                WorldArchiveRender.MonsterBookMessage = monsterBookDesc;
+                WorldArchiveRender.MobID = MobInfo.ID;
+                Bitmap waBitmap = WorldArchiveRender.Render();
+                Bitmap appendWaBitmap = new Bitmap(bmp.Width + waBitmap.Width, Math.Max(bmp.Height, waBitmap.Height));
+                using (g = Graphics.FromImage(appendWaBitmap))
+                {
+                    g.DrawImage(bmp, 0, 0, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+                    g.DrawImage(waBitmap, bmp.Width, 0, new Rectangle(0, 0, waBitmap.Width, waBitmap.Height), GraphicsUnit.Pixel);
+                }
+                bmp = appendWaBitmap;
             }
-            //绘制文本
-            foreach (var item in propBlocks)
-            {
-                DrawText(g, item, textRect.Location);
-            }
-            foreach (var item in locBlocks)
-            {
-                DrawText(g, item, locRect.Location);
-            }
-            g.Dispose();
             return bmp;
         }
 
@@ -331,6 +362,35 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
             return sr.Name;
+        }
+
+        private string GetMobDesc(int mobID)
+        {
+            StringResult sr;
+            if (this.StringLinker == null || !this.StringLinker.StringMonsterBook.TryGetValue(mobID, out sr))
+            {
+                return null;
+            }
+            else
+            {
+                return sr.Desc;
+            }
+        }
+
+        private Bitmap GetMobIcon(int mobID)
+        {
+            BitmapOrigin mobIconOrigin = BitmapOrigin.CreateFromNode(PluginManager.FindWz($@"UI\UIWindow2.img\MobGage\Mob\{mobID.ToString()}", this.SourceWzFile), PluginManager.FindWz);
+            return mobIconOrigin.Bitmap;
+        }
+
+        private string GetWorldArchiveDesc(int mobID)
+        {
+            StringResult sr;
+            if (this.StringLinker == null || !this.StringLinker.StringWorldArchiveMob.TryGetValue(mobID, out sr))
+            {
+                return null;
+            }
+            return sr.Desc;
         }
 
         private string GetElemAttrString(MobElemAttr elemAttr)

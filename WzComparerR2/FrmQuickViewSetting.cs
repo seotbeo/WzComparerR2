@@ -312,6 +312,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Npc_ShowNpcQuotes
+        {
+            get { return chkShowNpcQuotes.Checked; }
+            set { chkShowNpcQuotes.Checked = value; }
+        }
+
+        [Link]
         public bool Quest_ShowAllStates
         {
             get { return chkQAS.Checked; }
@@ -340,6 +347,13 @@ namespace WzComparerR2
                 item.Value = value;
                 cmbPreferredStringCopyMethod.SelectedItem = item;
             }
+        }
+
+        [Link]
+        public bool Misc_EnableWorldArchive
+        {
+            get { return chkEnableWorldArchive.Checked; }
+            set { chkEnableWorldArchive.Checked = value; }
         }
 
         public void Load(CharaSimConfig config)
@@ -392,6 +406,11 @@ namespace WzComparerR2
             this.comboBoxExQuestState.Enabled = !this.chkQAS.Checked;
             this.labelXQS.Enabled = !this.chkQAS.Checked;
             this.labelXQSHint.Enabled = !this.chkQAS.Checked;
+        }
+
+        private void chkEnableWorldArchive_CheckedChanged(object sender, EventArgs e)
+        {
+            this.chkShowNpcQuotes.Enabled = chkEnableWorldArchive.Checked;
         }
 
         private void txtDamageSkinNumber_TextChanged(object sender, EventArgs e)

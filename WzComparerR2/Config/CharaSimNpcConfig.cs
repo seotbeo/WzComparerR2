@@ -21,5 +21,12 @@ namespace WzComparerR2.Config
             get { return (bool)this["showAllIllustAtOnce"]; }
             set { this["showAllIllustAtOnce"] = value; }
         }
+
+        [ConfigurationProperty("showNpcQuotes", DefaultValue = false)]
+        public bool ShowNpcQuotes
+        {
+            get { return (bool)this["showNpcQuotes"]; }
+            set { this["showNpcQuotes"] = value; }
+        }
     }
 }
