@@ -69,6 +69,7 @@ namespace WzComparerR2.Comparer
                 OutputSkillTooltip = OutputItemTooltip = OutputGearTooltip = OutputMapTooltip = OutputMobTooltip = OutputNpcTooltip = OutputQuestTooltip = OutputAchvTooltip = value;
             }
         }
+        public bool EnableWorldArchive { get; set; }
 
         public string StateInfo
         {
@@ -125,7 +126,7 @@ namespace WzComparerR2.Comparer
 
                 if (SelectedNodes.TryGetValue("String", out bool s) && !s)
                 {
-                    OutputTooltips = false; 
+                    OutputTooltips = false;
                 }
                 if (OutputTooltips)
                 {
@@ -1051,6 +1052,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffMobTags = this.DiffMobTags;
+                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
             }
 
             foreach (var mobID in OutputMobTooltipIDs)
@@ -1101,6 +1103,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowAllIllustAtOnce = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
             }
 
             foreach (var npcID in OutputNpcTooltipIDs)

@@ -28,7 +28,9 @@ namespace WzComparerR2.CharaSimControl
 
         public Npc NpcInfo { get; set; }
         public bool ShowAllIllustAtOnce { get; set; }
+        public bool EnableWorldArchive { get; set; }
         private AvatarCanvasManager avatar { get; set; }
+        private WorldArchiveTooltipRender WorldArchiveRender { get; set; }
 
         public override Bitmap Render()
         {
@@ -197,12 +199,23 @@ namespace WzComparerR2.CharaSimControl
                 g2.Dispose();
                 bmp.Dispose();
                 illustration2Tooltip.Dispose();
-                return newTooltip;
+                bmp = newTooltip;
             }
-            else
+            string worldArchiveDesc = GetWorldArchiveDesc(NpcInfo.ID);
+            if (!string.IsNullOrEmpty(worldArchiveDesc) && EnableWorldArchive)
             {
-                return bmp;
+                WorldArchiveRender = new WorldArchiveTooltipRender();
+                WorldArchiveRender.WorldArchiveMessage = worldArchiveDesc;
+                Bitmap waBitmap = WorldArchiveRender.Render();
+                Bitmap appendWaBitmap = new Bitmap(bmp.Width + waBitmap.Width, Math.Max(bmp.Height, waBitmap.Height));
+                using (g = Graphics.FromImage(appendWaBitmap))
+                {
+                    g.DrawImage(bmp, 0, 0, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+                    g.DrawImage(waBitmap, bmp.Width, 0, new Rectangle(0, 0, waBitmap.Width, waBitmap.Height), GraphicsUnit.Pixel);
+                }
+                bmp = appendWaBitmap;
             }
+            return bmp;
         }
 
         private Bitmap drawIllustration2SetTooltip(List<Bitmap> bitmaps, int margin, int perLineCount, int npcIndex)
@@ -316,6 +329,16 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
             return sr.Name;
+        }
+
+        private string GetWorldArchiveDesc(int npcID)
+        {
+            StringResult sr;
+            if (this.StringLinker == null || !this.StringLinker.StringWorldArchiveNpc.TryGetValue(npcID, out sr))
+            {
+                return null;
+            }
+            return sr.Desc;
         }
     }
 }

@@ -31,6 +31,7 @@
             this.superTabControl1 = new DevComponents.DotNetBar.SuperTabControl();
             this.superTabControlPanel1 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.chkEnable22AniStyle = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkEnableWorldArchive = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowAllIllustAtOnce = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowMiniMap = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowMiniMapMob = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -1102,6 +1103,7 @@
             // 
             this.superTabControlPanel5.Controls.Add(this.chkShowAllIllustAtOnce);
             this.superTabControlPanel5.Controls.Add(this.chkEnable22AniStyle);
+            this.superTabControlPanel5.Controls.Add(this.chkEnableWorldArchive);
             this.superTabControlPanel5.Controls.Add(this.labelX4);
             this.superTabControlPanel5.Controls.Add(this.cmbPreferredStringCopyMethod);
             this.superTabControlPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1177,6 +1179,21 @@
             this.cmbPreferredStringCopyMethod.Size = new System.Drawing.Size(120, 19);
             this.cmbPreferredStringCopyMethod.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbPreferredStringCopyMethod.TabIndex = 7;
+            // 
+            // chkEnableWorldArchive
+            // 
+            this.chkEnableWorldArchive.AutoSize = true;
+            this.chkEnableWorldArchive.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkEnableWorldArchive.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkEnableWorldArchive.Location = new System.Drawing.Point(13, 132);
+            this.chkEnableWorldArchive.Name = "chkEnableWorldArchive";
+            this.chkEnableWorldArchive.Size = new System.Drawing.Size(145, 16);
+            this.chkEnableWorldArchive.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkEnableWorldArchive.TabIndex = 8;
+            this.chkEnableWorldArchive.Text = "월드 아카이브 사용";
             // 
             // buttonX2
             // 
@@ -1301,6 +1318,7 @@
         private DevComponents.DotNetBar.LabelX labelCosmeticHairColor;
         private DevComponents.DotNetBar.LabelX labelCosmeticFaceColor;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkEnable22AniStyle;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableWorldArchive;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowAllIllustAtOnce;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowDamageSkinID;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowDamageSkin;

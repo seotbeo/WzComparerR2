@@ -29,6 +29,8 @@ namespace WzComparerR2.CharaSimControl
         public Mob MobInfo { get; set; }
         private AvatarCanvasManager avatar { get; set; }
         public Dictionary<int, HashSet<string>> DiffMobTags { get; set; } = new Dictionary<int, HashSet<string>>();
+        public bool EnableWorldArchive { get; set; }
+        private WorldArchiveTooltipRender WorldArchiveRender { get; set; }
 
         public override Bitmap Render()
         {
@@ -297,29 +299,45 @@ namespace WzComparerR2.CharaSimControl
             imgRect.Offset(10, 10);
             textRect.Offset(10, 10);
             locRect.Offset(10, 10);
-            g = Graphics.FromImage(bmp);
-            //绘制背景
-            GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
-            //绘制标题
-            foreach (var item in titleBlocks)
+            using (g = Graphics.FromImage(bmp))
             {
-                DrawText(g, item, titleRect.Location);
+                //绘制背景
+                GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
+                //绘制标题
+                foreach (var item in titleBlocks)
+                {
+                    DrawText(g, item, titleRect.Location);
+                }
+                //绘制图像
+                if (mobImg != null && !imgRect.IsEmpty)
+                {
+                    g.DrawImage(mobImg, imgRect);
+                }
+                //绘制文本
+                foreach (var item in propBlocks)
+                {
+                    DrawText(g, item, textRect.Location);
+                }
+                foreach (var item in locBlocks)
+                {
+                    DrawText(g, item, locRect.Location);
+                }
             }
-            //绘制图像
-            if (mobImg != null && !imgRect.IsEmpty)
+
+            string worldArchiveDesc = GetWorldArchiveDesc(MobInfo.ID);
+            if (!string.IsNullOrEmpty(worldArchiveDesc) && EnableWorldArchive)
             {
-                g.DrawImage(mobImg, imgRect);
+                WorldArchiveRender = new WorldArchiveTooltipRender();
+                WorldArchiveRender.WorldArchiveMessage = worldArchiveDesc;
+                Bitmap waBitmap = WorldArchiveRender.Render();
+                Bitmap appendWaBitmap = new Bitmap(bmp.Width + waBitmap.Width, Math.Max(bmp.Height, waBitmap.Height));
+                using (g = Graphics.FromImage(appendWaBitmap))
+                {
+                    g.DrawImage(bmp, 0, 0, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+                    g.DrawImage(waBitmap, bmp.Width, 0, new Rectangle(0, 0, waBitmap.Width, waBitmap.Height), GraphicsUnit.Pixel);
+                }
+                bmp = appendWaBitmap;
             }
-            //绘制文本
-            foreach (var item in propBlocks)
-            {
-                DrawText(g, item, textRect.Location);
-            }
-            foreach (var item in locBlocks)
-            {
-                DrawText(g, item, locRect.Location);
-            }
-            g.Dispose();
             return bmp;
         }
 
@@ -331,6 +349,16 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
             return sr.Name;
+        }
+
+        private string GetWorldArchiveDesc(int mobID)
+        {
+            StringResult sr;
+            if (this.StringLinker == null || !this.StringLinker.StringWorldArchiveMob.TryGetValue(mobID, out sr))
+            {
+                return null;
+            }
+            return sr.Desc;
         }
 
         private string GetElemAttrString(MobElemAttr elemAttr)

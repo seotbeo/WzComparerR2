@@ -341,6 +341,13 @@ namespace WzComparerR2
                 cmbPreferredStringCopyMethod.SelectedItem = item;
             }
         }
+        
+        [Link]
+        public bool Misc_EnableWorldArchive
+        {
+            get { return chkEnableWorldArchive.Checked; }
+            set { chkEnableWorldArchive.Checked = value; }
+        }
 
         public void Load(CharaSimConfig config)
         {

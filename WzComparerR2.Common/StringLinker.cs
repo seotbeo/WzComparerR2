@@ -21,6 +21,8 @@ namespace WzComparerR2.Common
             stringSetItem = new Dictionary<int, StringResult>();
             stringQuest = new Dictionary<int, StringResult>();
             stringAchievement = new Dictionary<int, StringResult>();
+            stringWorldArchiveMob = new Dictionary<int, StringResult>();
+            stringWorldArchiveNpc = new Dictionary<int, StringResult>();
         }
 
         public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
@@ -416,6 +418,106 @@ namespace WzComparerR2.Common
                 }
             }
 
+            var worldArchiveNode = etcNode.FindNodeByPath("worldArchive.img");
+            if (worldArchiveNode != null)
+            {
+                Wz_Image worldArchiveImg = worldArchiveNode.Value as Wz_Image;
+                if (worldArchiveImg != null && worldArchiveImg.TryExtract())
+                {
+                    Wz_Node targetNode = worldArchiveImg.Node;
+                    Wz_Node infoNode = targetNode.FindNodeByPath("collectionInfo");
+                    foreach (Wz_Node node in infoNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                    {
+                        foreach (Wz_Node subNode in node.Nodes)
+                        {
+                            switch (subNode.Text)
+                            {
+                                case "worldName":
+                                case "worldDesc": break;
+                                default:
+                                    if (int.TryParse(subNode.Text, out _))
+                                    {
+                                        foreach (Wz_Node subNode2 in subNode.Nodes)
+                                        {
+                                            switch (subNode2.Text)
+                                            {
+                                                case "mob":
+                                                    Dictionary<int, string> mobDict = new Dictionary<int, string>();
+                                                    foreach (Wz_Node mobNode in subNode2.Nodes)
+                                                    {
+                                                        foreach (Wz_Node mobSubNode in mobNode.Nodes)
+                                                        {
+                                                            switch (mobSubNode.Text)
+                                                            {
+                                                                case "id":
+                                                                    foreach (Wz_Node idNode in mobSubNode.Nodes)
+                                                                    {
+                                                                        mobDict[idNode.GetValueEx<int>(0)] = "(null)";
+                                                                    }
+                                                                    break;
+                                                                case "desc":
+                                                                    foreach (int mobId in mobDict.Keys)
+                                                                    {
+                                                                        mobDict[mobId] = mobSubNode.Value.ToString();
+                                                                    }
+                                                                    foreach (var kvp in mobDict)
+                                                                    {
+                                                                        StringResult strResult = new StringResult();
+                                                                        strResult.Name = stringMob[kvp.Key].Name;
+                                                                        strResult.Desc = kvp.Value;
+
+                                                                        stringWorldArchiveMob[kvp.Key] = strResult;
+                                                                    }
+                                                                    mobDict.Clear();
+                                                                    break;
+                                                            }
+                                                        }
+                                                    }
+                                                    break;
+                                                case "npc":
+                                                    Dictionary<int, string> npcDict = new Dictionary<int, string>();
+                                                    foreach (Wz_Node npcNode in subNode2.Nodes)
+                                                    {
+                                                        foreach (Wz_Node npcSubNode in npcNode.Nodes)
+                                                        {
+                                                            switch (npcSubNode.Text)
+                                                            {
+                                                                case "id":
+                                                                    foreach (Wz_Node idNode in npcSubNode.Nodes)
+                                                                    {
+                                                                        npcDict[idNode.GetValueEx<int>(0)] = "(null)";
+                                                                    }
+                                                                    break;
+                                                                case "desc":
+                                                                    foreach (int npcId in npcDict.Keys)
+                                                                    {
+                                                                        npcDict[npcId] = npcSubNode.Value.ToString();
+                                                                    }
+                                                                    foreach (var kvp in npcDict)
+                                                                    {
+                                                                        StringResult strResult = new StringResult();
+                                                                        strResult.Name = stringNpc[kvp.Key].Name;
+                                                                        strResult.Desc = kvp.Value;
+
+                                                                        stringWorldArchiveNpc[kvp.Key] = strResult;
+                                                                        npcDict.Clear();
+                                                                    }
+                                                                    break;
+                                                            }
+                                                        }
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+            }
+
             Wz_Node qDataNode = questNode?.FindNodeByPath("QuestData");
             Wz_Node qInfoNode = null;
             bool newQuestDir = true;
@@ -479,6 +581,8 @@ namespace WzComparerR2.Common
             stringSetItem.Clear();
             stringQuest.Clear();
             stringAchievement.Clear();
+            stringWorldArchiveMob.Clear();
+            stringWorldArchiveNpc.Clear();
         }
 
         public bool HasValues
@@ -501,6 +605,8 @@ namespace WzComparerR2.Common
         private Dictionary<int, StringResult> stringSetItem;
         private Dictionary<int, StringResult> stringQuest;
         private Dictionary<int, StringResult> stringAchievement;
+        private Dictionary<int, StringResult> stringWorldArchiveMob;
+        private Dictionary<int, StringResult> stringWorldArchiveNpc;
 
         private string GetDefaultString(Wz_Node node, string searchNodeText)
         {
@@ -572,6 +678,16 @@ namespace WzComparerR2.Common
         public Dictionary<int, StringResult> StringAchievement
         {
             get { return stringAchievement; }
+        }
+
+        public Dictionary<int, StringResult> StringWorldArchiveMob
+        {
+            get { return stringWorldArchiveMob;  }
+        }
+
+        public Dictionary<int, StringResult> StringWorldArchiveNpc
+        {
+            get { return stringWorldArchiveNpc; }
         }
     }
 }

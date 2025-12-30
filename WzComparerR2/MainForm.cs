@@ -296,7 +296,9 @@ namespace WzComparerR2
             tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
             tooltipQuickView.MapRender.ShowMiniMapNpc = Setting.Map.ShowMiniMapNpc;
             tooltipQuickView.MapRender.ShowMiniMapPortal = Setting.Map.ShowMiniMapPortal;
+            tooltipQuickView.MobRender.EnableWorldArchive = Setting.Misc.EnableWorldArchive;
             tooltipQuickView.NpcRender.ShowAllIllustAtOnce = Setting.Npc.ShowAllIllustAtOnce;
+            tooltipQuickView.NpcRender.EnableWorldArchive = Setting.Misc.EnableWorldArchive;
             tooltipQuickView.QuestRender.ShowObjectID = Setting.Quest.ShowID;
             tooltipQuickView.QuestRender.DefaultState = Setting.Quest.DefaultState;
             tooltipQuickView.QuestRender.ShowAllStates = Setting.Quest.ShowAllStates;
@@ -3594,6 +3596,7 @@ namespace WzComparerR2
                 string altAutoDesc = null;
                 StringResult sr = new StringResult();
                 Dictionary<int, StringResult> sr_dict = null;
+                StringResult waSr = new StringResult();
 
                 // dispose bitmaps no longer in use
                 if (tooltipQuickView.TargetItem != null)
@@ -3601,9 +3604,17 @@ namespace WzComparerR2
                     switch (tooltipQuickView.TargetItem)
                     {
                         case Mob item:
+                            if (stringLinker == null || !stringLinker.StringWorldArchiveMob.TryGetValue(item.ID, out waSr))
+                            {
+                                waSr = new StringResult();
+                            }
                             item.Dispose();
                             break;
                         case Npc item:
+                            if (stringLinker == null || !stringLinker.StringWorldArchiveNpc.TryGetValue(item.ID, out waSr))
+                            {
+                                waSr = new StringResult();
+                            }
                             item.Dispose();
                             break;
                         case Quest item:
@@ -3725,7 +3736,7 @@ namespace WzComparerR2
                 {
                     tooltipQuickView.NodeName = sr.Name;
                     tooltipQuickView.Desc = sr.Desc;
-                    tooltipQuickView.Pdesc = sr.Pdesc;
+                    tooltipQuickView.Pdesc = sr.Pdesc ?? waSr.Desc;
                     tooltipQuickView.AutoDesc = altAutoDesc ?? sr.AutoDesc;
                     tooltipQuickView.Hdesc = sr["h"];
                     tooltipQuickView.DescLeftAlign = sr["desc_leftalign"];
@@ -4131,6 +4142,7 @@ namespace WzComparerR2
                     comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                     comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
                     comparer.EnableDarkMode = chkEnableDarkMode.Checked;
+                    comparer.EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
                     if (chkOutputAll.Checked)
                     {
                         comparer.OutputGearTooltip = true;
