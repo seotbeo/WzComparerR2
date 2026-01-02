@@ -160,8 +160,6 @@ namespace WzComparerR2.Animation
                     bound.Update(vertices, vertexCount);
                 }
             }
-            bound.minX += skeleton.X;
-            bound.minY += skeleton.Y;
         }
 
         public override object Clone()
