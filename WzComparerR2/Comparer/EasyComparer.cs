@@ -56,6 +56,8 @@ namespace WzComparerR2.Comparer
         public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
+        public bool EnableWorldArchive { get; set; }
+        public bool ShowNpcQuotes { get; set; }
         public Dictionary<string, bool> SelectedNodes { get; set; }
 
         public bool OutputTooltips
@@ -1051,6 +1053,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffMobTags = this.DiffMobTags;
+                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
             }
 
             foreach (var mobID in OutputMobTooltipIDs)
@@ -1101,6 +1104,8 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowAllIllustAtOnce = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
+                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
+                tooltipRenderNewOld[i].ShowNpcQuotes = this.ShowNpcQuotes;
             }
 
             foreach (var npcID in OutputNpcTooltipIDs)

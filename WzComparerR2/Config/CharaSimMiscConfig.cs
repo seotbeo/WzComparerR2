@@ -21,5 +21,12 @@ namespace WzComparerR2.Config
             get { return (int)this["PreferredStringCopyMethod"]; }
             set { this["PreferredStringCopyMethod"] = value; }
         }
+        
+        [ConfigurationProperty("enableWorldArchive", DefaultValue = true)]
+        public bool EnableWorldArchive
+        {
+            get { return (bool)this["enableWorldArchive"]; }
+            set { this["enableWorldArchive"] = value; }
+        }
     }
 }
