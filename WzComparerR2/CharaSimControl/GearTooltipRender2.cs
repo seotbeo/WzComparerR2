@@ -1179,6 +1179,11 @@ namespace WzComparerR2.CharaSimControl
                     cosmeticSample.Bitmap.Dispose();
                 }
 
+                // 어센틱심볼 추가효과 설명
+                if (!string.IsNullOrEmpty(Gear.SpecificTargetDesc))
+                {
+                    GearGraphics.DrawString(g, Gear.SpecificTargetDesc.Trim(), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);
+                }
                 if (!string.IsNullOrEmpty(sr.Desc))
                 {
                     GearGraphics.DrawString(g, sr.Desc.Replace("#", " #"), GearGraphics.EquipDetailFont2, orange2FontColorTable, 10, 243, ref picH, 15);

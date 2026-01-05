@@ -1094,6 +1094,17 @@ namespace WzComparerR2.CharaSimControl
                 cosmeticSample.Bitmap.Dispose();
             }
 
+            // 어센틱심볼 추가효과 설명
+            if (!string.IsNullOrEmpty(Gear.SpecificTargetDesc))
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                hasThirdContents = true;
+
+                GearGraphics.DrawString(g, Gear.SpecificTargetDesc.Replace("#c", " #$g").Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
+                picH += 4;
+            }
+
             // 장비 설명
             if (!string.IsNullOrEmpty(sr.Desc))
             {

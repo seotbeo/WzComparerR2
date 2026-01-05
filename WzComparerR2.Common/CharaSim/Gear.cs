@@ -43,6 +43,7 @@ namespace WzComparerR2.CharaSim
         public bool CanPotential { get; internal set; }
         public string EpicHs { get; internal set; }
         public string LabelGradeTooltip { get; internal set; }
+        public string SpecificTargetDesc { get; internal set; }
         public BitmapOrigin ToolTIpPreview { get; set; }
         public BitmapOrigin IllusionRingPreview { get; set; }
 
@@ -1086,6 +1087,12 @@ namespace WzComparerR2.CharaSim
 
                         case "limitedLabelGradeTooltip":
                             gear.LabelGradeTooltip = Convert.ToString(subNode.Value);
+                            break;
+
+                        case string text when text.StartsWith("specificTarget"):
+                            var stDesc = subNode.FindNodeByPath("desc").GetValueEx<string>(null);
+                            if (!string.IsNullOrEmpty(stDesc))
+                                gear.SpecificTargetDesc = stDesc;
                             break;
 
                         default:
