@@ -4228,8 +4228,6 @@ namespace WzComparerR2
                         comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     }
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
-                    comparer.EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
-                    comparer.ShowNpcQuotes = CharaSimConfig.Default.Npc.ShowNpcQuotes;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);
                     comparer.StateDetailChanged += new EventHandler(comparer_StateDetailChanged);
                     try

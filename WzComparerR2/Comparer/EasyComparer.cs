@@ -56,8 +56,6 @@ namespace WzComparerR2.Comparer
         public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
         public bool HashPngFileName { get; set; }
-        public bool EnableWorldArchive { get; set; }
-        public bool ShowNpcQuotes { get; set; }
         public Dictionary<string, bool> SelectedNodes { get; set; }
 
         public bool OutputTooltips
@@ -1053,7 +1051,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffMobTags = this.DiffMobTags;
-                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
+                tooltipRenderNewOld[i].EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
             }
 
             foreach (var mobID in OutputMobTooltipIDs)
@@ -1102,10 +1100,10 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i] = new NpcTooltipRenderer();
                 tooltipRenderNewOld[i].StringLinker = this.StringLinkerNewOld[i];
                 tooltipRenderNewOld[i].ShowObjectID = true;
-                tooltipRenderNewOld[i].ShowAllIllustAtOnce = true;
+                tooltipRenderNewOld[i].ShowAllIllustAtOnce = CharaSimConfig.Default.Npc.ShowAllIllustAtOnce;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
-                tooltipRenderNewOld[i].EnableWorldArchive = this.EnableWorldArchive;
-                tooltipRenderNewOld[i].ShowNpcQuotes = this.ShowNpcQuotes;
+                tooltipRenderNewOld[i].EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
+                tooltipRenderNewOld[i].ShowNpcQuotes = CharaSimConfig.Default.Npc.ShowNpcQuotes;
             }
 
             foreach (var npcID in OutputNpcTooltipIDs)
