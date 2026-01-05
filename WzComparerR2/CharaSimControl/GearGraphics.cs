@@ -1040,25 +1040,21 @@ namespace WzComparerR2.CharaSimControl
             protected override void MeasureRuns(List<Run> runs)
             {
                 List<Run> tempRuns = new List<Run>(MAX_RANGES);
-                int imageWidth = 0;
-                int tmpWidth = 0;
+                int sw = 0;
 
                 foreach (var run in runs)
                 {
                     tempRuns.Add(run);
-                    if (run.IsImage)
-                    {
-                        tmpWidth += run.ImageWidth;
-                    }
                     if (tempRuns.Count >= MAX_RANGES)
                     {
-                        MeasureBatch(tempRuns, imageWidth);
+                        MeasureBatch(tempRuns, sw);
+                        var lastrun = tempRuns[tempRuns.Count - 1];
+                        sw = lastrun.X + lastrun.Width;
                         tempRuns.Clear();
-                        imageWidth = tmpWidth;
                     }
                 }
 
-                MeasureBatch(tempRuns, imageWidth);
+                MeasureBatch(tempRuns, sw);
 
                 //failed
                 if (runs.Where(run => !run.IsBreakLine && run.Length > 0)
@@ -1080,9 +1076,11 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            private void MeasureBatch(List<Run> runs, int imageWidth = 0)
+            private void MeasureBatch(List<Run> runs, int sw = 0)
             {
                 string text = sb.ToString();
+                string currentFontID = "";
+                Font currentFont = this.font;
                 Func<int, bool> isSingleKoreanChar = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '가' && text[runs[i].StartIndex] <= '힣';
                 var koreanSize = TR.MeasureText(g, "가", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 Func<int, bool> isSpace = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] == ' ';
@@ -1098,6 +1096,14 @@ namespace WzComparerR2.CharaSimControl
                         var layout = new RectangleF();
                         if (this.UseGDIRenderer)
                         {
+                            if (runs[i].FontID != null && currentFontID != runs[i].FontID)
+                            {
+                                currentFontID = runs[i].FontID;
+                                currentFont = GetFont(runs[i].FontID);
+                                koreanSize = TR.MeasureText(g, "가", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                spaceSize = TR.MeasureText(g, " ", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                numberSize = TR.MeasureText(g, "0", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                            }
                             var prefixLayout = new Point();
                             if (isSingleKoreanChar(i - 1))
                                 prefixLayout = new Point(runs[i - 1].X + koreanSize.Width, 0);
@@ -1107,24 +1113,24 @@ namespace WzComparerR2.CharaSimControl
                                 prefixLayout = new Point(runs[i - 1].X + spaceSize.Width, 0);
                             else if (isNumber(i - 1))
                                 prefixLayout = new Point(runs[i - 1].X + numberSize.Width, 0);
+                            else if (i > 0)
+                                prefixLayout = new Point(runs[i - 1].X + runs[i - 1].Width, 0);
                             else
-                                prefixLayout = new Point(TR.MeasureText(g, text.Substring(0, runs[i].StartIndex), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width
-                                    + imageWidth, 0);
+                                prefixLayout = new Point(sw, 0);
 
                             var currentLayout = new Size();
                             if (isSingleKoreanChar(i))
                                 currentLayout = koreanSize;
                             else if (runs[i].IsImage)
                             {
-                                currentLayout = new Size(runs[i].ImageWidth, runs[i].ImageHeight); ;
-                                imageWidth += currentLayout.Width;
+                                currentLayout = new Size(runs[i].ImageWidth, runs[i].ImageHeight);
                             }
                             else if (isSpace(i))
                                 currentLayout = spaceSize;
                             else if (isNumber(i))
                                 currentLayout = numberSize;
                             else
-                                currentLayout = TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                currentLayout = TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
 
                             layout = new RectangleF(prefixLayout, currentLayout);
                         }
@@ -1205,13 +1211,7 @@ namespace WzComparerR2.CharaSimControl
                         default: color = this.defaultColor; break;
                     }
                 }
-                if (!(this.FontTable?.TryGetValue(fontID, out font) ?? false))
-                {
-                    switch (fontID)
-                    {
-                        default: font = this.font; break;
-                    }
-                }
+                font = GetFont(fontID);
                 if ((this.ImageTable?.TryGetValue(imageID, out bmp) ?? false) && bmp != null) // ImageTable로 전달된 이미지 그리기
                 {
                     var dx = Math.Max((32 - bmp.Width) / 2, 0);
@@ -1231,6 +1231,18 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawString(content, font, brush, this.drawX + x, y, fmt);
                     }
                 }
+            }
+
+            private Font GetFont(string fontID)
+            {
+                if (!(this.FontTable?.TryGetValue(fontID, out var font) ?? false))
+                {
+                    switch (fontID)
+                    {
+                        default: font = this.font; break;
+                    }
+                }
+                return font;
             }
 
             public void Dispose()
