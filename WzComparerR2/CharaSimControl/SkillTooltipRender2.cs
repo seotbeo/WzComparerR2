@@ -144,8 +144,7 @@ namespace WzComparerR2.CharaSimControl
             splitterH = new List<int>();
 
             //获取文字
-            StringResult sr;
-            if (StringLinker == null || !StringLinker.StringSkill.TryGetValue(Skill.SkillID, out sr))
+            if (StringLinker == null || !(StringLinker.StringSkill.TryGetValue(Skill.SkillID, out var _sr) && _sr is StringResultSkill sr))
             {
                 sr = new StringResultSkill();
                 sr.Name = "(null)";
@@ -188,11 +187,10 @@ namespace WzComparerR2.CharaSimControl
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
-                    StringResult sr2 = null;
                     foreach (var kv in Skill.ReqSkill)
                     {
                         string skillName;
-                        if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out sr2))
+                        if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(kv.Key, out var sr2))
                         {
                             skillName = sr2.Name;
                         }
@@ -322,9 +320,9 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(icon.Bitmap, 13 - icon.Origin.X, picH + 32 - icon.Origin.Y);
                 }
                 string skillName;
-                if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AddAttackToolTipDescSkill, out sr))
+                if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AddAttackToolTipDescSkill, out var sr2))
                 {
-                    skillName = sr.Name;
+                    skillName = sr2.Name;
                 }
                 else
                 {
@@ -355,9 +353,9 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(icon.Bitmap, 13 - icon.Origin.X, picH + 32 - icon.Origin.Y);
                 }
                 string skillName;
-                if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AssistSkillLink, out sr))
+                if (this.StringLinker != null && this.StringLinker.StringSkill.TryGetValue(Skill.AssistSkillLink, out var sr2))
                 {
-                    skillName = sr.Name;
+                    skillName = sr2.Name;
                 }
                 else
                 {

@@ -243,16 +243,16 @@ namespace WzComparerR2.Common
                             {
                                 continue;
                             }
-                            StringResult strResult = null;
+                            StringResultSkill strResult = null;
                             if (update)
                             {
                                 try
                                 {
                                     if (tree.Text.Length >= 7 && Int32.TryParse(tree.Text, out id))
                                     {
-                                        strResult = stringSkill[id];
+                                        strResult = (StringResultSkill)stringSkill[id];
                                     }
-                                    strResult = stringSkill2[tree.Text];
+                                    strResult = (StringResultSkill)stringSkill2[tree.Text];
                                 }
                                 catch { }
                             }
@@ -302,6 +302,18 @@ namespace WzComparerR2.Common
                                     }
                                     strResult.SkillH.Add(hi);
                                 }
+                            }
+                            // KMST1196, add h_ prefix strings
+                            foreach (Wz_Node child in linkNode.Nodes)
+                            {
+                                if (child.Text.StartsWith("h_") && int.TryParse(child.Text.Substring(2), out int level) && level > 0 && child.Value != null)
+                                {
+                                    strResult.SkillExtraH.Add(new KeyValuePair<int, string>(level, child.GetValue<string>()));
+                                }
+                            }
+                            if (strResult.SkillExtraH.Count > 1)
+                            {
+                                strResult.SkillExtraH.Sort((left, right) => left.Key.CompareTo(right.Key));
                             }
                             strResult.SkillH.TrimExcess();
                             strResult.SkillpH.TrimExcess();
