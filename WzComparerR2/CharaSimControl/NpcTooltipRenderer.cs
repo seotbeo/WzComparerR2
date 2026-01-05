@@ -218,6 +218,8 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(bmp, 0, 0, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
                     g.DrawImage(waBitmap, bmp.Width, 0, new Rectangle(0, 0, waBitmap.Width, waBitmap.Height), GraphicsUnit.Pixel);
                 }
+                bmp.Dispose();
+                waBitmap.Dispose();
                 bmp = appendWaBitmap;
             }
             return bmp;

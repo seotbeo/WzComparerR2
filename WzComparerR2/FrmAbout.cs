@@ -50,7 +50,7 @@ namespace WzComparerR2
         {
             this.advTree1.Nodes.Clear();
 
-            this.advTree1.Nodes.Add(new Node("KMS <font color=\"#808080\">v5.0.1</font>"));
+            this.advTree1.Nodes.Add(new Node("KMS <font color=\"#808080\">v6.0.0</font>"));
 
             foreach (var contribution in new[]
             {
@@ -74,6 +74,7 @@ namespace WzComparerR2
                 Tuple.Create("[KMS] 툴팁 관련 기능 추가, 오류 수정 및 제보", "@sh-cho"),
                 //Tuple.Create("[KMS] 훈장 미리보기 오류 제보, 스크립트 연결 맵 기능 추가", "@seotbeo"),
                 Tuple.Create("[KMS] 각종 기능 추가", "섣버@seotbeo"),
+                Tuple.Create("[KMS] 각종 기능 추가(JMS/TMS)", "@HikariCalyx"),
                 Tuple.Create("[KMS] 아바타 믹스 색 조합 방법 구현", "snlt7d"),
             })
             {

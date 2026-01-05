@@ -1147,7 +1147,7 @@
             // 
             // 
             this.chkShowAllIllustAtOnce.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowAllIllustAtOnce.Location = new System.Drawing.Point(13, 36);
+            this.chkShowAllIllustAtOnce.Location = new System.Drawing.Point(15, 36);
             this.chkShowAllIllustAtOnce.Name = "chkShowAllIllustAtOnce";
             this.chkShowAllIllustAtOnce.Size = new System.Drawing.Size(145, 16);
             this.chkShowAllIllustAtOnce.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -1162,7 +1162,7 @@
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(13, 60);
+            this.labelX4.Location = new System.Drawing.Point(15, 60);
             this.labelX4.Name = "labelX4";
             this.labelX4.Size = new System.Drawing.Size(87, 16);
             this.labelX4.TabIndex = 7;
@@ -1190,7 +1190,7 @@
             // 
             // 
             this.chkEnableWorldArchive.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkEnableWorldArchive.Location = new System.Drawing.Point(13, 156);
+            this.chkEnableWorldArchive.Location = new System.Drawing.Point(15, 84);
             this.chkEnableWorldArchive.Name = "chkEnableWorldArchive";
             this.chkEnableWorldArchive.Size = new System.Drawing.Size(145, 16);
             this.chkEnableWorldArchive.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -1206,7 +1206,7 @@
             // 
             // 
             this.chkShowNpcQuotes.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowNpcQuotes.Location = new System.Drawing.Point(13, 180);
+            this.chkShowNpcQuotes.Location = new System.Drawing.Point(30, 108);
             this.chkShowNpcQuotes.Name = "chkShowNpcQuotes";
             this.chkShowNpcQuotes.Size = new System.Drawing.Size(145, 16);
             this.chkShowNpcQuotes.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;

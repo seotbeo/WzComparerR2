@@ -1273,7 +1273,7 @@ namespace WzComparerR2
                     this.stringLinker.Load(findStringWz(), findItemWz(), findEtcWz(), findQuestWz());
                 }
                 QueryPerformance.End();
-                labelItemStatus.Text = (this.stringLinker.HasValues ? "Wz 열기 완료: 소요 시간 " : "Wz 열기 완료, 문자열 테이블을 초기화할 수 없습니다. 소요 시간 ") + (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000) + "ms, " + wz.img_number + " IMG";
+                labelItemStatus.Text = (this.stringLinker.HasValues ? "Wz 열기 완료: 소요 시간 " : "Wz 열기 완료, StringLinker가 초기화되지 않았습니다. 소요 시간 ") + (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000) + "ms, " + wz.img_number + " IMG";
 
                 ConfigManager.Reload();
                 WcR2Config.Default.RecentDocuments.Remove(wzFilePath);
@@ -3633,49 +3633,18 @@ namespace WzComparerR2
                 string altAutoDesc = null;
                 StringResult sr = new StringResult();
                 Dictionary<int, StringResult> sr_dict = null;
-
-                // dispose bitmaps no longer in use
                 StringResult waSr = new StringResult();
                 StringBuilder npcQuoteSb = new StringBuilder();
+
+                // dispose bitmaps no longer in use
                 if (tooltipQuickView.TargetItem != null)
                 {
                     switch (tooltipQuickView.TargetItem)
                     {
                         case Mob item:
-                            if (CharaSimConfig.Default.Misc.EnableWorldArchive)
-                            {
-                                if (stringLinker == null || !stringLinker.StringWorldArchiveMob.TryGetValue(item.ID, out waSr))
-                                {
-                                    waSr = new StringResult();
-                                }
-                            }
                             item.Dispose();
                             break;
                         case Npc item:
-                            if (CharaSimConfig.Default.Misc.EnableWorldArchive)
-                            {
-                                if (stringLinker == null || !stringLinker.StringWorldArchiveNpc.TryGetValue(item.ID, out waSr))
-                                {
-                                    waSr = new StringResult();
-                                }
-                                if (CharaSimConfig.Default.Npc.ShowNpcQuotes)
-                                {
-                                    NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{item.ID}"), PluginManager.FindWz, stringLinker);
-                                    if (quote != null)
-                                    {
-                                        foreach (var kvp in quote.NQuote)
-                                            npcQuoteSb.AppendLine($"n{kvp.Key}: {kvp.Value}");
-                                        foreach (var kvp in quote.FQuote)
-                                            npcQuoteSb.AppendLine($"f{kvp.Key}: {kvp.Value}");
-                                        foreach (var kvp in quote.WQuote)
-                                            npcQuoteSb.AppendLine($"w{kvp.Key}: {kvp.Value}");
-                                        foreach (var kvp in quote.DQuote)
-                                            npcQuoteSb.AppendLine($"d{kvp.Key}: {kvp.Value}");
-                                        foreach (var kvp in quote.SpecialQuote)
-                                            npcQuoteSb.AppendLine($"s{kvp.Key}: {kvp.Value}");
-                                    }
-                                }
-                            }
                             item.Dispose();
                             break;
                         case Quest item:
@@ -3733,12 +3702,45 @@ namespace WzComparerR2
                         break;
 
                     case Mob mob:
+                        if (CharaSimConfig.Default.Misc.EnableWorldArchive)
+                        {
+                            if (stringLinker == null || !stringLinker.StringWorldArchiveMob.TryGetValue(mob.ID, out waSr))
+                            {
+                                waSr = new StringResult();
+                            }
+                        }
+
                         sr_dict = stringLinker.StringMob;
                         node_id = mob.ID;
                         fileName = node_id + ".png";
                         break;
 
                     case Npc npc:
+                        if (CharaSimConfig.Default.Misc.EnableWorldArchive)
+                        {
+                            if (stringLinker == null || !stringLinker.StringWorldArchiveNpc.TryGetValue(npc.ID, out waSr))
+                            {
+                                waSr = new StringResult();
+                            }
+                            if (CharaSimConfig.Default.Npc.ShowNpcQuotes)
+                            {
+                                NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{npc.ID}"), PluginManager.FindWz, stringLinker);
+                                if (quote != null)
+                                {
+                                    foreach (var kvp in quote.NQuote)
+                                        npcQuoteSb.AppendLine($"n{kvp.Key}: {kvp.Value}");
+                                    foreach (var kvp in quote.FQuote)
+                                        npcQuoteSb.AppendLine($"f{kvp.Key}: {kvp.Value}");
+                                    foreach (var kvp in quote.WQuote)
+                                        npcQuoteSb.AppendLine($"w{kvp.Key}: {kvp.Value}");
+                                    foreach (var kvp in quote.DQuote)
+                                        npcQuoteSb.AppendLine($"d{kvp.Key}: {kvp.Value}");
+                                    foreach (var kvp in quote.SpecialQuote)
+                                        npcQuoteSb.AppendLine($"s{kvp.Key}: {kvp.Value}");
+                                }
+                            }
+                        }
+
                         sr_dict = stringLinker.StringNpc;
                         node_id = npc.ID;
                         fileName = node_id + ".png";

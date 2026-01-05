@@ -451,7 +451,7 @@ namespace WzComparerR2.Common
                 }
             }
 
-            var worldArchiveNode = etcNode.FindNodeByPath("worldArchive.img");
+            var worldArchiveNode = etcNode?.FindNodeByPath("worldArchive.img");
             if (worldArchiveNode != null)
             {
                 Wz_Image worldArchiveImg = worldArchiveNode.Value as Wz_Image;

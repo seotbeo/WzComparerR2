@@ -349,6 +349,8 @@ namespace WzComparerR2.CharaSimControl
                     g.DrawImage(bmp, 0, 0, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
                     g.DrawImage(waBitmap, bmp.Width, 0, new Rectangle(0, 0, waBitmap.Width, waBitmap.Height), GraphicsUnit.Pixel);
                 }
+                bmp.Dispose();
+                waBitmap.Dispose();
                 bmp = appendWaBitmap;
             }
             return bmp;
@@ -379,7 +381,7 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap GetMobIcon(int mobID)
         {
-            BitmapOrigin mobIconOrigin = BitmapOrigin.CreateFromNode(PluginManager.FindWz($@"UI\UIWindow2.img\MobGage\Mob\{mobID.ToString()}", this.SourceWzFile), PluginManager.FindWz);
+            BitmapOrigin mobIconOrigin = BitmapOrigin.CreateFromNode(PluginManager.FindWz($@"UI\UIWindow2.img\MobGage\Mob\{mobID.ToString()}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
             return mobIconOrigin.Bitmap;
         }
 
