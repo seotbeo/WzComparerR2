@@ -1097,7 +1097,7 @@ namespace WzComparerR2.CharaSimControl
                         if (i.Value == 0) continue;
                         string approxPrice = "";
                         if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID)) approxPrice = " (일반 월드)";
-                        priceList.Add(string.Format(" - {0}개로 {1} 캐시{2}", i.Key, i.Value, approxPrice));
+                        priceList.Add(string.Format(" - {0}개: {1} 캐시{2}", i.Key, i.Value, approxPrice));
                     }
                 }
                 if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID))
@@ -1105,7 +1105,7 @@ namespace WzComparerR2.CharaSimControl
                     foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdReboot[item.ItemID])
                     {
                         if (i.Value == 0) continue;
-                        priceList.Add(string.Format(" - {0}개로 {1} 메소 (리부트 월드)", i.Key, i.Value));
+                        priceList.Add(string.Format(" - {0}개: {1} 메소 (리부트 월드)", i.Key, i.Value));
                     }
                 }
                 if (priceList.Count > 0)
@@ -1114,10 +1114,10 @@ namespace WzComparerR2.CharaSimControl
                     switch (priceList.Count)
                     {
                         case 1:
-                            GearGraphics.DrawString(g, " - 구매가액: " + priceList[0].Replace(" - 1개로 ", "").Replace(" - ", ""), GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+                            GearGraphics.DrawString(g, " - 판매가격: " + priceList[0].Replace(" - 1개: ", "").Replace(" - ", ""), GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
                             break;
                         default:
-                            GearGraphics.DrawString(g, "구매가액: ", GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+                            GearGraphics.DrawString(g, "판매가격: ", GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
                             foreach (var i in priceList)
                                 GearGraphics.DrawString(g, i, GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
                             break;

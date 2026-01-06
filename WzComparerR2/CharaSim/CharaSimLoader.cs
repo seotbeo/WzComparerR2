@@ -141,6 +141,8 @@ namespace WzComparerR2.CharaSim
 
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();
+            LoadedCommoditiesByItemIdRegular.Clear();
+            LoadedCommoditiesByItemIdReboot.Clear();
             foreach (Wz_Node node in commodityNode.Nodes)
             {
                 int commodityIndex;
@@ -152,25 +154,29 @@ namespace WzComparerR2.CharaSim
                         LoadedCommoditiesBySN[commodity.SN] = commodity;
                         if (commodity.ItemId / 10000 == 910)
                             LoadedCommoditiesByItemId[commodity.ItemId] = commodity;
-                        bool isRebootOnly = commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0));
-                        // 45: Reboot
-                        // 1: Scania (GMS)
-                        // 0: Scania (KMS)
-                        if (isRebootOnly)
+
+                        if (commodity.OnSale > 0)
                         {
-                            if (!LoadedCommoditiesByItemIdReboot.ContainsKey(commodity.ItemId))
+                            bool isRebootOnly = commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0));
+                            // 45: Reboot
+                            // 1: Scania (GMS)
+                            // 0: Scania (KMS)
+                            if (isRebootOnly)
                             {
-                                LoadedCommoditiesByItemIdReboot[commodity.ItemId] = new Dictionary<int, int>();
+                                if (!LoadedCommoditiesByItemIdReboot.ContainsKey(commodity.ItemId))
+                                {
+                                    LoadedCommoditiesByItemIdReboot[commodity.ItemId] = new Dictionary<int, int>();
+                                }
+                                LoadedCommoditiesByItemIdReboot[commodity.ItemId][commodity.Count] = commodity.Price;
                             }
-                            LoadedCommoditiesByItemIdReboot[commodity.ItemId][commodity.Count] = commodity.Price;
-                        }
-                        else
-                        {
-                            if (!LoadedCommoditiesByItemIdRegular.ContainsKey(commodity.ItemId))
+                            else
                             {
-                                LoadedCommoditiesByItemIdRegular[commodity.ItemId] = new Dictionary<int, int>();
+                                if (!LoadedCommoditiesByItemIdRegular.ContainsKey(commodity.ItemId))
+                                {
+                                    LoadedCommoditiesByItemIdRegular[commodity.ItemId] = new Dictionary<int, int>();
+                                }
+                                if (commodity.Price > 1) LoadedCommoditiesByItemIdRegular[commodity.ItemId][commodity.Count] = commodity.Price;
                             }
-                            if (commodity.Price > 1) LoadedCommoditiesByItemIdRegular[commodity.ItemId][commodity.Count] = commodity.Price;
                         }
                     }
                 }
@@ -184,6 +190,7 @@ namespace WzComparerR2.CharaSim
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();
             LoadedCommoditiesByItemIdRegular.Clear();
+            LoadedCommoditiesByItemIdReboot.Clear();
         }
 
         public static int GetActionDelay(string actionName, Wz_Node wzNode = null)

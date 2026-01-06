@@ -1265,7 +1265,7 @@ namespace WzComparerR2.CharaSimControl
                     if (price > 0)
                     {
                         picH += 16;
-                        GearGraphics.DrawString(g, "- 구매가액: " + ItemStringHelper.ToCJKNumberExpr(price) + "캐시", GearGraphics.EquipDetailFont, 13, 244, ref picH, 16);
+                        GearGraphics.DrawString(g, "- 판매가격: " + ItemStringHelper.ToCJKNumberExpr(price) + "캐시", GearGraphics.EquipDetailFont, 13, 244, ref picH, 16);
                     }
                 }
             }

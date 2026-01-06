@@ -487,12 +487,12 @@
             // 
             // 
             this.chkShowGearPurchasePrice.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowGearPurchasePrice.Location = new System.Drawing.Point(13, 108);
+            this.chkShowGearPurchasePrice.Location = new System.Drawing.Point(15, 132);
             this.chkShowGearPurchasePrice.Name = "chkShowGearPurchasePrice";
             this.chkShowGearPurchasePrice.Size = new System.Drawing.Size(126, 16);
             this.chkShowGearPurchasePrice.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkShowGearPurchasePrice.TabIndex = 5;
-            this.chkShowGearPurchasePrice.Text = "구매 가격 보기";
+            this.chkShowGearPurchasePrice.Text = "캐시샵 판매 가격 표시";
             // 
             // checkBoxX11
             // 
@@ -625,12 +625,12 @@
             // 
             // 
             this.chkShowItemPurchasePrice.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowItemPurchasePrice.Location = new System.Drawing.Point(13, 204);
+            this.chkShowItemPurchasePrice.Location = new System.Drawing.Point(15, 108);
             this.chkShowItemPurchasePrice.Name = "chkShowItemPurchasePrice";
             this.chkShowItemPurchasePrice.Size = new System.Drawing.Size(126, 16);
             this.chkShowItemPurchasePrice.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkShowItemPurchasePrice.TabIndex = 5;
-            this.chkShowItemPurchasePrice.Text = "구매 가격 보기";
+            this.chkShowItemPurchasePrice.Text = "캐시샵 판매 가격 표시";
             // 
             // checkBoxX12
             // 
@@ -656,7 +656,7 @@
             // 
             // 
             this.labelCosmeticHairColor.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelCosmeticHairColor.Location = new System.Drawing.Point(15, 108);
+            this.labelCosmeticHairColor.Location = new System.Drawing.Point(15, 132);
             this.labelCosmeticHairColor.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelCosmeticHairColor.Name = "labelCosmeticHairColor";
             this.labelCosmeticHairColor.Size = new System.Drawing.Size(89, 18);
@@ -671,7 +671,7 @@
             // 
             // 
             this.labelCosmeticFaceColor.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelCosmeticFaceColor.Location = new System.Drawing.Point(15, 132);
+            this.labelCosmeticFaceColor.Location = new System.Drawing.Point(15, 156);
             this.labelCosmeticFaceColor.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelCosmeticFaceColor.Name = "labelCosmeticFaceColor";
             this.labelCosmeticFaceColor.Size = new System.Drawing.Size(89, 18);
@@ -686,7 +686,7 @@
             this.comboBoxEx3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxEx3.FormattingEnabled = true;
             this.comboBoxEx3.ItemHeight = 15;
-            this.comboBoxEx3.Location = new System.Drawing.Point(140, 106);
+            this.comboBoxEx3.Location = new System.Drawing.Point(140, 130);
             this.comboBoxEx3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx3.Name = "comboBoxEx3";
             this.comboBoxEx3.Size = new System.Drawing.Size(104, 21);
@@ -701,7 +701,7 @@
             this.comboBoxEx4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxEx4.FormattingEnabled = true;
             this.comboBoxEx4.ItemHeight = 15;
-            this.comboBoxEx4.Location = new System.Drawing.Point(140, 130);
+            this.comboBoxEx4.Location = new System.Drawing.Point(140, 154);
             this.comboBoxEx4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx4.Name = "comboBoxEx4";
             this.comboBoxEx4.Size = new System.Drawing.Size(104, 21);

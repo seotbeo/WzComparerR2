@@ -1215,7 +1215,7 @@ namespace WzComparerR2.CharaSimControl
                         if (i.Value == 0) continue;
                         string approxPrice = "";
                         if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID)) approxPrice = " (일반 월드)";
-                        priceList.Add(string.Format(" - {0}개로 {1} 캐시{2}", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value), approxPrice));
+                        priceList.Add(string.Format(" - {0}개: {1} 캐시{2}", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value), approxPrice));
                     }
                 }
                 if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID))
@@ -1223,7 +1223,7 @@ namespace WzComparerR2.CharaSimControl
                     foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdReboot[item.ItemID])
                     {
                         if (i.Value == 0) continue;
-                        priceList.Add(string.Format(" - {0}개로 {1} 메소 (리부트 월드)", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value)));
+                        priceList.Add(string.Format(" - {0}개: {1} 메소 (리부트 월드)", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value)));
                     }
                 }
                 if (priceList.Count > 0)
@@ -1231,10 +1231,10 @@ namespace WzComparerR2.CharaSimControl
                     switch (priceList.Count)
                     {
                         case 1:
-                            tags.Add("- 구매가액: " + priceList[0].Replace(" - 1개로 ", "").Replace(" - ", ""));
+                            tags.Add("- 판매가격: " + priceList[0].Replace(" - 1개: ", "").Replace(" - ", ""));
                             break;
                         default:
-                            tags.Add("구매가액:");
+                            tags.Add("판매가격:");
                             tags.AddRange(priceList);
                             break;
                     }
