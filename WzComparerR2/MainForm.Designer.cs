@@ -288,6 +288,14 @@
             this.btnRootNode = new DevComponents.DotNetBar.ButtonX();
             this.clbRootNode = new System.Windows.Forms.CheckedListBox();
             this.btnSkillTooltipExport = new DevComponents.DotNetBar.ButtonX();
+            this.itemContainerPBv = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainerPB1 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainerPB2 = new DevComponents.DotNetBar.ItemContainer();
+            this.buttonItemPBPlay = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemPBGA1 = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemPBGA2 = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemPBGB1 = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonItemPBGB2 = new DevComponents.DotNetBar.ButtonItem();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -1980,15 +1988,10 @@
             this.ribbonBar5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.ribbonBar5.DragDropSupport = true;
             this.ribbonBar5.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.cmbItemAniNames,
-            this.cmbItemSkins,
-            this.buttonItemSaveImage,
-            this.buttonItemGif,
-            this.buttonItemGif2,
-            this.colorPickerPicBoxBgColor});
+            this.itemContainerPBv,});
             this.ribbonBar5.Location = new System.Drawing.Point(0, 202);
             this.ribbonBar5.Name = "ribbonBar5";
-            this.ribbonBar5.Size = new System.Drawing.Size(292, 26);
+            this.ribbonBar5.Size = new System.Drawing.Size(292, 51);
             this.ribbonBar5.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonBar5.TabIndex = 2;
             this.ribbonBar5.Text = "ribbonBar5";
@@ -2001,6 +2004,106 @@
             // 
             this.ribbonBar5.TitleStyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.ribbonBar5.TitleVisible = false;
+            // 
+            // itemContainerPBv
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPBv.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPBv.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Vertical;
+            this.itemContainerPBv.Name = "itemContainerPBv";
+            this.itemContainerPBv.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.itemContainerPB1,
+            this.itemContainerPB2,});
+            // 
+            // 
+            // 
+            this.itemContainerPBv.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // itemContainerPB1
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPB1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPB1.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Horizontal;
+            this.itemContainerPB1.Name = "itemContainerPB1";
+            this.itemContainerPB1.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.colorPickerPicBoxBgColor,
+            this.buttonItemPBGB2,
+            this.buttonItemPBGB1,
+            this.buttonItemPBPlay,
+            this.buttonItemPBGA1,
+            this.buttonItemPBGA2,});
+            // 
+            // 
+            // 
+            this.itemContainerPB1.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // itemContainerPB2
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPB2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPB2.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Horizontal;
+            this.itemContainerPB2.Name = "itemContainerPB2";
+            this.itemContainerPB2.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.cmbItemAniNames,
+            this.cmbItemSkins,
+            this.buttonItemSaveImage,
+            this.buttonItemGif,
+            this.buttonItemGif2,});
+            // 
+            // 
+            // 
+            this.itemContainerPB2.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // buttonItemPBPlay
+            // 
+            this.buttonItemPBPlay.Image = global::WzComparerR2.Properties.Resources.Pause;
+            this.buttonItemPBPlay.Name = "buttonItemPBPlay";
+            this.buttonItemPBPlay.Text = "PictureBoxPlay";
+            this.buttonItemPBPlay.Click += new System.EventHandler(this.buttonItemPBPlay_Click);
+            this.buttonItemPBPlay.Tooltip = "일시정지";
+            // 
+            // buttonItemPBGA1
+            // 
+            this.buttonItemPBGA1.Image = global::WzComparerR2.Properties.Resources.GoA1;
+            this.buttonItemPBGA1.Name = "buttonItemPBGA1";
+            this.buttonItemPBGA1.Text = "PictureBoxGoAhead1";
+            this.buttonItemPBGA1.Click += new System.EventHandler(this.buttonItemPBGA1_Click);
+            this.buttonItemPBGA1.Enabled = false;
+            this.buttonItemPBGA1.Tooltip = "30ms 앞으로";
+            // 
+            // buttonItemPBGA2
+            // 
+            this.buttonItemPBGA2.Image = global::WzComparerR2.Properties.Resources.GoA2;
+            this.buttonItemPBGA2.Name = "buttonItemPBGA2";
+            this.buttonItemPBGA2.Text = "PictureBoxGoAhead2";
+            this.buttonItemPBGA2.Click += new System.EventHandler(this.buttonItemPBGA2_Click);
+            this.buttonItemPBGA2.Enabled = false;
+            this.buttonItemPBGA2.Tooltip = "360ms 앞으로";
+            // 
+            // buttonItemPBGB1
+            // 
+            this.buttonItemPBGB1.Image = global::WzComparerR2.Properties.Resources.GoB1;
+            this.buttonItemPBGB1.Name = "buttonItemPBGB1";
+            this.buttonItemPBGB1.Text = "PictureBoxGoBack1";
+            this.buttonItemPBGB1.Click += new System.EventHandler(this.buttonItemPBGB1_Click);
+            this.buttonItemPBGB1.Enabled = false;
+            this.buttonItemPBGB1.Tooltip = "30ms 뒤로";
+            // 
+            // buttonItemPBGB2
+            // 
+            this.buttonItemPBGB2.Image = global::WzComparerR2.Properties.Resources.GoB2;
+            this.buttonItemPBGB2.BeginGroup = true;
+            this.buttonItemPBGB2.Name = "buttonItemPBGB2";
+            this.buttonItemPBGB2.Text = "PictureBoxGoBack2";
+            this.buttonItemPBGB2.Click += new System.EventHandler(this.buttonItemPBGB2_Click);
+            this.buttonItemPBGB2.Enabled = false;
+            this.buttonItemPBGB2.Tooltip = "360ms 뒤로";
             // 
             // cmbItemAniNames
             // 
@@ -3653,5 +3756,13 @@
         private DevComponents.DotNetBar.ButtonX btnRootNode;
         private System.Windows.Forms.CheckedListBox clbRootNode;
         private DevComponents.DotNetBar.ButtonX btnSkillTooltipExport;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPBv;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPB1;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPB2;
+        private DevComponents.DotNetBar.ButtonItem buttonItemPBPlay;
+        private DevComponents.DotNetBar.ButtonItem buttonItemPBGA1;
+        private DevComponents.DotNetBar.ButtonItem buttonItemPBGA2;
+        private DevComponents.DotNetBar.ButtonItem buttonItemPBGB1;
+        private DevComponents.DotNetBar.ButtonItem buttonItemPBGB2;
     }
 }

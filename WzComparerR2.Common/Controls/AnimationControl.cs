@@ -61,6 +61,11 @@ namespace WzComparerR2.Controls
             }
         }
 
+        public bool IsPaused
+        {
+            get { return this.paused; }
+        }
+
         public int FrameInterval
         {
             get { return this.timer.Interval; }
@@ -75,13 +80,15 @@ namespace WzComparerR2.Controls
 
         public int CurrentTime
         {
-            get { return (int)this.lastUpdateTime.TotalMilliseconds; }
+            get { return (int)(this.lastUpdateTime + this.timeOffset).TotalMilliseconds; }
         }
 
         private float globalScale;
         private Timer timer;
         private Stopwatch sw;
         private TimeSpan lastUpdateTime;
+        private TimeSpan timeOffset;
+        private bool paused;
         private int maxLength;
 
         private SpriteBatchEx sprite;
@@ -109,7 +116,7 @@ namespace WzComparerR2.Controls
                 }
             }
             */
-            var curTime = (int)(this.lastUpdateTime).TotalMilliseconds;
+            var curTime = (int)(this.lastUpdateTime + this.timeOffset).TotalMilliseconds;
             var margin = this.timer.Interval; // 부자연스러운 전환 완화
             if (curTime > maxLength - margin)
             {
@@ -142,7 +149,7 @@ namespace WzComparerR2.Controls
             Matrix mtViewport = Matrix.CreateTranslation(this.Padding.Left, this.Padding.Top, 0);
             Matrix mtAnimation = Matrix.CreateScale(GlobalScale, GlobalScale, 1) * mtViewport;
 
-            var curTime = (int)(this.lastUpdateTime).TotalMilliseconds;
+            var curTime = (int)(this.lastUpdateTime + this.timeOffset).TotalMilliseconds;
             var playingItems = GetPlayingAni(curTime);
             foreach (var animation in playingItems)
             {
@@ -214,8 +221,10 @@ namespace WzComparerR2.Controls
 
         public void ResetTimer()
         {
+            this.timeOffset = TimeSpan.Zero;
             this.lastUpdateTime = TimeSpan.Zero;
-            this.sw.Restart();
+            if (this.IsPaused) this.sw.Reset();
+            else this.sw.Restart();
         }
 
         public void ResetAll()
@@ -264,6 +273,39 @@ namespace WzComparerR2.Controls
             UpdateMaxLength();
             ResetTimer();
             ResetAll();
+        }
+
+        protected void Pause()
+        {
+            this.sw.Stop();
+            this.timer.Enabled = false;
+            this.paused = true;
+        }
+
+        protected void Resume()
+        {
+            this.sw.Start();
+            this.timer.Enabled = true;
+            this.paused = false;
+        }
+
+        protected void UpdateTimeOffset(int ms)
+        {
+            if (!this.IsPaused || !this.Visible)
+            {
+                return;
+            }
+
+            var round = (10 - this.CurrentTime % 10) % 10;
+            var offset = TimeSpan.FromMilliseconds(ms + round) + this.lastUpdateTime + this.timeOffset;
+
+            offset = TimeSpan.FromMilliseconds(Math.Max(0, Math.Min((this.MaxLength - this.timer.Interval) / 10 * 10, offset.TotalMilliseconds)));
+            this.ResetTimer();
+            this.ResetAll();
+            this.timeOffset = offset;
+
+            this.Update(offset);
+            this.Invalidate();
         }
 
         #region EVENTS
@@ -355,6 +397,12 @@ namespace WzComparerR2.Controls
                         }
                     }
                 }
+            }
+
+            if (this.mouseDragContext.IsDragging && this.IsPaused && this.Visible)
+            {
+                this.Update(TimeSpan.Zero);
+                this.Invalidate();
             }
         }
 

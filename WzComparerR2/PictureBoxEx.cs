@@ -1098,6 +1098,21 @@ namespace WzComparerR2
             }
         }
 
+        public void DoPause()
+        {
+            base.Pause();
+        }
+
+        public void DoResume()
+        {
+            base.Resume();
+        }
+
+        public void DoTimeUpdate(int ms)
+        {
+            base.UpdateTimeOffset(ms);
+        }
+
         public void DisposeAnimationItem(AnimationItem animationItem)
         {
             switch (animationItem)
