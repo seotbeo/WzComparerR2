@@ -72,7 +72,6 @@ namespace WzComparerR2.CharaSimControl
         public TooltipRender SetItemRender { get; set; }
         public TooltipRender CashPackageRender { get; set; }
         private AvatarCanvasManager avatar { get; set; }
-        private string titleLanguage = "";
 
         public override Bitmap Render()
         {
@@ -741,7 +740,7 @@ namespace WzComparerR2.CharaSimControl
             if (item.Props.TryGetValue(ItemPropType.pointCost, out value) && value > 0)
             {
                 picH += 16;
-                GearGraphics.DrawString(g, "- " + value + " 포인트", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
+                GearGraphics.DrawString(g, "· " + value + " 포인트", GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
             }
             if (item.Specs.TryGetValue(ItemSpecType.recipeValidDay, out value) && value > 0)
             {
@@ -898,7 +897,7 @@ namespace WzComparerR2.CharaSimControl
                                 }
                                 break;
                         }
-                        GearGraphics.DrawString(g, "- " + coreSpec, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
+                        GearGraphics.DrawString(g, "· " + coreSpec, GearGraphics.ItemDetailFont, 14, right, ref picH, 16);
                     }
                 }
 
@@ -1080,7 +1079,7 @@ namespace WzComparerR2.CharaSimControl
                     case "장비제작": sr.Name = "장비 제작"; break;
                     case "장신구제작": sr.Name = "장신구 제작"; break;
                 }
-                TextRenderer.DrawText(g, string.Format("- {0} {1}레벨 이상", sr.Name, reqSkillLevel), GearGraphics.ItemDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.SetItemNameBrush).Color, TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, string.Format("· {0} {1}레벨 이상", sr.Name, reqSkillLevel), GearGraphics.ItemDetailFont, new Point(13, picH), ((SolidBrush)GearGraphics.SetItemNameBrush).Color, TextFormatFlags.NoPadding);
                 picH += 16;
                 picH += 6;
             }
