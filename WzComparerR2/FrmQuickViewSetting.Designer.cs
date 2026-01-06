@@ -110,6 +110,8 @@
             this.chkShowReqSkill = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.labelX4 = new DevComponents.DotNetBar.LabelX();
             this.cmbPreferredStringCopyMethod = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.chkShowItemPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkShowGearPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
@@ -461,6 +463,7 @@
             // 
             // superTabControlPanel2
             // 
+            this.superTabControlPanel2.Controls.Add(this.chkShowGearPurchasePrice);
             //this.superTabControlPanel2.Controls.Add(this.checkBoxX11);
             this.superTabControlPanel2.Controls.Add(this.checkBoxX18);
             this.superTabControlPanel2.Controls.Add(this.checkBoxX17);
@@ -475,6 +478,21 @@
             this.superTabControlPanel2.TabIndex = 0;
             this.superTabControlPanel2.TabItem = this.superTabItem2;
             this.superTabControlPanel2.Visible = false;
+            // 
+            // chkShowGearPurchasePrice
+            // 
+            this.chkShowGearPurchasePrice.AutoSize = true;
+            this.chkShowGearPurchasePrice.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowGearPurchasePrice.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowGearPurchasePrice.Location = new System.Drawing.Point(13, 108);
+            this.chkShowGearPurchasePrice.Name = "chkShowGearPurchasePrice";
+            this.chkShowGearPurchasePrice.Size = new System.Drawing.Size(126, 16);
+            this.chkShowGearPurchasePrice.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowGearPurchasePrice.TabIndex = 5;
+            this.chkShowGearPurchasePrice.Text = "구매 가격 보기";
             // 
             // checkBoxX11
             // 
@@ -581,6 +599,7 @@
             // 
             // superTabControlPanel3
             // 
+            this.superTabControlPanel3.Controls.Add(this.chkShowItemPurchasePrice);
             this.superTabControlPanel3.Controls.Add(this.checkBoxX12);
             this.superTabControlPanel3.Controls.Add(this.checkBoxX9);
             this.superTabControlPanel3.Controls.Add(this.checkBoxX8);
@@ -597,6 +616,21 @@
             this.superTabControlPanel3.TabIndex = 0;
             this.superTabControlPanel3.TabItem = this.superTabItem3;
             this.superTabControlPanel3.Visible = false;
+            // 
+            // chkShowItemPurchasePrice
+            // 
+            this.chkShowItemPurchasePrice.AutoSize = true;
+            this.chkShowItemPurchasePrice.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowItemPurchasePrice.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowItemPurchasePrice.Location = new System.Drawing.Point(13, 204);
+            this.chkShowItemPurchasePrice.Name = "chkShowItemPurchasePrice";
+            this.chkShowItemPurchasePrice.Size = new System.Drawing.Size(126, 16);
+            this.chkShowItemPurchasePrice.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowItemPurchasePrice.TabIndex = 5;
+            this.chkShowItemPurchasePrice.Text = "구매 가격 보기";
             // 
             // checkBoxX12
             // 
@@ -1360,5 +1394,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowReqSkill;
         private DevComponents.DotNetBar.LabelX labelX4;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbPreferredStringCopyMethod;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkShowItemPurchasePrice;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkShowGearPurchasePrice;
     }
 }

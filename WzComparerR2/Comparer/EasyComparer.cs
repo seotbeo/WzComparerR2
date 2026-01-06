@@ -822,6 +822,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).AlwaysUseMseaFormatDamageSkin = CharaSimConfig.Default.DamageSkin.AlwaysUseMseaFormat;
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).ShowCashPurchasePrice = CharaSimConfig.Default.Item.ShowPurchasePrice;
                 }
                 else
                 {
@@ -841,6 +842,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).AlwaysUseMseaFormatDamageSkin = CharaSimConfig.Default.DamageSkin.AlwaysUseMseaFormat;
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).ShowCashPurchasePrice = CharaSimConfig.Default.Item.ShowPurchasePrice;
                 }
             }
 
@@ -904,6 +906,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender22).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
+                    (tooltipRenderNewOld[i] as GearTooltipRender22).ShowCashPurchasePrice = CharaSimConfig.Default.Gear.ShowPurchasePrice;
                 }
                 else
                 {
@@ -915,6 +918,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender2).CompareMode = true;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
+                    (tooltipRenderNewOld[i] as GearTooltipRender2).ShowCashPurchasePrice = CharaSimConfig.Default.Gear.ShowPurchasePrice;
                 }
                 CharaWzNodeNewOld[i] = PluginManager.FindWz(Wz_Type.Character, WzFileNewOld[i]);
             }

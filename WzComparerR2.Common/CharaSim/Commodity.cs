@@ -10,6 +10,7 @@ namespace WzComparerR2.CharaSim
     {
         public Commodity()
         {
+            gameWorlds = new List<int>();
         }
         public int SN;
         public int ItemId;
@@ -25,6 +26,7 @@ namespace WzComparerR2.CharaSim
         public int Class;
         public int Limit;
         public string gameWorld;
+        public List<int> gameWorlds;
         public int LimitMax;
         public int LimitQuestID;
         public int originalPrice;
@@ -94,6 +96,14 @@ namespace WzComparerR2.CharaSim
                         break;
                     case "gameWorld":
                         commodity.gameWorld = Convert.ToString(subNode.Value);
+                        string[] worlds = Convert.ToString(subNode.Value).Split('/');
+                        foreach (var i in worlds)
+                        {
+                            if (int.TryParse(i, out int tmp))
+                            {
+                                commodity.gameWorlds.Add(tmp);
+                            }
+                        }
                         break;
                     case "originalPrice":
                         commodity.originalPrice = value;

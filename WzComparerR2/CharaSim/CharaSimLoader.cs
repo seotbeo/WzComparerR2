@@ -15,12 +15,16 @@ namespace WzComparerR2.CharaSim
             LoadedExclusiveEquips = new Dictionary<int, ExclusiveEquip>();
             LoadedCommoditiesBySN = new Dictionary<int, Commodity>();
             LoadedCommoditiesByItemId = new Dictionary<int, Commodity>();
+            LoadedCommoditiesByItemIdRegular = new Dictionary<int, Dictionary<int, int>>();
+            LoadedCommoditiesByItemIdReboot = new Dictionary<int, Dictionary<int, int>>();
         }
 
         public static Dictionary<int, SetItem> LoadedSetItems { get; private set; }
         public static Dictionary<int, ExclusiveEquip> LoadedExclusiveEquips { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesBySN { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesByItemId { get; private set; }
+        public static Dictionary<int, Dictionary<int, int>> LoadedCommoditiesByItemIdRegular { get; private set; }
+        public static Dictionary<int, Dictionary<int, int>> LoadedCommoditiesByItemIdReboot { get; private set; }
 
         public static void LoadSetItemsIfEmpty()
         {
@@ -148,6 +152,26 @@ namespace WzComparerR2.CharaSim
                         LoadedCommoditiesBySN[commodity.SN] = commodity;
                         if (commodity.ItemId / 10000 == 910)
                             LoadedCommoditiesByItemId[commodity.ItemId] = commodity;
+                        bool isRebootOnly = commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0));
+                        // 45: Reboot
+                        // 1: Scania (GMS)
+                        // 0: Scania (KMS)
+                        if (isRebootOnly)
+                        {
+                            if (!LoadedCommoditiesByItemIdReboot.ContainsKey(commodity.ItemId))
+                            {
+                                LoadedCommoditiesByItemIdReboot[commodity.ItemId] = new Dictionary<int, int>();
+                            }
+                            LoadedCommoditiesByItemIdReboot[commodity.ItemId][commodity.Count] = commodity.Price;
+                        }
+                        else
+                        {
+                            if (!LoadedCommoditiesByItemIdRegular.ContainsKey(commodity.ItemId))
+                            {
+                                LoadedCommoditiesByItemIdRegular[commodity.ItemId] = new Dictionary<int, int>();
+                            }
+                            if (commodity.Price > 1) LoadedCommoditiesByItemIdRegular[commodity.ItemId][commodity.Count] = commodity.Price;
+                        }
                     }
                 }
             }
@@ -157,6 +181,9 @@ namespace WzComparerR2.CharaSim
         {
             LoadedSetItems.Clear();
             LoadedExclusiveEquips.Clear();
+            LoadedCommoditiesBySN.Clear();
+            LoadedCommoditiesByItemId.Clear();
+            LoadedCommoditiesByItemIdRegular.Clear();
         }
 
         public static int GetActionDelay(string actionName, Wz_Node wzNode = null)

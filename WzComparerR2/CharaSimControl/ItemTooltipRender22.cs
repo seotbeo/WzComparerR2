@@ -49,6 +49,7 @@ namespace WzComparerR2.CharaSimControl
         public bool CompareMode { get; set; } = false;
         public int CosmeticHairColor { get; set; }
         public int CosmeticFaceColor { get; set; }
+        public bool ShowCashPurchasePrice { get; set; }
         public bool ShowDamageSkin { get; set; }
         public bool ShowDamageSkinID { get; set; }
         public bool UseMiniSizeDamageSkin { get; set; }
@@ -1200,6 +1201,43 @@ namespace WzComparerR2.CharaSimControl
                 {
                     case 1: tags.Add("#$r카르마의 가위 또는 실버 카르마의 가위 사용 시 1회 교환 가능#"); break;
                     case 2: tags.Add("#$r플래티넘 카르마의 가위 사용 시 1회 교환 가능#"); break;
+                }
+            }
+
+            // purchasePrice
+            if (ShowCashPurchasePrice && item.Cash)
+            {
+                List<string> priceList = new List<string>();
+                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(item.ItemID))
+                {
+                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdRegular[item.ItemID])
+                    {
+                        if (i.Value == 0) continue;
+                        string approxPrice = "";
+                        if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID)) approxPrice = " (일반 월드)";
+                        priceList.Add(string.Format(" - {0}개로 {1} 캐시{2}", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value), approxPrice));
+                    }
+                }
+                if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID))
+                {
+                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdReboot[item.ItemID])
+                    {
+                        if (i.Value == 0) continue;
+                        priceList.Add(string.Format(" - {0}개로 {1} 메소 (리부트 월드)", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value)));
+                    }
+                }
+                if (priceList.Count > 0)
+                {
+                    switch (priceList.Count)
+                    {
+                        case 1:
+                            tags.Add("- 구매가액: " + priceList[0].Replace(" - 1개로 ", "").Replace(" - ", ""));
+                            break;
+                        default:
+                            tags.Add("구매가액:");
+                            tags.AddRange(priceList);
+                            break;
+                    }
                 }
             }
 

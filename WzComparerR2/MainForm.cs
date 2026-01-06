@@ -261,12 +261,13 @@ namespace WzComparerR2
             tooltipQuickView.GearRender.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
             tooltipQuickView.GearRender.MaxStar25 = Setting.Gear.MaxStar25;
             tooltipQuickView.GearRender.ShowCosmetic = Setting.Gear.ShowCosmetic;
+            tooltipQuickView.GearRender.ShowCashPurchasePrice = Setting.Gear.ShowPurchasePrice;
             tooltipQuickView.GearRender22.ShowObjectID = Setting.Gear.ShowID;
             tooltipQuickView.GearRender22.ShowSpeed = Setting.Gear.ShowWeaponSpeed;
             tooltipQuickView.GearRender22.ShowLevelOrSealed = Setting.Gear.ShowLevelOrSealed;
             tooltipQuickView.GearRender22.MaxStar25 = Setting.Gear.MaxStar25;
             tooltipQuickView.GearRender22.ShowCosmetic = Setting.Gear.ShowCosmetic;
-
+            tooltipQuickView.GearRender22.ShowCashPurchasePrice = Setting.Gear.ShowPurchasePrice;
             tooltipQuickView.ItemRender.ShowObjectID = Setting.Item.ShowID;
             tooltipQuickView.ItemRender.LinkRecipeInfo = Setting.Item.LinkRecipeInfo;
             tooltipQuickView.ItemRender.LinkRecipeItem = Setting.Item.LinkRecipeItem;
@@ -279,6 +280,7 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender.AlwaysUseMseaFormatDamageSkin = Setting.DamageSkin.AlwaysUseMseaFormat;
             tooltipQuickView.ItemRender.DisplayUnitOnSingleLine = Setting.DamageSkin.DisplayUnitOnSingleLine;
             tooltipQuickView.ItemRender.DamageSkinNumber = Setting.DamageSkin.DamageSkinNumber;
+            tooltipQuickView.ItemRender.ShowCashPurchasePrice = Setting.Item.ShowPurchasePrice;
             tooltipQuickView.ItemRender22.ShowObjectID = Setting.Item.ShowID;
             tooltipQuickView.ItemRender22.LinkRecipeInfo = Setting.Item.LinkRecipeInfo;
             tooltipQuickView.ItemRender22.LinkRecipeItem = Setting.Item.LinkRecipeItem;
@@ -291,7 +293,7 @@ namespace WzComparerR2
             tooltipQuickView.ItemRender22.AlwaysUseMseaFormatDamageSkin = Setting.DamageSkin.AlwaysUseMseaFormat;
             tooltipQuickView.ItemRender22.DisplayUnitOnSingleLine = Setting.DamageSkin.DisplayUnitOnSingleLine;
             tooltipQuickView.ItemRender22.DamageSkinNumber = Setting.DamageSkin.DamageSkinNumber;
-
+            tooltipQuickView.ItemRender22.ShowCashPurchasePrice = Setting.Item.ShowPurchasePrice;
             tooltipQuickView.MapRender.ShowMiniMap = Setting.Map.ShowMiniMap;
             tooltipQuickView.MapRender.ShowMiniMapMob = Setting.Map.ShowMiniMapMob;
             tooltipQuickView.MapRender.ShowMiniMapNpc = Setting.Map.ShowMiniMapNpc;

@@ -55,6 +55,7 @@ namespace WzComparerR2.CharaSimControl
         public bool MaxStar25 { get; set; } = false;
         public bool ShowCosmetic { get; set; }
         public bool IsCombineProperties { get; set; } = true;
+        public bool ShowCashPurchasePrice { get; set; }
         public bool CompareMode { get; set; } = false;
         private bool isMsnClient { get; set; }
 
@@ -1253,6 +1254,19 @@ namespace WzComparerR2.CharaSimControl
                     GearGraphics.DrawString(g, exclusiveEquip, GearGraphics.EquipDetailFont2, orange2FontColorTable, 13, 244, ref picH, 15);
                     picH += 5;
                     break;
+                }
+            }
+
+            if (Gear.Cash && ShowCashPurchasePrice)
+            {
+                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(Gear.ItemID))
+                {
+                    int price = CharaSimLoader.LoadedCommoditiesByItemIdRegular[Gear.ItemID].Values.ToList()[0];
+                    if (price > 0)
+                    {
+                        picH += 16;
+                        GearGraphics.DrawString(g, "- 구매가액: " + ItemStringHelper.ToCJKNumberExpr(price) + "캐시", GearGraphics.EquipDetailFont, 13, 244, ref picH, 16);
+                    }
                 }
             }
 
