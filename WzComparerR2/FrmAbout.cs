@@ -55,6 +55,9 @@ namespace WzComparerR2
             foreach (var contribution in new[]
             {
                 Tuple.Create("[KMS] 각종 기능 추가, 최종 번역", "박현민"),
+                Tuple.Create("[KMS] 각종 기능 추가", "섣버@seotbeo"),
+                Tuple.Create("[KMS] 각종 기능 추가(GMS)", "@PirateIzzy"),
+                Tuple.Create("[KMS] 각종 기능 추가(JMS/TMS)", "@HikariCalyx"),
                 Tuple.Create("[KMS] 문구 번역", "슈린냥"),
                 Tuple.Create("[KMS] 문구 오류 제보", "인소야닷컴 실버"),
                 Tuple.Create("[KMS] 문구 오류 제보", "jusir_@naver.com"),
@@ -73,8 +76,6 @@ namespace WzComparerR2
                 Tuple.Create("[KMS] 아바타 모두 내보내기 오류 제보", "@pid011"),
                 Tuple.Create("[KMS] 툴팁 관련 기능 추가, 오류 수정 및 제보", "@sh-cho"),
                 //Tuple.Create("[KMS] 훈장 미리보기 오류 제보, 스크립트 연결 맵 기능 추가", "@seotbeo"),
-                Tuple.Create("[KMS] 각종 기능 추가", "섣버@seotbeo"),
-                Tuple.Create("[KMS] 각종 기능 추가(JMS/TMS)", "@HikariCalyx"),
                 Tuple.Create("[KMS] 아바타 믹스 색 조합 방법 구현", "snlt7d"),
             })
             {
