@@ -337,6 +337,10 @@ namespace WzComparerR2.Controls
             {
                 this.GlobalScale = 1f;
             }
+            if (this.IsPaused && this.Visible)
+            {
+                this.Invalidate();
+            }
         }
 
         private void AnimationControl_MouseUp(object sender, MouseEventArgs e)
@@ -344,6 +348,10 @@ namespace WzComparerR2.Controls
             if (this.MouseDragEnabled && e.Button == MouseButtons.Left)
             {
                 this.mouseDragContext.IsDragging = false;
+            }
+            if (this.IsPaused && this.Visible)
+            {
+                this.Invalidate();
             }
         }
 
@@ -401,7 +409,6 @@ namespace WzComparerR2.Controls
 
             if (this.mouseDragContext.IsDragging && this.IsPaused && this.Visible)
             {
-                this.Update(TimeSpan.Zero);
                 this.Invalidate();
             }
         }
