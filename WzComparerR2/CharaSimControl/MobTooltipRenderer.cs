@@ -220,6 +220,7 @@ namespace WzComparerR2.CharaSimControl
             Rectangle locRect = Measure(locBlocks);
             Bitmap mobImg = MobInfo.Default.Bitmap;
             Bitmap mobIcon = GetMobIcon(MobInfo.ID);
+            bool hasMobIcon = mobIcon != null;
             if (MobInfo.IsAvatarLook)
             {
                 if (this.avatar == null)
@@ -278,9 +279,17 @@ namespace WzComparerR2.CharaSimControl
             //布局 
             //水平排列
             int width = 0;
+            Point titleOffset = new Point(0, 0);
             if (!imgRect.IsEmpty)
             {
                 textRect.X = imgRect.Width + 4;
+            }
+            if (hasMobIcon)
+            {
+                titleOffset.X += mobIcon.Width + 4;
+                titleRect.Width += mobIcon.Width + 4;
+                titleOffset.Y += Math.Abs((mobIcon.Height + 2 - titleRect.Height) / 2);
+                titleRect.Height = Math.Max(mobIcon.Height + 2, titleRect.Height);
             }
             locRect.X = textRect.X + textRect.Width + 4;
             width = Math.Max(titleRect.Width, Math.Max(imgRect.Right, Math.Max(textRect.Right, locRect.Right)));
@@ -309,15 +318,15 @@ namespace WzComparerR2.CharaSimControl
             {
                 //绘制背景
                 GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
+                //Attempt Draw Mob Icon
+                if (hasMobIcon)
+                {
+                    g.DrawImage(mobIcon, titleRect.X, titleRect.Y, new Rectangle(0, 0, mobIcon.Width, mobIcon.Height), GraphicsUnit.Pixel);
+                }
                 //绘制标题
                 foreach (var item in titleBlocks)
                 {
-                    DrawText(g, item, titleRect.Location);
-                }
-                //Attempt Draw Mob Icon
-                if (mobIcon != null)
-                {
-                    g.DrawImage(mobIcon, titleRect.Location.X - mobIcon.Width - 4, titleRect.Y - (mobIcon.Height - titleRect.Height) / 2, new Rectangle(0, 0, mobIcon.Width, mobIcon.Height), GraphicsUnit.Pixel);
+                    DrawText(g, item, new Point(titleRect.Location.X + titleOffset.X, titleRect.Location.Y + titleOffset.Y));
                 }
                 //绘制图像
                 if (mobImg != null && !imgRect.IsEmpty)
