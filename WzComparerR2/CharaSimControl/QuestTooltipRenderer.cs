@@ -630,9 +630,19 @@ namespace WzComparerR2.CharaSimControl
                         return "x%";
 
                     case "c":
-                    case "R":
                         return "0";
-                    //return "미완";
+
+                    case "R":
+                        var m = Regex.Match(info, @"\d+Ex(\w+)Ref\d+");
+                        if (m.Success)
+                        {
+                            var exVariable = m.Groups[1].Value;
+                            if (this.Quest.Check1Infoex.TryGetValue(exVariable, out var cond))
+                            {
+                                return cond ? "0" : "미완";
+                            }
+                        }
+                        return "0";
 
                     case "u":
                         return "미완";
