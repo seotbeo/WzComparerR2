@@ -1084,41 +1084,37 @@ namespace WzComparerR2.CharaSimControl
                 picH += 6;
             }
 
-
-
-            if (ShowCashPurchasePrice && item.Cash)
+            if (ShowCashPurchasePrice)
             {
                 List<string> priceList = new List<string>();
-                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(item.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(item.ItemID))
                 {
-                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdRegular[item.ItemID])
+                    foreach (var i in CharaSimLoader.LoadedCommodityPricesByItemId[item.ItemID])
                     {
-                        if (i.Value == 0) continue;
-                        string approxPrice = "";
-                        if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID)) approxPrice = " (일반 월드)";
-                        priceList.Add(string.Format(" - {0}개: {1} 캐시{2}", i.Key, i.Value, approxPrice));
-                    }
-                }
-                if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID))
-                {
-                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdReboot[item.ItemID])
-                    {
-                        if (i.Value == 0) continue;
-                        priceList.Add(string.Format(" - {0}개: {1} 메소 (리부트 월드)", i.Key, i.Value));
+                        if (i.Value.Price == 0) continue;
+                        string currency = i.Value.Meso ? "메소" : "캐시";
+                        string rebootWorld = i.Value.Reboot ? " (리부트 월드)" : "";
+                        priceList.Add(string.Format("#$S - {0}개: {1} {2}{3}#", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value.Price), currency, rebootWorld));
                     }
                 }
                 if (priceList.Count > 0)
                 {
+                    var itemPriceColorTable = new Dictionary<string, Color>()
+                    {
+                        { "$S", ((SolidBrush)GearGraphics.ItemPriceBrush).Color },
+                    };
                     picH += 29;
                     switch (priceList.Count)
                     {
+                        /*
                         case 1:
-                            GearGraphics.DrawString(g, " - 판매가격: " + priceList[0].Replace(" - 1개: ", "").Replace(" - ", ""), GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+                            GearGraphics.DrawString(g, " - 판매가격: " + priceList[0].Replace(" - 1개: ", "").Replace(" - ", ""), GearGraphics.ItemDetailFont, 100, right, ref picH, 16);
                             break;
+                        */
                         default:
-                            GearGraphics.DrawString(g, "판매가격: ", GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+                            GearGraphics.DrawString(g, "#$S판매가격 #", GearGraphics.ItemDetailFont, itemPriceColorTable, 100, right, ref picH, 16);
                             foreach (var i in priceList)
-                                GearGraphics.DrawString(g, i, GearGraphics.EquipDetailFont, 100, right, ref picH, 16);
+                                GearGraphics.DrawString(g, i, GearGraphics.ItemDetailFont, itemPriceColorTable, 100, right, ref picH, 16);
                             break;
                     }
                 }

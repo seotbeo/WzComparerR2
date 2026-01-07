@@ -201,6 +201,10 @@ namespace WzComparerR2.CharaSimControl
                 { "$y", GearGraphics.gearCyanColor },
                 { "$e", GearGraphics.ScrollEnhancementColor },
             };
+            var itemPriceColorTable = new Dictionary<string, Color>()
+            {
+                { "$S", ((SolidBrush)GearGraphics.ItemPriceBrush).Color },
+            };
             int value, value2; ;
 
             picH = 13;
@@ -1259,13 +1263,15 @@ namespace WzComparerR2.CharaSimControl
 
             if (Gear.Cash && ShowCashPurchasePrice)
             {
-                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(Gear.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(Gear.ItemID))
                 {
-                    int price = CharaSimLoader.LoadedCommoditiesByItemIdRegular[Gear.ItemID].Values.ToList()[0];
+                    var priceInfo = CharaSimLoader.LoadedCommodityPricesByItemId[Gear.ItemID].Values.ToList()[0];
+                    int price = priceInfo.Price;
+                    string currency = priceInfo.Meso ? "메소" : "캐시";
                     if (price > 0)
                     {
                         picH += 16;
-                        GearGraphics.DrawString(g, "- 판매가격: " + ItemStringHelper.ToCJKNumberExpr(price) + "캐시", GearGraphics.EquipDetailFont, 13, 244, ref picH, 16);
+                        GearGraphics.DrawString(g, "#$S- 판매가격: " + ItemStringHelper.ToCJKNumberExpr(price) + currency + "#", GearGraphics.EquipDetailFont, itemPriceColorTable, 13, 244, ref picH, 16);
                     }
                 }
             }

@@ -264,6 +264,8 @@ namespace WzComparerR2.CharaSimControl
 
         public static readonly Brush LocationBrush = new SolidBrush(Color.FromArgb(209, 255, 50));
 
+        public static readonly Brush ItemPriceBrush = new SolidBrush(Color.FromArgb(119, 204, 255));
+
         public static Brush GetGearNameBrush(int diff, bool up, bool cash = false, bool petEquip = false)
         {
             if (cash && !petEquip)

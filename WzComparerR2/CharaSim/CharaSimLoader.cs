@@ -15,16 +15,14 @@ namespace WzComparerR2.CharaSim
             LoadedExclusiveEquips = new Dictionary<int, ExclusiveEquip>();
             LoadedCommoditiesBySN = new Dictionary<int, Commodity>();
             LoadedCommoditiesByItemId = new Dictionary<int, Commodity>();
-            LoadedCommoditiesByItemIdRegular = new Dictionary<int, Dictionary<int, int>>();
-            LoadedCommoditiesByItemIdReboot = new Dictionary<int, Dictionary<int, int>>();
+            LoadedCommodityPricesByItemId = new Dictionary<int, Dictionary<int, CommodityPriceInfo>>();
         }
 
         public static Dictionary<int, SetItem> LoadedSetItems { get; private set; }
         public static Dictionary<int, ExclusiveEquip> LoadedExclusiveEquips { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesBySN { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesByItemId { get; private set; }
-        public static Dictionary<int, Dictionary<int, int>> LoadedCommoditiesByItemIdRegular { get; private set; }
-        public static Dictionary<int, Dictionary<int, int>> LoadedCommoditiesByItemIdReboot { get; private set; }
+        public static Dictionary<int, Dictionary<int, CommodityPriceInfo>> LoadedCommodityPricesByItemId { get; private set; }
 
         public static void LoadSetItemsIfEmpty()
         {
@@ -141,8 +139,7 @@ namespace WzComparerR2.CharaSim
 
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();
-            LoadedCommoditiesByItemIdRegular.Clear();
-            LoadedCommoditiesByItemIdReboot.Clear();
+            LoadedCommodityPricesByItemId.Clear();
             foreach (Wz_Node node in commodityNode.Nodes)
             {
                 int commodityIndex;
@@ -157,26 +154,11 @@ namespace WzComparerR2.CharaSim
 
                         if (commodity.OnSale > 0)
                         {
-                            bool isRebootOnly = commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0));
-                            // 45: Reboot
-                            // 1: Scania (GMS)
-                            // 0: Scania (KMS)
-                            if (isRebootOnly)
+                            if (!LoadedCommodityPricesByItemId.ContainsKey(commodity.ItemId))
                             {
-                                if (!LoadedCommoditiesByItemIdReboot.ContainsKey(commodity.ItemId))
-                                {
-                                    LoadedCommoditiesByItemIdReboot[commodity.ItemId] = new Dictionary<int, int>();
-                                }
-                                LoadedCommoditiesByItemIdReboot[commodity.ItemId][commodity.Count] = commodity.Price;
+                                LoadedCommodityPricesByItemId[commodity.ItemId] = new Dictionary<int, CommodityPriceInfo>();
                             }
-                            else
-                            {
-                                if (!LoadedCommoditiesByItemIdRegular.ContainsKey(commodity.ItemId))
-                                {
-                                    LoadedCommoditiesByItemIdRegular[commodity.ItemId] = new Dictionary<int, int>();
-                                }
-                                if (commodity.Price > 1) LoadedCommoditiesByItemIdRegular[commodity.ItemId][commodity.Count] = commodity.Price;
-                            }
+                            if (commodity.Price > 0) LoadedCommodityPricesByItemId[commodity.ItemId][commodity.Count] = commodity.PriceInfo;
                         }
                     }
                 }
@@ -189,8 +171,7 @@ namespace WzComparerR2.CharaSim
             LoadedExclusiveEquips.Clear();
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();
-            LoadedCommoditiesByItemIdRegular.Clear();
-            LoadedCommoditiesByItemIdReboot.Clear();
+            LoadedCommodityPricesByItemId.Clear();
         }
 
         public static int GetActionDelay(string actionName, Wz_Node wzNode = null)

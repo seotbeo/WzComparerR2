@@ -3935,6 +3935,7 @@ namespace WzComparerR2
             int count = CharaSimLoader.LoadedCommoditiesBySN.Count;
             CharaSimLoader.LoadedCommoditiesBySN.Clear();
             CharaSimLoader.LoadedCommoditiesByItemId.Clear();
+            CharaSimLoader.LoadedCommodityPricesByItemId.Clear();
             labelItemStatus.Text = "캐시 아이템 " + count + "개 정리 완료";
         }
 

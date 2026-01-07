@@ -38,6 +38,7 @@ namespace WzComparerR2.CharaSim
         public int WebShop;
         public int termStart;
         public string termEnd;
+        public CommodityPriceInfo PriceInfo;
 
         public static Commodity CreateFromNode(Wz_Node commodityNode)
         {
@@ -138,7 +139,27 @@ namespace WzComparerR2.CharaSim
                 }
             }
 
+            commodity.PriceInfo = new CommodityPriceInfo(
+                commodity.Price,
+                commodity.SN / 10000000 == 8,
+                commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0))
+                );
+
             return commodity;
+        }
+    }
+
+    public readonly struct CommodityPriceInfo
+    {
+        public readonly int Price;
+        public readonly bool Meso;
+        public readonly bool Reboot;
+
+        public CommodityPriceInfo(int price, bool meso, bool reboot)
+        {
+            Price = price;
+            Meso = meso;
+            Reboot = reboot;
         }
     }
 }

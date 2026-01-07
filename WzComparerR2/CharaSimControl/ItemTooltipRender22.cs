@@ -401,6 +401,7 @@ namespace WzComparerR2.CharaSimControl
                 { "c", ((SolidBrush)GearGraphics.Equip22BrushEmphasis).Color },
                 { "$r", ((SolidBrush)GearGraphics.Equip22BrushRed).Color },
                 { "$g", ((SolidBrush)GearGraphics.Equip22BrushLegendary).Color },
+                { "$S", ((SolidBrush)GearGraphics.ItemPriceBrush).Color },
             };
             splitterH = new List<int>();
             picH = 0;
@@ -1205,36 +1206,30 @@ namespace WzComparerR2.CharaSimControl
             }
 
             // purchasePrice
-            if (ShowCashPurchasePrice && item.Cash)
+            if (ShowCashPurchasePrice)
             {
                 List<string> priceList = new List<string>();
-                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(item.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(item.ItemID))
                 {
-                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdRegular[item.ItemID])
+                    foreach (var i in CharaSimLoader.LoadedCommodityPricesByItemId[item.ItemID])
                     {
-                        if (i.Value == 0) continue;
-                        string approxPrice = "";
-                        if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID)) approxPrice = " (일반 월드)";
-                        priceList.Add(string.Format(" - {0}개: {1} 캐시{2}", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value), approxPrice));
-                    }
-                }
-                if (CharaSimLoader.LoadedCommoditiesByItemIdReboot.ContainsKey(item.ItemID))
-                {
-                    foreach (var i in CharaSimLoader.LoadedCommoditiesByItemIdReboot[item.ItemID])
-                    {
-                        if (i.Value == 0) continue;
-                        priceList.Add(string.Format(" - {0}개: {1} 메소 (리부트 월드)", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value)));
+                        if (i.Value.Price == 0) continue;
+                        string currency = i.Value.Meso ? "메소" : "캐시";
+                        string rebootWorld = i.Value.Reboot ? " (리부트 월드)" : "";
+                        priceList.Add(string.Format("#$S - {0}개: {1} {2}{3}#", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value.Price), currency, rebootWorld));
                     }
                 }
                 if (priceList.Count > 0)
                 {
                     switch (priceList.Count)
                     {
+                        /*
                         case 1:
                             tags.Add("- 판매가격: " + priceList[0].Replace(" - 1개: ", "").Replace(" - ", ""));
                             break;
+                        */
                         default:
-                            tags.Add("판매가격:");
+                            tags.Add("#$S판매가격#");
                             tags.AddRange(priceList);
                             break;
                     }

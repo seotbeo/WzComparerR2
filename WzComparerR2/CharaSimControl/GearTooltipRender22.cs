@@ -211,6 +211,7 @@ namespace WzComparerR2.CharaSimControl
                 { "$s", ((SolidBrush)GearGraphics.Equip22BrushScroll).Color },
                 { "$g", ((SolidBrush)GearGraphics.Equip22BrushGray).Color },
                 { "$d", ((SolidBrush)GearGraphics.Equip22BrushDarkGray).Color },
+                { "$S", ((SolidBrush)GearGraphics.ItemPriceBrush).Color },
             };
             var itemPotentialColorTable = new Dictionary<string, Color>()
             {
@@ -1564,13 +1565,15 @@ namespace WzComparerR2.CharaSimControl
 
             if (Gear.Cash && ShowCashPurchasePrice)
             {
-                if (CharaSimLoader.LoadedCommoditiesByItemIdRegular.ContainsKey(Gear.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(Gear.ItemID))
                 {
-                    int price = CharaSimLoader.LoadedCommoditiesByItemIdRegular[Gear.ItemID].Values.ToList()[0];
+                    var priceInfo = CharaSimLoader.LoadedCommodityPricesByItemId[Gear.ItemID].Values.ToList()[0];
+                    int price = priceInfo.Price;
+                    string currency = priceInfo.Meso ? "메소" : "캐시";
                     if (price > 0)
                     {
                         picH += 16;
-                        GearGraphics.DrawString(g, "- 판매가격: " + price + "캐시", GearGraphics.EquipDetailFont, 13, 244, ref picH, 16);
+                        GearGraphics.DrawString(g, "#$S- 판매가격: " + ItemStringHelper.ToCJKNumberExpr(price) + currency + "#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 13, 244, ref picH, 16);
                     }
                 }
             }
