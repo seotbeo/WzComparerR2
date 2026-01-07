@@ -63,6 +63,7 @@ namespace WzComparerR2.CharaSimControl
         public bool IsCombineProperties { get; set; } = true;
         public bool ShowCashPurchasePrice { get; set; }
         public bool CompareMode { get; set; } = false;
+        public int LoadedCommoditiesSlot { get; set; } = 0;
         private bool WillDrawMedal {  get; set; }
         private bool WillDrawChatBalloon { get; set; }
         private bool WillDrawNameTag { get; set; }
@@ -1565,9 +1566,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (Gear.Cash && ShowCashPurchasePrice)
             {
-                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(Gear.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId[LoadedCommoditiesSlot].ContainsKey(Gear.ItemID))
                 {
-                    var priceInfo = CharaSimLoader.LoadedCommodityPricesByItemId[Gear.ItemID].Values.ToList()[0];
+                    var priceInfo = CharaSimLoader.LoadedCommodityPricesByItemId[LoadedCommoditiesSlot][Gear.ItemID].FirstOrDefault();
                     int price = priceInfo.Price;
                     string currency = priceInfo.Meso ? "메소" : "캐시";
                     if (price > 0)

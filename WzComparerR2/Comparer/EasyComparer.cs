@@ -144,6 +144,17 @@ namespace WzComparerR2.Comparer
                             WzNewOld[i]?.FindNodeByPath("Quest").GetNodeWzFile());
                     }
                 }
+                if (OutputItemTooltip || OutputGearTooltip) // Check commodity differences
+                {
+                    StateInfo = "캐시 아이템 정리중";
+                    CharaSimLoader.ClearAll();
+                    CharaSimLoader.LoadSetItemsIfEmpty(fileNew);
+                    CharaSimLoader.LoadExclusiveEquipsIfEmpty(fileNew);
+                    CharaSimLoader.LoadCommodities(fileOld, slotIdx: 1);
+                    CharaSimLoader.LoadCommodities(fileNew, slotIdx: 0);
+                    CompareCommodities();
+                    StateInfo = "캐시 아이템 정리 완료";
+                }
 
                 var dictNew = SplitVirtualNode(virtualNodeNew);
                 var dictOld = SplitVirtualNode(virtualNodeOld);
@@ -823,6 +834,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
                     (tooltipRenderNewOld[i] as ItemTooltipRender22).ShowCashPurchasePrice = CharaSimConfig.Default.Item.ShowPurchasePrice;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender22).LoadedCommoditiesSlot = i;
                 }
                 else
                 {
@@ -843,6 +855,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).DisplayUnitOnSingleLine = CharaSimConfig.Default.DamageSkin.DisplayUnitOnSingleLine;
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).DamageSkinNumber = CharaSimConfig.Default.DamageSkin.DamageSkinNumber;
                     (tooltipRenderNewOld[i] as ItemTooltipRender2).ShowCashPurchasePrice = CharaSimConfig.Default.Item.ShowPurchasePrice;
+                    (tooltipRenderNewOld[i] as ItemTooltipRender2).LoadedCommoditiesSlot = i;
                 }
             }
 
@@ -907,6 +920,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender22).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
                     (tooltipRenderNewOld[i] as GearTooltipRender22).ShowCashPurchasePrice = CharaSimConfig.Default.Gear.ShowPurchasePrice;
+                    (tooltipRenderNewOld[i] as GearTooltipRender22).LoadedCommoditiesSlot = i;
                 }
                 else
                 {
@@ -919,6 +933,7 @@ namespace WzComparerR2.Comparer
                     (tooltipRenderNewOld[i] as GearTooltipRender2).MaxStar25 = CharaSimConfig.Default.Gear.MaxStar25;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowCosmetic = CharaSimConfig.Default.Gear.ShowCosmetic;
                     (tooltipRenderNewOld[i] as GearTooltipRender2).ShowCashPurchasePrice = CharaSimConfig.Default.Gear.ShowPurchasePrice;
+                    (tooltipRenderNewOld[i] as GearTooltipRender2).LoadedCommoditiesSlot = i;
                 }
                 CharaWzNodeNewOld[i] = PluginManager.FindWz(Wz_Type.Character, WzFileNewOld[i]);
             }
@@ -1654,6 +1669,65 @@ namespace WzComparerR2.Comparer
                 }
             }
         }
+
+        // 캐시 아이템 가격 변경 확인
+        private void CompareCommodities()
+        {
+            var commodities_new = CharaSimLoader.LoadedCommodityPricesByItemId[0];
+            var commodities_old = CharaSimLoader.LoadedCommodityPricesByItemId[1];
+
+            var key_new = commodities_new.Keys;
+            var key_old = commodities_old.Keys;
+
+            var added = key_new.Except(key_old).ToList();
+            var removed = key_old.Except(key_new).ToList();
+            List<int> ids = new List<int>();
+            ids.AddRange(added);
+            ids.AddRange(removed);
+
+            var common = key_new.Intersect(key_old);
+            foreach (var id in common)
+            {
+                if (commodities_new.TryGetValue(id, out var commodity_new) && commodities_old.TryGetValue(id, out var commodity_old) && CommodityPriceChanged(commodity_new, commodity_old))
+                {
+                    ids.Add(id);
+                }
+            }
+
+            foreach (var id in ids)
+            {
+                if (id >= 2000000 && OutputItemTooltip) // item
+                {
+                    if (!OutputItemTooltipIDs.Contains(id))
+                    {
+                        OutputItemTooltipIDs.Add(id);
+                    }
+                }
+                else if (OutputGearTooltip) // gear
+                {
+                    if (!OutputGearTooltipIDs.Contains(id))
+                    {
+                        OutputGearTooltipIDs.Add(id);
+                    }
+                }
+            }
+        }
+
+        private bool CommodityPriceChanged(IReadOnlyList<CommodityPriceInfo> commodity_new, IReadOnlyList<CommodityPriceInfo> commodity_old)
+        {
+            if (commodity_new.Count != commodity_old.Count)
+                return true;
+
+            for (int i = 0; i < commodity_new.Count; i++) // Sorted in CharaSimLoader
+            {
+                if (commodity_new[i] != commodity_old[i])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void CompareImg(Wz_Image imgNew, Wz_Image imgOld, string imgName, string anchorName, string menuAnchorName, string outputDir, StreamWriter sw)
         {
             StateDetail = "img 구조 분석중";

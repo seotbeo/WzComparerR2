@@ -140,6 +140,7 @@ namespace WzComparerR2.CharaSim
             }
 
             commodity.PriceInfo = new CommodityPriceInfo(
+                commodity.Count,
                 commodity.Price,
                 commodity.SN / 10000000 == 8,
                 commodity.gameWorlds.Contains(45) && (!commodity.gameWorlds.Contains(1) || !commodity.gameWorlds.Contains(0))
@@ -149,17 +150,60 @@ namespace WzComparerR2.CharaSim
         }
     }
 
-    public readonly struct CommodityPriceInfo
+    public readonly struct CommodityPriceInfo : IEquatable<CommodityPriceInfo>, IComparable<CommodityPriceInfo>
     {
+        public readonly int Count;
         public readonly int Price;
         public readonly bool Meso;
         public readonly bool Reboot;
 
-        public CommodityPriceInfo(int price, bool meso, bool reboot)
+        public CommodityPriceInfo(int count, int price, bool meso, bool reboot)
         {
+            Count = count;
             Price = price;
             Meso = meso;
             Reboot = reboot;
         }
+
+        public int CompareTo(CommodityPriceInfo other)
+        {
+            int c = Reboot.CompareTo(other.Reboot);
+            if (c != 0) return c;
+
+            c = Count.CompareTo(other.Count);
+            if (c != 0) return c;
+
+            c = Meso.CompareTo(other.Meso);
+            if (c != 0) return c;
+
+            return Price.CompareTo(other.Price);
+        }
+
+        public bool Equals(CommodityPriceInfo other)
+        {
+            return Count == other.Count && Price == other.Price && Meso == other.Meso && Reboot == other.Reboot;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CommodityPriceInfo other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + Count.GetHashCode();
+                hash = hash * 31 + Price.GetHashCode();
+                hash = hash * 31 + Meso.GetHashCode();
+                hash = hash * 31 + Reboot.GetHashCode();
+                return hash;
+            }
+        }
+
+        public static bool operator ==(CommodityPriceInfo left, CommodityPriceInfo right) => left.Equals(right);
+
+        public static bool operator !=(CommodityPriceInfo left, CommodityPriceInfo right) => !left.Equals(right);
     }
 }

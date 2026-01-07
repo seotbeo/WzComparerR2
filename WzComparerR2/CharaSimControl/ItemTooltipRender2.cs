@@ -50,6 +50,7 @@ namespace WzComparerR2.CharaSimControl
         public bool CompareMode { get; set; } = false;
         public int CosmeticHairColor { get; set; }
         public int CosmeticFaceColor { get; set; }
+        public int LoadedCommoditiesSlot { get; set; } = 0;
         public bool ShowDamageSkin { get; set; }
         public bool ShowDamageSkinID { get; set; }
         public bool UseMiniSizeDamageSkin { get; set; }
@@ -1087,14 +1088,14 @@ namespace WzComparerR2.CharaSimControl
             if (ShowCashPurchasePrice)
             {
                 List<string> priceList = new List<string>();
-                if (CharaSimLoader.LoadedCommodityPricesByItemId.ContainsKey(item.ItemID))
+                if (CharaSimLoader.LoadedCommodityPricesByItemId[LoadedCommoditiesSlot].ContainsKey(item.ItemID))
                 {
-                    foreach (var i in CharaSimLoader.LoadedCommodityPricesByItemId[item.ItemID])
+                    foreach (var i in CharaSimLoader.LoadedCommodityPricesByItemId[LoadedCommoditiesSlot][item.ItemID])
                     {
-                        if (i.Value.Price == 0) continue;
-                        string currency = i.Value.Meso ? "메소" : "캐시";
-                        string rebootWorld = i.Value.Reboot ? " (리부트 월드)" : "";
-                        priceList.Add(string.Format("#$S - {0}개: {1} {2}{3}#", i.Key, ItemStringHelper.ToCJKNumberExpr(i.Value.Price), currency, rebootWorld));
+                        if (i.Price == 0) continue;
+                        string currency = i.Meso ? "메소" : "캐시";
+                        string rebootWorld = i.Reboot ? " (리부트 월드)" : "";
+                        priceList.Add(string.Format("#$S - {0}개: {1} {2}{3}#", i.Count, ItemStringHelper.ToCJKNumberExpr(i.Price), currency, rebootWorld));
                     }
                 }
                 if (priceList.Count > 0)
