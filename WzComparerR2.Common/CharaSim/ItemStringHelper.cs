@@ -706,6 +706,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.compass: return "컴파스";
 
                 case GearType.jewel: return "쥬얼";
+                case GearType.hourGlass: return "모래시계";
 
                 case GearType.arcaneSymbol: return "아케인심볼";
                 case GearType.authenticSymbol: return "어센틱심볼";

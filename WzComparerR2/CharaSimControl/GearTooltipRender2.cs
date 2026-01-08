@@ -790,7 +790,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //星星锤子
-            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar() > 0 && !Gear.GetBooleanValue(GearPropType.blockUpgradeStarforce))
+            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons) > 0 && !Gear.GetBooleanValue(GearPropType.blockUpgradeStarforce))
             {
                 if (Gear.Hammer >= 1)
                 {
@@ -1863,7 +1863,7 @@ namespace WzComparerR2.CharaSimControl
 
         private void DrawStar2(Graphics g, ref int picH)
         {
-            int maxStar = Math.Max(Gear.GetMaxStar(), Gear.Star);
+            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
             if (maxStar > 0)
             {
                 if (maxStar == 30 && this.MaxStar25)

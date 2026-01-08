@@ -12,6 +12,7 @@ namespace WzComparerR2.CharaSim
         static CharaSimLoader()
         {
             LoadedSetItems = new Dictionary<int, SetItem>();
+            LoadedAstraSubWeapons = new Dictionary<int, int>();
             LoadedExclusiveEquips = new Dictionary<int, ExclusiveEquip>();
             LoadedCommoditiesBySN = new Dictionary<int, Commodity>();
             LoadedCommoditiesByItemId = new Dictionary<int, Commodity>();
@@ -21,6 +22,7 @@ namespace WzComparerR2.CharaSim
         }
 
         public static Dictionary<int, SetItem> LoadedSetItems { get; private set; }
+        public static Dictionary<int, int> LoadedAstraSubWeapons { get; private set; }
         public static Dictionary<int, ExclusiveEquip> LoadedExclusiveEquips { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesBySN { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesByItemId { get; private set; }
@@ -62,6 +64,62 @@ namespace WzComparerR2.CharaSim
                     if (setItem != null)
                         LoadedSetItems[setItemIndex] = setItem;
                 }
+            }
+        }
+
+        public static void LoadAstraSubWeaponsIfEmpty(Wz_File sourceWzFile = null)
+        {
+            if (LoadedAstraSubWeapons.Count == 0)
+            {
+                LoadAstraSubWeapons(sourceWzFile);
+            }
+        }
+
+        public static void LoadAstraSubWeapons(Wz_File sourceWzFile)
+        {
+            //搜索setItemInfo.img
+            Wz_Node etcWz = PluginManager.FindWz(Wz_Type.Etc, sourceWzFile);
+            if (etcWz == null)
+                return;
+            Wz_Node astraNode = etcWz.FindNodeByPath("SubWeaponTransferData.img\\Job", true);
+            if (astraNode == null)
+                return;
+
+            LoadedAstraSubWeapons.Clear();
+            List<int> idSet = new List<int>();
+            Action insert = () =>
+            {
+                idSet.Sort();
+                for (int i = 0; i < idSet.Count; i++)
+                {
+                    LoadedAstraSubWeapons[idSet[i]] = i;
+                }
+                idSet.Clear();
+            };
+
+            foreach (var job in astraNode.Nodes)
+            {
+                var targetNode = job.FindNodeByPath("target");
+                foreach (var target in targetNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                {
+                    if (int.TryParse(target.Text, out var id))
+                    {
+                        idSet.Add(id);
+                    }
+                    else
+                    {
+                        insert();
+                        foreach (var inner_target in target?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                        {
+                            if (int.TryParse(inner_target.Text, out var inner_id))
+                            {
+                                idSet.Add(inner_id);
+                            }
+                        }
+                        insert();
+                    }
+                }
+                insert();
             }
         }
 
@@ -175,6 +233,7 @@ namespace WzComparerR2.CharaSim
         public static void ClearAll()
         {
             LoadedSetItems.Clear();
+            LoadedAstraSubWeapons.Clear();
             LoadedExclusiveEquips.Clear();
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();

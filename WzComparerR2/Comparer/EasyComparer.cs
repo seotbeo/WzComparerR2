@@ -149,6 +149,7 @@ namespace WzComparerR2.Comparer
                     StateInfo = "캐시 아이템 정리중";
                     CharaSimLoader.ClearAll();
                     CharaSimLoader.LoadSetItemsIfEmpty(fileNew);
+                    CharaSimLoader.LoadAstraSubWeaponsIfEmpty(fileNew);
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty(fileNew);
                     CharaSimLoader.LoadCommodities(fileOld, slotIdx: 1);
                     CharaSimLoader.LoadCommodities(fileNew, slotIdx: 0);

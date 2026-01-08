@@ -546,6 +546,10 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         grandAuthenticSymbol = 1714,
         /// <summary>
+        /// 모래시계 172_37
+        /// </summary>
+        hourGlass = 17237,
+        /// <summary>
         /// 珠宝 178
         /// </summary>
         jewel = 178,

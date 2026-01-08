@@ -227,7 +227,7 @@ namespace WzComparerR2.CharaSimControl
             picH = 10;
 
             // 스타포스 별
-            int maxStar = Math.Max(Gear.GetMaxStar(), Gear.Star);
+            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
             if (maxStar == 30 && this.MaxStar25)
             {
                 maxStar -= 5;

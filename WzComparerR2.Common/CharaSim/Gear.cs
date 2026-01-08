@@ -93,8 +93,18 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public int GetMaxStar()
+        public int GetMaxStar(Dictionary<int, int> loadedAstraSubWeapons)
         {
+            var astraIdx = GetAstraIndex(loadedAstraSubWeapons, this.ItemID);
+            switch (astraIdx)
+            {
+                case 0:
+                    return 15;
+                case 1:
+                    return 20;
+                case 2:
+                    return 30;
+            }
             if (!this.HasTuc)
             {
                 return 0;
@@ -287,10 +297,12 @@ namespace WzComparerR2.CharaSim
         {
             switch (type)
             {
+                case GearType.subWeapon:
                 case GearType.katara:
                 //case GearType.shield:
                 case GearType.demonShield:
                 case GearType.soulShield:
+                case GearType.hourGlass:
                     return true;
 
                 default:
@@ -590,12 +602,45 @@ namespace WzComparerR2.CharaSim
                         return (GearType)(code / 100 * 10);
                 }
             }
+            // 아스트라 보조무기
+            if (code / 10000 == 172)
+            {
+                var index = (code % 10000) / 100;
+                var type_list = new[]
+                {
+                    GearType.heroMedal, GearType.rosario, GearType.chain, // 0 1 2
+                    GearType.book1, GearType.book2, GearType.book3, // 3 4 5
+                    GearType.bowMasterFeather, GearType.crossBowThimble, GearType.relic, // 6 7 8
+                    GearType.nightLordPoutch, GearType.shadowerSheath, // 9 10
+                    GearType.viperWristband, GearType.captainSight, GearType.connonGunPowder, // 11 12 13
+                    GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, // 14 15 16 17 18 19
+                    GearType.aranPendulum, GearType.magicArrow, GearType.card, GearType.orb, GearType.foxPearl, GearType.evanPaper, // 20 21 22 23 24 25
+                    GearType.demonShield, GearType.battlemageBall, GearType.wildHunterArrowHead, GearType.mailin, GearType.controller, GearType.ExplosivePill, GearType.demonShield, // 26 27 28 29 30 31 32
+                    GearType.novaMarrow, GearType.weaponBelt, GearType.transmitter, GearType.soulBangle, // 33 34 35 36
+                    GearType.hourGlass, GearType.chess, // 37 38
+                    GearType.bracelet, GearType.magicWing, GearType.hexSeeker, GearType.pathOfAbyss, // 39 40 41 42
+                    GearType.sacredJewel, GearType.ornament, GearType.fanTassel, // 43 44 45
+                };
+                return (index < type_list.Count()) ? type_list[index] : GearType.subWeapon;
+            }
             return (GearType)(code / 10000);
+        }
+
+        public static int GetAstraIndex(Dictionary<int, int> loadedAstraSubWeapons, int id)
+        {
+            if (id / 10000 == 172)
+                return id % 10;
+
+            if (loadedAstraSubWeapons.TryGetValue(id, out int value))
+                return value;
+
+            return -1;
         }
 
         public static int GetGender(int code)
         {
             GearType type = GetGearType(code);
+            if (IsSubWeapon(type)) return 2;
             switch (type)
             {
                 case GearType.emblem:
