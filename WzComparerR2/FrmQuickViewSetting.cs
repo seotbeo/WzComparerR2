@@ -136,6 +136,13 @@ namespace WzComparerR2
         }
 
         [Link]
+        public bool Skill_ShowSkillValuesByJob
+        {
+            get { return chkShowSkillValuesByJob.Checked; }
+            set { chkShowSkillValuesByJob.Checked = value; }
+        }
+
+        [Link]
         public bool Gear_ShowID
         {
             get { return checkBoxX3.Checked; }

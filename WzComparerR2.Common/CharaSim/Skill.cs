@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.WzLib;
@@ -20,6 +21,7 @@ namespace WzComparerR2.CharaSim
             this.Action = new List<string>();
             this.Lt = new Dictionary<string, Wz_Vector>();
             this.Rb = new Dictionary<string, Wz_Vector>();
+            this.AttackInfo = new Dictionary<int, List<ExtraProps>>();
         }
 
         private int level;
@@ -79,8 +81,13 @@ namespace WzComparerR2.CharaSim
         public int AddAttackToolTipDescSkill { get; set; }
         public int AssistSkillLink { get; set; }
         public int VehicleID { get; set; }
-        public Dictionary<string, Wz_Vector> Lt {  get; set; }
+        public Dictionary<string, Wz_Vector> Lt { get; set; }
         public Dictionary<string, Wz_Vector> Rb { get; set; }
+        public Dictionary<int, List<ExtraProps>> AttackInfo { get; set; }
+        public List<string> ExtraPropNames
+        {
+            get { return this.AttackInfo.SelectMany(kv => kv.Value).Select(info => info.Key).Distinct().ToList(); }
+        }
 
         public int MaxLevel
         {
@@ -135,6 +142,23 @@ namespace WzComparerR2.CharaSim
                                     else
                                     {
                                         skill.Rb[match.Groups[2].Value] = commonNode.Value as Wz_Vector;
+                                    }
+                                }
+                            }
+                            else if (commonNode.Text == "attackInfo")
+                            {
+                                foreach (var job in commonNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                                {
+                                    if (int.TryParse(job.Text, out int jobID))
+                                    {
+                                        if (!skill.AttackInfo.ContainsKey(jobID))
+                                        {
+                                            skill.AttackInfo[jobID] = new List<ExtraProps>();
+                                        }
+                                        foreach (var prop in job.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                                        {
+                                            skill.AttackInfo[jobID].Add(new ExtraProps(prop.Text, prop.GetValueEx<string>("")));
+                                        }
                                     }
                                 }
                             }
@@ -300,6 +324,18 @@ namespace WzComparerR2.CharaSim
             }
 
             return skill;
+        }
+    }
+
+    public readonly struct ExtraProps
+    {
+        public readonly string Key;
+        public readonly string Value;
+
+        public ExtraProps(string prop, string value)
+        {
+            Key = prop;
+            Value = value;
         }
     }
 }

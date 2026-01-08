@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
@@ -32,6 +33,7 @@ namespace WzComparerR2.CharaSimControl
         public bool DisplayCooltimeMSAsSec { get; set; } = true;
         public bool DisplayPermyriadAsPercent { get; set; } = true;
         public bool IgnoreEvalError { get; set; } = false;
+        public bool ShowSkillValuesByJob { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
         public Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
@@ -59,6 +61,7 @@ namespace WzComparerR2.CharaSimControl
             List<int> splitterH;
             Bitmap originBmp = RenderSkill(region, out picHeight, out splitterH, doHighlight);
             Bitmap ridingGearBmp = null;
+            Bitmap extraBmp = RenderExtra(out int extraWidth, out int extraHeight, doHighlight);
 
             int vehicleID = Skill.VehicleID;
             if (vehicleID == 0)
@@ -80,12 +83,20 @@ namespace WzComparerR2.CharaSimControl
 
             Size totalSize = new Size(originBmp.Width, picHeight);
             Point ridingGearOrigin = Point.Empty;
+            Point extraBmpOrigin = Point.Empty;
 
             if (ridingGearBmp != null)
             {
                 totalSize.Width += ridingGearBmp.Width;
                 totalSize.Height = Math.Max(picHeight, ridingGearBmp.Height);
                 ridingGearOrigin.X = originBmp.Width;
+            }
+
+            if (extraBmp != null)
+            {
+                extraBmpOrigin.X = totalSize.Width;
+                totalSize.Width += extraWidth;
+                totalSize.Height = Math.Max(picHeight, extraHeight);
             }
 
             Bitmap tooltip = new Bitmap(totalSize.Width, totalSize.Height);
@@ -120,10 +131,19 @@ namespace WzComparerR2.CharaSimControl
                     new Rectangle(Point.Empty, ridingGearBmp.Size), GraphicsUnit.Pixel);
             }
 
+            if (extraBmp != null)
+            {
+                GearGraphics.DrawNewTooltipBack(g, extraBmpOrigin.X, extraBmpOrigin.Y, extraWidth, extraHeight);
+                g.DrawImage(extraBmp, extraBmpOrigin.X, extraBmpOrigin.Y,
+                    new Rectangle(0, 0, extraWidth, extraHeight), GraphicsUnit.Pixel);
+            }
+
             if (originBmp != null)
                 originBmp.Dispose();
             if (ridingGearBmp != null)
                 ridingGearBmp.Dispose();
+            if (extraBmp != null)
+                extraBmp.Dispose();
 
             g.Dispose();
             return tooltip;
@@ -138,6 +158,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 { "c", GearGraphics.SkillSummaryOrangeTextColor },
                 { "$g", GearGraphics.gearCyanColor }, // color for skill prop changes comparison
+                { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
             };
 
             picH = 0;
@@ -183,7 +204,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (sr.Desc != null)
             {
-                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, SummaryParams.Default);
+                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, Skill.ExtraPropNames, SummaryParams.Default);
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
@@ -486,6 +507,105 @@ namespace WzComparerR2.CharaSimControl
 
             renderer.TargetItem = gear;
             return renderer.Render();
+        }
+
+        private Bitmap RenderExtra(out int extraWidth, out int extraHeight, bool doHighlight)
+        {
+            extraWidth = 0;
+            extraHeight = 0;
+            if (!ShowSkillValuesByJob || this.Skill.ExtraPropNames.Count == 0)
+                return null;
+
+            const int Margin = 14;
+            const int Interval = 150;
+            const int Line_Height = 15;
+            const int Max_Height = 850;
+
+            // calculate width and height
+            var box = this.Skill.AttackInfo.Values.Select(list => list.Count + 1);
+            int picH = Margin;
+            extraWidth += Interval;
+            List<int> rows = new List<int>();
+            int count = 0;
+            foreach (int h in box)
+            {
+                var addH = h * Line_Height;;
+                if (picH + addH > Max_Height)
+                {
+                    extraWidth += Interval;
+                    extraHeight = Math.Max(extraHeight, picH + Margin);
+                    picH = Margin;
+                    rows.Add(count);
+                    count = 0;
+                }
+                picH += addH;
+                count++;
+            }
+            rows.Add(count);
+
+            Bitmap bitmap = new Bitmap(extraWidth, extraHeight);
+            using Graphics g = Graphics.FromImage(bitmap);
+            StringFormat format = (StringFormat)StringFormat.GenericDefault.Clone();
+            var v6SkillSummaryFontColorTable = new Dictionary<string, Color>()
+            {
+                { "c", GearGraphics.SkillSummaryOrangeTextColor },
+                { "$g", GearGraphics.gearCyanColor }, // color for skill prop changes comparison
+                { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
+            };
+
+            var skillSummaryOptions = new SkillSummaryOptions
+            {
+                ConvertCooltimeMS = this.DisplayCooltimeMSAsSec,
+                ConvertPerM = this.DisplayPermyriadAsPercent,
+                IgnoreEvalError = this.IgnoreEvalError,
+                EndColorOnNewLine = true,
+            };
+
+            picH = Margin;
+            int sx = 0;
+            int col = 0;
+            count = 0;
+            foreach (var kv in Skill.AttackInfo)
+            {
+                GearGraphics.DrawString(g, $"#c[{Regex.Replace(ItemStringHelper.GetJobName(kv.Key), @"\s*\(\d{1,2}차\)$", "")}({kv.Key})]#", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
+                foreach (var prop in kv.Value)
+                {
+                    List<string> values = new List<string>();
+                    bool showCurLv = Skill.Level > 0;
+                    bool showNextLv = Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo;
+                    string tag = $"attackInfo/{kv.Key}/{prop.Key}";
+                    bool containsTag = false;
+                    if (doHighlight && DiffSkillTags[Skill.SkillID].Contains(tag))
+                    {
+                        containsTag = true;
+                    }
+
+                    if (showCurLv)
+                    {
+                        //values.Add($"{(showCurLv ^ showNextLv ? "" : "[현재 레벨] ")}{SummaryParser.CalcSingleProp(Skill.Level, prop.Key, prop.Value, skillSummaryOptions)}");
+                        values.Add($"{SummaryParser.CalcSingleProp(Skill.Level, prop.Key, prop.Value, skillSummaryOptions)}");
+                    }
+                    /*
+                    if (showNextLv)
+                    {
+                        values.Add($"{(showCurLv ^ showNextLv ? "" : "[다음 레벨] ")}{SummaryParser.CalcSingleProp(Skill.Level + 1, prop.Key, prop.Value, skillSummaryOptions)}");
+                    }
+                    */
+                    if (containsTag)
+                        GearGraphics.DrawString(g, $"    #$g{prop.Key} {string.Join(", ", values)}#", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
+                    else
+                        GearGraphics.DrawString(g, $"    #$x{prop.Key}# {string.Join(", ", values)}", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
+                }
+                if (++count == rows[col])
+                {
+                    picH = Margin;
+                    sx += Interval;
+                    count = 0;
+                    col++;
+                }
+            }
+
+            return bitmap;
         }
 
         private class CanvasRegion

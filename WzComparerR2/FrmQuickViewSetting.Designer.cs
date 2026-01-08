@@ -112,6 +112,7 @@
             this.cmbPreferredStringCopyMethod = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.chkShowItemPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowGearPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkShowSkillValuesByJob = new DevComponents.DotNetBar.Controls.CheckBoxX();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
@@ -188,6 +189,7 @@
             this.superTabControlPanel1.Controls.Add(this.comboBoxEx1);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX2);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX1);
+            this.superTabControlPanel1.Controls.Add(this.chkShowSkillValuesByJob);
             this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel1.Location = new System.Drawing.Point(62, 0);
             this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -227,6 +229,22 @@
             this.checkBoxX15.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX15.TabIndex = 8;
             this.checkBoxX15.Text = "계산 오류 무시";
+            // 
+            // chkShowSkillValuesByJob
+            // 
+            this.chkShowSkillValuesByJob.AutoSize = true;
+            this.chkShowSkillValuesByJob.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowSkillValuesByJob.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowSkillValuesByJob.Location = new System.Drawing.Point(15, 201);
+            this.chkShowSkillValuesByJob.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkShowSkillValuesByJob.Name = "chkShowSkillValuesByJob";
+            this.chkShowSkillValuesByJob.Size = new System.Drawing.Size(109, 18);
+            this.chkShowSkillValuesByJob.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowSkillValuesByJob.TabIndex = 9;
+            this.chkShowSkillValuesByJob.Text = "직업별 스킬 수치 표시";
             // 
             // checkBoxX14
             // 
@@ -285,7 +303,7 @@
             // 
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelX3.Location = new System.Drawing.Point(15, 259);
+            this.labelX3.Location = new System.Drawing.Point(15, 265);
             this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(236, 30);
@@ -307,12 +325,12 @@
             this.comboItem8,
             this.comboItem9,
             this.comboItem10});
-            this.comboBoxEx2.Location = new System.Drawing.Point(110, 226);
+            this.comboBoxEx2.Location = new System.Drawing.Point(110, 245);
             this.comboBoxEx2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx2.Name = "comboBoxEx2";
             this.comboBoxEx2.Size = new System.Drawing.Size(104, 21);
             this.comboBoxEx2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.comboBoxEx2.TabIndex = 10;
+            this.comboBoxEx2.TabIndex = 11;
             // 
             // comboItem5
             // 
@@ -346,7 +364,7 @@
             // 
             // 
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(15, 230);
+            this.labelX2.Location = new System.Drawing.Point(15, 249);
             this.labelX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(89, 18);
@@ -361,7 +379,7 @@
             // 
             // 
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(15, 205);
+            this.labelX1.Location = new System.Drawing.Point(15, 225);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(89, 18);
@@ -381,12 +399,12 @@
             this.comboItem2,
             this.comboItem3,
             this.comboItem4});
-            this.comboBoxEx1.Location = new System.Drawing.Point(110, 202);
+            this.comboBoxEx1.Location = new System.Drawing.Point(110, 221);
             this.comboBoxEx1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx1.Name = "comboBoxEx1";
             this.comboBoxEx1.Size = new System.Drawing.Size(104, 21);
             this.comboBoxEx1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.comboBoxEx1.TabIndex = 8;
+            this.comboBoxEx1.TabIndex = 10;
             // 
             // comboItem1
             // 
@@ -1363,7 +1381,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX12;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX13;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX14;
-        private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX15;
+        private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX15; 
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX16;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX17;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX18;
@@ -1396,5 +1414,6 @@
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbPreferredStringCopyMethod;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowItemPurchasePrice;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowGearPurchasePrice;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkShowSkillValuesByJob;
     }
 }

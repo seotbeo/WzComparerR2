@@ -763,6 +763,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].DiffSkillTags = this.DiffSkillTags;
                 tooltipRenderNewOld[i].IgnoreEvalError = true;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
+                tooltipRenderNewOld[i].ShowSkillValuesByJob = CharaSimConfig.Default.Skill.ShowSkillValuesByJob;
             }
 
             foreach (var skillID in OutputSkillTooltipIDs)
@@ -1380,6 +1381,15 @@ namespace WzComparerR2.Comparer
 
             Match match = Regex.Match(node.FullPathToFile, @"^String\\Skill.img\\(\d+).*"); // 스트링 확인
             string tag = null;
+
+            if (!match.Success)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\common\\attackInfo\\(\d+)\\(.+)"); // attackInfo 확인
+                if (match.Success)
+                {
+                    tag = $"attackInfo/{match.Groups[2]}/{match.Groups[3]}";
+                }
+            }
 
             if (!match.Success)
             {
