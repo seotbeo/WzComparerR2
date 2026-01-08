@@ -1975,17 +1975,24 @@ namespace WzComparerR2.Comparer
                                 Directory.CreateDirectory(outputDir);
                             }
                         }
-                        using (Bitmap bmp = png.ExtractPng())
+                        try
                         {
-                            try
+                            using (Bitmap bmp = png.ExtractPng())
                             {
-                                bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                                try
+                                {
+                                    bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
+                                }
+                                catch
+                                {
+                                    var fileName2 = ToHexString(MD5Hash(fileName)) + suffix;
+                                    bmp.Save(Path.Combine(outputDir, fileName2), System.Drawing.Imaging.ImageFormat.Png);
+                                }
                             }
-                            catch
-                            {
-                                fileName = ToHexString(MD5Hash(fileName)) + suffix;
-                                bmp.Save(Path.Combine(outputDir, fileName), System.Drawing.Imaging.ImageFormat.Png);
-                            }
+                        }
+                        catch
+                        {
+                            MessageBoxEx.Show($"이미지 파일 저장에 실패했습니다.\r\n확인 버튼을 누르면 비교가 계속됩니다.\r\n\r\n실패 대상: {fileName}", "오류");
                         }
                         return string.Format("<img src=\"{0}/{1}\" />", isCanvas ? Path.Combine(outputDirName, canvas) : outputDirName, WebUtility.UrlEncode(fileName));
                     }
