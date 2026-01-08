@@ -151,7 +151,10 @@ namespace WzComparerR2.MapRender.UI
             {
                 var animator = Back[i].View.Animator as ISpineAnimator;
                 var spineName = Back[i].SpineAni;
-                animator.SelectedAnimationName = spineName;
+                if (spineName != null)
+                    animator.SelectedAnimationName = spineName;
+                else
+                    animator.SelectedAnimationIndex = 0;
             }
             for (int layer = 0; layer <= 7; layer++)
             {
@@ -159,7 +162,10 @@ namespace WzComparerR2.MapRender.UI
                 {
                     var animator = Obj[layer][i].View.Animator as ISpineAnimator;
                     var spineName = Obj[layer][i].SpineAni;
-                    animator.SelectedAnimationName = spineName;
+                    if (spineName != null)
+                        animator.SelectedAnimationName = spineName;
+                    else
+                        animator.SelectedAnimationIndex = 0;
                 }
             }
 
