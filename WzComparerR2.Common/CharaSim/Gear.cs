@@ -93,7 +93,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public int GetMaxStar(Dictionary<int, int> loadedAstraSubWeapons)
+        public int GetMaxStar(Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons)
         {
             var astraIdx = GetAstraIndex(loadedAstraSubWeapons, this.ItemID);
             switch (astraIdx)
@@ -626,13 +626,13 @@ namespace WzComparerR2.CharaSim
             return (GearType)(code / 10000);
         }
 
-        public static int GetAstraIndex(Dictionary<int, int> loadedAstraSubWeapons, int id)
+        public static int GetAstraIndex(Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons, int id)
         {
             if (id / 10000 == 172)
                 return id % 10;
 
-            if (loadedAstraSubWeapons.TryGetValue(id, out int value))
-                return value;
+            if (loadedAstraSubWeapons.TryGetValue(id, out AstraSubWeaponInfo value))
+                return value.Index;
 
             return -1;
         }

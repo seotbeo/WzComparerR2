@@ -459,7 +459,7 @@ namespace WzComparerR2.CharaSimControl
             picH += 18;
 
             // 착용 직업
-            string reqJobString = ItemStringHelper.GetExtraJobReqString(Gear.type);
+            string reqJobString = ItemStringHelper.GetExtraJobReqString(Gear.type, Gear.ReqSpecJobs.Count > 0, CharaSimLoader.LoadedAstraSubWeapons, Gear.ItemID);
             if (reqJobString == null && Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value))
             {
                 reqJobString = ItemStringHelper.GetExtraJobReqString(value);

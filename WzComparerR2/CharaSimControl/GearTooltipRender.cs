@@ -252,7 +252,7 @@ namespace WzComparerR2.CharaSimControl
             picHeight += 19;
 
             //额外职业要求
-            string extraReq = ItemStringHelper.GetExtraJobReqString(gear.type) ??
+            string extraReq = ItemStringHelper.GetExtraJobReqString(gear.type, gear.ReqSpecJobs.Count > 0, CharaSimLoader.LoadedAstraSubWeapons, gear.ItemID) ??
                 (gear.Props.TryGetValue(GearPropType.reqSpecJob, out value) ? ItemStringHelper.GetExtraJobReqString(value) : null);
             if (!string.IsNullOrEmpty(extraReq))
             {

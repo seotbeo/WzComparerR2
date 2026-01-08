@@ -4,6 +4,7 @@ using System.Text;
 using System.Drawing;
 using WzComparerR2.WzLib;
 using WzComparerR2.PluginBase;
+using System.Linq;
 
 namespace WzComparerR2.CharaSim
 {
@@ -12,7 +13,7 @@ namespace WzComparerR2.CharaSim
         static CharaSimLoader()
         {
             LoadedSetItems = new Dictionary<int, SetItem>();
-            LoadedAstraSubWeapons = new Dictionary<int, int>();
+            LoadedAstraSubWeapons = new Dictionary<int, AstraSubWeaponInfo>();
             LoadedExclusiveEquips = new Dictionary<int, ExclusiveEquip>();
             LoadedCommoditiesBySN = new Dictionary<int, Commodity>();
             LoadedCommoditiesByItemId = new Dictionary<int, Commodity>();
@@ -22,7 +23,8 @@ namespace WzComparerR2.CharaSim
         }
 
         public static Dictionary<int, SetItem> LoadedSetItems { get; private set; }
-        public static Dictionary<int, int> LoadedAstraSubWeapons { get; private set; }
+        public static Dictionary<int, AstraSubWeaponInfo> LoadedAstraSubWeapons { get; private set; }
+
         public static Dictionary<int, ExclusiveEquip> LoadedExclusiveEquips { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesBySN { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesByItemId { get; private set; }
@@ -87,18 +89,21 @@ namespace WzComparerR2.CharaSim
 
             LoadedAstraSubWeapons.Clear();
             List<int> idSet = new List<int>();
-            Action insert = () =>
+            Action<int> insert = (int jobID) =>
             {
                 idSet.Sort();
                 for (int i = 0; i < idSet.Count; i++)
                 {
-                    LoadedAstraSubWeapons[idSet[i]] = i;
+                    LoadedAstraSubWeapons[idSet[i]] = new AstraSubWeaponInfo(idSet[i], i, jobID);
                 }
                 idSet.Clear();
             };
 
             foreach (var job in astraNode.Nodes)
             {
+                if (!int.TryParse(job.Text, out var jobID))
+                    continue;
+
                 var targetNode = job.FindNodeByPath("target");
                 foreach (var target in targetNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                 {
@@ -108,7 +113,7 @@ namespace WzComparerR2.CharaSim
                     }
                     else
                     {
-                        insert();
+                        insert(jobID);
                         foreach (var inner_target in target?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                         {
                             if (int.TryParse(inner_target.Text, out var inner_id))
@@ -116,10 +121,10 @@ namespace WzComparerR2.CharaSim
                                 idSet.Add(inner_id);
                             }
                         }
-                        insert();
+                        insert(jobID);
                     }
                 }
-                insert();
+                insert(jobID);
             }
         }
 

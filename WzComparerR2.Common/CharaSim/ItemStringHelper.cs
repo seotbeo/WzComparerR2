@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WzComparerR2.CharaSim
 {
@@ -753,8 +754,9 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         /// <param Name="Type">表示装备类型的GearType。</param>
         /// <returns></returns>
-        public static string GetExtraJobReqString(GearType type)
+        public static string GetExtraJobReqString(GearType type, bool hasReqSpecJobs = false, Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons = null, int id = 0)
         {
+            string str = null;
             switch (type)
             {
                 //0xxx
@@ -776,9 +778,20 @@ namespace WzComparerR2.CharaSim
                 case GearType.box:
                 case GearType.boxingClaw: return "용의 전인 착용 가능";
                 case GearType.relic: return "패스파인더 직업군 착용 가능";
+                case GearType.shield:
+                    if (!hasReqSpecJobs && GetAstraExtraJobReqString(loadedAstraSubWeapons, id, out str))
+                    {
+                        return str;
+                    }
+                    return null;
 
                 //1xxx
-                case GearType.cygnusGem: return "시그너스 기사단 착용 가능";
+                case GearType.cygnusGem:
+                    if (!hasReqSpecJobs && GetAstraExtraJobReqString(loadedAstraSubWeapons, id, out str))
+                    {
+                        return str;
+                    }    
+                    return "시그너스 기사단 착용 가능";
 
                 //2xxx
                 case GearType.aranPendulum: return GetExtraJobReqString(21);
@@ -830,7 +843,8 @@ namespace WzComparerR2.CharaSim
 
                 //10xxx
                 case GearType.swordZB:
-                case GearType.swordZL: return GetExtraJobReqString(101);
+                case GearType.swordZL:
+                case GearType.hourGlass: return GetExtraJobReqString(101);
 
                 case GearType.whistle:
                 case GearType.whistle2:
@@ -973,6 +987,17 @@ namespace WzComparerR2.CharaSim
                 return null;
             }
             return extraJobNames;
+        }
+
+        public static bool GetAstraExtraJobReqString(Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons, int id, out string str)
+        {
+            str = null;
+            if (loadedAstraSubWeapons != null && loadedAstraSubWeapons.TryGetValue(id, out AstraSubWeaponInfo value))
+            {
+                str = $"{Regex.Replace(ItemStringHelper.GetJobName(value.Job), @"\s*\(\d{1,2}차\)$", "")} 착용 가능";
+                return true;
+            }
+            return false;
         }
 
         public static string GetItemPropString(ItemPropType propType, long value)

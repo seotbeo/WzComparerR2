@@ -1756,7 +1756,7 @@ namespace WzComparerR2.CharaSimControl
         private void DrawJobReq(Graphics g, ref int picH)
         {
             int value;
-            string extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type);
+            string extraReq = ItemStringHelper.GetExtraJobReqString(Gear.type, Gear.ReqSpecJobs.Count > 0, CharaSimLoader.LoadedAstraSubWeapons, Gear.ItemID);
             if (extraReq == null && Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value))
             {
                 extraReq = ItemStringHelper.GetExtraJobReqString(value);
