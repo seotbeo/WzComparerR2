@@ -23,6 +23,7 @@ using KeyCode = EmptyKeys.UserInterface.Input.KeyCode;
 using ModifierKeys = EmptyKeys.UserInterface.Input.ModifierKeys;
 using ServiceManager = EmptyKeys.UserInterface.Mvvm.ServiceManager;
 using WzComparerR2.MapRender.Effects;
+using WzComparerR2.Animation;
 #endregion
 
 namespace WzComparerR2.MapRender
@@ -686,6 +687,13 @@ namespace WzComparerR2.MapRender
             LoadOptionData(data);
         }
 
+        private void SpineSelector_Visible(object sender, RoutedEventArgs e)
+        {
+            UISpineSelector wnd = sender as UISpineSelector;
+            wnd.Left = (int)Math.Max(0, (this.ui.Width - wnd.Width) / 2);
+            wnd.Top = (int)Math.Max(0, (this.ui.Height - wnd.Height) / 2);
+        }
+
         private void WorldMap_MapSpotClick(object sender, UIWorldMap.MapSpotEventArgs e)
         {
             int mapID = e.MapID;
@@ -747,6 +755,7 @@ namespace WzComparerR2.MapRender
                     this.ui.ChatBox.AppendTextHelp(@"/history [maxCount] 방문 기록 보기");
                     this.ui.ChatBox.AppendTextHelp(@"/minimap 미니맵 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/scene 장면 설정");
+                    this.ui.ChatBox.AppendTextHelp(@"/spine Spine 애니메이션 지정 창 열기");
                     this.ui.ChatBox.AppendTextHelp(@"/quest 퀘스트 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/questex 퀘스트 키의 값 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/date 시각 설정");
@@ -1115,6 +1124,29 @@ namespace WzComparerR2.MapRender
                             this.ui.ChatBox.AppendTextHelp(@"/questex set (questID) (key) (questState) 해당 퀘스트 키의 값 설정");
                             break;
                     }
+                    break;
+
+                case "/spine":
+                    var uiSpineSelector = this.ui.Windows.OfType<UISpineSelector>().FirstOrDefault();
+                    if (uiSpineSelector == null)
+                    {
+                        uiSpineSelector = new UISpineSelector();
+                        uiSpineSelector.Visible += SpineSelector_Visible;
+                        uiSpineSelector.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                        this.ui.Windows.Add(uiSpineSelector);
+                        uiSpineSelector.Parent = this.ui;
+                        uiSpineSelector.Hide();
+                    }
+
+                    var back = this?.mapData.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
+                        .Concat(this?.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList();
+                    var obj = this?.mapData.Scene.Layers.Nodes.OfType<LayerNode>()
+                        .Select(layerNode => layerNode.Obj.Slots.OfType<ObjItem>()
+                            .Where(item => item.View.Animator is ISpineAnimator)
+                            .ToList()).ToList();
+                    uiSpineSelector.LoadTabContents(back, obj);
+
+                    uiSpineSelector.Show();
                     break;
 
                 default:
