@@ -9,6 +9,11 @@ namespace WzComparerR2.Controls
 {
     public class OverlayOptions
     {
+        public OverlayOptions()
+        {
+            this.Vertices = new List<Point>();
+        }
+
         public int AniOffset { get; set; }
         public int AniStart {  get; set; }
         public int AniEnd { get; set; }
@@ -30,7 +35,7 @@ namespace WzComparerR2.Controls
         public Point RectLT { get; set; }
         public Point RectRB { get; set; }
 
-        public int RectType { get; set; }
+        public OverlayShapeType ShapeType { get; set; }
         public int RectRadius { get; set; }
         public int RectAlpha { get; set; }
 
@@ -38,5 +43,14 @@ namespace WzComparerR2.Controls
         public int RectAlphaDst { get; set; }
         public int RectAlphaStart { get; set; }
         public int RectAlphaEnd { get; set; }
+
+        public List<Point> Vertices { get; set; }
+    }
+
+    public enum OverlayShapeType
+    {
+        Rectangle = 0,
+        Circle = 1,
+        Polygon = 2,
     }
 }

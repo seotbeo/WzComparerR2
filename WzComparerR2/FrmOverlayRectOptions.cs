@@ -48,18 +48,26 @@ namespace WzComparerR2
             this.colorPickerButton1.SelectedColor = config.OverlayRectColor;
             this.txtAlpha.Value = config.OverlayRectAlpha;
 
+            this.buttonVertex.Enabled = false;
+
             this.txtStart.ValueChanged += TxtStart_ValueChanged;
             this.txtEnd.ValueChanged += TxtEnd_ValueChanged;
             this.chkAutoArea.CheckedChanged += ChkAutoArea_CheckedChanged;
             this.chkIsCircle.CheckedChanged += this.ChkIsCircle_CheckedChanged;
+            this.chkIsPolygon.CheckedChanged += this.ChkIsPolygon_CheckedChanged;
             this.chkAlphaGradation.CheckedChanged += ChkAlphaGradation_CheckedChanged;
+            this.buttonVertex.Click += ButtonVertex_Click;
 
             if (!enableAutoArea)
             {
                 this.chkAutoArea.Checked = false;
                 this.chkAutoArea.Enabled = false;
             }
+
+            this.Vertices = new List<Point>();
         }
+
+        public List<Point> Vertices { get; set; }
 
         public OverlayOptions GetValues(ImageHandlerConfig config)
         {
@@ -70,6 +78,8 @@ namespace WzComparerR2
             var a_e = this.txtAlphaEnd.ValueObject as int? ?? (s <= e ? e : s);
             if (a_s < s) a_s = s;
             if (a_e > e) a_e = e;
+
+            OverlayShapeType shapeType = this.chkIsPolygon.Checked ? OverlayShapeType.Polygon : (this.chkIsCircle.Checked ? OverlayShapeType.Circle : OverlayShapeType.Rectangle);
 
             var ret = new OverlayOptions()
             {
@@ -85,14 +95,16 @@ namespace WzComparerR2
                 RectLT = new Point(this.txtLeft.ValueObject as int? ?? 0, this.txtTop.ValueObject as int? ?? 0),
                 RectRB = new Point(this.txtRight.ValueObject as int? ?? 0, this.txtBottom.ValueObject as int? ?? 0),
 
-                RectType = this.chkIsCircle.Checked ? 1 : 0,
+                ShapeType = shapeType,
                 RectRadius = this.txtRadius.ValueObject as int? ?? 0,
                 RectAlpha = a,
 
                 RectGradation = this.chkAlphaGradation.Checked,
                 RectAlphaDst = this.txtAlphaDst.ValueObject as int? ?? a,
                 RectAlphaStart = a_s,
-                RectAlphaEnd = a_e
+                RectAlphaEnd = a_e,
+
+                Vertices = this.Vertices,
             };
 
             config.OverlayRectColor = this.colorPickerButton1.SelectedColor;
@@ -124,6 +136,7 @@ namespace WzComparerR2
                 this.txtBottom.Enabled = false;
                 this.chkAlphaGradation.Checked = false;
                 this.chkIsCircle.Enabled = false;
+                this.chkIsPolygon.Enabled = false;
                 this.chkAlphaGradation.Enabled = false;
                 this.labelX3.Text = "X,Y 위치";
             }
@@ -132,6 +145,7 @@ namespace WzComparerR2
                 this.txtRight.Enabled = true;
                 this.txtBottom.Enabled = true;
                 this.chkIsCircle.Enabled = true;
+                this.chkIsPolygon.Enabled = true;
                 this.chkAlphaGradation.Enabled = true;
                 this.labelX3.Text = "LT";
             }
@@ -141,16 +155,39 @@ namespace WzComparerR2
         {
             if ((sender as CheckBoxX).Checked)
             {
+                this.chkIsPolygon.Checked = false;
                 this.txtRadius.Enabled = true;
                 this.txtRight.Enabled = false;
                 this.txtBottom.Enabled = false;
+                this.buttonVertex.Enabled = false;
                 this.labelX3.Text = "X,Y 위치";
             }
-            else
+            else if (!this.chkIsPolygon.Checked)
             {
                 this.txtRadius.Enabled = false;
                 this.txtRight.Enabled = true;
                 this.txtBottom.Enabled = true;
+                this.labelX3.Text = "LT";
+            }
+        }
+
+        private void ChkIsPolygon_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if ((sender as CheckBoxX).Checked)
+            {
+                this.chkIsCircle.Checked = false;
+                this.txtRadius.Enabled = true;
+                this.txtRight.Enabled = false;
+                this.txtBottom.Enabled = false;
+                this.buttonVertex.Enabled = true;
+                this.labelX3.Text = "X,Y 위치";
+            }
+            else if (!this.chkIsCircle.Checked)
+            {
+                this.txtRadius.Enabled = false;
+                this.txtRight.Enabled = true;
+                this.txtBottom.Enabled = true;
+                this.buttonVertex.Enabled = false;
                 this.labelX3.Text = "LT";
             }
         }
@@ -167,6 +204,17 @@ namespace WzComparerR2
             this.txtAlphaDst.Enabled = value;
             this.txtAlphaStart.Enabled = value;
             this.txtAlphaEnd.Enabled = value;
+        }
+
+        private void ButtonVertex_Click(object sender, EventArgs e)
+        {
+            var frmOverlayPolygonOptions = new FrmOverlayPolygonOptions(new List<Point>(this.Vertices));
+
+            if (frmOverlayPolygonOptions.ShowDialog() == DialogResult.OK)
+            {
+                this.Vertices = frmOverlayPolygonOptions.Vertices;
+                this.labelX14.Text = $"{this.Vertices.Count}";
+            }
         }
     }
 }

@@ -32,9 +32,11 @@ namespace WzComparerR2
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOverlayRectOptions));
+            DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo2 = new DevComponents.DotNetBar.SuperTooltipInfo();
             DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo1 = new DevComponents.DotNetBar.SuperTooltipInfo();
             this.buttonOK = new DevComponents.DotNetBar.ButtonX();
             this.buttonCancel = new DevComponents.DotNetBar.ButtonX();
+            this.buttonVertex = new DevComponents.DotNetBar.ButtonX();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.labelX3 = new DevComponents.DotNetBar.LabelX();
@@ -47,6 +49,8 @@ namespace WzComparerR2
             this.labelX7 = new DevComponents.DotNetBar.LabelX();
             this.labelX11 = new DevComponents.DotNetBar.LabelX();
             this.labelX12 = new DevComponents.DotNetBar.LabelX();
+            this.labelX13 = new DevComponents.DotNetBar.LabelX();
+            this.labelX14 = new DevComponents.DotNetBar.LabelX();
             this.txtLeft = new DevComponents.Editors.IntegerInput();
             this.txtRight = new DevComponents.Editors.IntegerInput();
             this.txtTop = new DevComponents.Editors.IntegerInput();
@@ -65,6 +69,7 @@ namespace WzComparerR2
             this.colorPickerButton1 = new DevComponents.DotNetBar.ColorPickerButton();
             this.chkAutoArea = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkIsCircle = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.chkIsPolygon = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkAlphaGradation = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -93,14 +98,14 @@ namespace WzComparerR2
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(70, 3);
+            this.buttonOK.Location = new System.Drawing.Point(74, 3);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(35, 3, 4, 3);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(88, 23);
             this.buttonOK.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonOK.Symbol = "";
             this.buttonOK.SymbolSize = 1F;
-            this.buttonOK.TabIndex = 19;
+            this.buttonOK.TabIndex = 20;
             this.buttonOK.Text = "OK";
             // 
             // buttonCancel
@@ -109,18 +114,31 @@ namespace WzComparerR2
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(237, 3);
+            this.buttonCancel.Location = new System.Drawing.Point(248, 3);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 35, 3);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(88, 23);
             this.buttonCancel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.buttonCancel.TabIndex = 20;
+            this.buttonCancel.TabIndex = 22;
             this.buttonCancel.Text = "Cancel";
+            // 
+            // buttonVertex
+            // 
+            this.buttonVertex.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.buttonVertex.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.buttonVertex.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.buttonVertex.Location = new System.Drawing.Point(321, 88);
+            this.buttonVertex.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonVertex.Name = "buttonVertex";
+            this.buttonVertex.Size = new System.Drawing.Size(80, 19);
+            this.buttonVertex.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.buttonVertex.TabIndex = 5;
+            this.buttonVertex.Text = "정점 추가";
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 63F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
@@ -128,39 +146,45 @@ namespace WzComparerR2
             this.tableLayoutPanel1.Controls.Add(this.labelX3, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelX4, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelX8, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.labelX5, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.labelX6, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.labelX9, 1, 7);
-            this.tableLayoutPanel1.Controls.Add(this.labelX10, 1, 8);
-            this.tableLayoutPanel1.Controls.Add(this.labelX7, 1, 10);
-            this.tableLayoutPanel1.Controls.Add(this.labelX11, 2, 11);
-            this.tableLayoutPanel1.Controls.Add(this.labelX12, 1, 12);
+            this.tableLayoutPanel1.Controls.Add(this.labelX5, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.labelX6, 1, 7);
+            this.tableLayoutPanel1.Controls.Add(this.labelX9, 1, 9);
+            this.tableLayoutPanel1.Controls.Add(this.labelX10, 1, 10);
+            this.tableLayoutPanel1.Controls.Add(this.labelX7, 1, 12);
+            this.tableLayoutPanel1.Controls.Add(this.labelX11, 2, 13);
+            this.tableLayoutPanel1.Controls.Add(this.labelX12, 1, 14);
+            this.tableLayoutPanel1.Controls.Add(this.labelX13, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.labelX14, 2, 4);
             this.tableLayoutPanel1.Controls.Add(this.txtLeft, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtRight, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtTop, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtBottom, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtRadius, 2, 2);
-            this.tableLayoutPanel1.Controls.Add(this.txtStart, 2, 4);
-            this.tableLayoutPanel1.Controls.Add(this.txtEnd, 2, 5);
-            this.tableLayoutPanel1.Controls.Add(this.txtSpeedX, 2, 7);
-            this.tableLayoutPanel1.Controls.Add(this.txtSpeedY, 3, 7);
-            this.tableLayoutPanel1.Controls.Add(this.txtGoX, 2, 8);
-            this.tableLayoutPanel1.Controls.Add(this.txtGoY, 3, 8);
-            this.tableLayoutPanel1.Controls.Add(this.txtAlpha, 3, 10);
-            this.tableLayoutPanel1.Controls.Add(this.txtAlphaDst, 3, 11);
-            this.tableLayoutPanel1.Controls.Add(this.txtAlphaStart, 2, 12);
-            this.tableLayoutPanel1.Controls.Add(this.txtAlphaEnd, 3, 12);
-            this.tableLayoutPanel1.Controls.Add(this.colorPickerButton1, 2, 10);
+            this.tableLayoutPanel1.Controls.Add(this.txtStart, 2, 6);
+            this.tableLayoutPanel1.Controls.Add(this.txtEnd, 2, 7);
+            this.tableLayoutPanel1.Controls.Add(this.txtSpeedX, 2, 9);
+            this.tableLayoutPanel1.Controls.Add(this.txtSpeedY, 3, 9);
+            this.tableLayoutPanel1.Controls.Add(this.txtGoX, 2, 10);
+            this.tableLayoutPanel1.Controls.Add(this.txtGoY, 3, 10);
+            this.tableLayoutPanel1.Controls.Add(this.txtAlpha, 3, 12);
+            this.tableLayoutPanel1.Controls.Add(this.txtAlphaDst, 3, 13);
+            this.tableLayoutPanel1.Controls.Add(this.txtAlphaStart, 2, 14);
+            this.tableLayoutPanel1.Controls.Add(this.txtAlphaEnd, 3, 14);
+            this.tableLayoutPanel1.Controls.Add(this.colorPickerButton1, 2, 12);
             this.tableLayoutPanel1.Controls.Add(this.chkAutoArea, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.chkIsCircle, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.chkAlphaGradation, 1, 11);
+            this.tableLayoutPanel1.Controls.Add(this.chkIsPolygon, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.chkAlphaGradation, 1, 13);
+            this.tableLayoutPanel1.Controls.Add(this.buttonVertex, 3, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 8);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 13;
+            this.tableLayoutPanel1.RowCount = 15;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
@@ -172,7 +196,7 @@ namespace WzComparerR2
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(396, 296);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(410, 324);
             this.tableLayoutPanel1.TabIndex = 11;
             // 
             // labelX1
@@ -187,7 +211,7 @@ namespace WzComparerR2
             this.labelX1.Location = new System.Drawing.Point(4, 3);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(55, 20);
+            this.labelX1.Size = new System.Drawing.Size(62, 19);
             this.labelX1.TabIndex = 11;
             this.labelX1.Text = "설정";
             // 
@@ -200,10 +224,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(67, 3);
+            this.labelX3.Location = new System.Drawing.Point(74, 3);
             this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(134, 20);
+            this.labelX3.Size = new System.Drawing.Size(137, 19);
             this.labelX3.TabIndex = 11;
             this.labelX3.Text = "LT";
             // 
@@ -216,10 +240,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX4.Location = new System.Drawing.Point(67, 29);
+            this.labelX4.Location = new System.Drawing.Point(74, 28);
             this.labelX4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX4.Name = "labelX4";
-            this.labelX4.Size = new System.Drawing.Size(134, 20);
+            this.labelX4.Size = new System.Drawing.Size(137, 19);
             this.labelX4.TabIndex = 11;
             this.labelX4.Text = "RB";
             // 
@@ -232,10 +256,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX8.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX8.Location = new System.Drawing.Point(67, 55);
+            this.labelX8.Location = new System.Drawing.Point(74, 53);
             this.labelX8.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX8.Name = "labelX8";
-            this.labelX8.Size = new System.Drawing.Size(134, 20);
+            this.labelX8.Size = new System.Drawing.Size(137, 19);
             this.labelX8.TabIndex = 11;
             this.labelX8.Text = "반지름";
             // 
@@ -248,10 +272,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX5.Location = new System.Drawing.Point(67, 91);
+            this.labelX5.Location = new System.Drawing.Point(74, 123);
             this.labelX5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX5.Name = "labelX5";
-            this.labelX5.Size = new System.Drawing.Size(134, 20);
+            this.labelX5.Size = new System.Drawing.Size(137, 19);
             this.labelX5.TabIndex = 11;
             this.labelX5.Text = "시작 딜레이 (ms)";
             // 
@@ -264,10 +288,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX6.Location = new System.Drawing.Point(67, 117);
+            this.labelX6.Location = new System.Drawing.Point(74, 148);
             this.labelX6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX6.Name = "labelX7";
-            this.labelX6.Size = new System.Drawing.Size(134, 20);
+            this.labelX6.Size = new System.Drawing.Size(137, 19);
             this.labelX6.TabIndex = 11;
             this.labelX6.Text = "종료 딜레이 (ms)";
             // 
@@ -280,10 +304,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX9.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX9.Location = new System.Drawing.Point(67, 153);
+            this.labelX9.Location = new System.Drawing.Point(74, 183);
             this.labelX9.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX9.Name = "labelX9";
-            this.labelX9.Size = new System.Drawing.Size(134, 20);
+            this.labelX9.Size = new System.Drawing.Size(137, 19);
             this.labelX9.TabIndex = 12;
             this.labelX9.Text = "X Y 이동속도 (px/초)";
             // 
@@ -296,10 +320,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX10.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX10.Location = new System.Drawing.Point(67, 179);
+            this.labelX10.Location = new System.Drawing.Point(74, 208);
             this.labelX10.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX10.Name = "labelX10";
-            this.labelX10.Size = new System.Drawing.Size(134, 20);
+            this.labelX10.Size = new System.Drawing.Size(137, 19);
             this.labelX10.TabIndex = 12;
             this.labelX10.Text = "X Y 이동거리 (px)";
             // 
@@ -312,10 +336,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX7.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX7.Location = new System.Drawing.Point(67, 215);
+            this.labelX7.Location = new System.Drawing.Point(74, 243);
             this.labelX7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX7.Name = "labelX7";
-            this.labelX7.Size = new System.Drawing.Size(134, 20);
+            this.labelX7.Size = new System.Drawing.Size(137, 19);
             this.labelX7.TabIndex = 11;
             this.labelX7.Text = "색상/투명도";
             // 
@@ -328,10 +352,10 @@ namespace WzComparerR2
             // 
             // 
             this.labelX11.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX11.Location = new System.Drawing.Point(209, 241);
+            this.labelX11.Location = new System.Drawing.Point(219, 268);
             this.labelX11.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX11.Name = "labelX11";
-            this.labelX11.Size = new System.Drawing.Size(87, 20);
+            this.labelX11.Size = new System.Drawing.Size(89, 19);
             this.labelX11.TabIndex = 0;
             this.labelX11.Text = "최종 투명도";
             // 
@@ -344,12 +368,44 @@ namespace WzComparerR2
             // 
             // 
             this.labelX12.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX12.Location = new System.Drawing.Point(67, 267);
+            this.labelX12.Location = new System.Drawing.Point(74, 293);
             this.labelX12.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX12.Name = "labelX12";
-            this.labelX12.Size = new System.Drawing.Size(134, 26);
+            this.labelX12.Size = new System.Drawing.Size(137, 28);
             this.labelX12.TabIndex = 0;
             this.labelX12.Text = "변화 시작/끝 시점";
+            // 
+            // labelX13
+            // 
+            this.labelX13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.labelX13.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX13.Location = new System.Drawing.Point(74, 88);
+            this.labelX13.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX13.Name = "labelX13";
+            this.labelX13.Size = new System.Drawing.Size(137, 19);
+            this.labelX13.TabIndex = 0;
+            this.labelX13.Text = "정점 개수";
+            // 
+            // labelX14
+            // 
+            this.labelX14.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.labelX14.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX14.Location = new System.Drawing.Point(219, 88);
+            this.labelX14.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX14.Name = "labelX14";
+            this.labelX14.Size = new System.Drawing.Size(89, 19);
+            this.labelX14.TabIndex = 0;
+            this.labelX14.Text = "0";
             // 
             // txtLeft
             // 
@@ -363,13 +419,13 @@ namespace WzComparerR2
             this.txtLeft.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtLeft.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtLeft.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtLeft.Location = new System.Drawing.Point(209, 3);
+            this.txtLeft.Location = new System.Drawing.Point(219, 3);
             this.txtLeft.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtLeft.MaxValue = 8192;
             this.txtLeft.MinValue = -8192;
             this.txtLeft.Name = "txtLeft";
             this.txtLeft.ShowUpDown = true;
-            this.txtLeft.Size = new System.Drawing.Size(87, 21);
+            this.txtLeft.Size = new System.Drawing.Size(89, 21);
             this.txtLeft.TabIndex = 0;
             // 
             // txtRight
@@ -384,13 +440,13 @@ namespace WzComparerR2
             this.txtRight.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtRight.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtRight.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtRight.Location = new System.Drawing.Point(209, 29);
+            this.txtRight.Location = new System.Drawing.Point(219, 28);
             this.txtRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtRight.MaxValue = 8192;
             this.txtRight.MinValue = -8192;
             this.txtRight.Name = "txtRight";
             this.txtRight.ShowUpDown = true;
-            this.txtRight.Size = new System.Drawing.Size(87, 21);
+            this.txtRight.Size = new System.Drawing.Size(89, 21);
             this.txtRight.TabIndex = 2;
             // 
             // txtTop
@@ -405,13 +461,13 @@ namespace WzComparerR2
             this.txtTop.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtTop.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtTop.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtTop.Location = new System.Drawing.Point(304, 3);
+            this.txtTop.Location = new System.Drawing.Point(316, 3);
             this.txtTop.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtTop.MaxValue = 8192;
             this.txtTop.MinValue = -8192;
             this.txtTop.Name = "txtTop";
             this.txtTop.ShowUpDown = true;
-            this.txtTop.Size = new System.Drawing.Size(88, 21);
+            this.txtTop.Size = new System.Drawing.Size(90, 21);
             this.txtTop.TabIndex = 1;
             // 
             // txtBottom
@@ -426,13 +482,13 @@ namespace WzComparerR2
             this.txtBottom.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtBottom.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtBottom.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtBottom.Location = new System.Drawing.Point(304, 29);
+            this.txtBottom.Location = new System.Drawing.Point(316, 28);
             this.txtBottom.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtBottom.MaxValue = 8192;
             this.txtBottom.MinValue = -8192;
             this.txtBottom.Name = "txtBottom";
             this.txtBottom.ShowUpDown = true;
-            this.txtBottom.Size = new System.Drawing.Size(88, 21);
+            this.txtBottom.Size = new System.Drawing.Size(90, 21);
             this.txtBottom.TabIndex = 3;
             // 
             // txtRadius
@@ -449,13 +505,13 @@ namespace WzComparerR2
             this.tableLayoutPanel1.SetColumnSpan(this.txtRadius, 2);
             this.txtRadius.Enabled = false;
             this.txtRadius.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtRadius.Location = new System.Drawing.Point(209, 55);
+            this.txtRadius.Location = new System.Drawing.Point(219, 53);
             this.txtRadius.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtRadius.MaxValue = 65530;
             this.txtRadius.MinValue = 0;
             this.txtRadius.Name = "txtRadius";
             this.txtRadius.ShowUpDown = true;
-            this.txtRadius.Size = new System.Drawing.Size(183, 21);
+            this.txtRadius.Size = new System.Drawing.Size(187, 21);
             this.txtRadius.TabIndex = 4;
             // 
             // txtStart
@@ -472,14 +528,14 @@ namespace WzComparerR2
             this.tableLayoutPanel1.SetColumnSpan(this.txtStart, 2);
             this.txtStart.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtStart.Increment = 10;
-            this.txtStart.Location = new System.Drawing.Point(209, 91);
+            this.txtStart.Location = new System.Drawing.Point(219, 123);
             this.txtStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtStart.MaxValue = 65530;
             this.txtStart.MinValue = 0;
             this.txtStart.Name = "txtBottom";
             this.txtStart.ShowUpDown = true;
-            this.txtStart.Size = new System.Drawing.Size(183, 21);
-            this.txtStart.TabIndex = 5;
+            this.txtStart.Size = new System.Drawing.Size(187, 21);
+            this.txtStart.TabIndex = 6;
             // 
             // txtEnd
             // 
@@ -495,14 +551,14 @@ namespace WzComparerR2
             this.tableLayoutPanel1.SetColumnSpan(this.txtEnd, 2);
             this.txtEnd.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtEnd.Increment = 10;
-            this.txtEnd.Location = new System.Drawing.Point(209, 117);
+            this.txtEnd.Location = new System.Drawing.Point(219, 148);
             this.txtEnd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtEnd.MaxValue = 65530;
             this.txtEnd.MinValue = 0;
             this.txtEnd.Name = "txtEnd";
             this.txtEnd.ShowUpDown = true;
-            this.txtEnd.Size = new System.Drawing.Size(183, 21);
-            this.txtEnd.TabIndex = 6;
+            this.txtEnd.Size = new System.Drawing.Size(187, 21);
+            this.txtEnd.TabIndex = 7;
             // 
             // txtSpeedX
             // 
@@ -516,14 +572,14 @@ namespace WzComparerR2
             this.txtSpeedX.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtSpeedX.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtSpeedX.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtSpeedX.Location = new System.Drawing.Point(209, 153);
+            this.txtSpeedX.Location = new System.Drawing.Point(219, 183);
             this.txtSpeedX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtSpeedX.MaxValue = 100000;
             this.txtSpeedX.MinValue = -100000;
             this.txtSpeedX.Name = "txtSpeedX";
             this.txtSpeedX.ShowUpDown = true;
-            this.txtSpeedX.Size = new System.Drawing.Size(87, 21);
-            this.txtSpeedX.TabIndex = 7;
+            this.txtSpeedX.Size = new System.Drawing.Size(89, 21);
+            this.txtSpeedX.TabIndex = 8;
             // 
             // txtSpeedY
             // 
@@ -537,14 +593,14 @@ namespace WzComparerR2
             this.txtSpeedY.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtSpeedY.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtSpeedY.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtSpeedY.Location = new System.Drawing.Point(304, 153);
+            this.txtSpeedY.Location = new System.Drawing.Point(316, 183);
             this.txtSpeedY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtSpeedY.MaxValue = 100000;
             this.txtSpeedY.MinValue = -100000;
             this.txtSpeedY.Name = "txtSpeedY";
             this.txtSpeedY.ShowUpDown = true;
-            this.txtSpeedY.Size = new System.Drawing.Size(88, 21);
-            this.txtSpeedY.TabIndex = 8;
+            this.txtSpeedY.Size = new System.Drawing.Size(90, 21);
+            this.txtSpeedY.TabIndex = 9;
             // 
             // txtGoX
             // 
@@ -558,14 +614,14 @@ namespace WzComparerR2
             this.txtGoX.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtGoX.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtGoX.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtGoX.Location = new System.Drawing.Point(209, 179);
+            this.txtGoX.Location = new System.Drawing.Point(219, 208);
             this.txtGoX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtGoX.MaxValue = 16384;
             this.txtGoX.MinValue = 0;
             this.txtGoX.Name = "txtGoX";
             this.txtGoX.ShowUpDown = true;
-            this.txtGoX.Size = new System.Drawing.Size(87, 21);
-            this.txtGoX.TabIndex = 9;
+            this.txtGoX.Size = new System.Drawing.Size(89, 21);
+            this.txtGoX.TabIndex = 10;
             // 
             // txtGoY
             // 
@@ -579,14 +635,14 @@ namespace WzComparerR2
             this.txtGoY.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtGoY.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtGoY.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtGoY.Location = new System.Drawing.Point(304, 179);
+            this.txtGoY.Location = new System.Drawing.Point(316, 208);
             this.txtGoY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtGoY.MaxValue = 16384;
             this.txtGoY.MinValue = 0;
             this.txtGoY.Name = "txtGoY";
             this.txtGoY.ShowUpDown = true;
-            this.txtGoY.Size = new System.Drawing.Size(88, 21);
-            this.txtGoY.TabIndex = 10;
+            this.txtGoY.Size = new System.Drawing.Size(90, 21);
+            this.txtGoY.TabIndex = 11;
             // 
             // txtAlpha
             // 
@@ -600,14 +656,14 @@ namespace WzComparerR2
             this.txtAlpha.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtAlpha.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtAlpha.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtAlpha.Location = new System.Drawing.Point(304, 215);
+            this.txtAlpha.Location = new System.Drawing.Point(316, 243);
             this.txtAlpha.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlpha.MaxValue = 100;
             this.txtAlpha.MinValue = 0;
             this.txtAlpha.Name = "txtAlpha";
             this.txtAlpha.ShowUpDown = true;
-            this.txtAlpha.Size = new System.Drawing.Size(88, 21);
-            this.txtAlpha.TabIndex = 12;
+            this.txtAlpha.Size = new System.Drawing.Size(90, 21);
+            this.txtAlpha.TabIndex = 13;
             // 
             // txtAlphaDst
             // 
@@ -622,14 +678,14 @@ namespace WzComparerR2
             this.txtAlphaDst.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
             this.txtAlphaDst.Enabled = false;
             this.txtAlphaDst.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtAlphaDst.Location = new System.Drawing.Point(304, 241);
+            this.txtAlphaDst.Location = new System.Drawing.Point(316, 268);
             this.txtAlphaDst.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlphaDst.MaxValue = 100;
             this.txtAlphaDst.MinValue = 0;
             this.txtAlphaDst.Name = "txtAlphaDst";
             this.txtAlphaDst.ShowUpDown = true;
-            this.txtAlphaDst.Size = new System.Drawing.Size(88, 21);
-            this.txtAlphaDst.TabIndex = 14;
+            this.txtAlphaDst.Size = new System.Drawing.Size(90, 21);
+            this.txtAlphaDst.TabIndex = 15;
             // 
             // txtAlphaStart
             // 
@@ -645,13 +701,13 @@ namespace WzComparerR2
             this.txtAlphaStart.Enabled = false;
             this.txtAlphaStart.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtAlphaStart.Increment = 30;
-            this.txtAlphaStart.Location = new System.Drawing.Point(209, 267);
+            this.txtAlphaStart.Location = new System.Drawing.Point(219, 293);
             this.txtAlphaStart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlphaStart.MinValue = 0;
             this.txtAlphaStart.Name = "txtAlphaStart";
             this.txtAlphaStart.ShowUpDown = true;
-            this.txtAlphaStart.Size = new System.Drawing.Size(87, 21);
-            this.txtAlphaStart.TabIndex = 15;
+            this.txtAlphaStart.Size = new System.Drawing.Size(89, 21);
+            this.txtAlphaStart.TabIndex = 16;
             // 
             // txtAlphaEnd
             // 
@@ -667,13 +723,13 @@ namespace WzComparerR2
             this.txtAlphaEnd.Enabled = false;
             this.txtAlphaEnd.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtAlphaEnd.Increment = 30;
-            this.txtAlphaEnd.Location = new System.Drawing.Point(304, 267);
+            this.txtAlphaEnd.Location = new System.Drawing.Point(316, 293);
             this.txtAlphaEnd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtAlphaEnd.MinValue = 0;
             this.txtAlphaEnd.Name = "txtAlphaEnd";
             this.txtAlphaEnd.ShowUpDown = true;
-            this.txtAlphaEnd.Size = new System.Drawing.Size(88, 21);
-            this.txtAlphaEnd.TabIndex = 16;
+            this.txtAlphaEnd.Size = new System.Drawing.Size(90, 21);
+            this.txtAlphaEnd.TabIndex = 17;
             // 
             // colorPickerButton1
             // 
@@ -681,12 +737,12 @@ namespace WzComparerR2
             this.colorPickerButton1.AutoExpandOnClick = true;
             this.colorPickerButton1.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
             this.colorPickerButton1.Image = ((System.Drawing.Image)(resources.GetObject("colorPickerButton1.Image")));
-            this.colorPickerButton1.Location = new System.Drawing.Point(208, 215);
+            this.colorPickerButton1.Location = new System.Drawing.Point(218, 243);
             this.colorPickerButton1.Name = "colorPickerButton1";
             this.colorPickerButton1.SelectedColorImageRectangle = new System.Drawing.Rectangle(2, 2, 12, 12);
-            this.colorPickerButton1.Size = new System.Drawing.Size(37, 20);
+            this.colorPickerButton1.Size = new System.Drawing.Size(37, 17);
             this.colorPickerButton1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.colorPickerButton1.TabIndex = 11;
+            this.colorPickerButton1.TabIndex = 12;
             // 
             // chkAutoArea
             // 
@@ -694,16 +750,16 @@ namespace WzComparerR2
             // 
             // 
             this.chkAutoArea.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkAutoArea.Location = new System.Drawing.Point(3, 55);
+            this.chkAutoArea.Location = new System.Drawing.Point(3, 28);
             this.chkAutoArea.Name = "chkAutoArea";
-            this.chkAutoArea.Size = new System.Drawing.Size(57, 19);
+            this.chkAutoArea.Size = new System.Drawing.Size(57, 17);
             this.chkAutoArea.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkAutoArea.TabIndex = 17;
+            superTooltipInfo2.BodyText = "현재 선택된 노드에서 하위 프레임들의 LT, RB를 찾아서 그립니다.";
+            superTooltipInfo2.Color = DevComponents.DotNetBar.eTooltipColor.System;
+            superTooltipInfo2.FooterVisible = false;
+            this.superTooltip1.SetSuperTooltip(this.chkAutoArea, superTooltipInfo2);
+            this.chkAutoArea.TabIndex = 18;
             this.chkAutoArea.Text = "자동";
-            superTooltipInfo1.BodyText = "현재 선택된 노드에서 하위 프레임들의 LT, RB를 찾아서 그립니다.";
-            superTooltipInfo1.Color = DevComponents.DotNetBar.eTooltipColor.System;
-            superTooltipInfo1.FooterVisible = false;
-            this.superTooltip1.SetSuperTooltip(this.chkAutoArea, superTooltipInfo1);
             // 
             // chkIsCircle
             // 
@@ -711,12 +767,25 @@ namespace WzComparerR2
             // 
             // 
             this.chkIsCircle.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkIsCircle.Location = new System.Drawing.Point(3, 55);
+            this.chkIsCircle.Location = new System.Drawing.Point(3, 53);
             this.chkIsCircle.Name = "chkIsCircle";
-            this.chkIsCircle.Size = new System.Drawing.Size(57, 19);
+            this.chkIsCircle.Size = new System.Drawing.Size(57, 17);
             this.chkIsCircle.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkIsCircle.TabIndex = 18;
+            this.chkIsCircle.TabIndex = 19;
             this.chkIsCircle.Text = "원";
+            // 
+            // chkIsPolygon
+            // 
+            // 
+            // 
+            // 
+            this.chkIsPolygon.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkIsPolygon.Location = new System.Drawing.Point(3, 88);
+            this.chkIsPolygon.Name = "chkIsPolygon";
+            this.chkIsPolygon.Size = new System.Drawing.Size(64, 17);
+            this.chkIsPolygon.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkIsPolygon.TabIndex = 20;
+            this.chkIsPolygon.Text = "다각형";
             // 
             // chkAlphaGradation
             // 
@@ -724,12 +793,16 @@ namespace WzComparerR2
             // 
             // 
             this.chkAlphaGradation.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkAlphaGradation.Location = new System.Drawing.Point(66, 241);
+            this.chkAlphaGradation.Location = new System.Drawing.Point(73, 268);
             this.chkAlphaGradation.Name = "chkAlphaGradation";
-            this.chkAlphaGradation.Size = new System.Drawing.Size(136, 19);
+            this.chkAlphaGradation.Size = new System.Drawing.Size(136, 17);
             this.chkAlphaGradation.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkAlphaGradation.TabIndex = 13;
+            this.chkAlphaGradation.TabIndex = 14;
             this.chkAlphaGradation.Text = "투명도 그라데이션";
+            // 
+            // superTooltip1
+            // 
+            this.superTooltip1.DefaultTooltipSettings = superTooltipInfo1;
             // 
             // tableLayoutPanel2
             // 
@@ -739,14 +812,14 @@ namespace WzComparerR2
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonOK, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 304);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 332);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(396, 30);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(410, 30);
             this.tableLayoutPanel2.TabIndex = 11;
             // 
             // FrmOverlayRectOptions
@@ -755,7 +828,7 @@ namespace WzComparerR2
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(414, 342);
+            this.ClientSize = new System.Drawing.Size(428, 370);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.DoubleBuffered = true;
@@ -792,6 +865,7 @@ namespace WzComparerR2
 
         private DevComponents.DotNetBar.ButtonX buttonOK;
         private DevComponents.DotNetBar.ButtonX buttonCancel;
+        private DevComponents.DotNetBar.ButtonX buttonVertex;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private DevComponents.Editors.IntegerInput txtLeft;
@@ -820,8 +894,11 @@ namespace WzComparerR2
         private DevComponents.DotNetBar.LabelX labelX10;
         private DevComponents.DotNetBar.LabelX labelX11;
         private DevComponents.DotNetBar.LabelX labelX12;
+        private DevComponents.DotNetBar.LabelX labelX13;
+        private DevComponents.DotNetBar.LabelX labelX14;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkAutoArea;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkIsCircle;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkIsPolygon;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkAlphaGradation;
         private DevComponents.DotNetBar.ColorPickerButton colorPickerButton1;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;

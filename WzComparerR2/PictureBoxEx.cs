@@ -354,9 +354,9 @@ namespace WzComparerR2
                 {
                     var alphaTimeline = GetAlphaTimeline(options);
                     frameEnd = alphaTimeline.Count - 1;
-                    switch (options.RectType)
+                    switch (options.ShapeType)
                     {
-                        case 0:
+                        case OverlayShapeType.Rectangle:
                             var width = -options.RectLT.X + options.RectRB.X;
                             var height = -options.RectLT.Y + options.RectRB.Y;
                             if (width <= 0 || height <= 0)
@@ -366,13 +366,21 @@ namespace WzComparerR2
                             }
                             aniItemData = FrameAnimationData.CreateRectData(this.GraphicsDevice, config.OverlayRectColor.Value, alphaTimeline);
                             break;
-                        case 1:
+                        case OverlayShapeType.Circle:
                             if (options.RectRadius <= 0)
                             {
                                 MessageBoxEx.Show("입력한 반지름이 올바르지 않습니다.", "범위 설정 오류");
                                 return;
                             }
                             aniItemData = FrameAnimationData.CreateCircleData(this.GraphicsDevice, options.RectRadius, config.OverlayRectColor.Value, alphaTimeline);
+                            break;
+                        case OverlayShapeType.Polygon:
+                            if (options.Vertices.Count <= 2)
+                            {
+                                MessageBoxEx.Show("정점이 최소 3개 필요합니다.", "범위 설정 오류");
+                                return;
+                            }
+                            aniItemData = FrameAnimationData.CreatePolygonData(this.GraphicsDevice, options.Vertices, config.OverlayRectColor.Value, alphaTimeline);
                             break;
                         default:
                             break;

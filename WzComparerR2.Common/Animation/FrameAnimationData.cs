@@ -187,6 +187,61 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
+        public static FrameAnimationData CreatePolygonData(GraphicsDevice graphicsDevice, IEnumerable<Point> vertices, System.Drawing.Color baseColor, IEnumerable<TimelineData> alphaTimeline)
+        {
+            int thickness = 2;
+
+            var tmpFrameAnimationData = new FrameAnimationData();
+            var outlineColor = baseColor;
+            var rx = vertices.Min(p => p.X);
+            var ry = vertices.Min(p => p.Y);
+            var rw = vertices.Max(p => p.X) - rx;
+            var rh = vertices.Max(p => p.Y) - ry;
+
+            System.Drawing.Point[] drawingVertices = vertices.Select(p => new System.Drawing.Point(p.X - rx, p.Y - ry)).ToArray();
+
+            foreach (var item in alphaTimeline)
+            {
+                var alpha = item.Alpha;
+                var length = item.Delay;
+                var pos = item.LT;
+                var x = pos.X;
+                var y = pos.Y;
+                Point origin = new Point(-x - rx, -y - rw);
+
+                if (length <= 0) continue;
+                if (rw <= 0 || rh <= 0)
+                {
+                    tmpFrameAnimationData.Frames.Add(new Frame(null, origin, 0, length, true));
+                    continue;
+                }
+
+                var fillColor = System.Drawing.Color.FromArgb((255 * alpha / 100), baseColor);
+
+                using var bmp = new System.Drawing.Bitmap(rw, rh);
+                using (var g = System.Drawing.Graphics.FromImage(bmp))
+                {
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    using (var brush = new System.Drawing.SolidBrush(fillColor))
+                    {
+                        g.FillPolygon(brush, drawingVertices);
+                    }
+                    using (var pen = new System.Drawing.Pen(outlineColor, thickness))
+                    {
+                        g.DrawPolygon(pen, drawingVertices);
+                    }
+                }
+
+                var tmpFrame = new Frame(bmp.ToTexture(graphicsDevice), origin, 0, length, true);
+                tmpFrameAnimationData.Frames.Add(tmpFrame);
+            }
+
+            if (tmpFrameAnimationData.Frames.Count > 0)
+                return tmpFrameAnimationData;
+            else
+                return null;
+        }
+
         public static FrameAnimationData MergeAnimationData(FrameAnimationData baseData, FrameAnimationData addData, GraphicsDevice graphicsDevice, int delayOffset, int moveX, int moveY, int frameStart, int frameEnd)
         {
             var anime = new FrameAnimationData();

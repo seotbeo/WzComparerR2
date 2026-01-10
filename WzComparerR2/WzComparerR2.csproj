@@ -70,6 +70,9 @@
     <Compile Update="FrmCaptureAniOptions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FrmOverlayPolygonOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FrmOverlaySpineOptions.cs">
       <SubType>Form</SubType>
     </Compile>
