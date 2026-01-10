@@ -207,7 +207,7 @@ namespace WzComparerR2.Animation
                 var pos = item.LT;
                 var x = pos.X;
                 var y = pos.Y;
-                Point origin = new Point(-x - rx, -y - rw);
+                Point origin = new Point(-x - rx, -y - ry);
 
                 if (length <= 0) continue;
                 if (rw <= 0 || rh <= 0)
