@@ -631,7 +631,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.tamingChair: return "길들인 몬스터";
                 case GearType.saddle: return "안장";
                 case GearType.katana: return "카타나";
-                case GearType.fan: return "부채";
+                case GearType.fan: return "칸나 부채";
                 case GearType.swordZB: return "대검";
                 case GearType.swordZL: return "태도";
                 case GearType.weapon: return "무기";
@@ -713,6 +713,8 @@ namespace WzComparerR2.CharaSim
                 case GearType.authenticSymbol: return "어센틱심볼";
                 case GearType.grandAuthenticSymbol: return "그랜드 어센틱심볼";
 
+                case GearType.onmyoSen: return "음양 부채";
+                case GearType.kannaReifu: return "영부";
                 default: return null;
             }
         }
@@ -827,6 +829,8 @@ namespace WzComparerR2.CharaSim
                 case GearType.katana:
                 case GearType.kodachi:
                 case GearType.kodachi2: return "하야토 착용 가능";
+                case GearType.onmyoSen:
+                case GearType.kannaReifu:
                 case GearType.fan: return "칸나 착용 가능";
 
                 //5xxx
