@@ -183,7 +183,7 @@ namespace WzComparerR2.CharaSim
         /// <summary>
         /// Onmyo Sen 1254
         /// </summary>
-        onmyoSen = 1254,
+        onmyouSen = 1254,
         /// <summary>
         /// 驯兽魔法棒 1259
         /// </summary>
