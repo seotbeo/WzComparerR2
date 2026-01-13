@@ -297,6 +297,11 @@ namespace WzComparerR2
                 FrameAnimationData.ApplyFlip(this.GraphicsDevice, aniItem.Data, options.FlipX, options.FlipY);
             }
 
+            if (options.Angle != 0)
+            {
+                FrameAnimationData.ApplyRotation(this.GraphicsDevice, aniItem.Data, options.Angle);
+            }
+
             if ((options.SpeedX != 0 && options.GoX != 0) || (options.SpeedY != 0 && options.GoY != 0))
             {
                 FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStart, ref frameEnd);

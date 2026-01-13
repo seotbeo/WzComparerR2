@@ -39,6 +39,7 @@ namespace WzComparerR2
             this.txtSpeedY.Value = 0;
             this.txtGoX.Value = 0;
             this.txtGoY.Value = 0;
+            this.txtAngle.Value = 0;
             this.chkFullMove.Checked = true;
             this.chkFlipX.Checked = false;
             this.chkFlipY.Checked = false;
@@ -90,6 +91,7 @@ namespace WzComparerR2
                 FullMove = this.chkFullMove.Checked,
                 FlipX = this.chkFlipX.Checked,
                 FlipY = this.chkFlipY.Checked,
+                Angle = this.txtAngle.ValueObject as int? ?? 0,
 
                 SpeedX = this.txtSpeedX.ValueObject as int? ?? 0,
                 SpeedY = this.txtSpeedY.ValueObject as int? ?? 0,

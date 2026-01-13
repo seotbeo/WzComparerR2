@@ -466,16 +466,25 @@ namespace WzComparerR2.Animation
             return renderTarget;
         }
 
-        private static Texture2D CopyTexture(GraphicsDevice graphicsDevice, Texture2D texture, SpriteEffects se = SpriteEffects.None)
+        private static Texture2D CopyTexture(GraphicsDevice graphicsDevice, Texture2D texture, Point newSize = default(Point), Vector2 position = default(Vector2), float rad = 0f, Vector2 origin = default(Vector2), float scale = 1f, SpriteEffects se = SpriteEffects.None)
         {
             if (texture == null) return null;
 
-            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, texture.Width, texture.Height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            var width = texture.Width;
+            var height = texture.Height;
+            if (newSize != Point.Zero)
+            {
+                width = newSize.X;
+                height = newSize.Y;
+            }
+
+            RenderTarget2D renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             using SpriteBatch spriteBatch = new SpriteBatch(graphicsDevice);
 
             graphicsDevice.SetRenderTarget(renderTarget);
+            graphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-            spriteBatch.Draw(texture, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, se, 0);
+            spriteBatch.Draw(texture, position, null, Color.White, rad, origin, scale, se, 0);
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);
@@ -510,7 +519,7 @@ namespace WzComparerR2.Animation
                     se |= SpriteEffects.FlipVertically;
                     newY = frame.Texture.Height - frame.Origin.Y;
                 }
-                var newTexture = CopyTexture(graphicsDevice, frame.Texture, se);
+                var newTexture = CopyTexture(graphicsDevice, frame.Texture, se: se);
                 var newFrame = new Frame(newTexture, new Point(newX, newY), frame.Z, frame.Delay, frame.Blend);
                 result.Add(newFrame);
                 dispose.Add(frame);
@@ -525,6 +534,84 @@ namespace WzComparerR2.Animation
             }
 
             data.Frames = result;
+        }
+
+        public static void ApplyRotation(GraphicsDevice graphicsDevice, FrameAnimationData data, int angle)
+        {
+            var result = new List<Frame>();
+            var dispose = new List<Frame>();
+
+            angle = ((angle) + 360) % 360;
+            if (angle == 0) return;
+            float rad = MathHelper.ToRadians(angle);
+
+            foreach (var frame in data.Frames)
+            {
+                if (frame.Texture == null)
+                {
+                    result.Add(frame);
+                    continue;
+                }
+
+                SpriteEffects se = SpriteEffects.None;
+                var rotateOrigin = frame.Origin;
+
+                var newRect = GetRotationBound(new Rectangle(0, 0, frame.Texture.Width, frame.Texture.Height), rad, rotateOrigin, out Point newOrigin);
+
+                var newTexture = CopyTexture(graphicsDevice, frame.Texture, newSize: newRect.Size, position: new Vector2(newOrigin.X, newOrigin.Y), rad: rad, origin: new Vector2(rotateOrigin.X, rotateOrigin.Y));
+                var newFrame = new Frame(newTexture, newOrigin, frame.Z, frame.Delay, frame.Blend);
+                result.Add(newFrame);
+                dispose.Add(frame);
+            }
+
+            foreach (var frame in dispose)
+            {
+                if (frame.Texture != null && !frame.Texture.IsDisposed)
+                {
+                    frame.Texture.Dispose();
+                }
+            }
+
+            data.Frames = result;
+        }
+
+        private static Rectangle GetRotationBound(Rectangle src, float rad, Point origin, out Point newOrigin)
+        {
+            var sin = (float)Math.Sin(rad);
+            var cos = (float)Math.Cos(rad);
+
+            Vector2[] pts =
+            {
+                new Vector2(-origin.X, -origin.Y),
+                new Vector2(src.Width - origin.X, -origin.Y),
+                new Vector2(-origin.X, src.Height - origin.Y),
+                new Vector2(src.Width - origin.X, src.Height - origin.Y),
+            };
+
+            float minX = float.PositiveInfinity;
+            float minY = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float maxY = float.NegativeInfinity;
+
+            for (int i = 0; i < 4; i++)
+            {
+                float x = pts[i].X;
+                float y = pts[i].Y;
+
+                float rx = x * cos - y * sin;
+                float ry = x * sin + y * cos;
+
+                if (rx < minX) minX = rx;
+                if (ry < minY) minY = ry;
+                if (rx > maxX) maxX = rx;
+                if (ry > maxY) maxY = ry;
+            }
+
+            int newW = (int)Math.Ceiling(maxX - minX);
+            int newH = (int)Math.Ceiling(maxY - minY);
+            newOrigin = new Point((int)Math.Ceiling(-minX), (int)Math.Ceiling(-minY));
+
+            return new Rectangle(0, 0, newW, newH);
         }
 
         public static void ApplyMovement(GraphicsDevice graphicsDevice, FrameAnimationData data, int speedX, int speedY, int goX, int goY, bool fullMove, int start, ref int end)

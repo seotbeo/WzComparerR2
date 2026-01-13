@@ -30,6 +30,7 @@ namespace WzComparerR2.Controls
 
         public bool FlipX { get; set; }
         public bool FlipY { get; set; }
+        public int Angle { get; set; }
 
         public bool RectAutoArea { get; set; }
         public Point RectLT { get; set; }
