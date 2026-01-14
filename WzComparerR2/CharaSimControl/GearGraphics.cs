@@ -112,24 +112,50 @@ namespace WzComparerR2.CharaSimControl
                 Marshal.Copy(bytes, 0, ptr, bytes.Length);
                 _pfc.AddMemoryFont(ptr, bytes.Length);
 
-                var fm = _pfc.Families.LastOrDefault();
+                var fm = _pfc.Families.FirstOrDefault();
                 if (fm != null)
                 {
                     AchievementTitleFont = new Font(fm, 16f, FontStyle.Regular, GraphicsUnit.Pixel);
-                    FamiliarNameFont = new Font(fm, 14f, FontStyle.Bold, GraphicsUnit.Pixel);
                 }
                 else throw new Exception();
             }
             catch
             {
                 AchievementTitleFont = new Font("Noto Sans KR", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
-                FamiliarNameFont = new Font("Noto Sans KR", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
+            }
+        }
+
+        private static void LoadNotoSansKRBoldFont()
+        {
+            try
+            {
+                if (FamiliarNameFont != null)
+                {
+                    FamiliarNameFont.Dispose();
+                    FamiliarNameFont = null;
+                }
+                var bytes = Resource.NotoSansKRBold;
+                IntPtr ptr = Marshal.AllocCoTaskMem(bytes.Length);
+                Marshal.Copy(bytes, 0, ptr, bytes.Length);
+                _pfc.AddMemoryFont(ptr, bytes.Length);
+
+                var fm = _pfc.Families.FirstOrDefault();
+                if (fm != null)
+                {
+                    FamiliarNameFont = new Font(fm, 15f, FontStyle.Bold, GraphicsUnit.Pixel);
+                }
+                else throw new Exception();
+            }
+            catch
+            {
+                FamiliarNameFont = new Font("Noto Sans KR", 15f, FontStyle.Bold, GraphicsUnit.Pixel);
             }
         }
 
         public static void LoadFonts()
         {
             LoadNanumGothicExtraBoldFont();
+            LoadNotoSansKRBoldFont();
         }
 
         public static readonly Color GearBackColor = Color.FromArgb(204, 0, 51, 85);
