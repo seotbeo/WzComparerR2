@@ -175,7 +175,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap baseTooltipBottom = Resource.UIFamiliar_img_ToolTip__BackGround_2;
             // Get Mob image and name
             Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz, this.SourceWzFile);
-            Point alignOrigin = new Point(165, 230);
+            Point alignOrigin = new Point(165, 131);
             Point mobOrigin = new Point(0, 0);
             int mobXoffset = 0;
             int mobYoffset = 0;
@@ -187,11 +187,11 @@ namespace WzComparerR2.CharaSimControl
             this.DTop = 0;
             if (familiar.FamiliarCover.Bitmap != null)
             {
-                mobOrigin = familiar.FamiliarCover.Origin;
+                mobOrigin = new Point(familiar.FamiliarCover.Origin.X, familiar.FamiliarCover.Bitmap.Height / 2);
             }
             else
             {
-                mobOrigin = mob.Default.Origin;
+                mobOrigin = new Point(mob.Default.Origin.X, mob.Default.Bitmap.Height / 2);
             }
             Bitmap mobImg = Crop(familiar.FamiliarCover.Bitmap ?? mob.Default.Bitmap, alignOrigin, mobOrigin, out mobXoffset, out mobYoffset, out tDelta, out bDelta, out lDelta, out rDelta);
 
@@ -201,7 +201,7 @@ namespace WzComparerR2.CharaSimControl
                 g.DrawImage(baseTooltipTop, lDelta, tDelta, new Rectangle(0, 0, baseTooltipTop.Width, baseTooltipTop.Height), GraphicsUnit.Pixel);
                 g.DrawImage(baseTooltipBottom, lDelta, tDelta + baseTooltipTop.Height, new Rectangle(0, 0, baseTooltipBottom.Width, baseTooltipBottom.Height), GraphicsUnit.Pixel);
                 g.DrawImage(mobImg, mobXoffset + lDelta, mobYoffset + tDelta, new Rectangle(0, 0, mobImg.Width, mobImg.Height), GraphicsUnit.Pixel);
-                g.DrawImage(Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask, 14 + lDelta, 16 + tDelta, new Rectangle(0, 0, Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask.Width, Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask.Height), GraphicsUnit.Pixel);
+                if (!AllowOutOfBounds) g.DrawImage(Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask, 14 + lDelta, 16 + tDelta, new Rectangle(0, 0, Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask.Width, Resource.UIFamiliar_img_ToolTip__BackGround_0_MontserMask.Height), GraphicsUnit.Pixel);
                 switch (this.FamiliarTier)
                 {
                     default:
@@ -239,7 +239,7 @@ namespace WzComparerR2.CharaSimControl
                         break;
                 }
                 using Bitmap mobNameOverlay = DrawName(GetMobName(mob.ID), 297, 21);
-                g.DrawImage(mobNameOverlay, 17 + lDelta, 255 + tDelta, new Rectangle(0, 0, mobNameOverlay.Width, mobNameOverlay.Height), GraphicsUnit.Pixel);                // Layout
+                g.DrawImage(mobNameOverlay, 17 + lDelta, 252 + tDelta, new Rectangle(0, 0, mobNameOverlay.Width, mobNameOverlay.Height), GraphicsUnit.Pixel);
                 if (this.ShowObjectID)
                 {
                     GearGraphics.DrawGearDetailNumber(g, 3 + lDelta, 3 + tDelta, $"{this.familiar.FamiliarID.ToString()}", true);
@@ -297,10 +297,20 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.AllowOutOfBounds)
             {
-                lDelta = mobOrigin.X > alignOrigin.X ? mobOrigin.X - alignOrigin.X : 0;
-                rDelta = sourceBmp.Width - mobOrigin.X > 154 ? sourceBmp.Width - mobOrigin.X - 154 : 0;
-                tDelta = mobOrigin.Y > alignOrigin.Y ? mobOrigin.Y - alignOrigin.Y : 0;
-                bDelta = sourceBmp.Height - mobOrigin.Y > 228 ? sourceBmp.Height - mobOrigin.Y - 228 : 0;
+                if (UseAssembleUI)
+                {
+                    lDelta = mobOrigin.X > alignOrigin.X ? mobOrigin.X - alignOrigin.X : 0;
+                    rDelta = sourceBmp.Width - mobOrigin.X > 165 ? sourceBmp.Width - mobOrigin.X - 165 : 0;
+                    tDelta = mobOrigin.Y > alignOrigin.Y ? mobOrigin.Y - alignOrigin.Y : 0;
+                    bDelta = sourceBmp.Height - mobOrigin.Y > 74 ? sourceBmp.Height - mobOrigin.Y - 74 : 0;
+                }
+                else
+                {
+                    lDelta = mobOrigin.X > alignOrigin.X ? mobOrigin.X - alignOrigin.X : 0;
+                    rDelta = sourceBmp.Width - mobOrigin.X > 154 ? sourceBmp.Width - mobOrigin.X - 154 : 0;
+                    tDelta = mobOrigin.Y > alignOrigin.Y ? mobOrigin.Y - alignOrigin.Y : 0;
+                    bDelta = sourceBmp.Height - mobOrigin.Y > 228 ? sourceBmp.Height - mobOrigin.Y - 228 : 0;
+                }
                 return sourceBmp;
             }
 
@@ -321,36 +331,36 @@ namespace WzComparerR2.CharaSimControl
                     rectangWidth += mobOrigin.X;
                 }
 
-                if (sourceBmp.Width - mobOrigin.X > 152) // Define Right Border
+                if (sourceBmp.Width - mobOrigin.X > 151) // Define Right Border
                 {
-                    rectangWidth += 152;
+                    rectangWidth += 151;
                 }
                 else
                 {
                     rectangWidth += sourceBmp.Width - mobOrigin.X;
                 }
 
-                if (mobOrigin.Y > 183) // Define Top Border
+                if (mobOrigin.Y > 115) // Define Top Border
                 {
-                    rectangYoffset = mobOrigin.Y - 183;
-                    rectangHeight += 183;
+                    rectangYoffset = mobOrigin.Y - 115;
+                    rectangHeight += 115;
                 }
                 else
                 {
                     rectangHeight += mobOrigin.Y;
                 }
 
-                if (sourceBmp.Height - mobOrigin.Y > 46)
+                if (sourceBmp.Height - mobOrigin.Y > 112)
                 {
-                    rectangHeight += 46;
+                    rectangHeight += 112;
                 }
                 else
                 {
                     rectangHeight += sourceBmp.Height - mobOrigin.Y;
                 }
 
-                xOffset = rectangXoffset == 0 ? xOffset : 14;
-                yOffset = rectangYoffset == 0 ? yOffset : 16;
+                xOffset = rectangXoffset == 0 ? xOffset : 16;
+                yOffset = rectangYoffset == 0 ? yOffset : 18;
             }
             else
             {
