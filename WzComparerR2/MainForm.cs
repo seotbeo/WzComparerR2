@@ -252,6 +252,7 @@ namespace WzComparerR2
             tooltipQuickView.SkillRender.DisplayCooltimeMSAsSec = Setting.Skill.DisplayCooltimeMSAsSec;
             tooltipQuickView.SkillRender.DisplayPermyriadAsPercent = Setting.Skill.DisplayPermyriadAsPercent;
             tooltipQuickView.SkillRender.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
+            tooltipQuickView.SkillRender.ShowSkillValuesByJob = Setting.Skill.ShowSkillValuesByJob;
 
             this.skillDefaultLevel = Setting.Skill.DefaultLevel;
             this.skillInterval = Setting.Skill.IntervalLevel;
@@ -3610,6 +3611,7 @@ namespace WzComparerR2
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
                     CharaSimLoader.LoadSetItemsIfEmpty();
+                    CharaSimLoader.LoadAstraSubWeaponsIfEmpty();
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty();
                     CharaSimLoader.LoadCommoditiesIfEmpty();
                     if (selectedNode.FullPathToFile.Contains("Familiar"))
@@ -3920,6 +3922,7 @@ namespace WzComparerR2
         {
             int count = CharaSimLoader.LoadedSetItems.Count;
             CharaSimLoader.LoadedSetItems.Clear();
+            CharaSimLoader.LoadedAstraSubWeapons.Clear();
             labelItemStatus.Text = "세트 아이템 " + count + "개 정리 완료";
         }
 
@@ -4528,6 +4531,7 @@ namespace WzComparerR2
                             tooltip.ShowDelay = Setting.Skill.ShowDelay;
                             tooltip.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
                             tooltip.Enable22AniStyle = Setting.Misc.Enable22AniStyle;
+                            tooltip.ShowSkillValuesByJob = Setting.Skill.ShowSkillValuesByJob;
                             foreach (var i in selectedJob)
                             {
                                 var jobImg = PluginManager.FindWz($"Skill\\{i:D3}.img\\skill");
