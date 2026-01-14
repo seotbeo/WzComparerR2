@@ -183,6 +183,8 @@ namespace WzComparerR2.CharaSimControl
             int bDelta = 0;
             int lDelta = 0;
             int rDelta = 0;
+            this.DLeft = 0;
+            this.DTop = 0;
             if (familiar.FamiliarCover.Bitmap != null)
             {
                 mobOrigin = familiar.FamiliarCover.Origin;
@@ -236,14 +238,16 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(Resource.UIFamiliar_img_ToolTip__BackGround_0__Grade_7, 14 + lDelta, 292 + tDelta, new Rectangle(0, 0, Resource.UIFamiliar_img_ToolTip__BackGround_0__Grade_7.Width, Resource.UIFamiliar_img_ToolTip__BackGround_0__Grade_7.Height), GraphicsUnit.Pixel);
                         break;
                 }
-                Bitmap mobNameOverlay = DrawName(GetMobName(mob.ID), 297, 21);
+                using Bitmap mobNameOverlay = DrawName(GetMobName(mob.ID), 297, 21);
                 g.DrawImage(mobNameOverlay, 17 + lDelta, 255 + tDelta, new Rectangle(0, 0, mobNameOverlay.Width, mobNameOverlay.Height), GraphicsUnit.Pixel);                // Layout
                 if (this.ShowObjectID)
                 {
                     GearGraphics.DrawGearDetailNumber(g, 3 + lDelta, 3 + tDelta, $"{this.familiar.FamiliarID.ToString()}", true);
                 }
             }
-
+            mob.Dispose();
+            this.DLeft = lDelta;
+            this.DTop = tDelta;
             return baseTooltip;
         }
 
@@ -274,7 +278,7 @@ namespace WzComparerR2.CharaSimControl
             }
         }
 
-                private Bitmap Crop(Bitmap sourceBmp, Point alignOrigin, Point mobOrigin, out int xOffset, out int yOffset, out int tDelta, out int bDelta, out int lDelta, out int rDelta)
+        private Bitmap Crop(Bitmap sourceBmp, Point alignOrigin, Point mobOrigin, out int xOffset, out int yOffset, out int tDelta, out int bDelta, out int lDelta, out int rDelta)
         {
             tDelta = 0;
             bDelta = 0;
@@ -407,7 +411,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 int picH = 0;
-                GearGraphics.DrawString(g, name, GearGraphics.NewCTFamiliarNameFont, familiarColorTable, 0, w, ref picH, h, Text.TextAlignment.Center);
+                GearGraphics.DrawString(g, name, GearGraphics.FamiliarNameFont, familiarColorTable, 0, w, ref picH, h, Text.TextAlignment.Center);
             }
             return bmp;
         }

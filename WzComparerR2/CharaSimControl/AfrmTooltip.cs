@@ -128,6 +128,7 @@ namespace WzComparerR2.CharaSimControl
                 this.enable22AniStyle = value;
                 this.SkillRender.Enable22AniStyle = value;
                 this.RecipeRender.Enable22AniStyle = value;
+                this.FamiliarRender.UseAssembleUI = value;
             }
         }
 

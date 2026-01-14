@@ -72,6 +72,7 @@ namespace WzComparerR2.CharaSimControl
         public static Font ItemDetailFont2 { get; private set; }
         public static Font EquipDetailFont2 { get; private set; }
         public static Font AchievementTitleFont { get; private set; }
+        public static Font FamiliarNameFont { get; private set; }
 
         public static void SetFontFamily(string fontName)
         {
@@ -97,7 +98,7 @@ namespace WzComparerR2.CharaSimControl
             EquipDetailFont2 = new Font(fontName, 11f, GraphicsUnit.Pixel);
         }
 
-        private static void LoadAchvTitleFont()
+        private static void LoadNanumGothicExtraBoldFont()
         {
             try
             {
@@ -115,18 +116,20 @@ namespace WzComparerR2.CharaSimControl
                 if (fm != null)
                 {
                     AchievementTitleFont = new Font(fm, 16f, FontStyle.Regular, GraphicsUnit.Pixel);
+                    FamiliarNameFont = new Font(fm, 14f, FontStyle.Bold, GraphicsUnit.Pixel);
                 }
                 else throw new Exception();
             }
             catch
             {
                 AchievementTitleFont = new Font("Noto Sans KR", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
+                FamiliarNameFont = new Font("Noto Sans KR", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
             }
         }
 
         public static void LoadFonts()
         {
-            LoadAchvTitleFont();
+            LoadNanumGothicExtraBoldFont();
         }
 
         public static readonly Color GearBackColor = Color.FromArgb(204, 0, 51, 85);
