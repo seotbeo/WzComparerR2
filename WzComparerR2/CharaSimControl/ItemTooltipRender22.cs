@@ -1090,7 +1090,7 @@ namespace WzComparerR2.CharaSimControl
                 defaultRenderer.AllowOutOfBounds = false;
                 defaultRenderer.ItemID = this.item.ItemID;
                 defaultRenderer.FamiliarTier = this.item.Grade;
-                defaultRenderer.UseAssembleUI = false;
+                defaultRenderer.UseAssembleUI = true;
                 renderer = defaultRenderer;
             }
             renderer.TargetItem = familiar;
