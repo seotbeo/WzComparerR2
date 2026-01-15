@@ -475,68 +475,48 @@ namespace WzComparerR2.Common
                                             switch (subNode2.Text)
                                             {
                                                 case "mob":
-                                                    Dictionary<int, string> mobDict = new Dictionary<int, string>();
+                                                    List<int> mobIDs = new List<int>();
                                                     foreach (Wz_Node mobNode in subNode2.Nodes)
                                                     {
-                                                        foreach (Wz_Node mobSubNode in mobNode.Nodes)
+                                                        foreach (Wz_Node idNode in mobNode.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                                         {
-                                                            switch (mobSubNode.Text)
-                                                            {
-                                                                case "id":
-                                                                    foreach (Wz_Node idNode in mobSubNode.Nodes)
-                                                                    {
-                                                                        mobDict[idNode.GetValueEx<int>(0)] = "(null)";
-                                                                    }
-                                                                    break;
-                                                                case "desc":
-                                                                    foreach (int mobId in mobDict.Keys)
-                                                                    {
-                                                                        mobDict[mobId] = mobSubNode.Value.ToString();
-                                                                    }
-                                                                    foreach (var kvp in mobDict)
-                                                                    {
-                                                                        StringResult strResult = new StringResult();
-                                                                        strResult.Name = stringMob[kvp.Key].Name;
-                                                                        strResult.Desc = kvp.Value;
-
-                                                                        stringWorldArchiveMob[kvp.Key] = strResult;
-                                                                    }
-                                                                    mobDict.Clear();
-                                                                    break;
-                                                            }
+                                                            var mobID = idNode.GetValueEx<int>(0);
+                                                            if (mobID != 0) mobIDs.Add(mobID);
+                                                        }
+                                                        var desc = mobNode.FindNodeByPath("desc").GetValueEx<string>(null);
+                                                        if (string.IsNullOrEmpty(desc))
+                                                        {
+                                                            desc = "(null)";
+                                                        }
+                                                        foreach (var mobID in mobIDs)
+                                                        {
+                                                            StringResult strResult = new StringResult();
+                                                            strResult.Name = stringMob[mobID].Name;
+                                                            strResult.Desc = desc;
+                                                            stringWorldArchiveMob[mobID] = strResult;
                                                         }
                                                     }
                                                     break;
                                                 case "npc":
-                                                    Dictionary<int, string> npcDict = new Dictionary<int, string>();
+                                                    List<int> npcIDs = new List<int>();
                                                     foreach (Wz_Node npcNode in subNode2.Nodes)
                                                     {
-                                                        foreach (Wz_Node npcSubNode in npcNode.Nodes)
+                                                        foreach (Wz_Node idNode in npcNode.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                                         {
-                                                            switch (npcSubNode.Text)
-                                                            {
-                                                                case "id":
-                                                                    foreach (Wz_Node idNode in npcSubNode.Nodes)
-                                                                    {
-                                                                        npcDict[idNode.GetValueEx<int>(0)] = "(null)";
-                                                                    }
-                                                                    break;
-                                                                case "desc":
-                                                                    foreach (int npcId in npcDict.Keys)
-                                                                    {
-                                                                        npcDict[npcId] = npcSubNode.Value.ToString();
-                                                                    }
-                                                                    foreach (var kvp in npcDict)
-                                                                    {
-                                                                        StringResult strResult = new StringResult();
-                                                                        strResult.Name = stringNpc[kvp.Key].Name;
-                                                                        strResult.Desc = kvp.Value;
-
-                                                                        stringWorldArchiveNpc[kvp.Key] = strResult;
-                                                                        npcDict.Clear();
-                                                                    }
-                                                                    break;
-                                                            }
+                                                            var npcID = idNode.GetValueEx<int>(0);
+                                                            if (npcID != 0) npcIDs.Add(npcID);
+                                                        }
+                                                        var desc = npcNode.FindNodeByPath("desc").GetValueEx<string>(null);
+                                                        if (string.IsNullOrEmpty(desc))
+                                                        {
+                                                            desc = "(null)";
+                                                        }
+                                                        foreach (var npcID in npcIDs)
+                                                        {
+                                                            StringResult strResult = new StringResult();
+                                                            strResult.Name = stringNpc[npcID].Name;
+                                                            strResult.Desc = desc;
+                                                            stringWorldArchiveNpc[npcID] = strResult;
                                                         }
                                                     }
                                                     break;
