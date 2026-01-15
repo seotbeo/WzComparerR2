@@ -382,6 +382,7 @@ namespace WzComparerR2.AvatarCommon
             AvatarPart part = new AvatarPart(imgNode);
 
             var gearType = Gear.GetGearType(part.ID.Value);
+            if (Gear.IsSubWeapon(gearType)) this.SubWeapon = part;
             switch (gearType)
             {
                 case GearType.body: this.Body = part; break;

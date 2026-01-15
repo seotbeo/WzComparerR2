@@ -206,9 +206,18 @@ namespace WzComparerR2.OpenAPI
             if (id == -1) return "";
 
             var ret = "";
-            if (GetValue("isNotBlade") == 0) ret += 134;
-            else if (GetValue("isSubWeapon") != 0) ret += 135;
-            else ret += 109;
+            switch (GetValue("subWeaponType"))
+            {
+                case 0:
+                case 1:
+                    ret += 109; break;
+                case 2:
+                    ret += 134; break;
+                case 3:
+                    ret += 135; break;
+                case 4:
+                    ret += 172; break;
+            }
             ret += GetValue("shieldGender");
             ret += id.ToString().PadLeft(3, '0');
             return ret;
