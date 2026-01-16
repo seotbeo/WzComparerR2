@@ -475,9 +475,9 @@ namespace WzComparerR2.Common
                                             switch (subNode2.Text)
                                             {
                                                 case "mob":
-                                                    List<int> mobIDs = new List<int>();
                                                     foreach (Wz_Node mobNode in subNode2.Nodes)
                                                     {
+                                                        List<int> mobIDs = new List<int>();
                                                         foreach (Wz_Node idNode in mobNode.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                                         {
                                                             var mobID = idNode.GetValueEx<int>(0);
@@ -498,9 +498,9 @@ namespace WzComparerR2.Common
                                                     }
                                                     break;
                                                 case "npc":
-                                                    List<int> npcIDs = new List<int>();
                                                     foreach (Wz_Node npcNode in subNode2.Nodes)
                                                     {
+                                                        List<int> npcIDs = new List<int>();
                                                         foreach (Wz_Node idNode in npcNode.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                                         {
                                                             var npcID = idNode.GetValueEx<int>(0);
