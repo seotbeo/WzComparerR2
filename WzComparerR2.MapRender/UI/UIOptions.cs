@@ -564,16 +564,17 @@ namespace WzComparerR2.MapRender.UI
             {
                  "단축키 :",
                  "",
-                 "M 미니맵",
-                 "W 월드맵",
-                 "Esc 설정",
-                 "Ctrl+1~0 레이어 표시 변경",
-                 "Ctrl+U 시야 범위 제한 변경",
-                 "` 채팅창",
-                 "Alt+Enter 해상도 변경",
-                 "ScrollLock 스크린샷",
-                 "S 캡쳐 범위 표시",
-                 "Ctrl+S 현재 화면만 캡쳐",
+                 "[M] 미니맵",
+                 "[W] 월드맵",
+                 "[Esc] 설정",
+                 "[Ctrl+1~0] 레이어 표시 변경",
+                 "[Ctrl+U] 시야 범위 제한 변경",
+                 "[Ctrl+마우스 스크롤] 맵 확대/축소",
+                 "[`] 채팅창",
+                 "[Alt+Enter] 해상도 변경",
+                 "[ScrollLock] 스크린샷",
+                 "[S] 캡쳐 범위 표시",
+                 "[Ctrl+S] 현재 화면만 캡쳐",
             };
 
             foreach (var tip in tips)

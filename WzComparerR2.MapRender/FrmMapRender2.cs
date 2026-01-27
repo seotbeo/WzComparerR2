@@ -601,6 +601,24 @@ namespace WzComparerR2.MapRender
                 this.ui.MouseUp += mouseBtnEv;
                 this.attachedEvent.Add(EventDisposable(mouseBtnEv, _ev => this.ui.MouseUp -= _ev));
 
+                EmptyKeys.UserInterface.Input.MouseWheelEventHandler mouseWheelEv;
+
+                mouseWheelEv = (o, e) =>
+                {
+                    if (!EmptyKeys.UserInterface.Input.Keyboard.IsControlPressed || e.Delta == 0) return;
+
+                    var beforeMousePos = this.renderEnv.Camera.CameraToWorld(this.renderEnv.Input.MousePosition).ToVector2();
+
+                    this.renderEnv.Camera.ZoomLevel += (int)Math.Round(e.Delta / 120f);
+                    this.renderEnv.Camera.ZoomLevel = MathHelper.Clamp(this.renderEnv.Camera.ZoomLevel, -20, 20);
+
+                    var afterMousePos = this.renderEnv.Camera.CameraToWorld(this.renderEnv.Input.MousePosition).ToVector2();
+                    this.renderEnv.Camera.Center += (beforeMousePos - afterMousePos) * this.renderEnv.Camera.Scale;
+                };
+
+                this.ui.MouseWheel += mouseWheelEv;
+                this.attachedEvent.Add(EventDisposable(mouseWheelEv, _ev => this.ui.MouseWheel -= _ev));
+
                 //更新事件
                 EventHandler ev = async (o, e) =>
                 {
@@ -609,7 +627,7 @@ namespace WzComparerR2.MapRender
                     if (this.CamaraChangedEffState)
                     {
                         this.CamaraChangedEffState = false;
-                        await SetCameraChangedEffect(this.renderEnv.Camera.Center);
+                        await SetCameraChangedEffect(this.renderEnv.Camera.Center / this.renderEnv.Camera.Scale);
                     }
                 };
                 this.ui.InputUpdated += ev;
@@ -621,8 +639,9 @@ namespace WzComparerR2.MapRender
             var disposable = UIHelper.RegisterClickEvent<SceneItem>(this.ui.ContentControl,
                 (sender, point) =>
                 {
-                    int x = (int)point.X;
-                    int y = (int)point.Y;
+                    var cameraScale = this.renderEnv.Camera.Scale;
+                    int x = (int)(point.X / cameraScale);
+                    int y = (int)(point.Y / cameraScale);
                     var mouseTarget = this.allItems.Reverse<ItemRect>().FirstOrDefault(item =>
                     {
                         return item.rect.Contains(x, y) && (item.item is PortalItem || item.item is IlluminantClusterItem || item.item is ReactorItem || item.item is LifeItem);
@@ -1227,11 +1246,13 @@ namespace WzComparerR2.MapRender
 
             Rectangle originalWorldRect = this.renderEnv.Camera.WorldRect;
             Rectangle oldRect = originalWorldRect;
+            int originalZoomLevel = this.renderEnv.Camera.ZoomLevel;
             // 보이는 화면만 캡쳐
             if (captureViewPortOnly)
             {
-                oldRect = new Rectangle((int)this.renderEnv.Camera.Center.X - this.renderEnv.Camera.Width / 2, (int)this.renderEnv.Camera.Center.Y - this.renderEnv.Camera.Height / 2,
-                    this.renderEnv.Camera.Width, this.renderEnv.Camera.Height);
+                var scale = this.renderEnv.Camera.Scale;
+                oldRect = new Rectangle((int)(this.renderEnv.Camera.Center.X - this.renderEnv.Camera.Width / 2 / scale), (int)(this.renderEnv.Camera.Center.Y - this.renderEnv.Camera.Height / 2 / scale),
+                    (int)(this.renderEnv.Camera.Width / scale), (int)(this.renderEnv.Camera.Height / scale));
             }
             // 스크린샷 커스텀 범위
             else if (!(this.CaptureRect.IsEmpty || this.CaptureRect.Width == 0 || this.CaptureRect.Height == 0))
@@ -1241,6 +1262,7 @@ namespace WzComparerR2.MapRender
             int width = Math.Min(oldRect.Width, maxTextureWidth);
             int height = Math.Min(oldRect.Height, maxTextureHeight);
             this.renderEnv.Camera.UseWorldRect = true;
+            this.renderEnv.Camera.ZoomLevel = 0;
 
             var target2d = new RenderTarget2D(this.GraphicsDevice, width, height, false, SurfaceFormat.Bgra32, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             PngEffect pngEffect = null;
@@ -1311,6 +1333,7 @@ namespace WzComparerR2.MapRender
             //this.renderEnv.Camera.WorldRect = oldRect;
             this.renderEnv.Camera.WorldRect = originalWorldRect;
             this.renderEnv.Camera.UseWorldRect = false;
+            this.renderEnv.Camera.ZoomLevel = originalZoomLevel;
 
             GraphicsDevice.SetRenderTargets(oldTarget);
             prepareCapture = false;

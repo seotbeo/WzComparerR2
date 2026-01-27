@@ -43,10 +43,12 @@ namespace WzComparerR2.MapRender
         private bool matrixNoRot;
         private Rectangle viewport;
 
+        private float scale;
 
-        public void Begin(Vector2 camaraOriginWorldPosition, float gameTime)
+        public void Begin(Vector2 camaraOriginWorldPosition, float gameTime, float scale = 1f)
         {
-            this.matrix = Matrix.CreateTranslation(-camaraOriginWorldPosition.X, -camaraOriginWorldPosition.Y, 0);
+            this.scale = scale;
+            this.matrix = Matrix.CreateScale(scale, scale, 1) * Matrix.CreateTranslation(-camaraOriginWorldPosition.X, -camaraOriginWorldPosition.Y, 0);
             this.camaraOriginWorldPosition = camaraOriginWorldPosition;
             this.gameTime = gameTime;
             this.lastItem = ItemType.Unknown;
@@ -581,7 +583,7 @@ namespace WzComparerR2.MapRender
                     {
                         this.msSpriteRenderer = new MsSpriteRenderer(this.GraphicsDevice);
                     }
-                    this.msSpriteRenderer.Begin(this.camaraOriginWorldPosition, this.gameTime);
+                    this.msSpriteRenderer.Begin(this.camaraOriginWorldPosition, this.gameTime, this.scale);
                     break;
             }
         }
