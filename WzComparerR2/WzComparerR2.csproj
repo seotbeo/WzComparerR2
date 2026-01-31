@@ -96,7 +96,7 @@
     </Compile>
   </ItemGroup>
   <Target Name="UpdateBuildTime" BeforeTargets="BeforeCompile">
-	<WriteLinesToFile File="BuildInfo.cs" Lines="namespace WzComparerR2 { internal class BuildInfo { public static string BuildTime =&gt; &quot;m25052100&quot;%3b } }" Overwrite="true" />
+	<WriteLinesToFile File="BuildInfo.cs" Lines="namespace WzComparerR2 { internal class BuildInfo { public static string BuildTime =&gt; &quot;m$(FormattedBuildTime)00&quot;%3b } }" Overwrite="true" />
   </Target>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

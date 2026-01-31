@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -36,7 +37,13 @@ class Program
             Directory.CreateDirectory(tempUpdateFolder);
             ZipFile.ExtractToDirectory(updateZipPath, tempUpdateFolder);
 
+
             string[] directoriesToDelete = { "Lib", "Plugin", "runtimes" };
+            HashSet<string> exts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ".dll", ".json"
+            };
+            /*
             foreach (var dir in directoriesToDelete)
             {
                 string dirPath = Path.Combine(currentDirectory, dir);
@@ -45,11 +52,45 @@ class Program
                     Directory.Delete(dirPath, true);
                 }
             }
+            */
+            foreach (var dir in directoriesToDelete)
+            {
+                string dirPath = Path.Combine(currentDirectory, dir);
+                if (!Directory.Exists(dirPath)) continue;
 
+                foreach (var file in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                {
+                    if (exts.Contains(Path.GetExtension(file)))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+
+            /*
             foreach (var file in Directory.GetFiles(currentDirectory, "WzComparerR2*"))
             {
                 if (file.Contains("Updater")) continue;
                 File.Delete(file);
+            }
+            */
+            HashSet<string> deletableFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "WzComparerR2.exe",
+                "WzComparerR2.exe.config",
+                "WzComparerR2.dll",
+                "WzComparerR2.dll.config",
+                "WzComparerR2.deps.json",
+                "WzComparerR2.runtimeconfig.json",
+            };
+            foreach (var file in Directory.GetFiles(currentDirectory))
+            {
+                var name = Path.GetFileName(file);
+
+                if (deletableFiles.Contains(name))
+                {
+                    File.Delete(file);
+                }
             }
 
             foreach (var file in Directory.GetFiles(Path.Combine(tempUpdateFolder, targetSubFolder)))

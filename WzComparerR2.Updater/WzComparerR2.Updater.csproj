@@ -20,6 +20,7 @@
   <Import Project="$(ProjectDir)..\Build\Common.props" />
   <ItemGroup Condition="$(DotnetEdition) == 'framework'">
     <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="System.IO" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
