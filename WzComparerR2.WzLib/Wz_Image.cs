@@ -94,7 +94,26 @@ namespace WzComparerR2.WzLib
                     this.chec = true;
                 }
 
-                if (TextImageReaderV1.PreCheck(this.stream))
+                if (RawTextReader.PreCheck(this))
+                {
+                    try
+                    {
+                        lock (this.WzFile.ReadLock)
+                        {
+                            this.stream.Position = 0;
+                            var reader = new WzStreamReader(this.stream);
+                            RawTextReader.ExtractImg(reader, this.Node);
+                            this.extr = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        e = ex;
+                        this.Unextract();
+                        return false;
+                    }
+                }
+                else if (TextImageReaderV1.PreCheck(this.stream))
                 {
                     try
                     {
@@ -891,6 +910,29 @@ namespace WzComparerR2.WzLib
                     case "<Property>": type = NodeType.Property; return true;
                     default: type = NodeType.Unknown; return false;
                 }
+            }
+        }
+
+        internal class RawTextReader
+        {
+            public static bool PreCheck(Wz_Image img)
+            {
+                if (string.Equals(Path.GetExtension(img.Name), ".txt", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public static void ExtractImg(WzStreamReader reader, Wz_Node parent)
+            {
+                StringBuilder sb = new StringBuilder();
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    sb.Append(line).Append("\r\n");
+                }
+                parent.Value = sb.ToString();
             }
         }
 
