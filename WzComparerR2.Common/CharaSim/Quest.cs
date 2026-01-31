@@ -171,9 +171,9 @@ namespace WzComparerR2.CharaSim
                         case "infoex":
                             foreach (var subNode in propNode.Nodes)
                             {
-                                var exVariable = subNode.FindNodeByPath("exVariable").GetValueEx<string>(null);
+                                var exVariable = subNode.FindNodeByPath("exVariable").GetValueEx<string>("");
                                 var cond = subNode.FindNodeByPath("cond").GetValueEx<int>(0);
-                                if (exVariable != null)
+                                if (!quest.Check1Infoex.ContainsKey(exVariable))
                                     quest.Check1Infoex.Add(exVariable, cond > 0 ? true : false);
                             }
                             break;

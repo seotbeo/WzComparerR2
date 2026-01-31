@@ -633,7 +633,7 @@ namespace WzComparerR2.CharaSimControl
                         return "0";
 
                     case "R":
-                        var m = Regex.Match(info, @"\d+Ex(\w+)Ref\d+");
+                        var m = Regex.Match(info, @"\d+Ex(\w*)Ref\d+");
                         if (m.Success)
                         {
                             var exVariable = m.Groups[1].Value;
