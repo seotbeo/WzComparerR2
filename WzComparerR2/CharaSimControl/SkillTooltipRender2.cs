@@ -161,6 +161,17 @@ namespace WzComparerR2.CharaSimControl
                 { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
             };
 
+            //初始化 skillCommon
+            Dictionary<string, string> skillCommon = new Dictionary<string, string>(Skill.Common);
+            if (!ShowSkillValuesByJob && Skill.AttackInfo.Count > 0)
+            {
+                var perJobInfo = Skill.AttackInfo.ElementAt(Skill.PerJobIndex).Value;
+                foreach (var prop in perJobInfo)
+                {
+                    skillCommon[prop.Key] = prop.Value;
+                }
+            }
+
             picH = 0;
             splitterH = new List<int>();
 
@@ -204,7 +215,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (sr.Desc != null)
             {
-                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, Skill.Common, Skill.ExtraPropNames, SummaryParams.Default);
+                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, skillCommon, Skill.ExtraPropNames, SummaryParams.Default);
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
@@ -294,7 +305,7 @@ namespace WzComparerR2.CharaSimControl
                         if (Skill.VSkillValue == 1) Skill.Level = 30;
                     }
                 }
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, Skill.SkillID, this.DiffSkillTags);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, Skill.SkillID, DiffSkillTags: this.DiffSkillTags);
                 GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
                 {
@@ -452,6 +463,12 @@ namespace WzComparerR2.CharaSimControl
                     skillDescEx.Add("#c[범위" + kv.Key + "(px)] " + colortag + "좌: " + kv.Value.X + ", 우: " + Skill.Rb[kv.Key].X + ", 상: " + kv.Value.Y + ", 하: " + Skill.Rb[kv.Key].Y + "" +
                         ", 영역: " + Math.Abs(Skill.Rb[kv.Key].X - kv.Value.X) + " x " + Math.Abs(kv.Value.Y - Skill.Rb[kv.Key].Y) + "#");
                 }
+            }
+            
+            if (!ShowSkillValuesByJob && Skill.AttackInfo.Count > 0)
+            {
+                int jobID = Skill.AttackInfo.ElementAt(Skill.PerJobIndex).Key;
+                skillDescEx.Add($"#c[기준 직업] {ItemStringHelper.GetJobName(jobID)}({jobID})#");
             }
 
             if (skillDescEx.Count > 0)

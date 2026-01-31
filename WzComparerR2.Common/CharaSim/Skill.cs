@@ -22,9 +22,11 @@ namespace WzComparerR2.CharaSim
             this.Lt = new Dictionary<string, Wz_Vector>();
             this.Rb = new Dictionary<string, Wz_Vector>();
             this.AttackInfo = new Dictionary<int, List<ExtraProps>>();
+            this.perJobIndex = 0;
         }
 
         private int level;
+        private int perJobIndex;
         internal List<Dictionary<string, string>> levelCommon;
         internal Dictionary<string, string> common;
 
@@ -57,6 +59,15 @@ namespace WzComparerR2.CharaSim
                     || this.SkillID / 100000 == 4000; //fix for evan
                 int maxLevel = canBreakLevel ? 100 : this.MaxLevel;
                 level = Math.Max(0, Math.Min(value, maxLevel));
+            }
+        }
+
+        public int PerJobIndex
+        {
+            get { return perJobIndex; }
+            set
+            {
+                perJobIndex = Math.Max(0, Math.Min(value, this.AttackInfo.Count - 1));
             }
         }
 
@@ -147,15 +158,15 @@ namespace WzComparerR2.CharaSim
                             }
                             else if (commonNode.Text == "attackInfo")
                             {
-                                foreach (var job in commonNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                                foreach (var jobNode in commonNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                 {
-                                    if (int.TryParse(job.Text, out int jobID))
+                                    if (Int32.TryParse(jobNode.Text, out int jobID))
                                     {
                                         if (!skill.AttackInfo.ContainsKey(jobID))
                                         {
                                             skill.AttackInfo[jobID] = new List<ExtraProps>();
                                         }
-                                        foreach (var prop in job.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                                        foreach (var prop in jobNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
                                         {
                                             skill.AttackInfo[jobID].Add(new ExtraProps(prop.Text, prop.GetValueEx<string>("")));
                                         }

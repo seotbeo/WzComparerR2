@@ -227,12 +227,13 @@ namespace WzComparerR2.CharaSim
         private static bool GetValueIgnoreCase(Dictionary<string, string> dict, List<string> extraProps, string key, out string value)
         {
             //bool find = false;
+            string extraProp = null;
             foreach (var k in extraProps)
             {
                 if (k.Equals(key, StringComparison.OrdinalIgnoreCase))
                 {
-                    value = $"#$x{k}#";
-                    return true;
+                    extraProp = k;
+                    break;
                 }
             }
             foreach (var kv in dict)
@@ -242,6 +243,11 @@ namespace WzComparerR2.CharaSim
                     value = kv.Value;
                     return true;
                 }
+            }
+            if (!string.IsNullOrEmpty(extraProp))
+            {
+                value = $"#$x{extraProp}#";
+                return true;
             }
             value = null;
             return false;
@@ -287,7 +293,7 @@ namespace WzComparerR2.CharaSim
             return GetSkillSummary(skill, skill.Level, sr, param);
         }
 
-        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default, bool doHighlight = false, int? skillID = null, Dictionary<int, HashSet<string>> DiffSkillTags = null)
+        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default, bool doHighlight = false, Dictionary<string, string> overrideSkillCommon = null, int? skillID = null, Dictionary<int, HashSet<string>> DiffSkillTags = null)
         {
             if (skill == null || sr == null)
                 return null;
@@ -349,7 +355,7 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                return GetSkillSummary(h, level, skill.Common, skill.ExtraPropNames, param, options);
+                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, skill.ExtraPropNames, param, options);
             }
         }
 

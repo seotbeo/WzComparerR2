@@ -189,12 +189,11 @@
             this.superTabControlPanel1.Controls.Add(this.comboBoxEx1);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX2);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX1);
-            this.superTabControlPanel1.Controls.Add(this.chkShowSkillValuesByJob);
             this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.superTabControlPanel1.Location = new System.Drawing.Point(62, 0);
             this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.superTabControlPanel1.Name = "superTabControlPanel1";
-            this.superTabControlPanel1.Size = new System.Drawing.Size(293, 278);
+            this.superTabControlPanel1.Size = new System.Drawing.Size(293, 293);
             this.superTabControlPanel1.TabIndex = 0;
             this.superTabControlPanel1.TabItem = this.superTabItem1;
             // 
@@ -303,12 +302,12 @@
             // 
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.labelX3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelX3.Location = new System.Drawing.Point(15, 265);
+            this.labelX3.Location = new System.Drawing.Point(15, 243);
             this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(236, 30);
             this.labelX3.TabIndex = 11;
-            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b>";
+            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
             // 
             // comboBoxEx2
             // 
@@ -325,7 +324,7 @@
             this.comboItem8,
             this.comboItem9,
             this.comboItem10});
-            this.comboBoxEx2.Location = new System.Drawing.Point(110, 245);
+            this.comboBoxEx2.Location = new System.Drawing.Point(110, 221);
             this.comboBoxEx2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx2.Name = "comboBoxEx2";
             this.comboBoxEx2.Size = new System.Drawing.Size(104, 21);
@@ -364,7 +363,7 @@
             // 
             // 
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(15, 249);
+            this.labelX2.Location = new System.Drawing.Point(15, 225);
             this.labelX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(89, 18);
@@ -379,7 +378,7 @@
             // 
             // 
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(15, 225);
+            this.labelX1.Location = new System.Drawing.Point(15, 204);
             this.labelX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(89, 18);
@@ -399,7 +398,7 @@
             this.comboItem2,
             this.comboItem3,
             this.comboItem4});
-            this.comboBoxEx1.Location = new System.Drawing.Point(110, 221);
+            this.comboBoxEx1.Location = new System.Drawing.Point(110, 197);
             this.comboBoxEx1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx1.Name = "comboBoxEx1";
             this.comboBoxEx1.Size = new System.Drawing.Size(104, 21);

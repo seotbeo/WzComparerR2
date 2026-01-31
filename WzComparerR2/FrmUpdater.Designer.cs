@@ -36,9 +36,9 @@
             this.lblLatestVer = new DevComponents.DotNetBar.LabelX();
             this.lblUpdateContent = new DevComponents.DotNetBar.LabelX();
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
-            this.advTree1 = new DevComponents.AdvTree.AdvTree();
+            this.richTextBoxEx1 = new DevComponents.DotNetBar.Controls.RichTextBoxEx();
+            this.chkEnableAutoUpdate = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.elementStyle1 = new DevComponents.DotNetBar.ElementStyle();
-            ((System.ComponentModel.ISupportInitialize)(this.advTree1)).BeginInit();
             this.SuspendLayout();
             // 
             // labelX1
@@ -134,31 +134,20 @@
             this.buttonX1.Text = "업데이트";
             this.buttonX1.Click += new System.EventHandler(this.buttonX1_Click);
             // 
-            // advTree1
-            // 
-            this.advTree1.AccessibleRole = System.Windows.Forms.AccessibleRole.Outline;
-            this.advTree1.AllowDrop = true;
-            this.advTree1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.advTree1.BackColor = System.Drawing.SystemColors.Window;
+            // richTextBoxEx1
             // 
             // 
             // 
-            this.advTree1.BackgroundStyle.Class = "TreeBorderKey";
-            this.advTree1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.advTree1.DoubleClickTogglesNode = false;
-            this.advTree1.DragDropEnabled = false;
-            this.advTree1.DragDropNodeCopyEnabled = false;
-            this.advTree1.ExpandWidth = 4;
-            this.advTree1.HideSelection = true;
-            this.advTree1.Location = new System.Drawing.Point(12, 81);
-            this.advTree1.Name = "advTree1";
-            this.advTree1.NodeStyle = this.elementStyle1;
-            this.advTree1.PathSeparator = ";";
-            this.advTree1.Size = new System.Drawing.Size(546, 260);
-            this.advTree1.Styles.Add(this.elementStyle1);
-            this.advTree1.TabIndex = 9;
-            this.advTree1.Text = "advTree1";
+            // 
+            this.richTextBoxEx1.BackgroundStyle.Class = "RichTextBoxBorder";
+            this.richTextBoxEx1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.richTextBoxEx1.Location = new System.Drawing.Point(12, 81);
+            this.richTextBoxEx1.Name = "richTextBoxEx1";
+            this.richTextBoxEx1.Rtf = "{\\rtf1\\ansi\\ansicpg936\\deff0\\deflang1033\\deflangfe1042{\\fonttbl{\\f0\\fnil\\fcharset" +
+    "129 \\\'b5\\\'b8\\\'bf\\\'f2;}}\r\n\\viewkind4\\uc1\\pard\\lang1042\\f0\\fs18\\par\r\n}\r\n";
+            this.richTextBoxEx1.Size = new System.Drawing.Size(546, 260);
+            this.richTextBoxEx1.ReadOnly = true;
+            this.richTextBoxEx1.TabIndex = 9;
             // 
             // elementStyle1
             // 
@@ -166,12 +155,28 @@
             this.elementStyle1.Name = "elementStyle1";
             this.elementStyle1.TextColor = System.Drawing.SystemColors.ControlText;
             // 
+            // chkEnableAutoUpdate
+            // 
+            this.chkEnableAutoUpdate.AutoSize = true;
+            this.chkEnableAutoUpdate.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkEnableAutoUpdate.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkEnableAutoUpdate.Location = new System.Drawing.Point(12, 189);
+            this.chkEnableAutoUpdate.Name = "chkEnableAutoUpdate";
+            this.chkEnableAutoUpdate.Size = new System.Drawing.Size(170, 23);
+            this.chkEnableAutoUpdate.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkEnableAutoUpdate.TabIndex = 10;
+            this.chkEnableAutoUpdate.Text = "자동 업데이트";
+            this.chkEnableAutoUpdate.CheckedChanged += new System.EventHandler(this.chkEnableAutoUpdate_CheckedChanged);
+            // 
             // FrmUpdater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(570, 380);
-            this.Controls.Add(this.advTree1);
+            this.Controls.Add(this.richTextBoxEx1);
             this.Controls.Add(this.buttonX1);
             this.Controls.Add(this.lblUpdateContent);
             this.Controls.Add(this.lblLatestVer);
@@ -179,6 +184,7 @@
             this.Controls.Add(this.labelX3);
             this.Controls.Add(this.labelX2);
             this.Controls.Add(this.labelX1);
+            //this.Controls.Add(this.chkEnableAutoUpdate);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("굴림", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -188,7 +194,6 @@
             this.Name = "FrmUpdater";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "업데이터";
-            ((System.ComponentModel.ISupportInitialize)(this.advTree1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -203,7 +208,8 @@
         private DevComponents.DotNetBar.LabelX lblLatestVer;
         private DevComponents.DotNetBar.LabelX lblUpdateContent;
         private DevComponents.DotNetBar.ButtonX buttonX1;
-        private DevComponents.AdvTree.AdvTree advTree1;
+        private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableAutoUpdate;
+        private DevComponents.DotNetBar.Controls.RichTextBoxEx richTextBoxEx1;
         private DevComponents.DotNetBar.ElementStyle elementStyle1;
     }
 }

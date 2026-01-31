@@ -19,6 +19,7 @@ namespace WzComparerR2.Config
             this.AutoDetectExtFiles = true;
             this.AutoDetectUpdate = true;
             this.WzVersionVerifyMode = WzLib.WzVersionVerifyMode.Fast;
+            //this.EnableAutoUpdate = true;
         }
 
         /// <summary>
@@ -141,5 +142,17 @@ namespace WzComparerR2.Config
             get { return (ConfigItem<string>)this["nexonOpenAPIKey"]; }
             set { this["nexonOpenAPIKey"] = value; }
         }
+
+        /// <summary>
+        /// 获取或设置一个值，指示Release版本下是否需要自动检查更新。
+        /// </summary>
+        /*
+        [ConfigurationProperty("EnableAutoUpdate")]
+        public ConfigItem<bool> EnableAutoUpdate
+        {
+            get { return (ConfigItem<bool>)this["EnableAutoUpdate"]; }
+            set { this["EnableAutoUpdate"] = value; }
+        }
+        */
     }
 }

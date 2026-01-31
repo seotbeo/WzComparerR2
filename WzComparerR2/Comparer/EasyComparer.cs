@@ -763,7 +763,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].DiffSkillTags = this.DiffSkillTags;
                 tooltipRenderNewOld[i].IgnoreEvalError = true;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
-                tooltipRenderNewOld[i].ShowSkillValuesByJob = CharaSimConfig.Default.Skill.ShowSkillValuesByJob;
+                tooltipRenderNewOld[i].ShowSkillValuesByJob = true;
             }
 
             foreach (var skillID in OutputSkillTooltipIDs)
