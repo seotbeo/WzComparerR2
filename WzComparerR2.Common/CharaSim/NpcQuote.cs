@@ -31,7 +31,7 @@ namespace WzComparerR2.CharaSim
         public static NpcQuote CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, StringLinker stringLinker)
         {
             int npcID;
-            if (!(Int32.TryParse(node.Text, out npcID)))
+            if (node == null || !(Int32.TryParse(node.Text, out npcID)))
             {
                 return null;
             }

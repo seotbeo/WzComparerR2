@@ -60,6 +60,9 @@ namespace WzComparerR2
         HistoryList<Node> historyNodeList;
         bool historySelecting;
 
+        // ui event flags
+        bool _updatingClbRootNode;
+
         //soundPlayer
         BassSoundPlayer soundPlayer;
         Timer soundTimer;
@@ -335,6 +338,7 @@ namespace WzComparerR2
         private void UpdateClbRootNode()
         {
             clbRootNode.SuspendLayout();
+            _updatingClbRootNode = true;
             var containList = Enumerable.Repeat(false, clbRootNode.Items.Count).ToList();
             foreach (var wzs in this.openedWz)
             {
@@ -350,10 +354,12 @@ namespace WzComparerR2
                     }
                 }
             }
-            for (int i = 0; i < containList.Count; i++)
+            clbRootNode.SetItemChecked(0, true); // Base.wz
+            for (int i = 1; i < containList.Count; i++)
             {
                 clbRootNode.SetItemChecked(i, containList[i]);
             }
+            _updatingClbRootNode = false;
             clbRootNode.ResumeLayout();
         }
 
@@ -4420,6 +4426,8 @@ namespace WzComparerR2
 
         private void clbRootNode_ItemCheck(object sender, ItemCheckEventArgs e)
         {
+            if (_updatingClbRootNode) return;
+
             if (e.Index == clbRootNode.Items.IndexOf("Base"))
             {
                 if (e.NewValue == CheckState.Unchecked)
