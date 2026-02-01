@@ -159,7 +159,7 @@ namespace WzComparerR2
                 }
                 else
                 {
-                    this.lblUpdateContent.Text = "이미 최신 버전을 실행 중입니다";
+                    this.lblUpdateContent.Text = "최신 버전입니다";
                 }
             }
             catch (Exception ex)

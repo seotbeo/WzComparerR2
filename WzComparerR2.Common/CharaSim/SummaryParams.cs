@@ -12,6 +12,8 @@ namespace WzComparerR2.CharaSim
         private string cEnd;
         private string gStart;
         private string gEnd;
+        private string xStart;
+        private string xEnd;
 
         /// <summary>
         /// 获取或设置回车符(\r)的替换字符串。
@@ -68,6 +70,24 @@ namespace WzComparerR2.CharaSim
         }
 
         /// <summary>
+        /// 获取或设置自定义高亮起始符(#x)的替换字符串。
+        /// </summary>
+        public string XStart
+        {
+            get { return xStart; }
+            set { xStart = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置自定义高亮结束符(#)的替换字符串
+        /// </summary>
+        public string XEnd
+        {
+            get { return xEnd; }
+            set { xEnd = value; }
+        }
+
+        /// <summary>
         /// 获取默认的替换字符串组合。
         /// </summary>
         public static SummaryParams Default
@@ -81,7 +101,9 @@ namespace WzComparerR2.CharaSim
                     cStart = @"#c",
                     cEnd = @"#",
                     gStart = @"#$g",
-                    gEnd = @"#"
+                    gEnd = @"#",
+                    xStart = @"#$x",
+                    xEnd = @"#",
                 };
             }
         }
@@ -97,7 +119,9 @@ namespace WzComparerR2.CharaSim
                     cStart = @"#c",
                     cEnd = @"#",
                     gStart = @"#$g",
-                    gEnd = @"#"
+                    gEnd = @"#",
+                    xStart = @"#$x",
+                    xEnd = @"#",
                 };
             }
         }
@@ -113,7 +137,9 @@ namespace WzComparerR2.CharaSim
                     cStart = @"<span style=""font-weight:bold; color:orange;"">",
                     cEnd = @"</span>",
                     gStart = @"<span style=""font-weight:bold; color:#3f0;"">",
-                    gEnd = @"</span>"
+                    gEnd = @"</span>",
+                    xStart = @"<span style=""font-weight:bold; color:#ddfe01;"">",
+                    xEnd = @"</span>",
                 };
             }
         }
