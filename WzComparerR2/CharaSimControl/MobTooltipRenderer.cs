@@ -351,6 +351,7 @@ namespace WzComparerR2.CharaSimControl
                 WorldArchiveRender.WorldArchiveMessage = worldArchiveDesc;
                 WorldArchiveRender.MonsterBookMessage = monsterBookDesc;
                 WorldArchiveRender.MobID = MobInfo.ID;
+                WorldArchiveRender.SourceWzFile = this.SourceWzFile;
                 Bitmap waBitmap = WorldArchiveRender.Render();
                 Bitmap appendWaBitmap = new Bitmap(bmp.Width + waBitmap.Width, Math.Max(bmp.Height, waBitmap.Height));
                 using (g = Graphics.FromImage(appendWaBitmap))

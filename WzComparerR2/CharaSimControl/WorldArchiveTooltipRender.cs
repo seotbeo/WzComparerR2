@@ -183,13 +183,13 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap GetSpecialMobBitmap(int mobID)
         {
-            BitmapOrigin mobBitmap = BitmapOrigin.CreateFromNode(PluginManager.FindWz(@$"UI\UIworldArchive.img\image\mob\{mobID}"), PluginManager.FindWz, this.SourceWzFile);
+            BitmapOrigin mobBitmap = BitmapOrigin.CreateFromNode(PluginManager.FindWz(@$"UI\UIworldArchive.img\image\mob\{mobID}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
             return mobBitmap.Bitmap;
         }
 
         private Bitmap GetSpecialNpcBitmap(int npcID)
         {
-            BitmapOrigin npcBitmap = BitmapOrigin.CreateFromNode(PluginManager.FindWz(@$"UI\UIworldArchive.img\illust\npc\{npcID}"), PluginManager.FindWz, this.SourceWzFile);
+            BitmapOrigin npcBitmap = BitmapOrigin.CreateFromNode(PluginManager.FindWz(@$"UI\UIworldArchive.img\illust\npc\{npcID}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
             if (npcBitmap.Bitmap == null) return null;
             else
             {

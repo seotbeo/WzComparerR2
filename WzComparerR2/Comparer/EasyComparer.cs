@@ -55,6 +55,7 @@ namespace WzComparerR2.Comparer
         public bool OutputQuestTooltip { get; set; }
         public bool OutputAchvTooltip { get; set; }
         public bool OutputSkillTooltip { get; set; }
+        public bool OutputWorldArchives { get; set; }
         public bool HashPngFileName { get; set; }
         public Dictionary<string, bool> SelectedNodes { get; set; }
 
@@ -143,6 +144,8 @@ namespace WzComparerR2.Comparer
                             WzNewOld[i]?.FindNodeByPath("Etc").GetNodeWzFile(),
                             WzNewOld[i]?.FindNodeByPath("Quest").GetNodeWzFile());
                     }
+
+                    this.OutputWorldArchives = CharaSimConfig.Default.Misc.EnableWorldArchive;
                 }
                 if (OutputItemTooltip || OutputGearTooltip) // Check commodity differences
                 {
@@ -1072,7 +1075,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffMobTags = this.DiffMobTags;
-                tooltipRenderNewOld[i].EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
+                tooltipRenderNewOld[i].EnableWorldArchive = this.OutputWorldArchives;
             }
 
             foreach (var mobID in OutputMobTooltipIDs)
@@ -1123,7 +1126,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].ShowObjectID = true;
                 tooltipRenderNewOld[i].ShowAllIllustAtOnce = CharaSimConfig.Default.Npc.ShowAllIllustAtOnce;
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
-                tooltipRenderNewOld[i].EnableWorldArchive = CharaSimConfig.Default.Misc.EnableWorldArchive;
+                tooltipRenderNewOld[i].EnableWorldArchive = this.OutputWorldArchives;
                 tooltipRenderNewOld[i].ShowNpcQuotes = CharaSimConfig.Default.Npc.ShowNpcQuotes;
             }
 
@@ -1586,6 +1589,22 @@ namespace WzComparerR2.Comparer
                     }
                 }
             }
+
+            if (!match.Success && this.OutputWorldArchives)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\worldArchive.img\\collectionInfo\\\d+\\\d+\\mob\\\d+\\desc$"); // 월드 아카이브 확인
+                if (match.Success)
+                {
+                    IEnumerable<int> ids = (node.ParentNode?.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null)).Select(node => node.GetValueEx<int>(0)).Distinct();
+                    foreach (var id in ids)
+                    {
+                        if (!OutputMobTooltipIDs.Contains(id))
+                        {
+                            OutputMobTooltipIDs.Add(id);
+                        }
+                    }
+                }
+            }
         }
 
         // 노드에서 NPC ID 얻기
@@ -1614,6 +1633,22 @@ namespace WzComparerR2.Comparer
                     if (!OutputNpcTooltipIDs.Contains(id))
                     {
                         OutputNpcTooltipIDs.Add(id);
+                    }
+                }
+            }
+
+            if (!match.Success && this.OutputWorldArchives)
+            {
+                match = Regex.Match(node.FullPathToFile, @"^Etc\\worldArchive.img\\collectionInfo\\\d+\\\d+\\npc\\\d+\\desc$"); // 월드 아카이브 확인
+                if (match.Success)
+                {
+                    IEnumerable<int> ids = (node.ParentNode?.FindNodeByPath("id")?.Nodes ?? new Wz_Node.WzNodeCollection(null)).Select(node => node.GetValueEx<int>(0)).Distinct();
+                    foreach (var id in ids)
+                    {
+                        if (!OutputNpcTooltipIDs.Contains(id))
+                        {
+                            OutputNpcTooltipIDs.Add(id);
+                        }
                     }
                 }
             }

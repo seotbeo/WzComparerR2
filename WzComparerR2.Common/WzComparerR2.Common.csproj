@@ -60,12 +60,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows'">
     <PackageReference Include="MapleStory.OpenAPI">
-      <Version>3.4.0</Version>
+      <Version>3.8.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <PackageReference Include="MapleStory.OpenAPI">
-      <Version>3.4.0</Version>
+      <Version>3.8.1</Version>
     </PackageReference>
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Windows')) AND !Exists('$(ProjectDir)\Rendering\Effect\PngEffect.$(MonogameFrameworkVersion).mgfxo')">

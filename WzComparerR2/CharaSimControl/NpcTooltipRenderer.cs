@@ -211,6 +211,7 @@ namespace WzComparerR2.CharaSimControl
                 WorldArchiveRender.WorldArchiveMessage = worldArchiveDesc;
                 WorldArchiveRender.NpcQuoteMessage = npcQuoteMessage;
                 WorldArchiveRender.NpcID = NpcInfo.ID;
+                WorldArchiveRender.SourceWzFile = this.SourceWzFile;
                 Bitmap waBitmap = WorldArchiveRender.Render();
                 Bitmap appendWaBitmap = new Bitmap(bmp.Width + waBitmap.Width, Math.Max(bmp.Height, waBitmap.Height));
                 using (g = Graphics.FromImage(appendWaBitmap))
@@ -350,7 +351,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetNpcQuote(int npcID)
         {
-            NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{npcID}"), PluginManager.FindWz, this.StringLinker);
+            NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{npcID}", this.SourceWzFile), PluginManager.FindWz, this.StringLinker);
             if (quote == null)
                 return null;
             else
