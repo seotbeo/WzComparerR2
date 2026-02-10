@@ -201,6 +201,8 @@ namespace WzComparerR2.CharaSim
         magicLayerWz2,
         setExtraOption,
         reissueBan,
+        collabo,
+        isAbleCustomIllust,
 
         //MSN专属属性
         blockUpgradeExtraOption,

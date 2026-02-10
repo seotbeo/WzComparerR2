@@ -1948,6 +1948,16 @@ namespace WzComparerR2.CharaSimControl
                 tags.Add(ItemStringHelper.GetGearPropString22(GearPropType.noPrism, value)[0]);
             }
 
+            // 커스텀 일러스트 의뢰 불가
+            if (Gear.Props.TryGetValue(GearPropType.collabo, out value) && value != 0)
+            {
+                Gear.Props.TryGetValue(GearPropType.isAbleCustomIllust, out var value2);
+                if (value2 == 0)
+                {
+                    tags.Add("#$r커스텀 일러스트 의뢰 불가#");
+                }
+            }
+
             // 민팅
             if (Gear.Props.TryGetValue(GearPropType.mintable, out value) && value != 0)
             {
