@@ -15,6 +15,7 @@ namespace WzComparerR2.MapRender.Patches2
         public int Y { get; set; }
         public int HorizontalImpact { get; set; }
         public int VerticalImpact { get; set; }
+        public double InverseImpactLength { get; set; }
         public int HRange { get; set; }
         public int VRange { get; set; }
         public int? ToMap { get; set; }
@@ -55,6 +56,7 @@ namespace WzComparerR2.MapRender.Patches2
                 EnchantPortal = node.Nodes["enchantPortal"].GetValueEx<int>(0) != 0,
                 ShownAtMinimap = node.Nodes["shownAtMinimap"].GetValueEx<int>(0) != 0
             };
+            item.InverseImpactLength = item.IsSpring ? 1 / Math.Sqrt(item.HorizontalImpact * item.HorizontalImpact + item.VerticalImpact * item.VerticalImpact) : 0;
             if (item.Type == 12)
             {
                 item.VerticalImpact = 1000;

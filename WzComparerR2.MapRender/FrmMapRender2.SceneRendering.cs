@@ -573,9 +573,9 @@ namespace WzComparerR2.MapRender
                     var barScaler = 0;
                     foreach (var item in portalList)
                     {
-                        var angle = Math.Atan2(item.VerticalImpact, item.HorizontalImpact);
-                        var sin = Math.Sin(angle);
-                        var cos = Math.Cos(angle);
+                        double invLen = item.InverseImpactLength;
+                        double sin = item.VerticalImpact * item.InverseImpactLength;
+                        double cos = item.HorizontalImpact * item.InverseImpactLength;
                         Point arrow1 = new Point((int)((cos + sin) * -arrowScaler), (int)((cos - sin) * -arrowScaler));
                         Point arrow2 = new Point((int)((sin - cos) * arrowScaler), (int)((cos + sin) * arrowScaler));
 
