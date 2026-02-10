@@ -138,6 +138,7 @@ namespace WzComparerR2.MapRender
         bool prepareCapture;
         bool captureViewPortOnly;
         bool ForceCaptureWithResolution;
+        bool showFootholdBoundary;
         Task captureTask;
         Resolution resolution;
         float opacity;
@@ -1432,6 +1433,7 @@ namespace WzComparerR2.MapRender
             this.batcher.D2DEnabled = config.UseD2dRenderer;
             (this.Content as WcR2ContentManager).UseD2DFont = config.UseD2dRenderer;
             this.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
+            this.showFootholdBoundary = config.ShowFootholdBoundary;
         }
 
         private void LoadOptionData(UIOptionsDataModel model)
@@ -1449,6 +1451,7 @@ namespace WzComparerR2.MapRender
             model.Minimap_CameraRegionVisible = this.ui.Minimap.CameraRegionVisible;
             model.WorldMap_UseImageNameAsInfoName = this.ui.WorldMap.UseImageNameAsInfoName;
             model.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
+            model.ShowFootholdBoundary = config.ShowFootholdBoundary;
             LoadCaptureRectOptionData(model);
         }
 
@@ -1468,6 +1471,7 @@ namespace WzComparerR2.MapRender
             config.Minimap_CameraRegionVisible = model.Minimap_CameraRegionVisible;
             config.WorldMap_UseImageNameAsInfoName = model.WorldMap_UseImageNameAsInfoName;
             config.ForceCaptureWithResolution = model.ForceCaptureWithResolution;
+            config.ShowFootholdBoundary = model.ShowFootholdBoundary;
             WzComparerR2.Config.ConfigManager.Save();
 
             if (int.TryParse(model.ScLeft, out int left) && int.TryParse(model.ScTop, out int top)

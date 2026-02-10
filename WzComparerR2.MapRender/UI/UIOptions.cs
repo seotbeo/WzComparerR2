@@ -162,6 +162,7 @@ namespace WzComparerR2.MapRender.UI
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             //grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             //grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -289,6 +290,16 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetColumn(chk5, 0);
             Grid.SetColumnSpan(chk5, 2);
             grid.Children.Add(chk5);
+
+            CheckBox chk6 = new CheckBox();
+            chk6.Content = "발판 경계 표시";
+            chk6.Margin = new Thickness(18, 0, 0, 0);
+            chk6.Background = Brushes.Gray;
+            chk6.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.ShowFootholdBoundary)));
+            Grid.SetRow(chk6, 10);
+            Grid.SetColumn(chk6, 0);
+            Grid.SetColumnSpan(chk6, 2);
+            grid.Children.Add(chk6);
 
             /*TextBlock lbl6 = new TextBlock();
             lbl6.VerticalAlignment = VerticalAlignment.Center;
@@ -635,6 +646,7 @@ namespace WzComparerR2.MapRender.UI
         private bool _minimap_cameraRegionVisible;
         private bool _worldmap_useImageNameAsInfoName;
         private bool _forceCaptureWithResolution;
+        private bool _showFootholdBoundary;
         private string _screenshotBackgroundColor;
         private string _scLeft;
         private string _scTop;
@@ -681,6 +693,12 @@ namespace WzComparerR2.MapRender.UI
         {
             get { return this._mobNameVisible; }
             set { base.SetProperty(ref this._mobNameVisible, value); }
+        }
+
+        public bool ShowFootholdBoundary
+        {
+            get { return this._showFootholdBoundary; }
+            set { base.SetProperty(ref this._showFootholdBoundary, value); }
         }
 
         public string ScreenshotBackgroundColor

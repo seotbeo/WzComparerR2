@@ -462,6 +462,18 @@ namespace WzComparerR2.MapRender
                     {
                         lines.Add(new Point(fh.X1, fh.Y1));
                         lines.Add(new Point(fh.X2, fh.Y2));
+                        if (showFootholdBoundary)
+                        {
+                            lines.Add(new Point(fh.X1, fh.Y1));
+                            lines.Add(new Point(fh.X1, fh.Y1 + 10));
+                            lines.Add(new Point(fh.X1, fh.Y1 + 10));
+                            lines.Add(new Point(fh.X1 - 5, fh.Y1 + 5));
+
+                            lines.Add(new Point(fh.X2, fh.Y2));
+                            lines.Add(new Point(fh.X2, fh.Y2 - 10));
+                            lines.Add(new Point(fh.X2, fh.Y2 - 10));
+                            lines.Add(new Point(fh.X2 + 5, fh.Y2 - 5));
+                        }
                     }
                 }
 

@@ -87,5 +87,12 @@ namespace WzComparerR2.MapRender.Config
             get { return (ConfigItem<bool>)this["forceCaptureWithResolution"]; }
             set { this["forceCaptureWithResolution"] = value; }
         }
+
+        [ConfigurationProperty("showFootholdBoundary")]
+        public ConfigItem<bool> ShowFootholdBoundary
+        {
+            get { return (ConfigItem<bool>)this["showFootholdBoundary"]; }
+            set { this["showFootholdBoundary"] = value; }
+        }
     }
 }
