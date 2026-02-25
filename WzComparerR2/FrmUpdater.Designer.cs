@@ -194,6 +194,8 @@
             this.Name = "FrmUpdater";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "업데이터";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmUpdater_FormClosed);
+            this.Load += new System.EventHandler(this.FrmUpdater_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

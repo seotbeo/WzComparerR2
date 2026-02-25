@@ -361,21 +361,25 @@ namespace WzComparerR2
             clbRootNode.ResumeLayout();
         }
 
-        async Task<bool> AutomaticCheckUpdate()
+        async Task AutomaticCheckUpdate()
         {
-            FrmUpdater updater = new FrmUpdater();
-            return await updater.QueryUpdate();
-            // Following code is from JMS implementation
-            /*var config = WcR2Config.Default;
-            if (config.EnableAutoUpdate)
+            var config = WcR2Config.Default;
+            var updater = new Updater();
+            try
             {
-                FrmUpdater updater = new FrmUpdater();
-                return await updater.QueryUpdate();
+                await updater.QueryUpdateAsync();
+                if (updater.UpdateAvailable)
+                {
+                    ToastNotification.Show(this, $"업데이트가 가능합니다. 버전: {updater.LatestVersionString}", 5000, eToastPosition.TopCenter);
+                    var frmUpdater = new FrmUpdater(updater);
+                    frmUpdater.LoadConfig(config);
+                    frmUpdater.ShowDialog(this);
+                }
             }
-            else
+            catch
             {
-                return false;
-            }*/
+                // ignore error
+            }
         }
 
         void CharaSimLoader_WzFileFinding(object sender, FindWzEventArgs e)
@@ -4748,7 +4752,7 @@ namespace WzComparerR2
         private void buttonItemUpdate_Click(object sender, EventArgs e)
         {
             var frm = new FrmUpdater();
-            frm.Load(WcR2Config.Default);
+            frm.LoadConfig(WcR2Config.Default);
             frm.ShowDialog();
         }
 
@@ -4772,15 +4776,9 @@ namespace WzComparerR2
 
         private async void MainForm_Shown(object sender, EventArgs e)
         {
-            //Automatic Update Check
             if (WcR2Config.Default.AutoDetectUpdate)
             {
-                bool isUpdateRequired = await AutomaticCheckUpdate();
-                if (isUpdateRequired)
-                {
-                    var frm = new FrmUpdater();
-                    frm.ShowDialog();
-                }
+                await this.AutomaticCheckUpdate();
             }
         }
 

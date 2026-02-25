@@ -1,29 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using DevComponents.AdvTree;
-using Newtonsoft.Json;
-using WzComparerR2.Common;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using System.Net;
+using System.Drawing;
 using System.IO;
-using System.Security.Policy;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using DevComponents.DotNetBar;
 using WzComparerR2.Config;
+using WzComparerR2.Controls;
 
 namespace WzComparerR2
 {
     public partial class FrmUpdater : DevComponents.DotNetBar.Office2007Form
     {
-        public FrmUpdater()
+        public FrmUpdater() : this(new Updater())
+        {
+        }
+
+        public FrmUpdater(Updater updater)
         {
             InitializeComponent();
 #if NET6_0_OR_GREATER
@@ -31,10 +26,11 @@ namespace WzComparerR2
             this.Font = new Font(new FontFamily("굴림"), 9f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 #endif
 
-            //this.lblCurrentVer.Text = $"{versionNumbers()[2]}.{versionNumbers()[3]}";
-            this.lblCurrentVer.Text = BuildInfo.BuildTime;
-            Task.Run(() => this.ExecuteUpdateAsync());
+            this.Updater = updater;
+            this.lblCurrentVer.Text = updater.CurrentVersionString;
         }
+
+        public Updater Updater { get; set; }
 
         public bool EnableAutoUpdate
         {
@@ -42,199 +38,172 @@ namespace WzComparerR2
             set { chkEnableAutoUpdate.Checked = value; }
         }
 
-        private string net462url;
-        private string net60url;
-        private string net80url;
-        private string fileurl;
+        private CancellationTokenSource cts;
 
-        private static string checkUpdateURL = "https://api.github.com/repos/seotbeo/WzComparerR2/releases/latest";
-
-        private string GetFileVersion()
+        private async void FrmUpdater_Load(object sender, EventArgs e)
         {
-            return this.GetAsmAttr<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-                ?? this.GetAsmAttr<AssemblyFileVersionAttribute>()?.Version;
-        }
-
-        private int[] versionNumbers()
-        {
-            string[] parts = GetFileVersion().ToString().Split('.');
-            int[] numbers = new int[4];
-            for (int i = 0; i < parts.Length; i++)
+            var updater = this.Updater;
+            if (!updater.LatestReleaseFetched)
             {
-                if (int.TryParse(parts[i], out int num))
+                using var cts = new CancellationTokenSource();
+                this.cts = cts;
+                try
                 {
-                    numbers[i] = num;
+                    await updater.QueryUpdateAsync(cts.Token);
+                    
                 }
-                else
+                catch (TaskCanceledException)
                 {
-                    numbers[i] = 0;
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    this.lblUpdateContent.Text = "업데이트 확인 실패";
+                    this.AppendText(ex.Message + "\r\n" + ex.StackTrace, Color.Red);
+                    return;
+                }
+                finally
+                {
+                    this.cts = null;
                 }
             }
-            return numbers;
-        }
 
-        private static int[] getCiVersionNumbers(string version)
-        {
-            string[] parts = version.Split('-')[2].Split('.');
-            int[] numbers = new int[2];
-            for (int i = 0; i < parts.Length; i++)
+            if (updater.LatestReleaseFetched)
             {
-                if (int.TryParse(parts[i], out int num))
-                {
-                    numbers[i] = num;
-                }
-                else
-                {
-                    numbers[i] = 0;
-                }
-            }
-            return numbers;
-        }
-
-        public async Task<bool> QueryUpdate()
-        {
-#if DEBUG
-            // Disable update check in debug builds
-            return false;
-#endif
-            var request = (HttpWebRequest)WebRequest.Create(checkUpdateURL);
-            request.Accept = "application/json";
-            request.UserAgent = "WzComparerR2/1.0";
-            try
-            {
-                using (WebResponse response = await request.GetResponseAsync())
-                using (Stream stream = response.GetResponseStream())
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    string responseString = reader.ReadToEnd();
-                    JObject UpdateContent = JObject.Parse(responseString);
-                    string BuildNumber = UpdateContent.SelectToken("tag_name").ToString();
-                    return Int64.Parse(BuildNumber.Substring(1, 8)) > Int64.Parse(BuildInfo.BuildTime.Substring(1, 8));
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private async Task ExecuteUpdateAsync()
-        {
-            var request = (HttpWebRequest)WebRequest.Create(checkUpdateURL);
-            request.Accept = "application/json";
-            request.UserAgent = "WzComparerR2/1.0";
-            try
-            {
-                var response = (HttpWebResponse)request.GetResponse();
-                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                JObject UpdateContent = JObject.Parse(responseString);
-                string BuildNumber = UpdateContent.SelectToken("tag_name").ToString();
-                string ChangeTitle = UpdateContent.SelectToken("name").ToString();
-                string Changelog = UpdateContent.SelectToken("body").ToString();
-                JArray assets = (JArray)UpdateContent["assets"];
-                string[] downloadUrls = new string[assets.Count];
-                for (int i = 0; i < assets.Count; i++)
-                {
-                    downloadUrls[i] = assets[i]["browser_download_url"]?.ToString();
-                }
-                // This part is for builds that are separated into 3 packages
-                /*foreach (string url in downloadUrls)
-                {
-                    if (url.Contains("net6")) net60url = url;
-                    else if (url.Contains("net8")) net80url = url;
-                    else net462url = url;
-                }*/
-
-                // This part is specificially for this fork
-                fileurl = downloadUrls[0];
-
-                this.lblLatestVer.Text = BuildNumber;
-                AppendText(Changelog, Color.Black);
+                this.lblLatestVer.Text = updater.LatestVersionString;
+                this.AppendText(updater.Release?.CreatedAt.ToLocalTime().ToString() + "\r\n" + updater.Release?.Body, Color.Black);
                 this.richTextBoxEx1.SelectionStart = 0;
-
-                if (Int64.Parse(BuildNumber.Substring(1, 8)) > Int64.Parse(BuildInfo.BuildTime.Substring(1, 8)))
+                if (updater.UpdateAvailable)
                 {
-                    buttonX1.Enabled = true;
+                    this.buttonX1.Enabled = true;
                     this.lblUpdateContent.Text = "업데이트 가능";
                 }
                 else
                 {
+                    this.buttonX1.Enabled = false;
                     this.lblUpdateContent.Text = "최신 버전입니다";
                 }
-            }
-            catch (Exception ex)
-            {
-                this.lblUpdateContent.Text = "업데이트 확인 실패";
-                AppendText(ex.Message + "\r\n" + ex.StackTrace, Color.Red);
-            }
-        }
-
-        private async Task DownloadUpdateAsync(string url, int version)
-        {
-            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string savePath = Path.Combine(currentDirectory, "update.zip");
-            try
-            {
-                buttonX1.Enabled = false;
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "GET";
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        using (Stream responseStream = response.GetResponseStream())
-                        {
-                            using (FileStream fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
-                            {
-                                responseStream.CopyTo(fileStream);
-                            }
-                        }
-                    }
-                }
-
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.exe", Path.Combine(currentDirectory, "WzComparerR2.Updater.exe"));
-#if NET6_0_OR_GREATER
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.deps.json", Path.Combine(currentDirectory, "WzComparerR2.Updater.deps.json"));
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.dll", Path.Combine(currentDirectory, "WzComparerR2.Updater.dll"));
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.dll.config", Path.Combine(currentDirectory, "WzComparerR2.Updater.dll.config"));
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.runtimeconfig.json", Path.Combine(currentDirectory, "WzComparerR2.Updater.runtimeconfig.json"));
-#else
-                ExtractResource("WzComparerR2.WzComparerR2.Updater.exe.config", Path.Combine(currentDirectory, "WzComparerR2.Updater.exe.config"));
-#endif
-                RunProgram("WzComparerR2.Updater.exe", "\"" + savePath + "\"", version);
-            }
-            catch (Exception ex)
-            {
-                this.lblUpdateContent.Text = "업데이트 다운로드 실패";
-                AppendText(ex.Message + "\r\n" + ex.StackTrace, Color.Red);
-            }
-            finally
-            {
-                buttonX1.Enabled = true;
             }
         }
 
         private void buttonX1_Click(object sender, EventArgs e)
         {
-            this.lblUpdateContent.Text = "업데이트 다운로드 중";
-            buttonX1.Enabled = false;
-            /*
-            string selectedURL = "";
-            switch (Environment.Version.Major)
+            var updater = this.Updater;
+            if (!updater.UpdateAvailable)
             {
-                default:
-                case 4:
-                    selectedURL = net462url;
-                    break;
-                case 6:
-                    selectedURL = net60url;
-                    break;
-                case 8:
-                    selectedURL = net80url;
-                    break;
+                MessageBoxEx.Show(this, "업데이트 정보가 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            */
-            Task.Run(() => this.DownloadUpdateAsync(fileurl, Environment.Version.Major));
+
+            var runtimeVer = Environment.Version.Major;
+            var asset = runtimeVer switch
+            {
+                4 => updater.Net462Asset,
+                6 => updater.Net6Asset,
+                8 => updater.Net8Asset,
+                10 => updater.Net10Asset,
+                _ => null,
+            };
+            asset = updater.AssetZip;
+
+            if (asset == null)
+            {
+                //MessageBoxEx.Show(this, $"Github에서 .Net {runtimeVer} 버전 파일을 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, $"Github에서 업데이트 파일을 찾을 수 없습니다. 직접 다운로드해 주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (this.cts != null)
+            {
+                MessageBoxEx.Show(this, "이미 다른 작업이 실행 중입니다. 잠시 후 다시 시도해 주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using var cts = new CancellationTokenSource();
+            this.cts = cts;
+            this.buttonX1.Enabled = false;
+            this.lblUpdateContent.Text = "업데이트 다운로드 중...";
+
+            try
+            {
+                string savePath = Path.Combine(Application.StartupPath, "update.zip");
+                var result = ProgressDialog.Show(this, "업데이트 다운로드..", "Updater", true, true, async (ctx, cancellationToken) =>
+                {
+                    cancellationToken.Register(() => cts.Cancel());
+                    
+                    try
+                    {
+                        await updater.DownloadAssetAsync(asset, savePath, (downloaded, total) =>
+                        {
+                            if (total > 0)
+                            {
+                                if (ctx.Progress == 0)
+                                {
+                                    ctx.ProgressMin = 0;
+                                    ctx.ProgressMax = (int)total;
+                                }
+                                ctx.Progress = (int)downloaded;
+                                ctx.Message = $"다운로드: {(1.0 * downloaded / total):P1}";
+                            }
+                            else
+                            {
+                                ctx.Message = $"다운로드: {downloaded:N0}";
+                            }
+                        }, cts.Token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        this.lblUpdateContent.Text = "업데이트 중지";
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        this.lblUpdateContent.Text = "업데이트 다운로드 실패";
+                        this.AppendText(ex.Message + "\r\n" + ex.StackTrace, Color.Red);
+                        throw;
+                    }
+                });
+
+                if (result == DialogResult.OK)
+                {
+                    if (DialogResult.OK == MessageBoxEx.Show(this, "새 버전 다운로드가 완료되었습니다. 확인 버튼을 누르면 업데이트가 진행됩니다.", "알림", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
+                    {
+                        this.ExecuteUpdater(savePath, runtimeVer);
+                    }
+                    else
+                    {
+                        this.lblUpdateContent.Text = "업데이트 가능";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.lblUpdateContent.Text = "업데이트 실패";
+                AppendText(ex.Message + "\r\n" + ex.StackTrace, Color.Red);
+            }
+            finally
+            {
+                this.cts = null;
+                if (!this.IsDisposed)
+                {
+                    this.buttonX1.Enabled = true;
+                }
+            }
+        }
+
+        private void ExecuteUpdater(string assetFileName, int version)
+        {
+            string wcR2Folder = Application.StartupPath;
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.exe", Path.Combine(wcR2Folder, "WzComparerR2.Updater.exe"));
+#if NET6_0_OR_GREATER
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.deps.json", Path.Combine(wcR2Folder, "WzComparerR2.Updater.deps.json"));
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.dll", Path.Combine(wcR2Folder, "WzComparerR2.Updater.dll"));
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.dll.config", Path.Combine(wcR2Folder, "WzComparerR2.Updater.dll.config"));
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.runtimeconfig.json", Path.Combine(wcR2Folder, "WzComparerR2.Updater.runtimeconfig.json"));
+#else
+            ExtractResource("WzComparerR2.WzComparerR2.Updater.exe.config", Path.Combine(wcR2Folder, "WzComparerR2.Updater.exe.config"));
+#endif
+            RunProgram("WzComparerR2.Updater.exe", "\"" + assetFileName + "\"", version);
         }
 
         private void RunProgram(string url, string path, int dotNetVersion)
@@ -261,16 +230,6 @@ namespace WzComparerR2
             this.richTextBoxEx1.SelectionColor = this.richTextBoxEx1.ForeColor;
         }
 
-        private T GetAsmAttr<T>()
-        {
-            object[] attr = this.GetType().Assembly.GetCustomAttributes(typeof(T), true);
-            if (attr != null && attr.Length > 0)
-            {
-                return (T)attr[0];
-            }
-            return default(T);
-        }
-
         private void ExtractResource(string resourceName, string outputPath)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -292,9 +251,17 @@ namespace WzComparerR2
             //ConfigManager.Save();
         }
 
-        public void Load(WcR2Config config)
+        public void LoadConfig(WcR2Config config)
         {
             //this.EnableAutoUpdate = config.EnableAutoUpdate;
+        }
+
+        private void FrmUpdater_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
+        {
+            if (this.cts != null)
+            {
+                this.cts.Cancel();
+            }
         }
     }
 }
