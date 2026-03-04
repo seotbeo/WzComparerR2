@@ -48,8 +48,8 @@ namespace WzComparerR2.MapRender
         private const int Fly_WaveHeightBase = 30;
         private const int Fly_WaveHeightRange = 15;
         private const float Fly_FindTargetProb = 0.0004f;
-        private const int Fly_FindTargetX = 500;
-        private const int Fly_FindTargetY = 400;
+        private const int Fly_FindTargetX = 400;
+        private const int Fly_FindTargetY = 500;
         private const int Max_FallSpeed = 670;
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
@@ -857,7 +857,6 @@ namespace WzComparerR2.MapRender
                 if (this.Random.NextPercent(Fly_FindTargetProb))
                 {
                     SetFlyTarget(pos);
-                    this.HasMoveTarget = true;
                     return;
                 }
             }
@@ -885,13 +884,13 @@ namespace WzComparerR2.MapRender
                     this.fly_TargetDir = dx < 0 ? -1 : 1;
                     this.fly_ToTargetSpeedX = this.finalSpeed / dist * dx;
                     this.fly_ToTargetSpeedY = this.finalSpeed / dist * dy;
-                    this.curFoothold = -1;
                     if (fly_TargetDir == -1 && this.HState == HorizontalState.MoveR ||
                         fly_TargetDir == 1 && this.HState == HorizontalState.MoveL)
                     {
                         DoFlipX();
                     }
                     SetCurFoothold(-1, -1);
+                    this.HasMoveTarget = true;
                 }
             }
         }
