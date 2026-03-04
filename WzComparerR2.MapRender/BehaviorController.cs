@@ -959,7 +959,7 @@ namespace WzComparerR2.MapRender
                 if (finalSelected != null)
                 {
                     SetCurFoothold(finalSelected.ID, FHManager.GetGroupIndexByFootholdIndex(finalSelected.ID));
-                    SetVerticalState(this.flying ? VerticalState.Fly : VerticalState.Fall);
+                    SetVerticalState(this.flying ? VerticalState.Fly : this.MovementEnabled ? VerticalState.Fall : VerticalState.Stop);
                     return;
                 }
             }
