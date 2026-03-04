@@ -139,6 +139,7 @@ namespace WzComparerR2.MapRender
         bool captureViewPortOnly;
         bool ForceCaptureWithResolution;
         bool showFootholdBoundary;
+        bool enableMobMovement;
         Task captureTask;
         Resolution resolution;
         float opacity;
@@ -776,6 +777,7 @@ namespace WzComparerR2.MapRender
                     this.ui.ChatBox.AppendTextHelp(@"/minimap 미니맵 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/scene 장면 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/spine Spine 애니메이션 지정 창 열기");
+                    this.ui.ChatBox.AppendTextHelp(@"/summon 몬스터 소환");
                     this.ui.ChatBox.AppendTextHelp(@"/quest 퀘스트 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/questex 퀘스트 키의 값 설정");
                     this.ui.ChatBox.AppendTextHelp(@"/date 시각 설정");
@@ -1107,43 +1109,6 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case "/questex":
-                    switch (arguments.ElementAtOrDefault(1))
-                    {
-                        case "list":
-                            List<QuestExInfo> questList = this?.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Questex))
-                                .Distinct().ToList();
-                            this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 키 개수: ({questList.Count()})");
-                            foreach (QuestExInfo item in questList)
-                            {
-                                Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestData\{item.ID}.img\QuestInfo")
-                                    ?? PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{item.ID}");
-                                string questName = questInfoNode?.Nodes["name"].GetValueEx<string>(null) ?? "null";
-                                this.ui.ChatBox.AppendTextHelp($"  {questName}({item.ID}) / 키:{item.Key}, 기본값:{item.State}");
-                            }
-                            break;
-
-                        case "set":
-                            string qkey = arguments.ElementAtOrDefault(3);
-                            if (Int32.TryParse(arguments.ElementAtOrDefault(2), out int questID) && questID > -1 && Int32.TryParse(arguments.ElementAtOrDefault(4), out int questState) && questState >= -1 && qkey != null)
-                            {
-                                this.patchVisibility.SetQuestVisible(questID, qkey, questState);
-                                this.mapData.PreloadResource(resLoader);
-                                Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestData\{questID}.img\QuestInfo")
-                                    ?? PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{questID}");
-                                string questName = questInfoNode?.Nodes["name"].GetValueEx<string>(null) ?? "null";
-                                this.ui.ChatBox.AppendTextSystem($"{questName}({questID}, 키={qkey})의 값을 {questState}(으)로 변경했습니다.");
-                            }
-                            else
-                            {
-                                this.ui.ChatBox.AppendTextSystem($"정확한 퀘스트 ID, 키, 값을 입력하세요.");
-                            }
-                            break;
-
-                        default:
-                            this.ui.ChatBox.AppendTextHelp(@"/questex list 관련된 퀘스트 키 목록 보기");
-                            this.ui.ChatBox.AppendTextHelp(@"/questex set (questID) (key) (questState) 해당 퀘스트 키의 값 설정");
-                            break;
-                    }
                     break;
 
                 case "/spine":
@@ -1167,6 +1132,42 @@ namespace WzComparerR2.MapRender
                     uiSpineSelector.LoadTabContents(back, obj);
 
                     uiSpineSelector.Show();
+                    break;
+
+                case "/summon":
+                    var si = arguments.ElementAtOrDefault(1);
+                    var sx = arguments.ElementAtOrDefault(2);
+                    var sy = arguments.ElementAtOrDefault(3);
+                    if (int.TryParse(si, out int mobID))
+                    {
+                        int x, y;
+                        if (!int.TryParse(sx, out x) || !int.TryParse(sy, out y))
+                        {
+                            var p = this.renderEnv.Camera.CameraToWorld(renderEnv.Input.MousePosition);
+                            x = p.X;
+                            y = p.Y;
+                        }
+                        StringResult sr;
+                        string mobName = string.Empty;
+                        if (this.StringLinker != null)
+                        {
+                            this.StringLinker.StringMob.TryGetValue(mobID, out sr);
+                            mobName = sr?.Name ?? "(null)";
+                        }
+                        if (this.mapData.SummonMob(mobID, x, y, 0, 0, -1, playRegenMotion: false))
+                        {
+                            this.ui.ChatBox.AppendTextHelp($@"몬스터가 소환되었습니다. {mobName}({mobID})");
+                        }
+                        else
+                        {
+                            this.ui.ChatBox.AppendTextHelp($@"몬스터를 찾지 못했습니다. ({mobID})");
+                        }
+                    }
+                    else
+                    {
+                        this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) 마우스 위치에 mobID 몬스터 소환");
+                        this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) (x) (y) x, y 위치에 mobID 몬스터 소환");
+                    }
                     break;
 
                 default:
@@ -1434,6 +1435,11 @@ namespace WzComparerR2.MapRender
             (this.Content as WcR2ContentManager).UseD2DFont = config.UseD2dRenderer;
             this.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
             this.showFootholdBoundary = config.ShowFootholdBoundary;
+            this.enableMobMovement = config.EnableMobMovement;
+            if (this.mapData != null)
+            {
+                this.mapData.EnableMobMovement = this.enableMobMovement;
+            }
         }
 
         private void LoadOptionData(UIOptionsDataModel model)
@@ -1452,6 +1458,7 @@ namespace WzComparerR2.MapRender
             model.WorldMap_UseImageNameAsInfoName = this.ui.WorldMap.UseImageNameAsInfoName;
             model.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
             model.ShowFootholdBoundary = config.ShowFootholdBoundary;
+            model.EnableMobMovement = config.EnableMobMovement;
             LoadCaptureRectOptionData(model);
         }
 
@@ -1472,6 +1479,7 @@ namespace WzComparerR2.MapRender
             config.WorldMap_UseImageNameAsInfoName = model.WorldMap_UseImageNameAsInfoName;
             config.ForceCaptureWithResolution = model.ForceCaptureWithResolution;
             config.ShowFootholdBoundary = model.ShowFootholdBoundary;
+            config.EnableMobMovement = model.EnableMobMovement;
             WzComparerR2.Config.ConfigManager.Save();
 
             if (int.TryParse(model.ScLeft, out int left) && int.TryParse(model.ScTop, out int top)

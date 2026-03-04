@@ -77,10 +77,10 @@ namespace WzComparerR2.MapRender
             return (T)holder.Resource;
         }
 
-        public object LoadAnimationData(Wz_Node node)
+        public object LoadAnimationData(Wz_Node node, string forceAssetName = null)
         {
             object aniData;
-            string assetName = node.FullPathToFile;
+            string assetName = forceAssetName ?? node.FullPathToFile;
             if (!loadedAnimationData.TryGetValue(assetName, out aniData))
             {
                 aniData = InnerLoadAnimationData(node);

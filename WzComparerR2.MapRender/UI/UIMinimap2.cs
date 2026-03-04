@@ -536,6 +536,7 @@ namespace WzComparerR2.MapRender.UI
             public IconType IconType { get; set; }
             public PointF WorldPosition { get; set; }
             public object Tooltip { get; set; }
+            public string Tag { get; set; }
         }
 
         public enum IconType

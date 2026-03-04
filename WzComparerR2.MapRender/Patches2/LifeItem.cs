@@ -30,6 +30,7 @@ namespace WzComparerR2.MapRender.Patches2
         public LifeInfo LifeInfo { get; set; }
         public bool HideName { get; set; }
         public CustomFontFunc CustomFont { get; set; }
+        public BehaviorController Controller { get; set; }
 
         public static LifeItem LoadFromNode(Wz_Node node)
         {
@@ -80,6 +81,27 @@ namespace WzComparerR2.MapRender.Patches2
                     }
                 }
             }
+            return item;
+        }
+
+        public static LifeItem Create(int id, LifeItem.LifeType type, int x, int y, int index)
+        {
+            var item = new LifeItem()
+            {
+                ID = id,
+                Type = type,
+                X = x,
+                Y = y,
+                MobTime = 0,
+                Flip = false,
+                Hide = false,
+                Fh = 0,
+                Cy = y,
+                Rx0 = 0,
+                Rx1 = 0
+            };
+            item.Index = index;
+            item.Date = new List<Tuple<long, long>>();
             return item;
         }
 

@@ -26,8 +26,10 @@ namespace WzComparerR2.Animation
         }
 
         public IStateMachineAnimationData Data { get; private set; }
+        public IStateMachineAnimationData EffectData { get; private set; }
 
         public event EventHandler<AnimationEndEventArgs> AnimationEnd;
+        public event EventHandler<AnimationEndEventArgs> EffectAnimationEnd;
         public Point CurrentLT
         {
             get { return this.Data.CurrentLT; }
@@ -38,10 +40,29 @@ namespace WzComparerR2.Animation
         }
 
 
+        public void SetEffectData(Dictionary<string, RepeatableFrameAnimationData> data)
+        {
+            this.SetEffectData(new FrameStateMachineData(data));
+        }
+
+        public void SetEffectData(IStateMachineAnimationData data)
+        {
+            this.EffectData = data;
+            this.EffectData.AnimationEnd += Data_EffectAnimationEnd;
+        }
+
         public void SetAnimation(string aniName)
         {
             int idx = this.Data.States.IndexOf(aniName);
             this.Data.SelectedStateIndex = idx;
+        }
+
+        public void SetEffectAnimation(string aniName)
+        {
+            if (this.EffectData == null)
+                return;
+            int idx = this.EffectData.States.IndexOf(aniName);
+            this.EffectData.SelectedStateIndex = idx;
         }
 
         public string GetCurrent()
@@ -49,9 +70,15 @@ namespace WzComparerR2.Animation
             return this.Data.SelectedState;
         }
 
+        public string GetCurrentEffect()
+        {
+            return this.EffectData?.SelectedState ?? "invisible";
+        }
+
         public void Update(TimeSpan elapsedTime)
         {
             this.Data.Update(elapsedTime);
+            this.EffectData?.Update(elapsedTime);
         }
 
         protected virtual void OnAnimationEnd(AnimationEndEventArgs e)
@@ -66,6 +93,19 @@ namespace WzComparerR2.Animation
                 }
             }
         }
+        
+        protected virtual void OnEffectAnimationEnd(AnimationEndEventArgs e)
+        {
+            this.EffectAnimationEnd?.Invoke(this, e);
+
+            if (!e.IsHandled)
+            {
+                if (e.CurrentState != e.NextState)
+                {
+                    this.SetEffectAnimation(e.NextState);
+                }
+            }
+        }
 
         private void Data_AnimationEnd(object sender, EventArgs e)
         {
@@ -73,6 +113,14 @@ namespace WzComparerR2.Animation
             var ev = new AnimationEndEventArgs(state);
             ev.NextState = state;
             this.OnAnimationEnd(ev);
+        }
+
+        private void Data_EffectAnimationEnd(object sender, EventArgs e)
+        {
+            string state = GetCurrentEffect();
+            var ev = new AnimationEndEventArgs(state);
+            ev.NextState = state;
+            this.OnEffectAnimationEnd(ev);
         }
 
         public class AnimationEndEventArgs : EventArgs

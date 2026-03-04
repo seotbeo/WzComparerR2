@@ -152,6 +152,8 @@ namespace WzComparerR2.MapRender
             //加载地图数据
             var mapData = new MapData(this.Services.GetService<IRandom>());
             mapData.Load(this.mapImgLoading.Node, resLoader);
+            mapData.SoundEffPlayer = PlaySoundEff;
+            mapData.LoadMobResource = LoadMobResource;
 
             //处理bgm
             Music newBgm = LoadBgm(mapData);
@@ -181,6 +183,7 @@ namespace WzComparerR2.MapRender
             this.mapImg = this.mapImgLoading;
             this.mapImgLoading = null;
             this.mapData = mapData;
+            this.mapData.EnableMobMovement = this.enableMobMovement;
             this.bgm = newBgm;
             if (willSwitchBgm && this.bgm != null)
             {
@@ -663,6 +666,7 @@ namespace WzComparerR2.MapRender
             }
             //更新tooltip
             UpdateTooltip();
+            UpdateMinimapIcons();
         }
 
         private void MoveToPortal(int? toMap, string pName, string fromPName = null, bool isBack = false)

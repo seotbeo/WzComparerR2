@@ -544,8 +544,9 @@ namespace WzComparerR2.MapRender.UI
             return item;
         }
 
-        private void OnMapAreaClick(object obj)
+        private void OnMapAreaClick(object obj, EmptyKeys.UserInterface.Input.MouseButton targetButton)
         {
+            if (targetButton != EmptyKeys.UserInterface.Input.MouseButton.Left) return;
             if (obj is MapLink)
             {
                 var link = (MapLink)obj;

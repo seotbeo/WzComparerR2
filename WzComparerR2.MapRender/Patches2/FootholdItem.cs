@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using WzComparerR2.WzLib;
 
 namespace WzComparerR2.MapRender.Patches2
@@ -17,6 +18,12 @@ namespace WzComparerR2.MapRender.Patches2
         public int Next { get; set; }
         public int Piece { get; set; }
 
+        #region for FootholdManager
+        public bool Vertical { get; set; }
+        public Rectangle FootholdArea { get; set; }
+        public int GroupIndex { get; set; }
+        #endregion
+
         public static FootholdItem LoadFromNode(Wz_Node node)
         {
             var item = new FootholdItem()
@@ -29,6 +36,8 @@ namespace WzComparerR2.MapRender.Patches2
                 Next = node.Nodes["next"].GetValueEx(0),
                 Piece = node.Nodes["piece"].GetValueEx(0),
             };
+            item.Vertical = item.X1 == item.X2;
+            item.FootholdArea = new Rectangle(item.X1, item.Y1, Math.Abs(item.X2 - item.X1), Math.Abs(item.Y2 - item.Y1));
             return item;
         }
     }
