@@ -40,7 +40,7 @@ namespace WzComparerR2.MapRender.Patches2
             };
             item.Vertical = item.X1 == item.X2;
             item.Reversed = item.X1 > item.X2;
-            item.FootholdArea = new Rectangle(item.X1, item.Y1, Math.Abs(item.X2 - item.X1), Math.Abs(item.Y2 - item.Y1));
+            item.FootholdArea = new Rectangle(Math.Min(item.X1, item.X2), Math.Min(item.Y1, item.Y2), Math.Abs(item.X2 - item.X1), Math.Abs(item.Y2 - item.Y1));
             return item;
         }
     }
