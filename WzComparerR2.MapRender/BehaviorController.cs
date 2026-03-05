@@ -11,8 +11,9 @@ namespace WzComparerR2.MapRender
 {
     public class BehaviorController
     {
-        public BehaviorController(LifeItem life, FootholdManager fhManager, bool noRegen = false, bool playRegenMotion = true)
+        public BehaviorController(LifeItem life, FootholdManager fhManager, bool movementEnabled, bool noRegen = false, bool playRegenMotion = true)
         {
+            this.MovementEnabled = movementEnabled;
             this.NoRegen = noRegen;
             this.PlayRegenMotion = playRegenMotion;
             this.bState = playRegenMotion ? BaseState.Regen : BaseState.Idle;
@@ -55,9 +56,11 @@ namespace WzComparerR2.MapRender
         private const int GravityAcc = 2000;
         private const float RandomJumpProb = 0.003f;
         private const int MaxTriggerDistance = 30;
-        private const int MinTriggerDistance = 20;
+        private const int MinTriggerDistance = 10;
         private const int DamageBase = 70;
         private const int DamageRange = 50;
+        private const float RandomRestTimeBase = 2.8f;
+        private const float RandomRestTimeRange = 2f;
         #endregion
 
         #region Inner States
@@ -140,6 +143,7 @@ namespace WzComparerR2.MapRender
         public bool FlipX { get; private set; }
         public bool MovementEnabled { get; set; }
         public bool Fixed { get; set; }
+        public bool BlockRevive { get; set; }
         public bool ForceMoveStop => this.bState == BaseState.Hit || this.bState == BaseState.Died || this.bState == BaseState.Attack;
         public bool CanMove => this.hasMoveMotion;
         public bool CanJump => this.hasJumpMotion && this.bState == BaseState.Idle;
@@ -230,8 +234,9 @@ namespace WzComparerR2.MapRender
             SetBaseState(BaseState.Hit);
         }
 
-        public void SetDied()
+        public void SetDied(bool blockRevive = false)
         {
+            this.BlockRevive = blockRevive;
             SetBaseState(BaseState.Died);
         }
 
@@ -320,7 +325,7 @@ namespace WzComparerR2.MapRender
             if (this.restTime <= TimeSpan.Zero)
             {
                 DecideState(CurPos);
-                this.restTime = TimeSpan.FromSeconds(this.Random.NextVar(2.8f, 2f, true));
+                this.restTime = TimeSpan.FromSeconds(this.Random.NextVar(RandomRestTimeBase, RandomRestTimeRange, true));
             }
         }
 
@@ -479,7 +484,7 @@ namespace WzComparerR2.MapRender
 
         private void FlyToTarget(TimeSpan elapsedTime)
         {
-            if (this.flyingToTarget)
+            if (this.flyingToTarget && !this.ForceMoveStop)
             {
                 var newX = this.relPos.X + this.fly_ToTargetSpeedX * (float)elapsedTime.TotalSeconds;
                 var newY = this.relPos.Y + this.fly_ToTargetSpeedY * (float)elapsedTime.TotalSeconds;
@@ -502,6 +507,7 @@ namespace WzComparerR2.MapRender
             if (this.hState == HorizontalState.MoveL) this.hState = HorizontalState.MoveR;
             else this.hState = HorizontalState.MoveL;
             this.FlipX = !this.FlipX;
+            this.restTime += TimeSpan.FromSeconds(RandomRestTimeBase - RandomRestTimeRange);
         }
 
         private bool IsEndOfCurFoothold(float x)
@@ -510,14 +516,14 @@ namespace WzComparerR2.MapRender
             {
                 if (x <= fh.X1)
                 {
-                    if (fh.Prev == 0 || (FHManager.GetFootholdByID(fh.Prev, out var prevfh) && prevfh.Vertical))
+                    if (fh.Prev == 0 || (FHManager.GetFootholdByID(fh.Prev, out var prevfh) && prevfh.IsWall))
                     {
                         return true;
                     }
                 }
                 else if (x >= fh.X2)
                 {
-                    if (fh.Next == 0 || (FHManager.GetFootholdByID(fh.Next, out var nextfh) && nextfh.Vertical))
+                    if (fh.Next == 0 || (FHManager.GetFootholdByID(fh.Next, out var nextfh) && nextfh.IsWall))
                     {
                         return true;
                     }
@@ -540,11 +546,11 @@ namespace WzComparerR2.MapRender
         {
             if (FHManager.GetFootholdByID(curFoothold, out var fh))
             {
-                if (x < fh.X1 && fh.Prev != 0 && !fh.Vertical)
+                if (x < fh.X1 && fh.Prev != 0 && !fh.IsWall)
                 {
                     curFoothold = fh.Prev;
                 }
-                else if (x > fh.X2 && fh.Next != 0 && !fh.Vertical)
+                else if (x > fh.X2 && fh.Next != 0 && !fh.IsWall)
                 {
                     curFoothold = fh.Next;
                 }
@@ -557,7 +563,7 @@ namespace WzComparerR2.MapRender
             var belowY = int.MaxValue;
             foreach (var group in FHManager.AllFootholdGroups.Where(g => pos.X >= g.GroupArea.Left && pos.X <= g.GroupArea.Right))
             {
-                foreach (var fh in group.Footholds.Where(fh => pos.X >= fh.FootholdArea.Left && pos.X <= fh.FootholdArea.Right && !fh.Vertical).Select(fh =>
+                foreach (var fh in group.Footholds.Where(fh => pos.X >= fh.FootholdArea.Left && pos.X <= fh.FootholdArea.Right && !fh.IsWall).Select(fh =>
                 {
                     return new
                     {
@@ -588,7 +594,7 @@ namespace WzComparerR2.MapRender
                 {
                     foreach (var fh in group.Footholds)
                     {
-                        if (fh.Vertical)
+                        if (fh.IsWall)
                         {
                             if (FootholdManager.Intersects(fh, prevPos, nextPos))
                                 return true;
@@ -605,7 +611,7 @@ namespace WzComparerR2.MapRender
             {
                 foreach (var fh in group.Footholds)
                 {
-                    if (!fh.Vertical && FootholdManager.Intersects(fh, prevPos, nextPos))
+                    if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
                     {
                         HandleVCollision(fh);
                         return true;
@@ -622,7 +628,7 @@ namespace WzComparerR2.MapRender
 
         private int GetRelYOnFoothold(float x, float y)
         {
-            if (FHManager.GetFootholdByID(curFoothold, out var fh) && !fh.Vertical)
+            if (FHManager.GetFootholdByID(curFoothold, out var fh) && !fh.IsWall)
             {
                 return (int)(FHManager.GetYOnFoothold(fh, x) - y);
             }
@@ -680,7 +686,7 @@ namespace WzComparerR2.MapRender
                     }
                     else if (FHManager.GetFootholdByID(next, out nextfh))
                     {
-                        if (nextfh.Vertical)
+                        if (nextfh.IsWall)
                         {
                             var d = Math.Abs((dir == -1 ? nextfh.X1 : nextfh.X2) - x);
                             if (d <= MaxTriggerDistance && d >= MinTriggerDistance)
@@ -699,7 +705,7 @@ namespace WzComparerR2.MapRender
                     else return;
                 }
 
-                if (endfh.Vertical)
+                if (endfh.IsWall)
                 {
                     Vector2 startPos = dir == -1 ? new Vector2(endfh.X2, endfh.Y2) : new Vector2(endfh.X1, endfh.Y1);
                     Vector2 endPos = startPos;
@@ -713,7 +719,7 @@ namespace WzComparerR2.MapRender
                         }
                         else if (FHManager.GetFootholdByID(next, out nextfh))
                         {
-                            if (nextfh.Vertical)
+                            if (nextfh.IsWall)
                             {
                                 endfh = nextfh;
                                 continue;
@@ -816,7 +822,7 @@ namespace WzComparerR2.MapRender
                 {
                     foreach (var fh in group.Footholds)
                     {
-                        if (!fh.Vertical && FootholdManager.Intersects(fh, prevPos, nextPos))
+                        if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
                             return true;
                         }
@@ -866,7 +872,7 @@ namespace WzComparerR2.MapRender
         {
             var margin = new Vector2(Fly_FindTargetX, Fly_FindTargetY);
             var candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup && FootholdManager.GetCandidateGroups(g, pos - margin, pos + margin, margin: 0)).SelectMany(g => g.Footholds)
-                .Where(f => !f.Vertical && FootholdManager.GetCandidateFootholds(f, pos - margin, pos + margin, margin: 0)).ToList();
+                .Where(f => !f.IsWall && FootholdManager.GetCandidateFootholds(f, pos - margin, pos + margin, margin: 0)).ToList();
             var candidateCount = candidateFHs.Count;
             if (candidateCount > 0)
             {
@@ -928,7 +934,7 @@ namespace WzComparerR2.MapRender
             var upperY = int.MinValue;
             foreach (var group in FHManager.AllFootholdGroups.Where(g => pos.X >= g.GroupArea.Left && pos.X <= g.GroupArea.Right))
             {
-                foreach (var fh in group.Footholds.Where(fh => pos.X >= fh.FootholdArea.Left && pos.X <= fh.FootholdArea.Right).Select(fh =>
+                foreach (var fh in group.Footholds.Where(fh => !fh.IsWall && pos.X >= fh.FootholdArea.Left && pos.X <= fh.FootholdArea.Right).Select(fh =>
                 {
                     return new
                     {

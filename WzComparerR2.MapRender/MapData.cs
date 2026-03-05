@@ -73,7 +73,7 @@ namespace WzComparerR2.MapRender
                     {
                         if (!value)
                         {
-                            life.Controller.SetDied();
+                            life.Controller.SetDied(blockRevive: true);
                             if (!hs.Contains(life.Controller.ID)) PlaySoundEff(life.Controller.ID, "Die");
                             hs.Add(life.Controller.ID);
                         }
@@ -371,9 +371,8 @@ namespace WzComparerR2.MapRender
                 }
 
                 // init controller
-                item.Controller = new BehaviorController(item, FootholdManager);
+                item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement);
                 item.Controller.InitRandom(this.random);
-                item.Controller.MovementEnabled = this.EnableMobMovement;
             }
         }
 
@@ -1271,7 +1270,7 @@ namespace WzComparerR2.MapRender
                         aniName = Prefer("die1");
                         if (aniName == null)
                         {
-                            TrySummonMob(bc.Owner.LifeInfo.Revive, bc.ID, (int)bc.CurPos.X, (int)bc.CurPos.Y, 0, bc.Owner.Index + 1, bc.CurFoothold);
+                            TrySummonMob(bc);
                             if (bc.NoRegen)
                             {
                                 RequestRemoveFromLayer(bc.Owner);
@@ -1354,7 +1353,7 @@ namespace WzComparerR2.MapRender
                         break;
 
                     case "die1":
-                        TrySummonMob(bc.Owner.LifeInfo.Revive, bc.ID, (int)bc.CurPos.X, (int)bc.CurPos.Y, 0, bc.Owner.Index + 1, bc.CurFoothold);
+                        TrySummonMob(bc);
                         if (bc.NoRegen)
                         {
                             RequestRemoveFromLayer(bc.Owner);
@@ -1423,6 +1422,13 @@ namespace WzComparerR2.MapRender
             SoundEffPlayer?.Invoke($@"Sound\Mob.img\{mobID:D7}\" + path);
         }
 
+        public void TrySummonMob(BehaviorController controller)
+        {
+            if (controller == null || controller.BlockRevive) return;
+
+            TrySummonMob(controller.Owner.LifeInfo.Revive, controller.ID, (int)controller.CurPos.X, (int)controller.CurPos.Y, 0, controller.Owner.Index + 1, controller.CurFoothold);
+        }
+
         public void TrySummonMob(List<int> mobList, int parent, int x, int y, int z0, int z1, int f)
         {
             if (mobList.Count == 0) return;
@@ -1441,9 +1447,8 @@ namespace WzComparerR2.MapRender
             if (mob != null)
             {
                 // init controller
-                mob.Controller = new BehaviorController(mob, FootholdManager, noRegen: true, playRegenMotion: playRegenMotion);
+                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, noRegen: true, playRegenMotion: playRegenMotion);
                 mob.Controller.InitRandom(this.random);
-                mob.Controller.MovementEnabled = this.EnableMobMovement;
 
                 LoadMobResource?.Invoke(mob);
                 RequestAddToLayer(mob, fh);

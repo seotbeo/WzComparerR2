@@ -85,7 +85,7 @@ namespace WzComparerR2.MapRender
 
         public int GetYOnFoothold(FootholdItem fh, float x)
         {
-            if (!fh.Vertical)
+            if (!fh.IsWall)
             {
                 float dx = fh.X2 - fh.X1;
                 float t = (x - fh.X1) / dx;
