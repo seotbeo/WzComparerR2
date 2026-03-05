@@ -886,6 +886,11 @@ namespace WzComparerR2.MapRender
                 path = $@"Map\MapHelper.img\portal\game\{typeName}\{imgName}";
 
                 var aniNode = PluginManager.FindWz(path);
+                if (aniNode == null)
+                {
+                    path = $@"Map\MapHelper.img\portal\game\{typeName}";
+                    aniNode = PluginManager.FindWz(path);
+                }
                 if (aniNode != null)
                 {
                     bool useParts = new[] { "portalStart", "portalContinue", "portalExit" }
