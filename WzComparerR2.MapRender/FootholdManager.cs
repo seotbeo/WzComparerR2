@@ -15,6 +15,7 @@ namespace WzComparerR2.MapRender
         public IEnumerable<FootholdGroup> AllFootholdGroups { get; set; }
         public Dictionary<int, FootholdItem> AllFootholdByID { get; set; }
         private HashSet<int> checkedFH { get; set; } = new HashSet<int>();
+        public Rectangle Area { get; set; } = Rectangle.Empty;
 
         public void Build(SceneNode root)
         {
@@ -34,12 +35,22 @@ namespace WzComparerR2.MapRender
 
                     var fhGroup = new FootholdGroup(groupIdx++);
                     AddFootholdToGroup(fhGroup, fh, fhById);
-                    FootholdGroups[i].Add(fhGroup);
+                    Add(fhGroup, i);
                 }
             }
 
             AllFootholdGroups = FootholdGroups.SelectMany(g => g);
             AllFootholdByID = AllFootholdGroups.SelectMany(g => g.Footholds).ToDictionary(f => f.ID);
+        }
+
+        public void Add(FootholdGroup item, int layer)
+        {
+            FootholdGroups[layer].Add(item);
+            if (this.Area == Rectangle.Empty)
+            {
+                this.Area = item.GroupArea;
+            }
+            else this.Area = Rectangle.Union(this.Area, item.GroupArea);
         }
 
         public int GetGroupIndexByFootholdIndex(int index)

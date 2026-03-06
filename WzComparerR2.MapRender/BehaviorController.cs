@@ -33,11 +33,20 @@ namespace WzComparerR2.MapRender
 
             InitCurFoothold(this.basePos);
 
-            this.minMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? int.MinValue;
-            this.maxMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? int.MaxValue;
+            this.minMovePosX = this.NoRegen ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? int.MinValue : life.Rx0;
+            this.maxMovePosX = this.NoRegen ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? int.MaxValue : life.Rx1;
+            if (this.basePos.X < this.minMovePosX)
+            {
+                this.minMovePosX = (int)this.basePos.X;
+            }
+            else if (this.basePos.X > this.maxMovePosX)
+            {
+                this.maxMovePosX = (int)this.basePos.X;
+            }
 
-            this.baseLayer = this.baseFoothold;
-            this.curLayer = this.baseLayer;
+            this.availableArea = this.FHManager.Area;
+
+            this.curLayer = this.curFoothold;
         }
 
         #region Consts
@@ -61,6 +70,7 @@ namespace WzComparerR2.MapRender
         private const int DamageRange = 50;
         private const float RandomRestTimeBase = 2.8f;
         private const float RandomRestTimeRange = 2f;
+        private const int PosGuardMargin = 500;
         #endregion
 
         #region Inner States
@@ -75,7 +85,7 @@ namespace WzComparerR2.MapRender
 
         private TimeSpan restTime;
 
-        private int curLayer;
+        private int curLayer = -1;
         private int curFoothold = -1;
         private int curFootholdGroup = -1;
         private Vector2 relPos;
@@ -93,8 +103,6 @@ namespace WzComparerR2.MapRender
         private TimeSpan flyingPhaseTime;
 
         private bool HasMoveTarget; // 이동 목표까지 상태 결정 차단
-        private CommandState ExecuteFall;
-        private CommandState ExecuteEndFlyToTarget;
         #endregion
 
         private ReadOnlyCollection<string> aniList;
@@ -107,12 +115,12 @@ namespace WzComparerR2.MapRender
 
         private readonly int baseFoothold;
         private readonly int baseFootholdGroup;
-        private readonly int baseLayer;
 
         private readonly int minMovePosX;
         private readonly int maxMovePosX;
 
         private readonly Vector2 basePos;
+        private readonly Rectangle availableArea;
 
         private int speed;
         private int flySpeed;
@@ -379,10 +387,11 @@ namespace WzComparerR2.MapRender
             MoveX(elapsedTime, prevPos);
             MoveY(elapsedTime, prevPos);
             FlyToTarget(elapsedTime);
-            DecideJumpOrFall(CurPos);
             DecideFlyToTarget(CurPos);
+            DecideJump(CurPos);
             RandomJump();
             ExecuteOthers();
+            PosGuard();
         }
 
         private void MoveX(TimeSpan elapsedTime, Vector2 prevPos)
@@ -392,47 +401,90 @@ namespace WzComparerR2.MapRender
                 var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
                 var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
 
-                if (IsEndOfCurFoothold(basePos.X + newX)) // 이어진 발판 끝
+                var isOutOfRange = IsEndOfAvailableRange(basePos.X + newX);
+                if (this.floating) // 점프 중 같은 그룹 내 수직 발판과 충돌 확인
                 {
-                    if (this.HasMoveTarget)
-                    {
-                        if (!this.flying && this.floating && HCollisionTest(CurPos, new Vector2(basePos.X + newX, CurPos.Y))) // 같은 그룹 내 수직 발판과 충돌 확인
-                        {
-                            SetHorizontalState(HorizontalState.Stop);
-                            return;
-                        }
-                        if (this.ExecuteFall == CommandState.Queued)
-                        {
-                            this.ExecuteFall = CommandState.Execute;
-                        }
-                        this.relPos.X = newX;
-                        return;
-                    }
-
-                    if (this.floating) // 점프 중엔 강제 정지
+                    if (HCollisionTest(CurPos, new Vector2(basePos.X + newX, CurPos.Y)) || isOutOfRange)
                     {
                         SetHorizontalState(HorizontalState.Stop);
                         return;
                     }
+                    else
+                    {
+                        this.relPos.X = newX;
+                        return;
+                    }
+                }
 
+                if (isOutOfRange) // 가능 범위 밖이면 무조건 flip
+                {
                     DoFlipX();
                     return;
                 }
-                else if (!this.flying && IsEndOfAvailableRange(basePos.X + newX))
+
+                var nextFH = GetNextFootholdIndex(this.curFoothold, dir, basePos.X + newX);
+                var IsEndOfCurFoothold = nextFH == -1;
+                if (IsEndOfCurFoothold && FHManager.GetFootholdByID(this.curFoothold, out var curfh)) // 이어진 발판 끝인 경우
                 {
-                    SetHorizontalState(HorizontalState.Stop);
-                    return;
-                }
-                else if (HCollisionTest(CurPos, new Vector2(basePos.X + newX, CurPos.Y))) // 같은 그룹 내 수직 발판과 충돌 확인
-                {
-                    if (this.flying) DoFlipX();
-                    else SetHorizontalState(HorizontalState.Stop);
-                    return;
+                    var canJumpOrFall = this.CanJump;
+                    if (this.flying || !canJumpOrFall)
+                    {
+                        DoFlipX();
+                        return;
+                    }
+                    else
+                    {
+                        if (IsLastFoothold(curfh, dir)) // 그룹 내 마지막 발판인 경우 점프 가능 else 낙하 가능
+                        {
+                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, -75, 1500, -JumpSpeed); // 점프 가능 발판 있는지 탐색
+                            if (canJumpOrFall)
+                            {
+                                DoJump();
+                                this.relPos.X = newX;
+                                return;
+                            }
+                            else
+                            {
+                                DoFlipX();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (canJumpOrFall) // 낙하는 아래쪽으로만
+                            {
+                                if (FHManager.GetFootholdByID(dir < 0 ? curfh.Prev : curfh.Next, out var nextfh))
+                                {
+                                    var startPosY = dir < 0 ? curfh.Y1 : curfh.Y2;
+                                    var endPosY = dir < 0 ? nextfh.Y1 : nextfh.Y2;
+                                    if (startPosY <= endPosY) canJumpOrFall = true;
+                                    else canJumpOrFall = false;
+                                }
+                                else canJumpOrFall = false;
+                            }
+                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, 0, 1500, 0); // 낙하 가능 발판 있는지 탐색
+                            if (canJumpOrFall)
+                            {
+                                DoFall();
+                                this.relPos.X = newX;
+                                return;
+                            }
+                            else
+                            {
+                                DoFlipX();
+                                return;
+                            }
+                        }
+                    }
                 }
                 else // 이어진 발판 내 이동
                 {
-                    UpdateCurFootholdInGroup(basePos.X + newX);
+                    if (nextFH != this.curFoothold)
+                    {
+                        SetCurFoothold(nextFH, FHManager.GetGroupIndexByFootholdIndex(nextFH));
+                    }
                     this.relPos.X = newX;
+                    return;
                 }
             }
         }
@@ -510,35 +562,105 @@ namespace WzComparerR2.MapRender
             this.restTime += TimeSpan.FromSeconds(RandomRestTimeBase - RandomRestTimeRange);
         }
 
-        private bool IsEndOfCurFoothold(float x)
+        private int GetNextFootholdIndex(int curFootholdIndex, int dir, float x)
         {
-            if (FHManager.GetFootholdByID(curFoothold, out var fh))
+            var index = curFootholdIndex;
+            FootholdItem fh;
+            if (FHManager.GetFootholdByID(index, out fh))
             {
-                if (x <= fh.X1)
+                if (dir < 0)
                 {
-                    if (fh.Prev == 0 || (FHManager.GetFootholdByID(fh.Prev, out var prevfh) && prevfh.IsWall))
+                    index = fh.Prev;
+                    while (true)
                     {
-                        return true;
+                        if (x >= fh.X1)
+                        {
+                            return fh.ID;
+                        }
+                        else
+                        {
+                            if (index != 0 && (FHManager.GetFootholdByID(index, out fh)))
+                            {
+                                if (fh.IsWall)
+                                {
+                                    return -1;
+                                }
+                                else
+                                {
+                                    index = fh.Prev;
+                                    continue;
+                                }
+                            }
+                            else return -1;
+                        }
                     }
                 }
-                else if (x >= fh.X2)
+                else if (dir > 0)
                 {
-                    if (fh.Next == 0 || (FHManager.GetFootholdByID(fh.Next, out var nextfh) && nextfh.IsWall))
+                    index = fh.Next;
+                    while (true)
                     {
-                        return true;
+                        if (x <= fh.X2)
+                        {
+                            return fh.ID;
+                        }
+                        else
+                        {
+                            if (index != 0 && (FHManager.GetFootholdByID(index, out fh)))
+                            {
+                                if (fh.IsWall)
+                                {
+                                    return -1;
+                                }
+                                else
+                                {
+                                    index = fh.Next;
+                                    continue;
+                                }
+                            }
+                            else return -1;
+                        }
                     }
                 }
             }
-            return false;
+
+            return index;
         }
 
         private bool IsEndOfAvailableRange(float x)
         {
-            var group = FHManager.GetGroupByIndex(this.curFootholdGroup);
-            if (group != null && (this.hState == HorizontalState.MoveL && x <= Math.Min(this.minMovePosX, group.GroupArea.Left) ||
-               (this.hState == HorizontalState.MoveR && x >= Math.Max(this.maxMovePosX, group.GroupArea.Right))))
+            if (x < this.minMovePosX || x > this.maxMovePosX)
                 return true;
 
+            return false;
+        }
+
+        private bool IsLastFoothold(int index, int dir)
+        {
+            if (FHManager.GetFootholdByID(index, out var fh))
+            {
+                return IsLastFoothold(fh, dir);
+            }
+
+            return false;
+        }
+
+        private bool IsLastFoothold(FootholdItem fh, int dir)
+        {
+            if (dir < 0)
+            {
+                if (fh.Prev == 0)
+                {
+                    return true;
+                }
+            }
+            else if (dir > 0)
+            {
+                if (fh.Next == 0)
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -655,29 +777,28 @@ namespace WzComparerR2.MapRender
             return fly_WaveHeight;
         }
 
-        private void DecideJumpOrFall(Vector2 pos)
+        private void DecideJump(Vector2 pos)
         {
             if (!this.grounded || !this.CanJump || this.HasMoveTarget || this.hState == HorizontalState.Stop) return;
 
             bool canJump = false;
-            bool canFall = false;
             int x = (int)pos.X;
             int dir = this.hState == HorizontalState.MoveL ? -1 : 1;
-            if ((x >= this.minMovePosX || dir == 1) &&
-                (x <= this.maxMovePosX || dir == -1) &&
+            if ((x >= this.minMovePosX || dir > 0) &&
+                (x <= this.maxMovePosX || dir < 0) &&
                 FHManager.GetFootholdByID(curFoothold, out var fh))
             {
                 FootholdItem nextfh = fh;
                 FootholdItem endfh = fh;
                 Vector2 fallPos = pos;
-                var next = dir == -1 ? fh.Prev : fh.Next;
+                var next = dir < 0 ? fh.Prev : fh.Next;
 
                 while (true) // 발판 끝부터 거리 확인
                 {
                     if (next == 0)
                     {
                         endfh = nextfh;
-                        var d = Math.Abs((dir == -1 ? nextfh.X1 : nextfh.X2) - x);
+                        var d = Math.Abs((dir < 0 ? nextfh.X1 : nextfh.X2) - x);
                         if (!(d <= MaxTriggerDistance && d >= MinTriggerDistance))
                         {
                             return;
@@ -688,7 +809,7 @@ namespace WzComparerR2.MapRender
                     {
                         if (nextfh.IsWall)
                         {
-                            var d = Math.Abs((dir == -1 ? nextfh.X1 : nextfh.X2) - x);
+                            var d = Math.Abs((dir < 0 ? nextfh.X1 : nextfh.X2) - x);
                             if (d <= MaxTriggerDistance && d >= MinTriggerDistance)
                             {
                                 endfh = nextfh;
@@ -698,103 +819,31 @@ namespace WzComparerR2.MapRender
                         }
                         else
                         {
-                            next = dir == -1 ? nextfh.Prev : nextfh.Next;
+                            next = dir < 0 ? nextfh.Prev : nextfh.Next;
                             continue;
                         }
                     }
                     else return;
                 }
 
-                if (endfh.IsWall)
+                var limitX1 = dir < 0 ? Math.Max(Math.Min(0, this.minMovePosX - x), -100) : Math.Min(Math.Max(0, this.maxMovePosX - x), 100);
+                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -75, 0, -JumpSpeed, sameGroup: true); // 점프 가능 발판 있는지 탐색
+                if (canJump)
                 {
-                    Vector2 startPos = dir == -1 ? new Vector2(endfh.X2, endfh.Y2) : new Vector2(endfh.X1, endfh.Y1);
-                    Vector2 endPos = startPos;
-                    while (true) // 수직 발판 계속 탐색
-                    {
-                        next = dir == -1 ? nextfh.Prev : nextfh.Next;
-                        if (next == 0)
-                        {
-                            endPos = dir == -1 ? new Vector2(endfh.X1, endfh.Y1) : new Vector2(endfh.X2, endfh.Y2);
-                            break;
-                        }
-                        else if (FHManager.GetFootholdByID(next, out nextfh))
-                        {
-                            if (nextfh.IsWall)
-                            {
-                                endfh = nextfh;
-                                continue;
-                            }
-                            else
-                            {
-                                endPos = dir == -1 ? new Vector2(endfh.X1, endfh.Y1) : new Vector2(endfh.X2, endfh.Y2);
-                                break;
-                            }
-                        }
-                        else break;
-                    }
-                    if (startPos.Y >= endPos.Y)
-                    {
-                        canFall = false;
-                    }
-                    else
-                    {
-                        fallPos = startPos;
-                        canFall = true;
-                    }
+                    DoJump();
+                    this.HasMoveTarget = true; // 목표까지 상태 결정 차단
                 }
-                else
-                {
-                    fallPos = dir == -1 ? new Vector2(endfh.X1, endfh.Y1) : new Vector2(endfh.X2, endfh.Y2);
-                    canFall = true;
-                }
-
-                var limitX1 = dir == -1 ? Math.Max(Math.Min(0, this.minMovePosX - x), -100) : Math.Min(Math.Max(0, this.maxMovePosX - x), 100);
-                var limitX2 = dir == -1 ? Math.Max(Math.Min(0, this.minMovePosX - fallPos.X), -100) : Math.Min(Math.Max(0, this.maxMovePosX - fallPos.X), 100);
-                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -75, 0, -JumpSpeed); // 점프 가능 발판 있는지 탐색
-                canFall = canFall && HasPossibleFoothold(fallPos, dir, Math.Abs((int)limitX2), 0, 600, this.vSpeed); // 낙하 가능 발판 있는지 탐색
-
-                var coef = this.Random.Next(6);
-                if (canJump || canFall)
-                {
-                    switch (coef)
-                    {
-                        case 0:
-                        case 3:
-                        case 4:
-                            if (canJump)
-                            {
-                                DoJump();
-                                this.HasMoveTarget = true; // 목표까지 상태 결정 차단
-                            }
-                            else goto case 1;
-                            break;
-
-                        case 1:
-                        case 5:
-                            if (canFall)
-                            {
-                                this.ExecuteFall = CommandState.Queued;
-                                this.HasMoveTarget = true; // 목표까지 상태 결정 차단
-                            }
-                            else goto case 0;
-                            break;
-
-                        case 2:
-                            break;
-                    }
-                }
-                else return;
             }
         }
 
-        public bool HasPossibleFoothold(Vector2 pos, int dir, int limitX, int minLimitY, int maxLimitY, float startVSpeed = 0f)
+        public bool HasPossibleFoothold(Vector2 pos, int dir, int limitX, int minLimitY, int maxLimitY, float startVSpeed = 0f, bool sameGroup = false)
         {
             if (limitX == 0 || maxLimitY - minLimitY == 0) return false;
 
             var minY = pos.Y + minLimitY;
             var maxY = pos.Y + maxLimitY;
-            var minX = dir == -1 ? pos.X - limitX : pos.X;
-            var maxX = dir == -1 ? pos.X : pos.X + limitX;
+            var minX = dir < 0 ? pos.X - limitX : pos.X;
+            var maxX = dir < 0 ? pos.X : pos.X + limitX;
 
             var hSpeed = this.finalSpeed;
             var vSpeed = startVSpeed;
@@ -809,6 +858,7 @@ namespace WzComparerR2.MapRender
             {
                 prevPos = nextPos;
                 hPos += dir * hSpeed * (float)dt;
+                hPos = Math.Min(Math.Max(hPos, this.minMovePosX), this.maxMovePosX);
                 vSpeed += GravityAcc * (float)dt;
                 vSpeed = Math.Min(vSpeed, Max_FallSpeed);
                 vPos += vSpeed * (float)dt;
@@ -818,7 +868,7 @@ namespace WzComparerR2.MapRender
                 if ((nextPos.X <= minX) || (nextPos.X >= maxX)) break;
                 if ((nextPos.Y <= minY) || (nextPos.Y >= maxY)) break;
 
-                foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
+                foreach (var group in FHManager.AllFootholdGroups.Where(g => (sameGroup ? g.Index == this.curFootholdGroup : true) && FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
                 {
                     foreach (var fh in group.Footholds)
                     {
@@ -872,7 +922,7 @@ namespace WzComparerR2.MapRender
         {
             var margin = new Vector2(Fly_FindTargetX, Fly_FindTargetY);
             var candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup && FootholdManager.GetCandidateGroups(g, pos - margin, pos + margin, margin: 0)).SelectMany(g => g.Footholds)
-                .Where(f => !f.IsWall && FootholdManager.GetCandidateFootholds(f, pos - margin, pos + margin, margin: 0)).ToList();
+                .Where(f => !f.IsWall && Math.Min(f.X1, f.X2) >= this.minMovePosX && Math.Max(f.X1, f.X2) <= this.maxMovePosX && FootholdManager.GetCandidateFootholds(f, pos - margin, pos + margin, margin: 0)).ToList();
             var candidateCount = candidateFHs.Count;
             if (candidateCount > 0)
             {
@@ -890,8 +940,8 @@ namespace WzComparerR2.MapRender
                     this.fly_TargetDir = dx < 0 ? -1 : 1;
                     this.fly_ToTargetSpeedX = this.finalSpeed / dist * dx;
                     this.fly_ToTargetSpeedY = this.finalSpeed / dist * dy;
-                    if (fly_TargetDir == -1 && this.HState == HorizontalState.MoveR ||
-                        fly_TargetDir == 1 && this.HState == HorizontalState.MoveL)
+                    if (fly_TargetDir < 0 && this.HState == HorizontalState.MoveR ||
+                        fly_TargetDir > 0 && this.HState == HorizontalState.MoveL)
                     {
                         DoFlipX();
                     }
@@ -911,16 +961,27 @@ namespace WzComparerR2.MapRender
 
         private void ExecuteOthers()
         {
-            if (this.ExecuteFall == CommandState.Execute)
+
+        }
+
+        private void PosGuard()
+        {
+            if (this.MovementEnabled)
             {
-                DoFall();
-                this.ExecuteFall = CommandState.None;
+                var x = CurPos.X;
+                var y = CurPos.Y;
+                if (x < availableArea.Left - PosGuardMargin || x > availableArea.Right + PosGuardMargin ||
+                    y < availableArea.Top - PosGuardMargin || y > availableArea.Bottom + PosGuardMargin)
+                {
+                    SetDied();
+                }
             }
         }
 
         private void SetCurFoothold(int newID, int newGroup)
         {
             if (this.curFoothold == newID) return;
+            var prevGroup = this.curFootholdGroup;
             this.curFoothold = newID;
             this.curFootholdGroup = newGroup;
             SetLayer(this.curFoothold);
@@ -1013,12 +1074,12 @@ namespace WzComparerR2.MapRender
             if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Provoke, this.bState, this.hState, this.vState, this.pState));
         }
 
-        private void SetLayer(int layer, bool invoke = true)
+        private void SetLayer(int nextfh, bool invoke = true)
         {
-            if (this.curLayer == layer) return;
+            if (this.curLayer == nextfh) return;
             var prev = this.curLayer;
-            this.curLayer = layer;
-            if (invoke) OnLayerChanged(new LayerChangedEventArgs(prev, layer));
+            this.curLayer = nextfh;
+            if (invoke) OnLayerChanged(new LayerChangedEventArgs(prev, this.curLayer));
         }
 
         public class StateChangedEventArgs : EventArgs
@@ -1047,6 +1108,7 @@ namespace WzComparerR2.MapRender
                 this.NewLayer = newLayer;
             }
 
+            // -1 == Fly
             public int PrevLayer { get; }
             public int NewLayer { get; }
         }

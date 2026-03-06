@@ -21,6 +21,7 @@ namespace WzComparerR2.MapRender.Patches2
         #region for FootholdManager
         public bool IsWall => this.Vertical || this.Reversed;
         public bool Vertical { get; set; }
+        public bool Flat { get; set; }
         public bool Reversed { get; set; }
         public Rectangle FootholdArea { get; set; }
         public int GroupIndex { get; set; }
@@ -39,6 +40,7 @@ namespace WzComparerR2.MapRender.Patches2
                 Piece = node.Nodes["piece"].GetValueEx(0),
             };
             item.Vertical = item.X1 == item.X2;
+            item.Flat = item.Y1 == item.Y2;
             item.Reversed = item.X1 > item.X2;
             item.FootholdArea = new Rectangle(Math.Min(item.X1, item.X2), Math.Min(item.Y1, item.Y2), Math.Abs(item.X2 - item.X1), Math.Abs(item.Y2 - item.Y1));
             return item;

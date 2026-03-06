@@ -139,6 +139,7 @@ namespace WzComparerR2.MapRender
             }
             if ((node = mapImgNode.Nodes["foothold"]) != null)
             {
+                this.Scene.FootholdContainerById.Clear();
                 for (int i = 0; i <= 7; i++)
                 {
                     var fhLevel = node.Nodes[i.ToString()];
@@ -326,6 +327,7 @@ namespace WzComparerR2.MapRender
 
                     var fhSceneNode = new ContainerNode<FootholdItem>() { Item = item };
                     layerSceneNode.Foothold.Nodes.Add(fhSceneNode);
+                    this.Scene.FootholdContainerById[item.ID] = fhSceneNode;
                 }
             }
         }
@@ -655,6 +657,10 @@ namespace WzComparerR2.MapRender
 
         private ContainerNode<FootholdItem> FindFootholdByID(int fhID)
         {
+            if (this.Scene.FootholdContainerById.TryGetValue(fhID, out var ret))
+            {
+                return ret;
+            }
             return this.Scene.Layers.Nodes.OfType<LayerNode>()
                 .SelectMany(layerNode => layerNode.Foothold.Nodes).OfType<ContainerNode<FootholdItem>>()
                 .FirstOrDefault(fhNode => fhNode.Item.ID == fhID);

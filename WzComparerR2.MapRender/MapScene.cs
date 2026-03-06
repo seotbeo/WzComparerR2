@@ -44,6 +44,7 @@ namespace WzComparerR2.MapRender
                     .Where(lifeNode => lifeNode.Type == LifeItem.LifeType.Mob && !lifeNode.Hide)
                     .Concat(this.Fly.Sky.Slots.OfType<LifeItem>()
                     .Where(lifeNode => lifeNode.Type == LifeItem.LifeType.Mob && !lifeNode.Hide));
+        public Dictionary<int, ContainerNode<FootholdItem>> FootholdContainerById = new();
 
         public PortalItem FindPortal(string pName)
         {
