@@ -1470,7 +1470,7 @@ namespace WzComparerR2.MapRender
                 mob.Controller.InitRandom(this.random);
 
                 LoadMobResource?.Invoke(mob);
-                RequestAddToLayer(mob, fh);
+                RequestAddToLayer(mob, mob.Controller.CurLayerFoothold);
                 return true;
             }
             else return false;

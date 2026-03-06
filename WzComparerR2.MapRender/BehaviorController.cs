@@ -163,6 +163,7 @@ namespace WzComparerR2.MapRender
         public bool CanHit => this.bState == BaseState.Idle || this.bState == BaseState.Hit;
         public bool Inited => this.inited == 0b111;
         public int CurFoothold => this.curFoothold;
+        public int CurLayerFoothold => this.curLayerFoothold;
         public Vector2 RelPos => relPos;
         public Vector2 CurPos => basePos + relPos;
         public Vector2 IntRelPos => new Vector2((int)relPos.X, (int)relPos.Y);
