@@ -11,10 +11,10 @@ namespace WzComparerR2.MapRender
 {
     public class BehaviorController
     {
-        public BehaviorController(LifeItem life, FootholdManager fhManager, bool movementEnabled, bool noRegen = false, bool playRegenMotion = true)
+        public BehaviorController(LifeItem life, FootholdManager fhManager, bool movementEnabled, bool summoned = false, bool playRegenMotion = true)
         {
             this.MovementEnabled = movementEnabled;
-            this.NoRegen = noRegen;
+            this.Summoned = summoned;
             this.PlayRegenMotion = playRegenMotion;
             this.bState = playRegenMotion ? BaseState.Regen : BaseState.Idle;
             this.hState = HorizontalState.Stop;
@@ -30,11 +30,12 @@ namespace WzComparerR2.MapRender
             this.relPos = Vector2.Zero;
             this.baseFoothold = life.Fh;
             this.baseFootholdGroup = FHManager.GetGroupIndexByFootholdIndex(this.baseFoothold);
+            this.availableArea = this.FHManager.Area;
 
             InitCurFoothold(this.basePos);
 
-            this.minMovePosX = this.NoRegen ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? int.MinValue : life.Rx0;
-            this.maxMovePosX = this.NoRegen ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? int.MaxValue : life.Rx1;
+            this.minMovePosX = this.Summoned ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? this.availableArea.Left : life.Rx0;
+            this.maxMovePosX = this.Summoned ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? this.availableArea.Right : life.Rx1;
             if (this.basePos.X < this.minMovePosX)
             {
                 this.minMovePosX = (int)this.basePos.X;
@@ -44,9 +45,8 @@ namespace WzComparerR2.MapRender
                 this.maxMovePosX = (int)this.basePos.X;
             }
 
-            this.availableArea = this.FHManager.Area;
-
-            this.curLayer = this.curFoothold;
+            this.curLayer = FHManager.GetLayerByFootholdIndex(this.curFoothold);
+            this.curLayerFoothold = this.curFoothold;
         }
 
         #region Consts
@@ -86,6 +86,7 @@ namespace WzComparerR2.MapRender
         private TimeSpan restTime;
 
         private int curLayer = -1;
+        private int curLayerFoothold = -1;
         private int curFoothold = -1;
         private int curFootholdGroup = -1;
         private Vector2 relPos;
@@ -116,11 +117,11 @@ namespace WzComparerR2.MapRender
         private readonly int baseFoothold;
         private readonly int baseFootholdGroup;
 
-        private readonly int minMovePosX;
-        private readonly int maxMovePosX;
-
         private readonly Vector2 basePos;
         private readonly Rectangle availableArea;
+
+        private int minMovePosX;
+        private int maxMovePosX;
 
         private int speed;
         private int flySpeed;
@@ -146,7 +147,8 @@ namespace WzComparerR2.MapRender
 
         public LifeItem Owner { get; }
         public int ID { get; }
-        public bool NoRegen { get; }
+        public bool NoRegen => this.Summoned;
+        public bool Summoned { get; }
         public bool PlayRegenMotion { get; }
         public bool FlipX { get; private set; }
         public bool MovementEnabled { get; set; }
@@ -206,7 +208,14 @@ namespace WzComparerR2.MapRender
             this.hasJumpMotion = aniList.Contains("jump");
             this.hasFlyMotion = aniList.Contains("fly");
             if (this.CanFly)
+            {
                 SetVerticalState(VerticalState.Fly);
+                if (this.Summoned)
+                {
+                    this.minMovePosX = this.availableArea.Left;
+                    this.maxMovePosX = this.availableArea.Right;
+                }
+            }
             this.hasChaseMotion = aniList.Contains("chase");
             this.attackList = aniList.Where(a => a.StartsWith("attack")).ToList().AsReadOnly();
             this.skillList = aniList.Where(a => a.StartsWith("skill")).ToList().AsReadOnly();
@@ -1049,44 +1058,51 @@ namespace WzComparerR2.MapRender
         private void SetBaseState(BaseState state, bool invoke = true)
         {
             if (this.bState == state) return;
+            var prev = this.bState;
             this.bState = state;
-            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Horizontal, this.bState, this.hState, this.vState, this.pState));
+            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Base, prev, this.bState, this.hState, this.vState, this.pState));
         }
 
         private void SetHorizontalState(HorizontalState state, bool invoke = true)
         {
             if (this.hState == state) return;
+            var prev = this.hState;
             this.hState = state;
-            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Horizontal, this.bState, this.hState, this.vState, this.pState));
+            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Horizontal, prev, this.bState, this.hState, this.vState, this.pState));
         }
 
         private void SetVerticalState(VerticalState state, bool invoke = true)
         {
             if (this.vState == state) return;
+            var prev = this.vState;
             this.vState = state;
-            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Vertical, this.bState, this.hState, this.vState, this.pState));
+            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Vertical, prev, this.bState, this.hState, this.vState, this.pState));
         }
 
         private void SetProvokeState(ProvokeState state, bool invoke = true)
         {
             if (this.pState == state) return;
+            var prev = this.pState;
             this.pState = state;
-            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Provoke, this.bState, this.hState, this.vState, this.pState));
+            if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Provoke, prev, this.bState, this.hState, this.vState, this.pState));
         }
 
         private void SetLayer(int nextfh, bool invoke = true)
         {
-            if (this.curLayer == nextfh) return;
-            var prev = this.curLayer;
-            this.curLayer = nextfh;
-            if (invoke) OnLayerChanged(new LayerChangedEventArgs(prev, this.curLayer));
+            var nextLayer = FHManager.GetLayerByFootholdIndex(nextfh);
+            if (this.curLayer == nextLayer) return;
+            this.curLayer = nextLayer;
+            var prevfh = this.curLayerFoothold;
+            this.curLayerFoothold = nextfh;
+            if (invoke) OnLayerChanged(new LayerChangedEventArgs(prevfh, nextfh));
         }
 
         public class StateChangedEventArgs : EventArgs
         {
-            public StateChangedEventArgs(StateType sType, BaseState bState, HorizontalState hState, VerticalState vState, ProvokeState pState)
+            public StateChangedEventArgs(StateType sType, Enum prev, BaseState bState, HorizontalState hState, VerticalState vState, ProvokeState pState)
             {
                 this.StateType = sType;
+                this.PrevState = prev;
                 this.BState = bState;
                 this.HState = hState;
                 this.VState = vState;
@@ -1094,6 +1110,7 @@ namespace WzComparerR2.MapRender
             }
 
             public StateType StateType { get; }
+            public Enum PrevState { get; }
             public BaseState BState { get; }
             public HorizontalState HState { get; }
             public VerticalState VState { get; }

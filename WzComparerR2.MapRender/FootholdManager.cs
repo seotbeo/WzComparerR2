@@ -69,6 +69,17 @@ namespace WzComparerR2.MapRender
             return AllFootholdGroups.FirstOrDefault(g => g.Index == index);
         }
 
+        public int GetLayerByFootholdIndex(int index)
+        {
+            if (GetFootholdByID(index, out var fh)) return GetLayerByFoothold(fh);
+            return -1;
+        }
+
+        public int GetLayerByFoothold(FootholdItem item)
+        {
+            return item.LayerLevel;
+        }
+
         public List<FootholdItem> GetFootholds(FootholdGroup group)
         {
             return group.Footholds.ToList();

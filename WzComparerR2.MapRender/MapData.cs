@@ -324,6 +324,7 @@ namespace WzComparerR2.MapRender
                     var item = FootholdItem.LoadFromNode(node);
                     item.ID = int.Parse(node.Text);
                     item.Name = $"fh_{level}_{group.Text}_{node.Text}";
+                    item.LayerLevel = level;
 
                     var fhSceneNode = new ContainerNode<FootholdItem>() { Item = item };
                     layerSceneNode.Foothold.Nodes.Add(fhSceneNode);
@@ -1324,6 +1325,9 @@ namespace WzComparerR2.MapRender
                             hState == BehaviorController.HorizontalState.MoveR)
                         {
                             SetIfDifferent(Prefer(defaultMoveAni, "fly"));
+                            if (e.StateType == BehaviorController.StateType.Horizontal &&
+                                (BehaviorController.HorizontalState)e.PrevState == BehaviorController.HorizontalState.Stop)
+                                PlaySoundEff(bc.ID, "Move");
                         }
                         else
                         {
@@ -1353,10 +1357,14 @@ namespace WzComparerR2.MapRender
 
                     case "stand":
                     case "fly":
-                    case "move":
                     case "jump":
                     case "chase":
                         e.NextState = e.CurrentState;
+                        break;
+
+                    case "move":
+                        e.NextState = e.CurrentState;
+                        PlaySoundEff(bc.ID, "Move");
                         break;
 
                     case "hit1":
@@ -1458,7 +1466,7 @@ namespace WzComparerR2.MapRender
             if (mob != null)
             {
                 // init controller
-                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, noRegen: true, playRegenMotion: playRegenMotion);
+                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion);
                 mob.Controller.InitRandom(this.random);
 
                 LoadMobResource?.Invoke(mob);
