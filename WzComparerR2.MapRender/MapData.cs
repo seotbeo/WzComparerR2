@@ -1462,8 +1462,10 @@ namespace WzComparerR2.MapRender
 
         public bool SummonMob(int id, int x, int y, int z0, int z1, int fh, bool playRegenMotion = false)
         {
+            var path = $@"Mob\{id:D7}.img";
+            var mobNode = PluginManager.FindWz(path);
             LifeItem mob = LifeItem.Create(id, LifeItem.LifeType.Mob, x, y, z1);
-            if (mob != null)
+            if (mobNode != null && mob != null)
             {
                 // init controller
                 mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion);
