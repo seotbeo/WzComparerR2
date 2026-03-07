@@ -559,6 +559,8 @@ namespace WzComparerR2.MapRender
 
         private void FlyToTarget(TimeSpan elapsedTime, Vector2 prevPos)
         {
+            if (this.ForceMoveStop) return;
+
             if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/다른 그룹 50% 확률
             {
                 SetFlyTarget(prevPos, 0.5f);
