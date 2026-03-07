@@ -768,7 +768,7 @@ namespace WzComparerR2.MapRender
 
                             //绘制怪物名称
                             mesh = batcher.MeshPop();
-                            mesh.Position = new Vector2(life.X, life.Cy + 4) + life.Controller.IntRelPos;
+                            mesh.Position = life.Controller.IntCurPos + new Vector2(0, 4);
                             mesh.RenderObject = new TextMesh()
                             {
                                 Align = Alignment.Center,

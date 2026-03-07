@@ -20,13 +20,17 @@ namespace WzComparerR2.MapRender
             this.hState = HorizontalState.Stop;
             this.vState = VerticalState.Stop;
             this.pState = ProvokeState.None;
+            this.fState = FlyingState.Start;
 
             this.Owner = life;
             this.ID = life.ID;
 
             this.FHManager = fhManager;
 
-            this.basePos = new Vector2(life.X, life.Cy);
+            this.x = life.X;
+            this.y = life.Y;
+            this.cy = life.Cy;
+            this.basePos = new Vector2(this.x, this.cy);
             this.relPos = Vector2.Zero;
             this.baseFoothold = life.Fh;
             this.baseFootholdGroup = FHManager.GetGroupIndexByFootholdIndex(this.baseFoothold);
@@ -54,12 +58,6 @@ namespace WzComparerR2.MapRender
         private const int Walk_Drag = 800;
         private const int SpeedBase = 125;
         private const int Fly_SpeedBase = 200;
-        private const float Fly_WavePeriod = 720f;
-        private const int Fly_WaveHeightBase = 30;
-        private const int Fly_WaveHeightRange = 15;
-        private const float Fly_FindTargetProb = 0.0004f;
-        private const int Fly_FindTargetX = 400;
-        private const int Fly_FindTargetY = 500;
         private const int Max_FallSpeed = 670;
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
@@ -94,14 +92,14 @@ namespace WzComparerR2.MapRender
         private int attackIdx = -1;
         private int attackType = -1;
 
-        private int fly_WaveHeight;
-        private int fly_TargetFoothold = -1;
-        private int fly_TargetDir;
-        private float fly_PrevPhase = 1;
-        private float fly_ToTargetSpeedX;
-        private float fly_ToTargetSpeedY;
-        private Vector2 fly_TargetPos;
+        private FlyingState fState;
         private TimeSpan flyingPhaseTime;
+        private Vector2 fly_TargetPos;
+        private int fly_TargetFoothold = -1;
+        private bool finishFlyX;
+        private bool finishFlyY;
+        private int fly_ToTargetDirX;
+        private int fly_ToTargetDirY;
 
         private bool HasMoveTarget; // 이동 목표까지 상태 결정 차단
         #endregion
@@ -117,8 +115,12 @@ namespace WzComparerR2.MapRender
         private readonly int baseFoothold;
         private readonly int baseFootholdGroup;
 
-        private readonly Vector2 basePos;
+        private readonly int x;
+        private readonly int y;
+        private readonly int cy;
         private readonly Rectangle availableArea;
+
+        private Vector2 basePos;
 
         private int minMovePosX;
         private int maxMovePosX;
@@ -133,8 +135,6 @@ namespace WzComparerR2.MapRender
         private bool hasChaseMotion;
         private bool hasAttackMotion;
         private bool hasSkillMotion;
-
-        private bool noRegen;
 
         private int finalSpeed => this.flying ? Fly_SpeedBase + this.flySpeed : (SpeedBase + (this.chasing ? this.chaseSpeed : this.speed));
         private bool grounded => this.vState == VerticalState.Stop;
@@ -161,7 +161,7 @@ namespace WzComparerR2.MapRender
         public bool CanChase => this.hasChaseMotion;
         public bool CanAttack => (this.hasAttackMotion || this.hasSkillMotion) && this.bState == BaseState.Idle;
         public bool CanHit => this.bState == BaseState.Idle || this.bState == BaseState.Hit;
-        public bool Inited => this.inited == 0b111;
+        public bool Inited => this.inited == 0b1111;
         public int CurFoothold => this.curFoothold;
         public int CurLayerFoothold => this.curLayerFoothold;
         public Vector2 RelPos => relPos;
@@ -208,15 +208,6 @@ namespace WzComparerR2.MapRender
             this.hasMoveMotion = aniList.Contains("move");
             this.hasJumpMotion = aniList.Contains("jump");
             this.hasFlyMotion = aniList.Contains("fly");
-            if (this.CanFly)
-            {
-                SetVerticalState(VerticalState.Fly);
-                if (this.Summoned)
-                {
-                    this.minMovePosX = this.availableArea.Left;
-                    this.maxMovePosX = this.availableArea.Right;
-                }
-            }
             this.hasChaseMotion = aniList.Contains("chase");
             this.attackList = aniList.Where(a => a.StartsWith("attack")).ToList().AsReadOnly();
             this.skillList = aniList.Where(a => a.StartsWith("skill")).ToList().AsReadOnly();
@@ -233,16 +224,35 @@ namespace WzComparerR2.MapRender
             this.inited |= 0b100;
         }
 
+        public void InitFlyState()
+        {
+            if (this.CanFly)
+            {
+                this.basePos.Y = this.y;
+                SetHorizontalState(HorizontalState.MoveL);
+                SetVerticalState(VerticalState.Fly);
+                if (this.Summoned)
+                {
+                    this.minMovePosX = this.availableArea.Left;
+                    this.maxMovePosX = this.availableArea.Right;
+                }
+            }
+            this.inited |= 0b1000;
+        }
+
         public void Reset()
         {
             SetBaseState(BaseState.Regen);
-            SetHorizontalState(HorizontalState.Stop);
+            SetHorizontalState(this.flying ? HorizontalState.MoveL : HorizontalState.Stop);
             SetVerticalState(this.flying ? VerticalState.Fly : VerticalState.Stop);
             SetProvokeState(ProvokeState.None);
             this.HasMoveTarget = false;
             this.fly_TargetFoothold = -1;
             this.relPos = Vector2.Zero;
             this.flyingPhaseTime = TimeSpan.Zero;
+            this.fState = FlyingState.Start;
+            this.finishFlyX = false;
+            this.finishFlyY = false;
             InitCurFoothold(this.basePos);
             this.hp = 100;
         }
@@ -336,9 +346,13 @@ namespace WzComparerR2.MapRender
                 Move(elapsedTime, prevPos);
             }
 
+            if (this.flying && this.finishFlyY)
+            {
+                this.flyingPhaseTime += elapsedTime;
+                return;
+            }
             if (this.ForceMoveStop || this.HasMoveTarget) return;
 
-            this.flyingPhaseTime += elapsedTime;
             this.restTime -= elapsedTime;
             if (this.restTime <= TimeSpan.Zero)
             {
@@ -350,9 +364,9 @@ namespace WzComparerR2.MapRender
         private void DecideState(Vector2 pos)
         {
             var coef = this.Random.Next(4);
-            if (this.grounded || this.flying)
+            if (this.grounded)
             {
-                if (this.chasing || this.flying)
+                if (this.chasing)
                 {
                     switch (coef)
                     {
@@ -394,12 +408,17 @@ namespace WzComparerR2.MapRender
 
         private void Move(TimeSpan elapsedTime, Vector2 prevPos)
         {
-            MoveX(elapsedTime, prevPos);
-            MoveY(elapsedTime, prevPos);
-            FlyToTarget(elapsedTime);
-            DecideFlyToTarget(CurPos);
-            DecideJump(CurPos);
-            RandomJump();
+            if (this.flying)
+            {
+                FlyToTarget(elapsedTime, prevPos);
+            }
+            else
+            {
+                MoveX(elapsedTime, prevPos);
+                MoveY(elapsedTime, prevPos);
+                DecideJump(CurPos);
+                RandomJump();
+            }
             ExecuteOthers();
             PosGuard();
         }
@@ -506,12 +525,6 @@ namespace WzComparerR2.MapRender
                 var newY = GetRelYOnFoothold(CurPos.X, CurPos.Y);
                 this.relPos.Y += newY;
             }
-            else if (this.flying && !this.ForceMoveStop && !this.flyingToTarget)
-            {
-                var newY = GetRelYOnFoothold(CurPos.X, CurPos.Y);
-                newY += GetRelYOnFlyingWave((float)(this.flyingPhaseTime.TotalMilliseconds));
-                this.relPos.Y += newY;
-            }
             else if (this.jumping)
             {
                 this.vSpeed += GravityAcc * (float)elapsedTime.TotalSeconds;
@@ -544,32 +557,109 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void FlyToTarget(TimeSpan elapsedTime)
+        private void FlyToTarget(TimeSpan elapsedTime, Vector2 prevPos)
         {
-            if (this.flyingToTarget && !this.ForceMoveStop)
+            if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/다른 그룹 50% 확률
             {
-                var newX = this.relPos.X + this.fly_ToTargetSpeedX * (float)elapsedTime.TotalSeconds;
-                var newY = this.relPos.Y + this.fly_ToTargetSpeedY * (float)elapsedTime.TotalSeconds;
+                SetFlyTarget(prevPos, 0.5f);
+            }
+            else if (this.fState == FlyingState.Idle) // 이동 완료되면 다음 타겟 탐색
+            {
+                SetFlyTarget(prevPos, 0.995f);
+            }
 
-                if (this.fly_TargetDir * (this.fly_TargetPos.X - (this.basePos.X + newX)) <= 0) // end flying
+            if (this.fState == FlyingState.NoTarget) // 타겟 찾기 실패
+            {
+                if (this.Random.NextPercent(0.97f)) // 97% 확률로 제자리 통통 튐
                 {
-                    this.relPos = this.fly_TargetPos - this.basePos;
-                    EndFlyTarget();
+                    this.vSpeed += GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * 0.35f);
+                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+
+                    this.relPos.Y += newY;
+                    if (this.CurPos.Y >= this.fly_TargetPos.Y)
+                    {
+                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
+                    }
                 }
                 else
                 {
-                    this.relPos.X = newX;
-                    this.relPos.Y = newY;
+                    SetFlyTarget(prevPos, 0f); // 3% 확률로 다른 발판 그룹에서 재탐색
+                }
+            }
+
+            if (this.fState == FlyingState.FlyToTarget) // 타겟 존재
+            {
+                if (!this.finishFlyX) // X축 이동거리 남았을 때, 이동
+                {
+                    var dir = this.fly_ToTargetDirX;
+                    var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
+                    if ((dir < 0 && this.basePos.X + newX <= this.fly_TargetPos.X) ||
+                            (dir > 0 && this.basePos.X + newX >= this.fly_TargetPos.X))
+                    {
+                        this.finishFlyX = true;
+                        this.relPos.X = (this.fly_TargetPos - this.basePos).X;
+                    }
+                    else
+                    {
+                        this.relPos.X = newX;
+                    }
+                }
+
+                if (!this.finishFlyY) // Y축 이동거리 남았을 때, 이동
+                {
+                    var dir = this.fly_ToTargetDirY;
+                    if ((dir < 0 && this.vSpeed >= 0))
+                    {
+                        this.vSpeed = dir * JumpSpeed * 0.35f;
+                    }
+                    else
+                    {
+                        this.vSpeed += dir * GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
+                    }
+                    this.vSpeed = MathHelper.Clamp(this.vSpeed, -this.finalSpeed, this.finalSpeed);
+
+                    var newY = this.relPos.Y + this.vSpeed * (float)elapsedTime.TotalSeconds;
+                    if ((dir < 0 && this.basePos.Y + newY <= this.fly_TargetPos.Y) ||
+                            (dir > 0 && this.basePos.Y + newY >= this.fly_TargetPos.Y))
+                    {
+                        this.finishFlyY = true;
+                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
+                    }
+                    else
+                    {
+                        this.relPos.Y = newY;
+                    }
+                }
+                else // Y축 이동 끝일 때는 통통 튐
+                {
+                    this.vSpeed += GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * 0.35f);
+                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+
+                    this.relPos.Y += newY;
+                    if (this.CurPos.Y > this.fly_TargetPos.Y)
+                    {
+                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
+                    }
+                }
+
+                if (this.finishFlyX && this.finishFlyY) // 이동 완료
+                {
+                    EndFlyTarget();
                 }
             }
         }
 
-        private void DoFlipX()
+        private void DoFlipX(bool increaseRestTime = true)
         {
             if (this.hState == HorizontalState.MoveL) this.hState = HorizontalState.MoveR;
             else this.hState = HorizontalState.MoveL;
             this.FlipX = !this.FlipX;
-            this.restTime += TimeSpan.FromSeconds(RandomRestTimeBase - RandomRestTimeRange);
+            if (increaseRestTime) this.restTime += TimeSpan.FromSeconds(RandomRestTimeBase - RandomRestTimeRange);
         }
 
         private int GetNextFootholdIndex(int curFootholdIndex, int dir, float x)
@@ -767,26 +857,6 @@ namespace WzComparerR2.MapRender
             return int.MaxValue;
         }
 
-        private int GetRelYOnFlyingWave(float phase)
-        {
-            phase %= Fly_WavePeriod;
-            phase = MathHelper.Clamp(phase / Fly_WavePeriod, 0f, 1f);
-
-            float arc = -4f * phase * (1f - phase) * GetFlyWaveHeight(phase);
-
-            return (int)arc;
-        }
-
-        private int GetFlyWaveHeight(float phase)
-        {
-            if (phase < fly_PrevPhase) // 웨이브 높이 재설정
-            {
-                fly_WaveHeight = this.Random.NextVar(Fly_WaveHeightBase, Fly_WaveHeightRange, true);
-            }
-            fly_PrevPhase = phase;
-            return fly_WaveHeight;
-        }
-
         private void DecideJump(Vector2 pos)
         {
             if (!this.grounded || !this.CanJump || this.HasMoveTarget || this.hState == HorizontalState.Stop) return;
@@ -916,49 +986,73 @@ namespace WzComparerR2.MapRender
             SetVerticalState(VerticalState.Fall);
         }
 
-        private void DecideFlyToTarget(Vector2 pos)
+        private void SetFlyTarget(Vector2 pos, float sameGroupProb)
         {
-            if (this.flying && !this.HasMoveTarget)
+            var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
+            List<FootholdItem> candidateFHs;
+            if (this.Random.NextPercent(sameGroupProb))
             {
-                if (this.Random.NextPercent(Fly_FindTargetProb))
-                {
-                    SetFlyTarget(pos);
-                    return;
-                }
+                candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index == this.curFootholdGroup).SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
             }
-        }
+            else
+            {
+                candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup).SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
+            }
 
-        private void SetFlyTarget(Vector2 pos)
-        {
-            var margin = new Vector2(Fly_FindTargetX, Fly_FindTargetY);
-            var candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup && FootholdManager.GetCandidateGroups(g, pos - margin, pos + margin, margin: 0)).SelectMany(g => g.Footholds)
-                .Where(f => !f.IsWall && Math.Min(f.X1, f.X2) >= this.minMovePosX && Math.Max(f.X1, f.X2) <= this.maxMovePosX && FootholdManager.GetCandidateFootholds(f, pos - margin, pos + margin, margin: 0)).ToList();
             var candidateCount = candidateFHs.Count;
-            if (candidateCount > 0)
+            while (candidateCount > 0)
             {
                 var selected = candidateFHs[this.Random.Next(candidateCount)];
 
                 if (selected != null)
                 {
-                    var x = (selected.X1 + selected.X2) / 2;
-                    var y = (selected.Y1 + selected.Y2) / 2;
+                    var t = this.Random.NextVar(0, 21);
+                    var pos1 = new Vector2(selected.X1, selected.Y1);
+                    var pos2 = new Vector2(selected.X2, selected.Y2);
+
+                    var forbidXMin = pos.X - 40; // x축 +-40px이내로는 이동 제한
+                    var forbidXMax = pos.X + 40;
+
+                    var segments = new List<Tuple<float, float>>();
+                    if (selected.X1 < forbidXMin)
+                        segments.Add(new Tuple<float, float>(selected.X1, Math.Min(selected.X2, forbidXMin)));
+                    if (selected.X2 > forbidXMax)
+                        segments.Add(new Tuple<float, float>(Math.Max(selected.X1, forbidXMax), selected.X2));
+
+                    if (segments.Count == 0)
+                    {
+                        candidateFHs.Remove(selected);
+                        candidateCount--;
+                        continue;
+                    }
+
+                    var selectedSegment = segments[this.Random.Next(segments.Count)];
+                    var x = this.Random.NextVar((selectedSegment.Item1 + selectedSegment.Item2) / 2f, (selectedSegment.Item2 - selectedSegment.Item1) / 2f);
+                    var y = FHManager.GetYOnFoothold(selected, x);
+
+                    y += this.Random.NextVar(-15, 20); // 랜덤 높이 (-35 ~ 5px)
+
                     var dx = x - pos.X;
                     var dy = y - pos.Y;
-                    var dist = (float)Math.Sqrt(dx * dx + dy * dy);
+                    this.fly_ToTargetDirX = dx < 0 ? -1 : 1;
+                    this.fly_ToTargetDirY = dy < 0 ? -1 : 1;
+                    if (fly_ToTargetDirX < 0 && this.HState == HorizontalState.MoveR ||
+                        fly_ToTargetDirX > 0 && this.HState == HorizontalState.MoveL)
+                    {
+                        DoFlipX(increaseRestTime: false);
+                    }
+
                     this.fly_TargetFoothold = selected.ID;
                     this.fly_TargetPos = new Vector2(x, y);
-                    this.fly_TargetDir = dx < 0 ? -1 : 1;
-                    this.fly_ToTargetSpeedX = this.finalSpeed / dist * dx;
-                    this.fly_ToTargetSpeedY = this.finalSpeed / dist * dy;
-                    if (fly_TargetDir < 0 && this.HState == HorizontalState.MoveR ||
-                        fly_TargetDir > 0 && this.HState == HorizontalState.MoveL)
-                    {
-                        DoFlipX();
-                    }
+
                     SetCurFoothold(-1, -1);
                     this.HasMoveTarget = true;
+                    this.fState = FlyingState.FlyToTarget;
+                    return;
                 }
             }
+
+            this.fState = FlyingState.NoTarget; // 후보 없음
         }
 
         private void EndFlyTarget()
@@ -967,6 +1061,9 @@ namespace WzComparerR2.MapRender
             this.fly_TargetFoothold = -1;
             this.HasMoveTarget = false;
             this.flyingPhaseTime = TimeSpan.Zero;
+            this.fState = FlyingState.Idle;
+            this.finishFlyX = false;
+            this.finishFlyY = false;
         }
 
         private void ExecuteOthers()
@@ -1037,6 +1134,7 @@ namespace WzComparerR2.MapRender
                 {
                     SetCurFoothold(finalSelected.ID, FHManager.GetGroupIndexByFootholdIndex(finalSelected.ID));
                     SetVerticalState(this.flying ? VerticalState.Fly : this.MovementEnabled ? VerticalState.Fall : VerticalState.Stop);
+                    this.fly_TargetPos.Y = Math.Max(finalSelected.Y1, finalSelected.Y2);
                     return;
                 }
             }
@@ -1169,6 +1267,14 @@ namespace WzComparerR2.MapRender
             Horizontal,
             Vertical,
             Provoke,
+        }
+
+        private enum FlyingState
+        {
+            Start,
+            Idle,
+            FlyToTarget,
+            NoTarget,
         }
 
         private enum CommandState
