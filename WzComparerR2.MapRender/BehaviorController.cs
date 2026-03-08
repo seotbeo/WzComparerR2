@@ -597,7 +597,7 @@ namespace WzComparerR2.MapRender
         {
             if (this.ForceMoveStop) return;
 
-            if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/다른 그룹 50% 확률
+            if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/모든 그룹 50% 확률
             {
                 SetFlyTarget(prevPos, 0.5f);
             }
@@ -623,7 +623,7 @@ namespace WzComparerR2.MapRender
                 }
                 else
                 {
-                    SetFlyTarget(prevPos, 0f); // 3% 확률로 다른 발판 그룹에서 재탐색
+                    SetFlyTarget(prevPos, 0f); // 3% 확률로 모든 발판 그룹에서 재탐색
                 }
             }
 
@@ -1063,7 +1063,7 @@ namespace WzComparerR2.MapRender
             }
             else
             {
-                candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup).SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
+                candidateFHs = FHManager.AllFootholdGroups.SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
             }
 
             var candidateCount = candidateFHs.Count;
