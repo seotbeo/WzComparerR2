@@ -599,11 +599,11 @@ namespace WzComparerR2.MapRender
 
             if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/모든 그룹 50% 확률
             {
-                SetFlyTarget(prevPos, 0.5f);
+                SetFlyTarget(prevPos, 0.5f, differentGroup: false);
             }
-            else if (this.fState == FlyingState.Idle) // 이동 완료되면 다음 타겟 탐색
+            else if (this.fState == FlyingState.Idle) // 이동 완료되면 다음 타겟 탐색; 0.5% 확률로 다른 그룹으로
             {
-                SetFlyTarget(prevPos, 0.995f);
+                SetFlyTarget(prevPos, 0.995f, differentGroup: true);
             }
 
             if (this.fState == FlyingState.NoTarget) // 타겟 찾기 실패
@@ -623,7 +623,7 @@ namespace WzComparerR2.MapRender
                 }
                 else
                 {
-                    SetFlyTarget(prevPos, 0f); // 3% 확률로 모든 발판 그룹에서 재탐색
+                    SetFlyTarget(prevPos, 0f, differentGroup: false); // 3% 확률로 모든 발판 그룹에서 재탐색
                 }
             }
 
@@ -1059,17 +1059,30 @@ namespace WzComparerR2.MapRender
             SetVerticalState(VerticalState.Fall);
         }
 
-        private void SetFlyTarget(Vector2 pos, float sameGroupProb)
+        private void SetFlyTarget(Vector2 pos, float sameGroupProb, bool differentGroup)
         {
             var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
-            List<FootholdItem> candidateFHs;
-            if (this.Random.NextPercent(sameGroupProb))
+            List<FootholdItem> candidateFHs = new List<FootholdItem>();
+            if (this.Random.NextPercent(sameGroupProb)) // 같은 그룹
             {
                 candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index == this.curFootholdGroup).SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
             }
             else
             {
-                candidateFHs = FHManager.AllFootholdGroups.SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
+                if (differentGroup) // 다른 그룹
+                {
+                    candidateFHs = FHManager.AllFootholdGroups.Where(g => g.Index != this.curFootholdGroup).SelectMany(g => g.Footholds).Where(f => !f.IsWall).ToList();
+                }
+                
+                if (!differentGroup || candidateFHs.Count == 0) // 모든 그룹
+                {
+                    var groupCount = FHManager.AllFootholdGroups.Count;
+                    if (groupCount > 0)
+                    {
+                        var selectedGroup = FHManager.AllFootholdGroups[this.Random.Next(groupCount)];
+                        candidateFHs = selectedGroup.Footholds.Where(f => !f.IsWall).ToList();
+                    }
+                }
             }
 
             var candidateCount = candidateFHs.Count;

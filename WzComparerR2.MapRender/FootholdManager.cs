@@ -12,7 +12,7 @@ namespace WzComparerR2.MapRender
     public class FootholdManager
     {
         public List<FootholdGroup>[] FootholdGroups { get; set; } = Enumerable.Range(0, 8).Select(_ => new List<FootholdGroup>()).ToArray();
-        public IEnumerable<FootholdGroup> AllFootholdGroups { get; set; }
+        public List<FootholdGroup> AllFootholdGroups { get; set; }
         public Dictionary<int, FootholdItem> AllFootholdByID { get; set; }
         private HashSet<int> checkedFH { get; set; } = new HashSet<int>();
         public Rectangle Area { get; set; } = Rectangle.Empty;
@@ -39,7 +39,7 @@ namespace WzComparerR2.MapRender
                 }
             }
 
-            AllFootholdGroups = FootholdGroups.SelectMany(g => g);
+            AllFootholdGroups = FootholdGroups.SelectMany(g => g).ToList();
             AllFootholdByID = AllFootholdGroups.SelectMany(g => g.Footholds).ToDictionary(f => f.ID);
         }
 
