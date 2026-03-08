@@ -601,9 +601,9 @@ namespace WzComparerR2.MapRender
             {
                 SetFlyTarget(prevPos, 0.5f, differentGroup: false);
             }
-            else if (this.fState == FlyingState.Idle) // 이동 완료되면 다음 타겟 탐색; 0.5% 확률로 다른 그룹으로
+            else if (this.fState == FlyingState.Idle) // 이동 완료되면 다음 타겟 탐색; 1% 확률로 다른 그룹으로
             {
-                SetFlyTarget(prevPos, 0.995f, differentGroup: true);
+                SetFlyTarget(prevPos, 0.99f, differentGroup: true);
             }
 
             if (this.fState == FlyingState.NoTarget) // 타겟 찾기 실패
@@ -1092,12 +1092,11 @@ namespace WzComparerR2.MapRender
 
                 if (selected != null)
                 {
-                    var t = this.Random.NextVar(0, 21);
                     var pos1 = new Vector2(selected.X1, selected.Y1);
                     var pos2 = new Vector2(selected.X2, selected.Y2);
 
-                    var forbidXMin = pos.X - 40; // x축 +-40px이내로는 이동 제한
-                    var forbidXMax = pos.X + 40;
+                    var forbidXMin = pos.X - 15; // x축 +-15px이내로는 이동 제한
+                    var forbidXMax = pos.X + 15;
 
                     var segments = new List<Tuple<float, float>>();
                     if (selected.X1 < forbidXMin)
