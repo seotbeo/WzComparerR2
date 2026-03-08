@@ -315,7 +315,7 @@ namespace WzComparerR2.MapRender
 
         private void OnSceneItemClick(SceneItem item, bool ctrlOn)
         {
-            if (item is PortalItem && !ctrlOn)
+            if (item is PortalItem)
             {
                 var portal = (PortalItem)item;
                 if (portal.ToMap != 999999999)
@@ -342,12 +342,12 @@ namespace WzComparerR2.MapRender
                     BlinkPortal(portal.ToName); // blink
                 }
             }
-            else if (item is IlluminantClusterItem && !ctrlOn)
+            else if (item is IlluminantClusterItem)
             {
                 var illuminantCluster = (IlluminantClusterItem)item;
                 this.cm.StartCoroutine(OnCameraMoving(new Point(illuminantCluster.End.X, illuminantCluster.End.Y), 500));
             }
-            else if (item is ReactorItem && !ctrlOn)
+            else if (item is ReactorItem)
             {
                 var reactor = (ReactorItem)item;
                 reactor.View.NextStage = reactor.View.Stage + 1;
