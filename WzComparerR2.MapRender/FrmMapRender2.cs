@@ -848,6 +848,11 @@ namespace WzComparerR2.MapRender
                     break;
                     
                 case "/minimap":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     var canvasList = this.mapData?.MiniMap?.ExtraCanvas;
                     switch (arguments.ElementAtOrDefault(1))
                     {
@@ -876,6 +881,11 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case "/scene":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "tag":
@@ -973,13 +983,16 @@ namespace WzComparerR2.MapRender
                     }
                     break;
 
-
-
                 case "/date":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            List<Tuple<long, long>> dateList = this?.mapData.Scene.Npcs.SelectMany(item => item.Date).ToList();
+                            List<Tuple<long, long>> dateList = this.mapData?.Scene.Npcs.SelectMany(item => item.Date).ToList() ?? new();
                             this.ui.ChatBox.AppendTextHelp($"관련된 시각 개수: ({dateList.Count()})");
                             foreach (Tuple<long, long> item in dateList)
                             {
@@ -1008,10 +1021,15 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case "/multibgm":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            if (!string.IsNullOrEmpty(this.mapData.Bgm))
+                            if (!string.IsNullOrEmpty(this.mapData?.Bgm))
                             {
                                 var path = new List<string>() { "Sound" };
                                 path.AddRange(this.mapData.Bgm.Split('/'));
@@ -1069,16 +1087,21 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case "/quest":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            List<QuestInfo> questList = this?.mapData.Scene.Back.Slots.SelectMany(item => ((BackItem)item).Quest)
-                                .Concat(this?.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Quest)))
-                                .Concat(this?.mapData.Scene.Npcs.SelectMany(item => item.Quest))
-                                .Concat(this?.mapData.Scene.Front.Slots.SelectMany(item => ((BackItem)item).Quest))
-                                .Concat(this?.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).Quest))
-                                .Concat(this?.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).SubItems).SelectMany(item => item.Quest))
-                                .Distinct().ToList();
+                            List<QuestInfo> questList = this.mapData?.Scene.Back.Slots.SelectMany(item => ((BackItem)item).Quest)
+                                .Concat(this.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Quest)))
+                                .Concat(this.mapData.Scene.Npcs.SelectMany(item => item.Quest))
+                                .Concat(this.mapData.Scene.Front.Slots.SelectMany(item => ((BackItem)item).Quest))
+                                .Concat(this.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).Quest))
+                                .Concat(this.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).SubItems).SelectMany(item => item.Quest))
+                                .Distinct().ToList() ?? new();
                             this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 개수: ({questList.Count()})");
                             foreach (QuestInfo item in questList)
                             {
@@ -1113,9 +1136,56 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case "/questex":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
+                    switch (arguments.ElementAtOrDefault(1))
+                    {
+                        case "list":
+                            List<QuestExInfo> questList = this.mapData?.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Questex))
+                                .Distinct().ToList() ?? new();
+                            this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 키 개수: ({questList.Count()})");
+                            foreach (QuestExInfo item in questList)
+                            {
+                                Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestData\{item.ID}.img\QuestInfo")
+                                    ?? PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{item.ID}");
+                                string questName = questInfoNode?.Nodes["name"].GetValueEx<string>(null) ?? "null";
+                                this.ui.ChatBox.AppendTextHelp($"  {questName}({item.ID}) / 키:{item.Key}, 기본값:{item.State}");
+                            }
+                            break;
+
+                        case "set":
+                            string qkey = arguments.ElementAtOrDefault(3);
+                            if (Int32.TryParse(arguments.ElementAtOrDefault(2), out int questID) && questID > -1 && Int32.TryParse(arguments.ElementAtOrDefault(4), out int questState) && questState >= -1 && qkey != null)
+                            {
+                                this.patchVisibility.SetQuestVisible(questID, qkey, questState);
+                                this.mapData.PreloadResource(resLoader);
+                                Wz_Node questInfoNode = PluginBase.PluginManager.FindWz($@"Quest\QuestData\{questID}.img\QuestInfo")
+                                    ?? PluginBase.PluginManager.FindWz($@"Quest\QuestInfo.img\{questID}");
+                                string questName = questInfoNode?.Nodes["name"].GetValueEx<string>(null) ?? "null";
+                                this.ui.ChatBox.AppendTextSystem($"{questName}({questID}, 키={qkey})의 값을 {questState}(으)로 변경했습니다.");
+                            }
+                            else
+                            {
+                                this.ui.ChatBox.AppendTextSystem($"정확한 퀘스트 ID, 키, 값을 입력하세요.");
+                            }
+                            break;
+
+                        default:
+                            this.ui.ChatBox.AppendTextHelp(@"/questex list 관련된 퀘스트 키 목록 보기");
+                            this.ui.ChatBox.AppendTextHelp(@"/questex set (questID) (key) (questState) 해당 퀘스트 키의 값 설정");
+                            break;
+                    }
                     break;
 
                 case "/spine":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     var uiSpineSelector = this.ui.Windows.OfType<UISpineSelector>().FirstOrDefault();
                     if (uiSpineSelector == null)
                     {
@@ -1127,18 +1197,23 @@ namespace WzComparerR2.MapRender
                         uiSpineSelector.Hide();
                     }
 
-                    var back = this?.mapData.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
-                        .Concat(this?.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList();
-                    var obj = this?.mapData.Scene.Layers.Nodes.OfType<LayerNode>()
+                    var back = this.mapData?.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
+                        .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList() ?? new();
+                    var obj = this.mapData?.Scene.Layers.Nodes.OfType<LayerNode>()
                         .Select(layerNode => layerNode.Obj.Slots.OfType<ObjItem>()
                             .Where(item => item.View.Animator is ISpineAnimator)
-                            .ToList()).ToList();
+                            .ToList()).ToList() ?? new();
                     uiSpineSelector.LoadTabContents(back, obj);
 
                     uiSpineSelector.Show();
                     break;
 
                 case "/summon":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        break;
+                    }
                     var si = arguments.ElementAtOrDefault(1);
                     var sx = arguments.ElementAtOrDefault(2);
                     var sy = arguments.ElementAtOrDefault(3);

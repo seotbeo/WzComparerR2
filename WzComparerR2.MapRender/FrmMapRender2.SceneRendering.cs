@@ -293,6 +293,8 @@ namespace WzComparerR2.MapRender
 
         private void UpdateMinimapIcons()
         {
+            if (this.mapData == null) return;
+
             this.ui.Minimap.Icons.RemoveAll(icon => icon.Tag == "mob");
             foreach (var mob in this.mapData.Scene.Mobs)
             {
