@@ -115,6 +115,7 @@ namespace WzComparerR2.CharaSim
             }
 
             Wz_Node lifeNode = linkNode.FindNodeByPath("life").ResolveUol();
+            Dictionary<int, bool> mobCanFlyDict = new Dictionary<int, bool>();
             if (lifeNode != null)
             {
                 foreach (var life in lifeNode.Nodes)
@@ -171,8 +172,22 @@ namespace WzComparerR2.CharaSim
                                     map.Mobs.Add(lifeId);
                                 }
                                 MiniMapIcon mobItem = new MiniMapIcon();
+                                bool canFly = false;
+                                if (mobCanFlyDict.ContainsKey(lifeId))
+                                {
+                                    canFly = mobCanFlyDict[lifeId];
+                                }
+                                else
+                                {
+                                    var mobNode = findNode?.Invoke($"Mob\\{lifeId:d7}.img", wzf);
+                                    if (mobNode != null && mobNode.FindNodeByPath("fly") != null)
+                                    {
+                                        canFly = true;
+                                    }
+                                    mobCanFlyDict.Add(lifeId, canFly);
+                                }
                                 mobItem.X = life.FindNodeByPath("x").GetValueEx<int>(0);
-                                mobItem.Y = life.FindNodeByPath("cy").GetValueEx<int>(0);
+                                mobItem.Y = life.FindNodeByPath(canFly ? "y" : "cy").GetValueEx<int>(0);
                                 map.MiniMapMobs.Add(mobItem);
                                 break;
                             default:
