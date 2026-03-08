@@ -58,6 +58,8 @@ namespace WzComparerR2.MapRender
         private const int Walk_Drag = 800;
         private const int SpeedBase = 125;
         private const int Fly_SpeedBase = 200;
+        private const int Fly_Force = 1200;
+        private const float Fly_Dec = 0.35f;
         private const int Max_FallSpeed = 670;
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
@@ -78,6 +80,7 @@ namespace WzComparerR2.MapRender
         private VerticalState vState;
         private ProvokeState pState;
 
+        private float hSpeed = 0;
         private float vSpeed = 0;
         private int hp = 100;
 
@@ -253,6 +256,9 @@ namespace WzComparerR2.MapRender
             this.fState = FlyingState.Start;
             this.finishFlyX = false;
             this.finishFlyY = false;
+            this.hSpeed = 0;
+            this.vSpeed = 0;
+            this.FlipX = false;
             InitCurFoothold(this.basePos);
             this.hp = 100;
         }
@@ -428,6 +434,12 @@ namespace WzComparerR2.MapRender
             if (this.hState != HorizontalState.Stop && !this.ForceMoveStop && !this.flyingToTarget)
             {
                 var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
+                /* TODO: hspeed 감/가속 반영
+                this.hSpeed += dir * Walk_Force * (float)elapsedTime.TotalSeconds;
+                this.hSpeed = MathHelper.Clamp(this.hSpeed, -this.finalSpeed, this.finalSpeed);
+                var newX = this.relPos.X + this.hSpeed * (float)elapsedTime.TotalSeconds;
+                this.relPos.X += newX;
+                */
                 var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
 
                 var isOutOfRange = IsEndOfAvailableRange(basePos.X + newX);
@@ -436,6 +448,7 @@ namespace WzComparerR2.MapRender
                     if (HCollisionTest(CurPos, new Vector2(basePos.X + newX, CurPos.Y)) || isOutOfRange)
                     {
                         SetHorizontalState(HorizontalState.Stop);
+                        //this.hSpeed = 0;
                         return;
                     }
                     else
@@ -448,6 +461,7 @@ namespace WzComparerR2.MapRender
                 if (isOutOfRange) // 가능 범위 밖이면 무조건 flip
                 {
                     DoFlipX();
+                    //this.hSpeed = 0;
                     return;
                 }
 
@@ -459,6 +473,7 @@ namespace WzComparerR2.MapRender
                     if (this.flying || !canJumpOrFall)
                     {
                         DoFlipX();
+                        //this.hSpeed = 0;
                         return;
                     }
                     else
@@ -475,6 +490,7 @@ namespace WzComparerR2.MapRender
                             else
                             {
                                 DoFlipX();
+                                //this.hSpeed = 0;
                                 return;
                             }
                         }
@@ -501,6 +517,7 @@ namespace WzComparerR2.MapRender
                             else
                             {
                                 DoFlipX();
+                                //this.hSpeed = 0;
                                 return;
                             }
                         }
@@ -515,6 +532,25 @@ namespace WzComparerR2.MapRender
                     this.relPos.X = newX;
                     return;
                 }
+            }
+            else if (this.hState == HorizontalState.Stop) // TODO: 감속
+            {
+                /*
+                if (this.hSpeed < 0)
+                {
+                    this.hSpeed += Walk_Drag * (float)elapsedTime.TotalSeconds;
+                    this.hSpeed = Math.Min(this.hSpeed, 0);
+                    var newX = this.hSpeed * (float)elapsedTime.TotalSeconds;
+                    this.relPos.X += newX;
+                }
+                else if (this.hSpeed > 0)
+                {
+                    this.hSpeed -= Walk_Drag * (float)elapsedTime.TotalSeconds;
+                    this.hSpeed = Math.Max(this.hSpeed, 0);
+                    var newX = this.hSpeed * (float)elapsedTime.TotalSeconds;
+                    this.relPos.X += newX;
+                }
+                */
             }
         }
 
@@ -574,14 +610,14 @@ namespace WzComparerR2.MapRender
             {
                 if (this.Random.NextPercent(0.97f)) // 97% 확률로 제자리 통통 튐
                 {
-                    this.vSpeed += GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
-                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * 0.35f);
+                    this.vSpeed += GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * Fly_Dec);
                     var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
 
                     this.relPos.Y += newY;
                     if (this.CurPos.Y >= this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.vSpeed = -JumpSpeed * Fly_Dec;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }
@@ -596,7 +632,10 @@ namespace WzComparerR2.MapRender
                 if (!this.finishFlyX) // X축 이동거리 남았을 때, 이동
                 {
                     var dir = this.fly_ToTargetDirX;
-                    var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
+                    this.hSpeed += dir * Fly_Force * (float)elapsedTime.TotalSeconds;
+                    this.hSpeed = MathHelper.Clamp(this.hSpeed, -this.finalSpeed, this.finalSpeed);
+                    var newX = this.relPos.X + this.hSpeed * (float)elapsedTime.TotalSeconds;
+                    
                     if ((dir < 0 && this.basePos.X + newX <= this.fly_TargetPos.X) ||
                             (dir > 0 && this.basePos.X + newX >= this.fly_TargetPos.X))
                     {
@@ -608,17 +647,43 @@ namespace WzComparerR2.MapRender
                         this.relPos.X = newX;
                     }
                 }
+                else // X축 이동 끝일 때는 좌우 반복 이동
+                {
+                    var max = Math.Max(0, this.finalSpeed);
+                    if (this.hState == HorizontalState.MoveL)
+                    {
+                        this.FlipX = true;
+                        this.hSpeed += Fly_Force * (float)elapsedTime.TotalSeconds;
+                        if (this.hSpeed > max)
+                        {
+                            this.hSpeed = max;
+                            SetHorizontalState(HorizontalState.MoveR, invoke: false);
+                        }
+                    }
+                    else if (this.hState == HorizontalState.MoveR)
+                    {
+                        this.FlipX = false;
+                        this.hSpeed += -Fly_Force * (float)elapsedTime.TotalSeconds;
+                        if (this.hSpeed < -max)
+                        {
+                            this.hSpeed = -max;
+                            SetHorizontalState(HorizontalState.MoveL, invoke: false);
+                        }
+                    }
+                    var newX = this.hSpeed * (float)elapsedTime.TotalSeconds;
+                    this.relPos.X += newX;
+                }
 
                 if (!this.finishFlyY) // Y축 이동거리 남았을 때, 이동
                 {
                     var dir = this.fly_ToTargetDirY;
                     if ((dir < 0 && this.vSpeed >= 0))
                     {
-                        this.vSpeed = dir * JumpSpeed * 0.35f;
+                        this.vSpeed = dir * JumpSpeed * Fly_Dec;
                     }
                     else
                     {
-                        this.vSpeed += dir * GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
+                        this.vSpeed += dir * GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
                     }
                     this.vSpeed = MathHelper.Clamp(this.vSpeed, -this.finalSpeed, this.finalSpeed);
 
@@ -627,7 +692,7 @@ namespace WzComparerR2.MapRender
                             (dir > 0 && this.basePos.Y + newY >= this.fly_TargetPos.Y))
                     {
                         this.finishFlyY = true;
-                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.vSpeed = -JumpSpeed * Fly_Dec;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                     else
@@ -637,14 +702,14 @@ namespace WzComparerR2.MapRender
                 }
                 else // Y축 이동 끝일 때는 통통 튐
                 {
-                    this.vSpeed += GravityAcc * 0.35f * (float)elapsedTime.TotalSeconds;
-                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * 0.35f);
+                    this.vSpeed += GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * Fly_Dec);
                     var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
 
                     this.relPos.Y += newY;
                     if (this.CurPos.Y > this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -JumpSpeed * 0.35f;
+                        this.vSpeed = -JumpSpeed * Fly_Dec;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }
@@ -1038,10 +1103,15 @@ namespace WzComparerR2.MapRender
                     var dy = y - pos.Y;
                     this.fly_ToTargetDirX = dx < 0 ? -1 : 1;
                     this.fly_ToTargetDirY = dy < 0 ? -1 : 1;
-                    if (fly_ToTargetDirX < 0 && this.HState == HorizontalState.MoveR ||
-                        fly_ToTargetDirX > 0 && this.HState == HorizontalState.MoveL)
+                    if (fly_ToTargetDirX < 0)
                     {
-                        DoFlipX(increaseRestTime: false);
+                        this.FlipX = false;
+                        SetHorizontalState(HorizontalState.MoveL, invoke: false);
+                    }
+                    else if (fly_ToTargetDirX > 0)
+                    {
+                        this.FlipX = true;
+                        SetHorizontalState(HorizontalState.MoveR, invoke: false);
                     }
 
                     this.fly_TargetFoothold = selected.ID;
