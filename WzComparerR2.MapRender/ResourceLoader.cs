@@ -367,6 +367,7 @@ namespace WzComparerR2.MapRender
                     else //读取序列帧动画
                     {
                         var frames = new List<Frame>();
+                        /*
                         Wz_Node frameNode;
                         for (int i = 0; (frameNode = node.Nodes[i.ToString()]) != null; i++)
                         {
@@ -374,7 +375,17 @@ namespace WzComparerR2.MapRender
                             {
                                 return InnerLoadAnimationData(frameNode);
                             }
-
+                        }
+                        */
+                        Wz_Node frameNode = node.Nodes["0"];
+                        if (frameNode != null && frameNode.Value == null)
+                        {
+                            return InnerLoadAnimationData(frameNode);
+                        }
+                        var frame0 = LoadFrame(frameNode);
+                        frames.Add(frame0);
+                        for (int i = 1; (frameNode = node.Nodes[i.ToString()]) != null; i++)
+                        {
                             var frame = LoadFrame(frameNode);
                             frames.Add(frame);
                         }
