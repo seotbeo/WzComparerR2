@@ -414,6 +414,34 @@ namespace WzComparerR2.CharaSim
             }
         }
 
+        public static bool CanCustomIllust(GearType type)
+        {
+            switch (type)
+            {
+                case GearType.body:
+                case GearType.head:
+                case GearType.hair:
+                case GearType.hair2:
+                case GearType.hair3:
+                case GearType.hair4:
+                case GearType.face:
+                case GearType.face2:
+                case GearType.cap:
+                case GearType.faceAccessory:
+                case GearType.eyeAccessory:
+                case GearType.earrings:
+                case GearType.coat:
+                case GearType.longcoat:
+                case GearType.pants:
+                case GearType.shoes:
+                case GearType.glove:
+                case GearType.cape:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         /// <summary>
         /// 获取一个值，指示装备类型是否为双手武器。
         /// </summary>
