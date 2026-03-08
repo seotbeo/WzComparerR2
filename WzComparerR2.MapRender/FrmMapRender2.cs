@@ -383,9 +383,11 @@ namespace WzComparerR2.MapRender
 
                         case KeyCode.LeftControl:
                             boostMoveFlag |= 0x01;
+                            this.ui.OnCtrlKeyDown();
                             break;
                         case KeyCode.RightControl:
                             boostMoveFlag |= 0x02;
+                            this.ui.OnCtrlKeyDown();
                             break;
 
                         default:
@@ -414,9 +416,11 @@ namespace WzComparerR2.MapRender
 
                         case KeyCode.LeftControl:
                             boostMoveFlag &= ~0x01;
+                            this.ui.OnCtrlKeyUp();
                             break;
                         case KeyCode.RightControl:
                             boostMoveFlag &= ~0x02;
+                            this.ui.OnCtrlKeyUp();
                             break;
                     }
                 };
@@ -638,7 +642,7 @@ namespace WzComparerR2.MapRender
             #endregion
 
             //点击事件
-            var disposable = UIHelper.RegisterClickEvent<SceneItem>(this.ui.ContentControl,
+            var disposable = UIHelper.RegisterClickEvent<SceneItem>(this.ui, this.ui.ContentControl,
                 (sender, point) =>
                 {
                     var cameraScale = this.renderEnv.Camera.Scale;

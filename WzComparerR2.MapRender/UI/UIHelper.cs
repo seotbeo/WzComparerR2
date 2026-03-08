@@ -19,9 +19,20 @@ namespace WzComparerR2.MapRender.UI
 {
     static class UIHelper
     {
-        public static IDisposable RegisterClickEvent<T>(UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, EmptyKeys.UserInterface.Input.MouseButton> onClick)
+        public static IDisposable RegisterClickEvent<T>(UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, bool> onClick)
         {
             var holder = new ClickEventHolder<T>(control)
+            {
+                GetItemFunc = getItemFunc,
+                ClickFunc = onClick,
+            };
+            holder.Register();
+            return holder;
+        }
+
+        public static IDisposable RegisterClickEvent<T>(UIElement root, UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, bool> onClick)
+        {
+            var holder = new ClickEventHolder<T>(root, control)
             {
                 GetItemFunc = getItemFunc,
                 ClickFunc = onClick,
@@ -112,11 +123,19 @@ namespace WzComparerR2.MapRender.UI
                 this.Control = control;
             }
 
+            public ClickEventHolder(UIElement root, UIElement control)
+            {
+                this.Root = root;
+                this.Control = control;
+            }
+
+            public UIElement Root { get; private set; }
             public UIElement Control { get; private set; }
             public Func<UIElement, PointF, T> GetItemFunc { get; set; }
-            public Action<T, EmptyKeys.UserInterface.Input.MouseButton> ClickFunc { get; set; }
+            public Action<T, bool> ClickFunc { get; set; }
 
             private T item;
+            private bool ctrlOn => (this.Root as MapRenderUIRoot)?.CtrlOn ?? false;
 
             public void Register()
             {
@@ -132,8 +151,7 @@ namespace WzComparerR2.MapRender.UI
 
             private void OnMouseDown(object sender, MouseButtonEventArgs e)
             {
-                //if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
-                if (GetItemFunc != null)
+                if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
                 {
                     this.item = GetItemFunc.Invoke(this.Control, e.GetPosition(this.Control));
                 }
@@ -141,13 +159,12 @@ namespace WzComparerR2.MapRender.UI
 
             private void OnMouseUp(object sender, MouseButtonEventArgs e)
             {
-                //if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
-                if (GetItemFunc != null)
+                if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
                 {
                     T item = GetItemFunc.Invoke(this.Control, e.GetPosition(this.Control));
                     if (item != null && object.Equals(item, this.item))
                     {
-                        this.ClickFunc?.Invoke(item, e.ChangedButton);
+                        this.ClickFunc?.Invoke(item, ctrlOn);
                     }
                     this.item = default(T);
                 }

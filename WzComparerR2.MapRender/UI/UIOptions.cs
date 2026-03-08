@@ -581,7 +581,6 @@ namespace WzComparerR2.MapRender.UI
             var tips = new[]
             {
                  "단축키 :",
-                 "",
                  "[M] 미니맵",
                  "[W] 월드맵",
                  "[Esc] 설정",
@@ -593,6 +592,10 @@ namespace WzComparerR2.MapRender.UI
                  "[ScrollLock] 스크린샷",
                  "[S] 캡쳐 범위 표시",
                  "[Ctrl+S] 현재 화면만 캡쳐",
+                 "",
+                 "시뮬레이터 :",
+                 "[마우스 클릭] 몬스터 공격",
+                 "[Ctrl+마우스 클릭] 몬스터 스킬 사용"
             };
 
             foreach (var tip in tips)

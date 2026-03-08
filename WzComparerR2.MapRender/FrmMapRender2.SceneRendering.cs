@@ -311,9 +311,9 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void OnSceneItemClick(SceneItem item, EmptyKeys.UserInterface.Input.MouseButton targetButton)
+        private void OnSceneItemClick(SceneItem item, bool ctrlOn)
         {
-            if (item is PortalItem && targetButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
+            if (item is PortalItem && !ctrlOn)
             {
                 var portal = (PortalItem)item;
                 if (portal.ToMap != 999999999)
@@ -340,12 +340,12 @@ namespace WzComparerR2.MapRender
                     BlinkPortal(portal.ToName); // blink
                 }
             }
-            else if (item is IlluminantClusterItem && targetButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
+            else if (item is IlluminantClusterItem && !ctrlOn)
             {
                 var illuminantCluster = (IlluminantClusterItem)item;
                 this.cm.StartCoroutine(OnCameraMoving(new Point(illuminantCluster.End.X, illuminantCluster.End.Y), 500));
             }
-            else if (item is ReactorItem && targetButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
+            else if (item is ReactorItem && !ctrlOn)
             {
                 var reactor = (ReactorItem)item;
                 reactor.View.NextStage = reactor.View.Stage + 1;
@@ -360,7 +360,7 @@ namespace WzComparerR2.MapRender
                     var ani = life.View.Animator as StateMachineAnimator;
                     var soundEffPath = $@"Sound\Mob.img\{life.ID:D7}\";
 
-                    if (life.Controller.CanHit && targetButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
+                    if (life.Controller.CanHit && !ctrlOn)
                     {
                         life.Controller.DoDamage();
                         if (life.Controller.DecideDie())
@@ -376,7 +376,7 @@ namespace WzComparerR2.MapRender
 
                         PlaySoundEff(soundEffPath);
                     }
-                    else if (life.Controller.CanAttack && targetButton == EmptyKeys.UserInterface.Input.MouseButton.Middle)
+                    else if (life.Controller.CanAttack && ctrlOn)
                     {
                         soundEffPath += life.Controller.DecideAttack().Replace("attack", "Attack").Replace("skill", "Skill");
                         life.Controller.SetAttack();
