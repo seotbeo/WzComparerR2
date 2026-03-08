@@ -64,8 +64,7 @@ namespace WzComparerR2.MapRender
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
         private const float RandomJumpProb = 0.003f;
-        private const int MaxTriggerDistance = 30;
-        private const int MinTriggerDistance = 10;
+        private const int JumpTriggerDistanceRange = 10;
         private const int DamageBase = 70;
         private const int DamageRange = 50;
         private const float RandomRestTimeBase = 2.8f;
@@ -139,7 +138,8 @@ namespace WzComparerR2.MapRender
         private bool hasAttackMotion;
         private bool hasSkillMotion;
 
-        private int finalSpeed => this.flying ? Fly_SpeedBase + this.flySpeed : (SpeedBase + (this.chasing ? this.chaseSpeed : this.speed));
+        private int finalSpeed => this.flying ? this.flySpeed : (this.chasing ? this.chaseSpeed : this.speed);
+        private int jumpTriggerDistance => (int)(this.finalSpeed * 0.28f);
         private bool grounded => this.vState == VerticalState.Stop;
         private bool flying => this.vState == VerticalState.Fly;
         private bool flyingToTarget => this.fly_TargetFoothold != -1;
@@ -221,9 +221,9 @@ namespace WzComparerR2.MapRender
 
         public void SetSpeed(int speed, int flySpeed, int chaseSpeed)
         {
-            this.speed = speed;
-            this.flySpeed = flySpeed;
-            this.chaseSpeed = chaseSpeed;
+            this.speed = Math.Min((int)(SpeedBase * (100f + speed) / 100f), 200);
+            this.flySpeed = (int)(Fly_SpeedBase * (100f + flySpeed) / 100f);
+            this.chaseSpeed = Math.Min((int)(SpeedBase * (100f + chaseSpeed) / 100f), 200);
             this.inited |= 0b100;
         }
 
@@ -617,7 +617,7 @@ namespace WzComparerR2.MapRender
                     this.relPos.Y += newY;
                     if (this.CurPos.Y >= this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -JumpSpeed * Fly_Dec;
+                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }
@@ -692,7 +692,7 @@ namespace WzComparerR2.MapRender
                             (dir > 0 && this.basePos.Y + newY >= this.fly_TargetPos.Y))
                     {
                         this.finishFlyY = true;
-                        this.vSpeed = -JumpSpeed * Fly_Dec;
+                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                     else
@@ -709,7 +709,7 @@ namespace WzComparerR2.MapRender
                     this.relPos.Y += newY;
                     if (this.CurPos.Y > this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -JumpSpeed * Fly_Dec;
+                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }
@@ -879,7 +879,8 @@ namespace WzComparerR2.MapRender
 
             if (gi != -1)
             {
-                foreach (var group in FHManager.AllFootholdGroups.Where(g => g.Index == gi))
+                var group = FHManager.GetGroupByIndex(gi);
+                if (group != null)
                 {
                     foreach (var fh in group.Footholds)
                     {
@@ -940,13 +941,16 @@ namespace WzComparerR2.MapRender
                 Vector2 fallPos = pos;
                 var next = dir < 0 ? fh.Prev : fh.Next;
 
+                var minJumpTriggerDistance = this.jumpTriggerDistance - JumpTriggerDistanceRange;
+                var maxJumpTriggerDistance = this.jumpTriggerDistance + JumpTriggerDistanceRange;
+
                 while (true) // 발판 끝부터 거리 확인
                 {
                     if (next == 0)
                     {
                         endfh = nextfh;
                         var d = Math.Abs((dir < 0 ? nextfh.X1 : nextfh.X2) - x);
-                        if (!(d <= MaxTriggerDistance && d >= MinTriggerDistance))
+                        if (!(d <= maxJumpTriggerDistance && d >= minJumpTriggerDistance))
                         {
                             return;
                         }
@@ -957,7 +961,7 @@ namespace WzComparerR2.MapRender
                         if (nextfh.IsWall)
                         {
                             var d = Math.Abs((dir < 0 ? nextfh.X1 : nextfh.X2) - x);
-                            if (d <= MaxTriggerDistance && d >= MinTriggerDistance)
+                            if (d <= maxJumpTriggerDistance && d >= minJumpTriggerDistance)
                             {
                                 endfh = nextfh;
                                 break;
@@ -1001,6 +1005,7 @@ namespace WzComparerR2.MapRender
             var prevPos = pos;
             var nextPos = pos;
 
+            var candidateGroups = FHManager.AllFootholdGroups.Where(g => (sameGroup ? g.Index == this.curFootholdGroup : true) && FootholdManager.GetCandidateGroups(g, new Vector2(minX, minY), new Vector2(maxX, maxY))).ToList();
             for (int i = 0; i < timestamps; i++)
             {
                 prevPos = nextPos;
@@ -1014,8 +1019,9 @@ namespace WzComparerR2.MapRender
                 if (vSpeed < 0) continue;
                 if ((nextPos.X <= minX) || (nextPos.X >= maxX)) break;
                 if ((nextPos.Y <= minY) || (nextPos.Y >= maxY)) break;
+                if (HCollisionTest(prevPos, nextPos)) break;
 
-                foreach (var group in FHManager.AllFootholdGroups.Where(g => (sameGroup ? g.Index == this.curFootholdGroup : true) && FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
+                foreach (var group in candidateGroups)
                 {
                     foreach (var fh in group.Footholds)
                     {
