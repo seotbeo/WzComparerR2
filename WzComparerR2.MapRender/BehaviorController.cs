@@ -64,10 +64,10 @@ namespace WzComparerR2.MapRender
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
         private const float RandomJumpProb = 0.003f;
-        private const int JumpTriggerDistanceRange = 10;
+        private const int JumpTriggerDistanceRange = 7;
         private const int DamageBase = 70;
         private const int DamageRange = 50;
-        private const float RandomRestTimeBase = 2.8f;
+        private const float RandomRestTimeBase = 2.5f;
         private const float RandomRestTimeRange = 2f;
         private const int PosGuardMargin = 500;
         #endregion
@@ -480,7 +480,7 @@ namespace WzComparerR2.MapRender
                     {
                         if (IsLastFoothold(curfh, dir)) // 그룹 내 마지막 발판인 경우 점프 가능 else 낙하 가능
                         {
-                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, -75, 1500, -JumpSpeed); // 점프 가능 발판 있는지 탐색
+                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, -80, 1500, -JumpSpeed); // 점프 가능 발판 있는지 탐색
                             if (canJumpOrFall)
                             {
                                 DoJump();
@@ -908,7 +908,7 @@ namespace WzComparerR2.MapRender
                             
                             return true;
                         }
-                        else if (fh.Vertical && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos, onSegment: false))
+                        else if (fh.Vertical && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
                             HandleFallHCollision(fh);
                         }
@@ -1003,7 +1003,7 @@ namespace WzComparerR2.MapRender
                 }
 
                 var limitX1 = dir < 0 ? Math.Max(Math.Min(0, this.minMovePosX - x), -100) : Math.Min(Math.Max(0, this.maxMovePosX - x), 100);
-                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -75, 0, -JumpSpeed, sameGroup: true); // 점프 가능 발판 있는지 탐색
+                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -80, 0, -JumpSpeed, sameGroup: true); // 점프 가능 발판 있는지 탐색
                 if (canJump)
                 {
                     DoJump();
