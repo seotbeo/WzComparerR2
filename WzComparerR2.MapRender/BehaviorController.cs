@@ -565,25 +565,19 @@ namespace WzComparerR2.MapRender
             {
                 this.vSpeed += GravityAcc * (float)elapsedTime.TotalSeconds;
                 this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed);
+                var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+                this.relPos.Y += newY;
                 if (this.vSpeed > 0)
                 {
                     SetVerticalState(VerticalState.Fall);
                 }
 
-                if (this.jumping)
+                if (this.falling)
                 {
-                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
-                    this.relPos.Y += newY;
-                }
-                else if (this.falling)
-                {
-                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+                    FallCollisionTest(prevPos, CurPos);
 
-                    VCollisionTest(CurPos, new Vector2(CurPos.X, CurPos.Y + newY));
-
-                    this.relPos.Y += newY;
                     var collisionOn = GetRelYOnFoothold(CurPos.X, basePos.Y);
-                    if (this.relPos.Y > collisionOn)
+                    if (this.relPos.Y >= collisionOn)
                     {
                         this.relPos.Y = collisionOn;
                         this.vSpeed = 0;
@@ -884,7 +878,7 @@ namespace WzComparerR2.MapRender
                 var group = FHManager.GetGroupByIndex(gi);
                 if (group != null)
                 {
-                    foreach (var fh in group.Footholds)
+                    foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
                         if (fh.IsWall)
                         {
@@ -897,17 +891,31 @@ namespace WzComparerR2.MapRender
             return false;
         }
 
-        private bool VCollisionTest(Vector2 prevPos, Vector2 nextPos)
+        private bool FallCollisionTest(Vector2 prevPos, Vector2 nextPos)
         {
             if (prevPos.Y == nextPos.Y) return false;
 
+            var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
             foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
             {
-                foreach (var fh in group.Footholds)
+                foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                 {
-                    if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
+                    if (fh.GroupIndex == this.curFootholdGroup)
                     {
-                        HandleVCollision(fh);
+                        if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
+                        {
+                            HandleFallVCollision(fh);
+                            
+                            return true;
+                        }
+                        else if (fh.Vertical && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos, onSegment: false))
+                        {
+                            HandleFallHCollision(fh);
+                        }
+                    }
+                    else if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
+                    {
+                        HandleFallVCollision(fh);
                         return true;
                     }
                 }
@@ -915,14 +923,27 @@ namespace WzComparerR2.MapRender
             return false;
         }
 
-        private void HandleVCollision(FootholdItem fh)
+        private void HandleFallVCollision(FootholdItem fh)
         {
+            if (fh.IsWall) return;
+
             SetCurFoothold(fh.ID, fh.GroupIndex);
         }
 
-        private int GetRelYOnFoothold(float x, float y)
+        private void HandleFallHCollision(FootholdItem fh)
         {
-            if (FHManager.GetFootholdByID(curFoothold, out var fh) && !fh.IsWall)
+            if (!fh.Vertical) return;
+
+            SetHorizontalState(HorizontalState.Stop);
+            //this.hSpeed = 0;
+            this.relPos.X = fh.X1 - this.basePos.X;
+        }
+
+        private int GetRelYOnFoothold(float x, float y, int? footholdID = null)
+        {
+            if (footholdID == null) footholdID = this.curFoothold;
+
+            if (FHManager.GetFootholdByID(footholdID.Value, out var fh) && !fh.Vertical)
             {
                 return (int)(FHManager.GetYOnFoothold(fh, x) - y);
             }

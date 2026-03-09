@@ -107,7 +107,7 @@ namespace WzComparerR2.MapRender
 
         public int GetYOnFoothold(FootholdItem fh, float x)
         {
-            if (!fh.IsWall)
+            if (!fh.Vertical)
             {
                 float dx = fh.X2 - fh.X1;
                 float t = (x - fh.X1) / dx;
@@ -130,14 +130,14 @@ namespace WzComparerR2.MapRender
             return item.FootholdArea.Intersects(target);
         }
 
-        public static bool Intersects(FootholdItem item, Vector2 pos1, Vector2 pos2)
+        public static bool Intersects(FootholdItem item, Vector2 pos1, Vector2 pos2, bool onSegment = true)
         {
             var fpos1 = new Vector2(item.X1, item.Y1);
             var fpos2 = new Vector2(item.X2, item.Y2);
-            return intersects(fpos1, fpos2, pos1, pos2);
+            return intersects(fpos1, fpos2, pos1, pos2, onSegment);
         }
 
-        public static bool intersects(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        public static bool intersects(Vector2 a, Vector2 b, Vector2 c, Vector2 d, bool onSegment = true)
         {
             int ab_c = CCW(a, b, c);
             int ab_d = CCW(a, b, d);
@@ -145,7 +145,7 @@ namespace WzComparerR2.MapRender
             int cd_b = CCW(c, d, b);
 
             if (ab_c * ab_d < 0 && cd_a * cd_b < 0) return true;
-
+            if (!onSegment) return false;
             if (ab_c == 0 && OnSegment(a, b, c)) return true;
             if (ab_d == 0 && OnSegment(a, b, d)) return true;
             if (cd_a == 0 && OnSegment(c, d, a)) return true;
