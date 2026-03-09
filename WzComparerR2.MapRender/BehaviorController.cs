@@ -360,7 +360,7 @@ namespace WzComparerR2.MapRender
             if (this.ForceMoveStop || this.HasMoveTarget) return;
 
             this.restTime -= elapsedTime;
-            if (this.restTime <= TimeSpan.Zero)
+            if (this.restTime <= TimeSpan.Zero && !this.floating)
             {
                 DecideState(CurPos);
                 this.restTime = TimeSpan.FromSeconds(this.Random.NextVar(RandomRestTimeBase, RandomRestTimeRange, true));
@@ -561,34 +561,35 @@ namespace WzComparerR2.MapRender
                 var newY = GetRelYOnFoothold(CurPos.X, CurPos.Y);
                 this.relPos.Y += newY;
             }
-            else if (this.jumping)
-            {
-                this.vSpeed += GravityAcc * (float)elapsedTime.TotalSeconds;
-
-                var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
-                this.relPos.Y += newY;
-                if (this.vSpeed >= 0)
-                {
-                    SetVerticalState(VerticalState.Fall);
-                }
-            }
-            else if (this.falling)
+            else if (this.floating)
             {
                 this.vSpeed += GravityAcc * (float)elapsedTime.TotalSeconds;
                 this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed);
-
-                var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
-
-                VCollisionTest(prevPos, new Vector2(CurPos.X, CurPos.Y + newY));
-
-                this.relPos.Y += newY;
-                var collisionOn = GetRelYOnFoothold(CurPos.X, basePos.Y);
-                if (this.relPos.Y > collisionOn)
+                if (this.vSpeed > 0)
                 {
-                    this.relPos.Y = collisionOn;
-                    this.vSpeed = 0;
-                    this.HasMoveTarget = false;
-                    SetVerticalState(VerticalState.Stop);
+                    SetVerticalState(VerticalState.Fall);
+                }
+
+                if (this.jumping)
+                {
+                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+                    this.relPos.Y += newY;
+                }
+                else if (this.falling)
+                {
+                    var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
+
+                    VCollisionTest(CurPos, new Vector2(CurPos.X, CurPos.Y + newY));
+
+                    this.relPos.Y += newY;
+                    var collisionOn = GetRelYOnFoothold(CurPos.X, basePos.Y);
+                    if (this.relPos.Y > collisionOn)
+                    {
+                        this.relPos.Y = collisionOn;
+                        this.vSpeed = 0;
+                        this.HasMoveTarget = false;
+                        SetVerticalState(VerticalState.Stop);
+                    }
                 }
             }
         }
@@ -721,12 +722,11 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void DoFlipX(bool increaseRestTime = true)
+        private void DoFlipX()
         {
             if (this.hState == HorizontalState.MoveL) this.hState = HorizontalState.MoveR;
             else this.hState = HorizontalState.MoveL;
             this.FlipX = !this.FlipX;
-            if (increaseRestTime) this.restTime += TimeSpan.FromSeconds(RandomRestTimeBase - RandomRestTimeRange);
         }
 
         private int GetNextFootholdIndex(int curFootholdIndex, int dir, float x)
@@ -873,6 +873,8 @@ namespace WzComparerR2.MapRender
 
         private bool HCollisionTest(Vector2 prevPos, Vector2 nextPos)
         {
+            if (prevPos.X == nextPos.X) return false;
+
             int gi = -1;
             if (this.grounded) gi = this.curFootholdGroup;
             else  gi = VRayCastingTest(prevPos);
@@ -897,6 +899,8 @@ namespace WzComparerR2.MapRender
 
         private bool VCollisionTest(Vector2 prevPos, Vector2 nextPos)
         {
+            if (prevPos.Y == nextPos.Y) return false;
+
             foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
             {
                 foreach (var fh in group.Footholds)
