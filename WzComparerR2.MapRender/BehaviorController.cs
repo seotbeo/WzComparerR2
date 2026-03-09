@@ -110,7 +110,7 @@ namespace WzComparerR2.MapRender
         private ReadOnlyCollection<string> attackList;
         private ReadOnlyCollection<string> skillList;
 
-        private readonly TimeSpan MaxFrameRate = TimeSpan.FromMilliseconds(50);
+        private readonly TimeSpan MaxFrameRate = TimeSpan.FromMilliseconds(33);
         private readonly FootholdManager FHManager;
         private IRandom Random;
 
@@ -443,9 +443,9 @@ namespace WzComparerR2.MapRender
                 var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
 
                 var isOutOfRange = IsEndOfAvailableRange(basePos.X + newX);
-                if (this.floating) // 점프 중 같은 그룹 내 수직 발판과 충돌 확인
+                if (isOutOfRange) // 가능 범위 밖이면 무조건 flip
                 {
-                    if (HCollisionTest(CurPos, new Vector2(basePos.X + newX, CurPos.Y)) || isOutOfRange)
+                    if (this.floating) // 점프 중에는 X이동 정지
                     {
                         SetHorizontalState(HorizontalState.Stop);
                         //this.hSpeed = 0;
@@ -453,16 +453,10 @@ namespace WzComparerR2.MapRender
                     }
                     else
                     {
-                        this.relPos.X = newX;
+                        DoFlipX();
+                        //this.hSpeed = 0;
                         return;
                     }
-                }
-
-                if (isOutOfRange) // 가능 범위 밖이면 무조건 flip
-                {
-                    DoFlipX();
-                    //this.hSpeed = 0;
-                    return;
                 }
 
                 var nextFH = GetNextFootholdIndex(this.curFoothold, dir, basePos.X + newX);
@@ -556,7 +550,7 @@ namespace WzComparerR2.MapRender
 
         private void MoveY(TimeSpan elapsedTime, Vector2 prevPos)
         {
-            if (this.grounded && !this.ForceMoveStop)
+            if (this.grounded && !this.ForceMoveStop) // 발판에 스냅
             {
                 var newY = GetRelYOnFoothold(CurPos.X, CurPos.Y);
                 this.relPos.Y += newY;
@@ -572,12 +566,12 @@ namespace WzComparerR2.MapRender
                     SetVerticalState(VerticalState.Fall);
                 }
 
+                CollisionTest(prevPos, CurPos); // 착지 시 curFoothold != -1
+
                 if (this.falling)
                 {
-                    FallCollisionTest(prevPos, CurPos);
-
-                    var collisionOn = GetRelYOnFoothold(CurPos.X, basePos.Y);
-                    if (this.relPos.Y >= collisionOn)
+                    var collisionOn = GetRelYOnFoothold(CurPos.X, basePos.Y); // curFoothold 기준으로 y축 상대 좌표
+                    if (this.relPos.Y >= collisionOn) // 착지 판정
                     {
                         this.relPos.Y = collisionOn;
                         this.vSpeed = 0;
@@ -865,13 +859,14 @@ namespace WzComparerR2.MapRender
             return selectedBelow?.GroupIndex ?? -1;
         }
 
-        private bool HCollisionTest(Vector2 prevPos, Vector2 nextPos)
+        private bool HCollisionTest(Vector2 prevPos, Vector2 nextPos, bool useCurFootholdGroup)
         {
             if (prevPos.X == nextPos.X) return false;
 
+            var dir = prevPos.X > nextPos.X ? -1 : 1;
             int gi = -1;
-            if (this.grounded) gi = this.curFootholdGroup;
-            else  gi = VRayCastingTest(prevPos);
+            if (useCurFootholdGroup) gi = this.curFootholdGroup;
+            else gi = VRayCastingTest(prevPos); // 수직 아래 가장 가까운 발판 그룹 찾기
 
             if (gi != -1)
             {
@@ -880,10 +875,9 @@ namespace WzComparerR2.MapRender
                 {
                     foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
-                        if (fh.IsWall)
+                        if (fh.IsWall && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
-                            if (FootholdManager.Intersects(fh, prevPos, nextPos))
-                                return true;
+                            return true;
                         }
                     }
                 }
@@ -891,32 +885,31 @@ namespace WzComparerR2.MapRender
             return false;
         }
 
-        private bool FallCollisionTest(Vector2 prevPos, Vector2 nextPos)
+        private bool CollisionTest(Vector2 prevPos, Vector2 nextPos)
         {
             if (prevPos.Y == nextPos.Y) return false;
 
-            var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
-            foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
+            var dir = prevPos.X > nextPos.X ? -1 : 1;
+            // 수직 발판과 충돌 체크
+            // 현재 발판 그룹에서 벗어난 경우, 발판 그룹을 재탐색, 아니면 현재 발판 그룹의 수직 발판만 대상
+            var curGroup = FHManager.GetGroupByIndex(this.curFootholdGroup);
+            if (HCollisionTest(prevPos, nextPos, useCurFootholdGroup: curGroup != null && nextPos.X >= curGroup.GroupArea.Left && nextPos.X <= curGroup.GroupArea.Right))
             {
-                foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
+                HandleHCollision(prevPos); // 수평 충돌시 정지
+            }
+
+            // 낙하 중에만 착지 체크
+            if (this.falling)
+            {
+                foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
                 {
-                    if (fh.GroupIndex == this.curFootholdGroup)
+                    foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
                         if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
-                            HandleFallVCollision(fh);
-                            
+                            HandleFallVCollision(fh); // 착지한 발판으로 curFoothold와 curFootholdGroup 변경
                             return true;
                         }
-                        else if (fh.Vertical && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos))
-                        {
-                            HandleFallHCollision(fh);
-                        }
-                    }
-                    else if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
-                    {
-                        HandleFallVCollision(fh);
-                        return true;
                     }
                 }
             }
@@ -930,13 +923,11 @@ namespace WzComparerR2.MapRender
             SetCurFoothold(fh.ID, fh.GroupIndex);
         }
 
-        private void HandleFallHCollision(FootholdItem fh)
+        private void HandleHCollision(Vector2 prevPos)
         {
-            if (!fh.Vertical) return;
-
             SetHorizontalState(HorizontalState.Stop);
             //this.hSpeed = 0;
-            this.relPos.X = fh.X1 - this.basePos.X;
+            this.relPos.X = prevPos.X - basePos.X;
         }
 
         private int GetRelYOnFoothold(float x, float y, int? footholdID = null)
@@ -1023,7 +1014,7 @@ namespace WzComparerR2.MapRender
 
             var hSpeed = this.finalSpeed;
             var vSpeed = startVSpeed;
-            var dt = 1 / 60f; // 60프레임으로 이동경로 시뮬레이션
+            var dt = 1 / 30f; // 30프레임으로 이동경로 시뮬레이션
             var timestamps = Math.Max(1, Math.Max((int)Math.Ceiling(limitX / Math.Max(1f, hSpeed * dt)), (int)Math.Ceiling((maxLimitY - minLimitY) / Math.Max(1f, Max_FallSpeed * dt))));
             var hPos = pos.X;
             var vPos = pos.Y;
@@ -1041,10 +1032,10 @@ namespace WzComparerR2.MapRender
                 vPos += vSpeed * (float)dt;
                 nextPos = new Vector2(hPos, vPos);
 
+                if (HCollisionTest(prevPos, nextPos, useCurFootholdGroup: true)) break;
                 if (vSpeed < 0) continue;
                 if ((nextPos.X <= minX) || (nextPos.X >= maxX)) break;
                 if ((nextPos.Y <= minY) || (nextPos.Y >= maxY)) break;
-                if (HCollisionTest(prevPos, nextPos)) break;
 
                 foreach (var group in candidateGroups)
                 {
