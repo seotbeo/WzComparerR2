@@ -859,11 +859,10 @@ namespace WzComparerR2.MapRender
             return selectedBelow?.GroupIndex ?? -1;
         }
 
-        private bool HCollisionTest(Vector2 prevPos, Vector2 nextPos, bool useCurFootholdGroup)
+        private FootholdItem HCollisionTest(Vector2 prevPos, Vector2 nextPos, bool useCurFootholdGroup)
         {
-            if (prevPos.X == nextPos.X) return false;
-
             var dir = prevPos.X > nextPos.X ? -1 : 1;
+            var ydir = prevPos.Y > nextPos.Y ? -1 : 1; // vSpeed < 0 일때는 Reversed 발판까지 탐지
             int gi = -1;
             if (useCurFootholdGroup) gi = this.curFootholdGroup;
             else gi = VRayCastingTest(prevPos); // 수직 아래 가장 가까운 발판 그룹 찾기
@@ -873,16 +872,17 @@ namespace WzComparerR2.MapRender
                 var group = FHManager.GetGroupByIndex(gi);
                 if (group != null)
                 {
-                    foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
+                    foreach (var fh in group.Footholds.Where(f => (ydir < 0 ? f.IsWall : f.Vertical) && (dir < 0 ? f.Y1 <= f.Y2 : f.Y1 >= f.Y2) &&
+                        FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
-                        if (fh.IsWall && (dir < 0 ? fh.Y1 < fh.Y2 : fh.Y1 > fh.Y2) && FootholdManager.Intersects(fh, prevPos, nextPos))
+                        if (FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
-                            return true;
+                            return fh;
                         }
                     }
                 }
             }
-            return false;
+            return null;
         }
 
         private bool CollisionTest(Vector2 prevPos, Vector2 nextPos)
@@ -893,9 +893,11 @@ namespace WzComparerR2.MapRender
             // 수직 발판과 충돌 체크
             // 현재 발판 그룹에서 벗어난 경우, 발판 그룹을 재탐색, 아니면 현재 발판 그룹의 수직 발판만 대상
             var curGroup = FHManager.GetGroupByIndex(this.curFootholdGroup);
-            if (HCollisionTest(prevPos, nextPos, useCurFootholdGroup: curGroup != null && nextPos.X >= curGroup.GroupArea.Left && nextPos.X <= curGroup.GroupArea.Right))
+            var useCurFootholdGroup = curGroup != null && nextPos.X >= curGroup.GroupArea.Left && nextPos.X <= curGroup.GroupArea.Right;
+            FootholdItem hfh;
+            if ((hfh = HCollisionTest(prevPos, nextPos, useCurFootholdGroup: useCurFootholdGroup)) != null)
             {
-                HandleHCollision(prevPos); // 수평 충돌시 정지
+                HandleHCollision(hfh, prevPos, ref nextPos); // 수평 충돌시 정지
             }
 
             // 낙하 중에만 착지 체크
@@ -903,9 +905,9 @@ namespace WzComparerR2.MapRender
             {
                 foreach (var group in FHManager.AllFootholdGroups.Where(g => FootholdManager.GetCandidateGroups(g, prevPos, nextPos)))
                 {
-                    foreach (var fh in group.Footholds.Where(f => FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
+                    foreach (var fh in group.Footholds.Where(f => !f.IsWall && FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
-                        if (!fh.IsWall && FootholdManager.Intersects(fh, prevPos, nextPos))
+                        if (FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
                             HandleFallVCollision(fh); // 착지한 발판으로 curFoothold와 curFootholdGroup 변경
                             return true;
@@ -923,11 +925,19 @@ namespace WzComparerR2.MapRender
             SetCurFoothold(fh.ID, fh.GroupIndex);
         }
 
-        private void HandleHCollision(Vector2 prevPos)
+        private void HandleHCollision(FootholdItem fh, Vector2 prevPos, ref Vector2 nextPos)
         {
+            if (!fh.IsWall) return;
+
             SetHorizontalState(HorizontalState.Stop);
             //this.hSpeed = 0;
             this.relPos.X = prevPos.X - basePos.X;
+            nextPos.X = prevPos.X;
+            if (fh.Reversed)
+            {
+                nextPos.Y = FHManager.GetYOnFoothold(fh, nextPos.X);
+                this.vSpeed = 0;
+            }
         }
 
         private int GetRelYOnFoothold(float x, float y, int? footholdID = null)
@@ -1032,7 +1042,7 @@ namespace WzComparerR2.MapRender
                 vPos += vSpeed * (float)dt;
                 nextPos = new Vector2(hPos, vPos);
 
-                if (HCollisionTest(prevPos, nextPos, useCurFootholdGroup: true)) break;
+                if (HCollisionTest(prevPos, nextPos, useCurFootholdGroup: true) != null) break;
                 if (vSpeed < 0) continue;
                 if ((nextPos.X <= minX) || (nextPos.X >= maxX)) break;
                 if ((nextPos.Y <= minY) || (nextPos.Y >= maxY)) break;
