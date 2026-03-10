@@ -16,6 +16,7 @@ namespace WzComparerR2.MapRender.Config
             this.Volume = 1f;
             this.MuteOnLeaveFocus = true;
             this.ClipMapRegion = true;
+            this.EnableMobMovement = true;
         }
 
         [ConfigurationProperty("volume")]
