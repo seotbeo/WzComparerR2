@@ -1270,7 +1270,7 @@ namespace WzComparerR2.MapRender
                         return;
 
                     case BehaviorController.BaseState.Hit:
-                        aniName = Prefer("hit1");
+                        aniName = Prefer("hit1", "hit");
                         if (aniName == null)
                         {
                             bc.RecoverHit();
@@ -1280,7 +1280,7 @@ namespace WzComparerR2.MapRender
                         return;
 
                     case BehaviorController.BaseState.Died:
-                        aniName = Prefer("die1");
+                        aniName = Prefer("die1", "die");
                         if (aniName == null)
                         {
                             TrySummonMob(bc);
