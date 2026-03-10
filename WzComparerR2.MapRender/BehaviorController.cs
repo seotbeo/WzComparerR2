@@ -32,6 +32,7 @@ namespace WzComparerR2.MapRender
             this.cy = life.Cy;
             this.basePos = new Vector2(this.x, this.cy);
             this.relPos = Vector2.Zero;
+            this.baseFlipX = life.Flip;
             this.baseFoothold = life.Fh;
             this.baseFootholdGroup = FHManager.GetGroupIndexByFootholdIndex(this.baseFoothold);
             this.availableArea = this.FHManager.Area;
@@ -123,6 +124,7 @@ namespace WzComparerR2.MapRender
         private readonly Rectangle availableArea;
 
         private Vector2 basePos;
+        private bool baseFlipX;
 
         private int minMovePosX;
         private int maxMovePosX;
@@ -246,8 +248,16 @@ namespace WzComparerR2.MapRender
         public void Reset()
         {
             SetBaseState(BaseState.Regen);
-            SetHorizontalState(this.flying ? HorizontalState.MoveL : HorizontalState.Stop);
-            SetVerticalState(this.flying ? VerticalState.Fly : VerticalState.Stop);
+            if (this.flying)
+            {
+                SetHorizontalState(this.baseFlipX ? HorizontalState.MoveR : HorizontalState.MoveL);
+                SetVerticalState(VerticalState.Fly);
+            }
+            else
+            {
+                SetHorizontalState(HorizontalState.Stop);
+                SetVerticalState(VerticalState.Stop);
+            }
             SetProvokeState(ProvokeState.None);
             this.HasMoveTarget = false;
             this.fly_TargetFoothold = -1;
@@ -258,7 +268,7 @@ namespace WzComparerR2.MapRender
             this.finishFlyY = false;
             this.hSpeed = 0;
             this.vSpeed = 0;
-            this.FlipX = false;
+            this.FlipX = this.baseFlipX;
             InitCurFoothold(this.basePos);
             this.hp = 100;
         }
@@ -1161,7 +1171,8 @@ namespace WzComparerR2.MapRender
                     this.fly_TargetFoothold = selected.ID;
                     this.fly_TargetPos = new Vector2(x, y);
 
-                    SetCurFoothold(-1, -1);
+                    if (this.curFootholdGroup != FHManager.GetGroupIndexByFoothold(selected)) // 발판 그룹 전환; fly 레이어로 변경 (-1)
+                        SetCurFoothold(-1, -1);
                     this.HasMoveTarget = true;
                     this.fState = FlyingState.FlyToTarget;
                     return;

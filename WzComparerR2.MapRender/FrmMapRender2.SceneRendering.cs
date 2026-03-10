@@ -704,7 +704,7 @@ namespace WzComparerR2.MapRender
                         var y = (int)mob.Controller.IntCurPos.Y;
                         Rectangle rect = new Rectangle(x + lt.X, y + lt.Y, rb.X - lt.X, rb.Y - lt.Y);
 
-                        if (mob.Flip)
+                        if (mob.Controller.FlipX)
                         {
                             rect.X = 2 * x - rect.X - rect.Width;
                         }
@@ -1257,7 +1257,7 @@ namespace WzComparerR2.MapRender
             var mesh = batcher.MeshPop();
             mesh.RenderObject = renderObj;
             mesh.Position = life.Controller.IntCurPos;
-            mesh.FlipX = life.Controller.MovementEnabled ? life.Controller.FlipX : life.Flip;
+            mesh.FlipX = life.Controller.FlipX;
             mesh.Z0 = ((renderObj as Frame)?.Z ?? 0);
             mesh.Z1 = life.Index;
             return mesh;
