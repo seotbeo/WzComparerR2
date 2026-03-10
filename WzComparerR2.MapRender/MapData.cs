@@ -1369,10 +1369,12 @@ namespace WzComparerR2.MapRender
                         break;
 
                     case "hit1":
+                    case "hit":
                         bc.RecoverHit();
                         break;
 
                     case "die1":
+                    case "die":
                         TrySummonMob(bc);
                         if (bc.NoRegen)
                         {
