@@ -33,6 +33,7 @@ namespace WzComparerR2.MapRender
             this.basePos = new Vector2(this.x, this.cy);
             this.relPos = Vector2.Zero;
             this.baseFlipX = life.Flip;
+            this.FlipX = this.baseFlipX;
             this.baseFoothold = life.Fh;
             this.baseFootholdGroup = FHManager.GetGroupIndexByFootholdIndex(this.baseFoothold);
             this.availableArea = this.FHManager.Area;

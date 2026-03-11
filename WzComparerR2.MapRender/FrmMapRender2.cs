@@ -850,7 +850,7 @@ namespace WzComparerR2.MapRender
                 case "/minimap":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     var canvasList = this.mapData?.MiniMap?.ExtraCanvas;
@@ -883,7 +883,7 @@ namespace WzComparerR2.MapRender
                 case "/scene":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     switch (arguments.ElementAtOrDefault(1))
@@ -986,7 +986,7 @@ namespace WzComparerR2.MapRender
                 case "/date":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     switch (arguments.ElementAtOrDefault(1))
@@ -1023,7 +1023,7 @@ namespace WzComparerR2.MapRender
                 case "/multibgm":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     switch (arguments.ElementAtOrDefault(1))
@@ -1089,7 +1089,7 @@ namespace WzComparerR2.MapRender
                 case "/quest":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     switch (arguments.ElementAtOrDefault(1))
@@ -1138,7 +1138,7 @@ namespace WzComparerR2.MapRender
                 case "/questex":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     switch (arguments.ElementAtOrDefault(1))
@@ -1183,7 +1183,7 @@ namespace WzComparerR2.MapRender
                 case "/spine":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
                     var uiSpineSelector = this.ui.Windows.OfType<UISpineSelector>().FirstOrDefault();
@@ -1211,12 +1211,17 @@ namespace WzComparerR2.MapRender
                 case "/summon":
                     if (this.mapData == null)
                     {
-                        this.ui.ChatBox.AppendTextHelp("맵이 로드되지 않았습니다.");
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
                         break;
                     }
-                    var si = arguments.ElementAtOrDefault(1);
-                    var sx = arguments.ElementAtOrDefault(2);
-                    var sy = arguments.ElementAtOrDefault(3);
+
+                    CommandParser cp = new CommandParser(CommandParser.SummonSpecs, arguments);
+                    string si = cp.GetPositional(0);
+                    string sx = cp.GetPositional(1);
+                    string sy = cp.GetPositional(2);
+                    bool flip = cp.HasFlag("Flip");
+                    bool regen = cp.HasFlag("Regen");
+
                     if (int.TryParse(si, out int mobID))
                     {
                         int x, y;
@@ -1233,19 +1238,21 @@ namespace WzComparerR2.MapRender
                             this.StringLinker.StringMob.TryGetValue(mobID, out sr);
                             mobName = sr?.Name ?? "(null)";
                         }
-                        if (this.mapData.SummonMob(mobID, x, y, 0, 0, -1, playRegenMotion: false))
+                        if (this.mapData.SummonMob(mobID, x, y, z0: 0, z1: 0, fh: -1, flip: flip, playRegenMotion: regen))
                         {
-                            this.ui.ChatBox.AppendTextHelp($@"몬스터가 소환되었습니다. {mobName}({mobID})");
+                            this.ui.ChatBox.AppendTextSystem($@"몬스터가 소환되었습니다. {mobName}({mobID})");
                         }
                         else
                         {
-                            this.ui.ChatBox.AppendTextHelp($@"몬스터를 찾지 못했습니다. ({mobID})");
+                            this.ui.ChatBox.AppendTextSystem($@"몬스터를 찾지 못했습니다. ({mobID})");
                         }
                     }
                     else
                     {
                         this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) 마우스 위치에 mobID 몬스터 소환");
                         this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) (x) (y) x, y 위치에 mobID 몬스터 소환");
+                        this.ui.ChatBox.AppendTextHelp(@"-f, --flip 좌우 반전으로 소환");
+                        this.ui.ChatBox.AppendTextHelp(@"-r, --regen 소환 시 리젠 모션 재생");
                     }
                     break;
 

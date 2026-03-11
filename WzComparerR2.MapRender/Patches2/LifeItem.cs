@@ -84,7 +84,7 @@ namespace WzComparerR2.MapRender.Patches2
             return item;
         }
 
-        public static LifeItem Create(int id, LifeItem.LifeType type, int x, int y, int index)
+        public static LifeItem Create(int id, LifeItem.LifeType type, int x, int y, int index, bool flip)
         {
             var item = new LifeItem()
             {
@@ -93,7 +93,7 @@ namespace WzComparerR2.MapRender.Patches2
                 X = x,
                 Y = y,
                 MobTime = 0,
-                Flip = false,
+                Flip = flip,
                 Hide = false,
                 Fh = 0,
                 Cy = y,

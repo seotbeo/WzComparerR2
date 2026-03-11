@@ -1458,16 +1458,16 @@ namespace WzComparerR2.MapRender
             {
                 if (summon != parent)
                 {
-                    SummonMob(summon, x, y, z0, z1, f);
+                    SummonMob(summon, x, y, z0: z0, z1: z1, fh: f, flip: false);
                 }
             }
         }
 
-        public bool SummonMob(int id, int x, int y, int z0, int z1, int fh, bool playRegenMotion = false)
+        public bool SummonMob(int id, int x, int y, int z0, int z1, int fh, bool flip, bool playRegenMotion = false)
         {
             var path = $@"Mob\{id:D7}.img";
             var mobNode = PluginManager.FindWz(path);
-            LifeItem mob = LifeItem.Create(id, LifeItem.LifeType.Mob, x, y, z1);
+            LifeItem mob = LifeItem.Create(id, LifeItem.LifeType.Mob, x, y, index: z1, flip: flip);
             if (mobNode != null && mob != null)
             {
                 // init controller
