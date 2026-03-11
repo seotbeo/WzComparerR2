@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
 using WzComparerR2.CharaSim;
 using WzComparerR2.PluginBase;
+using WzComparerR2.WzLib;
 using static WzComparerR2.CharaSimControl.RenderHelper;
 using Resource = CharaSimResource.Resource;
 
@@ -189,25 +190,65 @@ namespace WzComparerR2.CharaSimControl
 
         private Bitmap GetSpecialNpcBitmap(int npcID)
         {
-            BitmapOrigin npcBitmap = BitmapOrigin.CreateFromNode(PluginManager.FindWz(@$"UI\UIworldArchive.img\illust\npc\{npcID}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
-            if (npcBitmap.Bitmap == null) return null;
-            else
+            List<BitmapOrigin> list = new List<BitmapOrigin>();
+            Wz_Node illustNode = PluginManager.FindWz(@$"UI\UIworldArchive.img\illust\npc\{npcID}", this.SourceWzFile);
+            if (illustNode != null)
             {
-                Bitmap npcBmp = npcBitmap.Bitmap;
-                Bitmap specialNpcTooltip = new Bitmap(npcBmp.Width / 2 + 20, npcBmp.Height / 2 + Resource.WorldArchive.Height + 32);
+                if (illustNode.Value is Wz_Png)
+                {
+                    list.Add(BitmapOrigin.CreateFromNode(illustNode, PluginManager.FindWz, this.SourceWzFile));
+                }
+                else
+                {
+                    foreach (var page in illustNode.Nodes)
+                    {
+                        if (page.Value is Wz_Png)
+                        {
+                            list.Add(BitmapOrigin.CreateFromNode(page, PluginManager.FindWz, this.SourceWzFile));
+                        }
+                    }
+                }
+            }
+
+            int finalWidth = Resource.WorldArchive.Width + 14;
+            int finalHeight = Resource.WorldArchive.Height + 32;
+            bool doDraw = false;
+            foreach (var bo in list)
+            {
+                if (bo.Bitmap != null)
+                {
+                    finalWidth = Math.Max(finalWidth, bo.Bitmap.Width / 2 + 20);
+                    finalHeight += bo.Bitmap.Height / 2;
+                    doDraw = true;
+                }
+            }
+
+            if (doDraw)
+            {
+                Bitmap specialNpcTooltip = new Bitmap(finalWidth, finalHeight);
                 using (Graphics g = Graphics.FromImage(specialNpcTooltip))
                 {
-                    GearGraphics.DrawNewTooltipBack(g, 0, 0, specialNpcTooltip.Width, specialNpcTooltip.Height);
                     int picH = 12;
+                    GearGraphics.DrawNewTooltipBack(g, 0, 0, specialNpcTooltip.Width, specialNpcTooltip.Height);
                     g.DrawImage(Resource.WorldArchive, 14, picH, new Rectangle(0, 0, Resource.WorldArchive.Width, Resource.WorldArchive.Height), GraphicsUnit.Pixel);
                     picH += 10 + Resource.WorldArchive.Height;
-                    //g.DrawImage(npcBmp, 10, picH, new Rectangle(0, 0, npcBmp.Width, npcBmp.Height), GraphicsUnit.Pixel);
+
                     g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                    g.DrawImage(npcBmp, new Rectangle(10, picH, npcBmp.Width / 2, npcBmp.Height / 2));
+                    foreach (var bo in list)
+                    {
+                        if (bo.Bitmap != null)
+                        {
+                            Bitmap npcBmp = bo.Bitmap;
+                            //g.DrawImage(npcBmp, 10, picH, new Rectangle(0, 0, npcBmp.Width, npcBmp.Height), GraphicsUnit.Pixel);
+                            g.DrawImage(npcBmp, new Rectangle(10, picH, npcBmp.Width / 2, npcBmp.Height / 2));
+                            picH += npcBmp.Height / 2;
+                            npcBmp.Dispose();
+                        }
+                    }
                 }
-                npcBmp.Dispose();
                 return specialNpcTooltip;
             }
+            else return null;
         }
     }
 }
