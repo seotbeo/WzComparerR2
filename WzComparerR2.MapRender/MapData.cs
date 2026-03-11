@@ -74,8 +74,8 @@ namespace WzComparerR2.MapRender
                         if (!value)
                         {
                             life.Controller.SetDied(blockRevive: true);
-                            if (!hs.Contains(life.Controller.ID)) PlaySoundEff(life.Controller.ID, "Die");
-                            hs.Add(life.Controller.ID);
+                            if (hs.Add(life.Controller.ID)) PlaySoundEff(life.Controller.ID, "Die");
+                            else life.Controller.PlayRegenSound = false; // 소리 테러 방지
                         }
                         life.Controller.MovementEnabled = value;
                     }
@@ -339,6 +339,7 @@ namespace WzComparerR2.MapRender
             var lifeNodeList = !isCategory ? lifeNode.Nodes : lifeNode.Nodes.SelectMany(n => n.Nodes);
 
             int i = 0;
+            var hs = new HashSet<int>();
             foreach (var node in lifeNodeList)
             {
                 var item = LifeItem.LoadFromNode(node);
@@ -376,6 +377,7 @@ namespace WzComparerR2.MapRender
                 // init controller
                 item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement);
                 item.Controller.InitRandom(this.random);
+                if (!hs.Add(item.Controller.ID)) item.Controller.PlayRegenSound = false; // 소리 테러 방지
             }
         }
 
@@ -1266,7 +1268,7 @@ namespace WzComparerR2.MapRender
                             return;
                         }
                         SetIfDifferent(aniName);
-                        PlaySoundEff(bc.ID, "Regen"); // 소리 테러 가능
+                        if (bc.PlayRegenSound) PlaySoundEff(bc.ID, "Regen");
                         return;
 
                     case BehaviorController.BaseState.Hit:

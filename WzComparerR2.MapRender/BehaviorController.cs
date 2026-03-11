@@ -16,7 +16,7 @@ namespace WzComparerR2.MapRender
             this.MovementEnabled = movementEnabled;
             this.Summoned = summoned;
             this.PlayRegenMotion = playRegenMotion;
-            this.bState = playRegenMotion ? BaseState.Regen : BaseState.Idle;
+            this.bState = BaseState.None;
             this.hState = HorizontalState.Stop;
             this.vState = VerticalState.Stop;
             this.pState = ProvokeState.None;
@@ -156,6 +156,7 @@ namespace WzComparerR2.MapRender
         public bool NoRegen => this.Summoned;
         public bool Summoned { get; }
         public bool PlayRegenMotion { get; }
+        public bool PlayRegenSound { get; set; } = true;
         public bool FlipX { get; private set; }
         public bool MovementEnabled { get; set; }
         public bool Fixed { get; set; }
@@ -274,6 +275,16 @@ namespace WzComparerR2.MapRender
             this.hp = 100;
         }
 
+        public void SetRegen()
+        {
+            SetBaseState(BaseState.Regen);
+        }
+
+        public void SetBaseIdle()
+        {
+            SetBaseState(BaseState.Idle);
+        }
+
         public void SetHit()
         {
             SetBaseState(BaseState.Hit);
@@ -340,6 +351,7 @@ namespace WzComparerR2.MapRender
             var prev = this.hState;
             Reset();
             SetHorizontalState(this.flying ? prev : HorizontalState.Stop);
+            this.PlayRegenSound = true; // 리젠 소리 제한 해제
         }
 
         public void EndAttack()
@@ -1361,6 +1373,7 @@ namespace WzComparerR2.MapRender
         #region Enums
         public enum BaseState
         {
+            None = -1,
             Regen,
             Idle,
             Hit,

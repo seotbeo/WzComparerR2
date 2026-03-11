@@ -71,16 +71,20 @@ namespace WzComparerR2.MapRender
                         var smAni = (life.View.Animator as StateMachineAnimator);
                         if (smAni != null)
                         {
-                            if (smAni.GetCurrent() == null) //当前无动作
+                            if (life.Type == LifeItem.LifeType.Mob)
                             {
-                                if (life.Type == LifeItem.LifeType.Mob)
+                                if (life.Controller.BState == BehaviorController.BaseState.None) // 초기
                                 {
                                     if (life.Controller.PlayRegenMotion)
-                                        smAni.SetAnimation("regen");
+                                        life.Controller.SetRegen();
                                     else
-                                        smAni.SetAnimation("stand");
+                                        life.Controller.SetBaseIdle();
+                                    life.Controller.PlayRegenSound = true; // 리젠 소리 제한 해제
                                 }
-                                else
+                            }
+                            else
+                            {
+                                if (smAni.GetCurrent() == null) //当前无动作
                                 {
                                     smAni.SetAnimation(smAni.Data.States[0]); //动作0
                                 }
