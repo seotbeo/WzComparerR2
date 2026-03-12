@@ -349,8 +349,7 @@ namespace WzComparerR2.MapRender
                 else
                 {
                     Prepare(ItemType.Sprite);
-                    if (rect.Thickness == 1) sprite.DrawRectangle(rect.Rect, rect.Color);
-                    else sprite.DrawThickRectangle(rect.Rect, rect.Color, rect.Thickness);
+                    sprite.DrawThickRectangle(rect.Rect, rect.Color, rect.Thickness);
                     sprite.FillRectangle(rect.Rect, rect.FillColor);
                 }
             }

@@ -687,7 +687,7 @@ namespace WzComparerR2.MapRender
                 foreach (var rect in rectList)
                 {
                     var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new RectMesh(rect, color, 1);
+                    meshItem.RenderObject = new RectMesh(rect, color, 1, alpha: 0.3);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
                 }
@@ -720,7 +720,7 @@ namespace WzComparerR2.MapRender
                 foreach (var rect in rectList)
                 {
                     var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new RectMesh(rect, color, 1);
+                    meshItem.RenderObject = new RectMesh(rect, color, 1, alpha: 0.3);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
                 }
