@@ -1222,7 +1222,48 @@ namespace WzComparerR2.MapRender
                     bool flip = cp.HasFlag("Flip");
                     bool regen = cp.HasFlag("Regen");
 
-                    if (int.TryParse(si, out int mobID))
+                    if (string.Equals(si, "preset", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var mapID = this.mapData.ID ?? 0;
+                        IReadOnlyList<string> presets;
+                        if (SummonPreset.MapPresets.TryGetValue(mapID, out presets))
+                        {
+                            if (string.Equals(sx, "list", StringComparison.OrdinalIgnoreCase))
+                            {
+                                int i = 1;
+                                this.ui.ChatBox.AppendTextHelp($"프리셋 개수: ({presets.Count})");
+                                foreach (var preset in presets)
+                                {
+                                    this.ui.ChatBox.AppendTextHelp($"{i++}: {preset}");
+                                }
+                            }
+                            else if (int.TryParse(sx, out int presetIndex))
+                            {
+                                if (presetIndex >= 1 && presetIndex <= presets.Count && SummonPreset.AllPresets.TryGetValue(presets[presetIndex - 1], out var summons))
+                                {
+                                    foreach (var summon in summons)
+                                    {
+                                        this.mapData.SummonMob(summon.MobID, summon.X, summon.Y, z0: summon.Z0, z1: summon.Z1, fh: summon.Foothold, flip: summon.Flip, playRegenMotion: summon.Regen);
+                                    }
+                                    this.ui.ChatBox.AppendTextSystem($@"{presetIndex}번 프리셋이 적용되었습니다.");
+                                }
+                                else
+                                {
+                                    this.ui.ChatBox.AppendTextSystem($@"올바르지 않은 프리셋 번호입니다.");
+                                }
+                            }
+                            else
+                            {
+                                this.ui.ChatBox.AppendTextHelp(@"/summon preset list 프리셋 목록 보기");
+                                this.ui.ChatBox.AppendTextHelp(@"/summon preset (x) x번 프리셋 실행");
+                            }
+                        }
+                        else
+                        {
+                            this.ui.ChatBox.AppendTextSystem($@"현재 맵에 사용 가능한 프리셋이 없습니다.");
+                        }
+                    }
+                    else if (int.TryParse(si, out int mobID))
                     {
                         int x, y;
                         if (!int.TryParse(sx, out x) || !int.TryParse(sy, out y))
@@ -1251,6 +1292,7 @@ namespace WzComparerR2.MapRender
                     {
                         this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) 마우스 위치에 mobID 몬스터 소환");
                         this.ui.ChatBox.AppendTextHelp(@"/summon (mobID) (x) (y) x, y 위치에 mobID 몬스터 소환");
+                        this.ui.ChatBox.AppendTextHelp(@"/summon preset 몬스터 소환 프리셋 사용");
                         this.ui.ChatBox.AppendTextHelp(@"-f, --flip 좌우 반전으로 소환");
                         this.ui.ChatBox.AppendTextHelp(@"-r, --regen 소환 시 리젠 모션 재생");
                     }
