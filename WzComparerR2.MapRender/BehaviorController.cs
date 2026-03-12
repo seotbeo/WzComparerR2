@@ -29,6 +29,8 @@ namespace WzComparerR2.MapRender
 
             this.x = life.X;
             this.y = life.Y;
+            this.rx0 = life.Rx0;
+            this.rx1 = life.Rx1;
             this.cy = life.Cy;
             this.basePos = new Vector2(this.x, this.cy);
             this.relPos = Vector2.Zero;
@@ -39,17 +41,7 @@ namespace WzComparerR2.MapRender
             this.availableArea = this.FHManager.Area;
 
             InitCurFoothold(this.basePos);
-
-            this.minMovePosX = this.Summoned ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? this.availableArea.Left : life.Rx0;
-            this.maxMovePosX = this.Summoned ? FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? this.availableArea.Right : life.Rx1;
-            if (this.basePos.X < this.minMovePosX)
-            {
-                this.minMovePosX = (int)this.basePos.X;
-            }
-            else if (this.basePos.X > this.maxMovePosX)
-            {
-                this.maxMovePosX = (int)this.basePos.X;
-            }
+            InitMoveXLimit();
 
             this.curLayer = FHManager.GetLayerByFootholdIndex(this.curFoothold);
             this.curLayerFoothold = this.curFoothold;
@@ -122,6 +114,8 @@ namespace WzComparerR2.MapRender
         private readonly int x;
         private readonly int y;
         private readonly int cy;
+        private readonly int rx0;
+        private readonly int rx1;
         private readonly Rectangle availableArea;
 
         private Vector2 basePos;
@@ -746,11 +740,13 @@ namespace WzComparerR2.MapRender
             FootholdItem fh;
             if (FHManager.GetFootholdByID(index, out fh))
             {
+                HashSet<int> hs = new HashSet<int>();
                 if (dir < 0)
                 {
                     index = fh.Prev;
                     while (true)
                     {
+                        if (!hs.Add(index)) return -1;
                         if (x >= fh.X1)
                         {
                             return fh.ID;
@@ -778,6 +774,7 @@ namespace WzComparerR2.MapRender
                     index = fh.Next;
                     while (true)
                     {
+                        if (!hs.Add(index)) return -1;
                         if (x <= fh.X2)
                         {
                             return fh.ID;
@@ -993,8 +990,10 @@ namespace WzComparerR2.MapRender
                 var minJumpTriggerDistance = this.jumpTriggerDistance - JumpTriggerDistanceRange;
                 var maxJumpTriggerDistance = this.jumpTriggerDistance + JumpTriggerDistanceRange;
 
+                HashSet<int> hs = new HashSet<int>();
                 while (true) // 발판 끝부터 거리 확인
                 {
+                    if (!hs.Add(next)) return;
                     if (next == 0)
                     {
                         endfh = nextfh;
@@ -1283,6 +1282,80 @@ namespace WzComparerR2.MapRender
             this.curFoothold = -1;
             this.curFootholdGroup = -1;
             this.Fixed = true;
+        }
+
+        private void InitMoveXLimit()
+        {
+            // 소환된 몹은 rx0 rx1 정보 없음 -> 현재 발판 그룹 기준으로 이동 제한 설정
+            if (this.Summoned)
+            {
+                this.minMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Left ?? this.availableArea.Left;
+                this.maxMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroup)?.GroupArea.Right ?? this.availableArea.Right;
+                return;
+            }
+
+            // rx0, rx1 기반 이동 제한
+            this.minMovePosX = this.rx0;
+            this.maxMovePosX = this.rx1;
+
+            // 첫 소환 위치까지 이동 제한 확장
+            if (this.basePos.X < this.minMovePosX)
+            {
+                this.minMovePosX = (int)this.basePos.X;
+            }
+            else if (this.basePos.X > this.maxMovePosX)
+            {
+                this.maxMovePosX = (int)this.basePos.X;
+            }
+
+            // 평평한 발판인 경우, 같은 발판 그룹의 flat 끝에서 +-20px까지 이동 제한 확장
+            // 확장o : 251010403/life/2, 800010100/life/1000 ...
+            // 확장x : 101020100/life/2 ...
+            if (FHManager.GetFootholdByID(this.curFoothold, out FootholdItem fh) && fh.Flat)
+            {
+                FootholdItem prevfh = fh;
+                FootholdItem nextfh = fh;
+                int min = fh.FootholdArea.Left + 20;
+                int max = fh.FootholdArea.Right - 20;
+
+                HashSet<int> hs = new HashSet<int>();
+                while (true)
+                {
+                    if (!hs.Add(prevfh.ID)) break;
+                    if (FHManager.GetFootholdByID(prevfh.Prev, out prevfh))
+                    {
+                        if (prevfh.Flat)
+                        {
+                            min = prevfh.FootholdArea.Left + 20;
+                        }
+                        else break;
+                    }
+                    else break;
+                }
+                hs.Clear();
+                while (true)
+                {
+                    if (!hs.Add(nextfh.ID)) break;
+                    if (FHManager.GetFootholdByID(nextfh.Next, out nextfh))
+                    {
+                        if (nextfh.Flat)
+                        {
+                            max = nextfh.FootholdArea.Right - 20;
+                        }
+                        else break;
+                    }
+                    else break;
+                }
+
+                if (this.minMovePosX > min)
+                {
+                    this.minMovePosX = min;
+                }
+                if (this.maxMovePosX < max)
+                {
+                    this.maxMovePosX = max;
+                }
+            }
         }
 
         #region Events
