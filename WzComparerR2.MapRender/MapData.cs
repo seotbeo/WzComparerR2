@@ -1128,7 +1128,11 @@ namespace WzComparerR2.MapRender
                         var ani = resLoader.LoadAnimationData(actionNode) as RepeatableFrameAnimationData;
                         if (ani != null)
                         {
-                            aniData.Add(actName, ani);
+                            if (!((actName.StartsWith("attack") || actName.StartsWith("skill")) &&
+                                (ani.Frames.Count == 1 && ani.Frames[0].Texture?.Width == 1 && ani.Frames[0].Texture?.Height == 1))) // 의미없는 ani는 추가x
+                            {
+                                aniData.Add(actName, ani);
+                            }
                         }
                     }
                 }
