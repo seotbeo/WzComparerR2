@@ -178,12 +178,12 @@ namespace WzComparerR2.Animation
 
             public Point CurrentLT
             {
-                get { return this.selectedData.CurrentFrame.LT; }
+                get { return this.selectedData?.CurrentFrame?.LT ?? Point.Zero; }
             }
 
             public Point CurrentRB
             {
-                get { return this.selectedData.CurrentFrame.RB; }
+                get { return this.selectedData?.CurrentFrame?.RB ?? Point.Zero; }
             }
 
             public event EventHandler AnimationEnd;
