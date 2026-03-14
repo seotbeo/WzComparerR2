@@ -123,6 +123,7 @@ namespace WzComparerR2.MapRender.UI
             {
                 wnd.JumpToCurrentMap();
             }
+            wnd.EnableButtons();
         }
 
         private void Teleport_Visible(object sender, RoutedEventArgs e)
@@ -130,6 +131,7 @@ namespace WzComparerR2.MapRender.UI
             UITeleport wnd = sender as UITeleport;
             wnd.Left = (int)Math.Max(0, (this.Width - wnd.Width) / 2);
             wnd.Top = (int)Math.Max(0, (this.Height - wnd.Height) / 2);
+            wnd.EnableButtons();
         }
 
         public void LoadContent(object contentManager)

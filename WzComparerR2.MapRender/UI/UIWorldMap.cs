@@ -57,6 +57,7 @@ namespace WzComparerR2.MapRender.UI
 
         public event EventHandler<MapSpotEventArgs> MapSpotClick;
 
+        private List<Button> buttons { get; set; } = new List<Button>();
         private ObservableCollection<WorldMapInfo> worldMaps;
 
         public WorldMapInfo CurrentWorldMap
@@ -141,6 +142,7 @@ namespace WzComparerR2.MapRender.UI
             Canvas.SetLeft(btnBack, 180);
             Canvas.SetTop(btnBack, 23);
             canvas.Children.Add(btnBack);
+            this.buttons.Add(btnBack);
 
             ImageButton btnClose = new ImageButton();
             btnClose.Name = "Close";
@@ -149,6 +151,7 @@ namespace WzComparerR2.MapRender.UI
             Canvas.SetRight(btnClose, 7);
             Canvas.SetTop(btnClose, 5);
             canvas.Children.Add(btnClose);
+            this.buttons.Add(btnClose);
 
             this.Width = canvasBackTexture.Width;
             this.Height = canvasBackTexture.Height;
@@ -568,6 +571,7 @@ namespace WzComparerR2.MapRender.UI
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
             this.GoBack();
+            this.DisableButtons();
         }
 
         private void MapArea_RightClick(object obj)
@@ -578,6 +582,23 @@ namespace WzComparerR2.MapRender.UI
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
+            this.DisableButtons();
+        }
+
+        private void DisableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = false;
+            }
+        }
+
+        public void EnableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = true;
+            }
         }
 
         private void GoBack()

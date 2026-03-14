@@ -40,6 +40,8 @@ namespace WzComparerR2.MapRender.UI
 
         public event EventHandler<SelectedMapGoEventArgs> SelectedMapGo;
 
+        private List<Button> buttons { get; set; } = new List<Button>();
+
         public int? SelectedMapID
         {
             get { return (int?)this.GetValue(SelectedMapIDProperty); }
@@ -121,6 +123,7 @@ namespace WzComparerR2.MapRender.UI
             Canvas.SetLeft(btnBack, 106);
             Canvas.SetTop(btnBack, 149);
             canvas.Children.Add(btnBack);
+            this.buttons.Add(btnBack);
 
             ImageButton btnGo = new ImageButton();
             btnGo.Name = "OK";
@@ -130,6 +133,7 @@ namespace WzComparerR2.MapRender.UI
             Canvas.SetLeft(btnGo, 58);
             Canvas.SetTop(btnGo, 149);
             canvas.Children.Add(btnGo);
+            this.buttons.Add(btnGo);
 
             ImageButton btnClose = new ImageButton();
             btnClose.Name = "Close";
@@ -139,6 +143,8 @@ namespace WzComparerR2.MapRender.UI
             Canvas.SetRight(btnClose, 7);
             Canvas.SetTop(btnClose, 5);
             canvas.Children.Add(btnClose);
+            this.buttons.Add(btnClose);
+
 
             this.Width = canvasBackTexture.Width;
             this.Height = canvasBackTexture.Height;
@@ -163,6 +169,13 @@ namespace WzComparerR2.MapRender.UI
                     Tooltip.ResetTooltip(streetSTR, mapSTR);
                 }
             }
+        }
+
+        public void LoadContents(StringLinker sl, List<int> targetMaps)
+        {
+            this.Sl = sl;
+            this.CmbMaps.ItemsSource = targetMaps;
+            this.CmbMaps.SelectedIndex = 0;
         }
 
         private string GetStringResult(string str) // 주어진 칸 넘는 문자열 ..처리
@@ -218,17 +231,36 @@ namespace WzComparerR2.MapRender.UI
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
+            this.DisableButtons();
         }
 
         private void BtnGo_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
             this.SelectedMapGo?.Invoke(this, new SelectedMapGoEventArgs(SelectedMapID ?? 999999999));
+            this.DisableButtons();
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
+            this.DisableButtons();
+        }
+
+        private void DisableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = false;
+            }
+        }
+
+        public void EnableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = true;
+            }
         }
 
         public class SelectedMapGoEventArgs : EventArgs

@@ -27,6 +27,8 @@ namespace WzComparerR2.MapRender.UI
         public event EventHandler ResetSCRect;
         public event EventHandler ChkForceClickEvent;
 
+        private List<Button> buttons { get; set; } = new List<Button>();
+
         protected override void InitializeComponents()
         {
             Grid grid = new Grid();
@@ -100,6 +102,7 @@ namespace WzComparerR2.MapRender.UI
             btnOK.Margin = new Thickness(5);
             btnOK.Content = "확인";
             btnOK.Click += BtnOK_Click;
+            this.buttons.Add(btnOK);
 
             Button btnCancel = new Button();
             btnCancel.Width = 50;
@@ -107,6 +110,7 @@ namespace WzComparerR2.MapRender.UI
             btnCancel.Margin = new Thickness(5);
             btnCancel.Content = "취소";
             btnCancel.Click += BtnCancel_Click;
+            this.buttons.Add(btnCancel);
 
             StackPanel footerPanel = new StackPanel();
             footerPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -130,11 +134,13 @@ namespace WzComparerR2.MapRender.UI
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
             this.OK?.Invoke(this, EventArgs.Empty);
+            this.DisableButtons();
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Cancel?.Invoke(this, EventArgs.Empty);
+            this.DisableButtons();
         }
 
         private void BtnSCReset_Click(object sender, RoutedEventArgs e)
@@ -147,6 +153,22 @@ namespace WzComparerR2.MapRender.UI
         {
             this.ChkForceClickEvent?.Invoke(this, EventArgs.Empty);
             return;
+        }
+
+        private void DisableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = false;
+            }
+        }
+
+        public void EnableButtons()
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = true;
+            }
         }
 
         private UIElement GetTabContent1()
@@ -519,6 +541,7 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetRow(btnSCReset, 6);
             Grid.SetColumn(btnSCReset, 3);
             grid.Children.Add(btnSCReset);
+            this.buttons.Add(btnSCReset);
 
             CheckBox chkForce = new CheckBox();
             chkForce.Content = "최소 크기를 현재 해상도로 맞춤";

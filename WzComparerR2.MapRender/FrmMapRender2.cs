@@ -710,6 +710,7 @@ namespace WzComparerR2.MapRender
             var wnd = sender as UIOptions;
             var data = wnd.DataContext as UIOptionsDataModel;
             LoadOptionData(data);
+            wnd.EnableButtons();
         }
 
         private void SpineSelector_Visible(object sender, RoutedEventArgs e)

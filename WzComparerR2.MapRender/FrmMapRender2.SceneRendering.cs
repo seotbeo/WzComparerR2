@@ -332,10 +332,8 @@ namespace WzComparerR2.MapRender
                 }
                 else if (portal.GraphTargetMap.Count > 1)
                 {
-                    this.ui.Teleport.Sl = this.StringLinker;
-                    this.ui.Teleport.CmbMaps.ItemsSource = portal.GraphTargetMap.ToList();
-                    this.ui.Teleport.CmbMaps.SelectedIndex = 0;
-                    this.ui.Teleport.Toggle();
+                    this.ui.Teleport.LoadContents(this.StringLinker, portal.GraphTargetMap);
+                    this.ui.Teleport.Show();
                 }
                 else if (portal.IsSpring && (portal.ToName == null || portal.ToName == ""))
                 {
