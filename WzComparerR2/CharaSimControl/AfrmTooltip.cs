@@ -34,6 +34,7 @@ namespace WzComparerR2.CharaSimControl
             this.RecipeRender = new RecipeTooltipRender();
             this.MapRender = new MapTooltipRenderer();
             this.MobRender = new MobTooltipRenderer();
+            this.MorphRender = new MorphTooltipRenderer();
             this.NpcRender = new NpcTooltipRenderer();
             this.QuestRender = new QuestTooltipRenderer();
             this.HelpRender = new HelpTooltipRender();
@@ -71,6 +72,7 @@ namespace WzComparerR2.CharaSimControl
         public RecipeTooltipRender RecipeRender { get; private set; }
         public MapTooltipRenderer MapRender { get; private set; }
         public MobTooltipRenderer MobRender { get; private set; }
+        public MorphTooltipRenderer MorphRender { get; private set; }
         public NpcTooltipRenderer NpcRender { get; private set; }
         public QuestTooltipRenderer QuestRender { get; private set; }
         public HelpTooltipRender HelpRender { get; private set; }
@@ -111,6 +113,7 @@ namespace WzComparerR2.CharaSimControl
                 this.SkillRender.ShowObjectID = value;
                 this.RecipeRender.ShowObjectID = value;
                 this.AchievementRender.ShowObjectID = value;
+                this.MorphRender.ShowObjectID = value;
             }
         }
 
@@ -297,6 +300,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 renderer = MobRender;
                 MobRender.MobInfo = this.item as Mob;
+            }
+            else if (item is Morph)
+            {
+                renderer = MorphRender;
+                MorphRender.MorphInfo = this.item as Morph;
             }
             else if (item is Npc)
             {

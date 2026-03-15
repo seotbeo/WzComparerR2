@@ -3687,6 +3687,13 @@ namespace WzComparerR2
                     obj = mob;
                     break;
 
+                case Wz_Type.Morph:
+                    if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
+                        return;
+                    var morph = Morph.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                    obj = morph;
+                    break;
+
                 case Wz_Type.Npc:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
@@ -3748,6 +3755,9 @@ namespace WzComparerR2
                     switch (tooltipQuickView.TargetItem)
                     {
                         case Mob item:
+                            item.Dispose();
+                            break;
+                        case Morph item:
                             item.Dispose();
                             break;
                         case Npc item:
@@ -3819,6 +3829,11 @@ namespace WzComparerR2
                         sr_dict = stringLinker.StringMob;
                         node_id = mob.ID;
                         fileName = node_id + ".png";
+                        break;
+
+                    case Morph morph:
+                        node_id = morph.ID;
+                        fileName = "morph_" + node_id + ".png";
                         break;
 
                     case Npc npc:
