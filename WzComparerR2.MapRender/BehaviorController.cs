@@ -465,6 +465,7 @@ namespace WzComparerR2.MapRender
                     if (this.floating) // 점프 중에는 X이동 정지
                     {
                         SetHorizontalState(HorizontalState.Stop);
+                        this.restTime = TimeSpan.Zero; // 착지 후 바로 다음 행동 결정
                         //this.hSpeed = 0;
                         return;
                     }
