@@ -99,7 +99,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.knockback: return "직접 타격시 " + value + "%의 확률로 넉백";
                 case GearPropType.incPVPDamage: return "대난투 시 추가 공격력 " + sign + " " + value;
                 case GearPropType.incPQEXPr: return "파티퀘스트 경험치 " + value + "% 증가";
-                case GearPropType.incEXPr: return "经验值增加" + value + "%";
+                case GearPropType.incEXPr: return "추가 경험치 : " + sign + value + "%";
                 case GearPropType.incBDR:
                 case GearPropType.bdR: return "보스 몬스터 공격 시 데미지 +" + value + "%";
                 case GearPropType.incIMDR:
@@ -296,6 +296,10 @@ namespace WzComparerR2.CharaSim
                     res[0] = "크리티컬 데미지";
                     res[1] = sign + value + "%";
                     return res;
+                case GearPropType.incEXPr:
+                    res[0] = "추가 경험치";
+                    res[1] = sign + value + "%";
+                    return res;
                 case GearPropType.knockback:
                     res[0] = "직접 타격시 " + value + "%의 확률로 넉백";
                     return res;
@@ -434,7 +438,6 @@ namespace WzComparerR2.CharaSim
                     res[0] = $" #$r(가위 사용 잔여 횟수：{value} / {value})#";
                     return res;
 
-                case GearPropType.incEXPr:
                 default: return res;
             }
         }
@@ -469,6 +472,7 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.incIMDR:
                     case GearPropType.damR:
                     case GearPropType.incDAMr:
+                    case GearPropType.incEXPr:
                     case GearPropType.statR:
                         suffix = $"({standardValue}% #$y+{value - standardValue}%#)"; break;
                 }
@@ -513,6 +517,7 @@ namespace WzComparerR2.CharaSim
                     case GearPropType.damR:
                     case GearPropType.incDAMr:
                     case GearPropType.statR:
+                    case GearPropType.incEXPr:
                         suffix = $"({standardValue}% #$e+{value - standardValue}%#)"; break;
                 }
                 res[2] = suffix;

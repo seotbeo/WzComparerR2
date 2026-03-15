@@ -52,6 +52,7 @@ namespace WzComparerR2.CharaSim
         nbdR,
         incCHUC,
         incPQEXPr,
+        incEXPr,
 
         //潜能属性
         incPADr = 100,
@@ -85,7 +86,7 @@ namespace WzComparerR2.CharaSim
         level,
         incTerR,
         incAsrR,
-        incEXPr,
+        //incEXPr,
         reduceCooltime,
         incCriticaldamageMax,
         incCriticaldamageMin,
