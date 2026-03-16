@@ -1561,6 +1561,8 @@ namespace WzComparerR2.CharaSimControl
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.noPrism, value));
             }
             // 커스텀 일러스트 의뢰 불가
+            // removed in kmst 1199
+            /*
             if (Gear.Props.TryGetValue(GearPropType.collabo, out value) && value != 0)
             {
                 Gear.Props.TryGetValue(GearPropType.isAbleCustomIllust, out var value2);
@@ -1569,6 +1571,7 @@ namespace WzComparerR2.CharaSimControl
                     tags.Add("커스텀 일러스트 의뢰 불가");
                 }
             }
+            */
             if (Gear.Props.TryGetValue(GearPropType.mintable, out value) && value != 0)
             {
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.mintable, value));
