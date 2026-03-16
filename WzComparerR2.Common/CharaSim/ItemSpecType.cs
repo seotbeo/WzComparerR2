@@ -13,5 +13,6 @@ namespace WzComparerR2.CharaSim
         recipeValidDay,
         recipeUseCount,
         cosmetic,
+        morph,
     }
 }

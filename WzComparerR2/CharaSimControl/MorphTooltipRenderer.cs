@@ -31,16 +31,15 @@ namespace WzComparerR2.CharaSimControl
             }
 
             Bitmap image = MorphInfo.Default.Bitmap;
-            if (image == null) return null;
 
             const int Margin = 20;
-            int width = image.Width;
-            int height = image.Height;
+            int width = image?.Width ?? 0;
+            int height = image?.Height ?? 0;
             Bitmap bmp = new Bitmap(width + Margin * 2, height + Margin * 2);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
-                g.DrawImage(image, Margin, Margin);
+                if (image != null) g.DrawImage(image, Margin, Margin);
 
                 if (this.ShowObjectID)
                 {
