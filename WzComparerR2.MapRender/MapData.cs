@@ -1238,16 +1238,18 @@ namespace WzComparerR2.MapRender
                 return null;
             }
 
-            void SetIfDifferent(string name)
+            bool SetIfDifferent(string name)
             {
-                if (string.IsNullOrEmpty(name) || ani.GetCurrent() == name) return;
+                if (string.IsNullOrEmpty(name) || ani.GetCurrent() == name) return false;
                 ani.SetAnimation(name);
+                return true;
             }
 
-            void SetEffectIfDifferent(string name)
+            bool SetEffectIfDifferent(string name)
             {
-                if (string.IsNullOrEmpty(name) || ani.GetCurrentEffect() == name) return;
+                if (string.IsNullOrEmpty(name) || ani.GetCurrentEffect() == name) return false;
                 ani.SetEffectAnimation(name);
+                return true;
             }
 
             bc.StateChanged += (o, e) =>
@@ -1271,8 +1273,8 @@ namespace WzComparerR2.MapRender
                             bc.EndRegen();
                             return;
                         }
-                        SetIfDifferent(aniName);
-                        if (bc.PlayRegenSound) PlaySoundEff(bc.ID, "Regen");
+                        if (SetIfDifferent(aniName) && bc.PlayRegenSound)
+                            PlaySoundEff(bc.ID, "Regen");
                         return;
 
                     case BehaviorController.BaseState.Hit:
