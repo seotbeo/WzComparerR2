@@ -14,23 +14,20 @@ namespace WzComparerR2.OpenAPI
             Version = version;
             UnknownVer = false;
 
-            if (!Utils.Structure.ContainsKey(version))
+            if (!AvatarCodeStructure.Structure.ContainsKey(version))
             {
-                if (version < Utils.Structure.Keys.Min())
+                if (version < AvatarCodeStructure.Structure.Keys.Min())
                 {
-                    version = Utils.Structure.Keys.Min();
+                    version = AvatarCodeStructure.Structure.Keys.Min();
                 }
                 else
                 {
-                    version = Utils.Structure.Keys.Max();
+                    version = AvatarCodeStructure.Structure.Keys.Max();
                 }
                 UnknownVer = true;
             }
                 
-            Unpacked = Utils.Structure[version].Select(d => new DataInfo(d.Name, d.Bits)
-            {
-                Value = d.Value
-            }).ToList();
+            Unpacked = AvatarCodeStructure.Structure[version].Select(d => d.Clone()).ToList();
         }
 
         public int Version { get; set; }
