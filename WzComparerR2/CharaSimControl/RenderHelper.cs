@@ -38,8 +38,8 @@ namespace WzComparerR2.CharaSimControl
         {
             var x = block.Position.X + offset.X;
             var y = block.Position.Y + offset.Y;
-            GearGraphics.DrawPlainText(g, block.Text, block.Font, ((SolidBrush)block.Brush).Color, x, width - 2, ref y, lineHeight, strictlyAlignLeft: 2);
-
+            GearGraphics.DrawString(g, block.Text, block.Font, new Dictionary<string, Color>() { { "c", GearGraphics.SkillSummaryOrangeTextColor } }, x, width - 2, ref y, lineHeight, strictlyAlignLeft: 2, defaultColor: ((SolidBrush)block.Brush).Color);
+            
             offsetY = y - (block.Position.Y + offset.Y) - lineHeight;
         }
 
