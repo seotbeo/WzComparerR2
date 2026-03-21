@@ -109,7 +109,7 @@ namespace WzComparerR2.CharaSimControl
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                 foreach (var y in splitterH)
                 {
-                    DrawV6SkillDotline(g, region.SplitterX1, region.SplitterX2, y);
+                    RenderHelper.DrawV6SkillDotline(g, region.SplitterX1, region.SplitterX2, y, this.Enable22AniStyle);
                 }
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
             }
@@ -488,17 +488,6 @@ namespace WzComparerR2.CharaSimControl
             format.Dispose();
             g.Dispose();
             return bitmap;
-        }
-
-        private void DrawV6SkillDotline(Graphics g, int x1, int x2, int y)
-        {
-            // here's a trick that we won't draw left and right part because it looks the same as background border.
-            var picCenter = Enable22AniStyle ? Resource.UIToolTipNew_img_Skill_Frame_dotline_c : Resource.UIToolTip_img_Skill_Frame_dotline_c;
-            using (var brush = new TextureBrush(picCenter))
-            {
-                brush.TranslateTransform(x1, y);
-                g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
-            }
         }
 
         private Bitmap RenderLinkRidingGear(Gear gear)

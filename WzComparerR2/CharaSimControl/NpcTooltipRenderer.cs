@@ -87,6 +87,7 @@ namespace WzComparerR2.CharaSimControl
             Rectangle titleRect = Measure(titleBlocks);
             Rectangle imgRect = Rectangle.Empty;
             Rectangle textRect = Measure(propBlocks);
+            Rectangle illustRect = Rectangle.Empty;
             Bitmap npcImg = NpcInfo.Default.Bitmap;
             if (NpcInfo.IsComponentNPC)
             {
@@ -142,17 +143,29 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
 
-            Bitmap illustration2Tooltip = drawIllustration2SetTooltip(NpcInfo.Illustration2Bitmaps, 8, 4, NpcInfo.IllustIndex);
+            Bitmap illustration2Tooltip = null;
+            Bitmap targetIllust = null;
+            if (ShowAllIllustAtOnce) illustration2Tooltip = drawIllustration2SetTooltip(NpcInfo.Illustration2Bitmaps, 8, 4, NpcInfo.IllustIndex);
+            else if (NpcInfo.Illustration2Bitmaps.Count > 0) targetIllust = NpcInfo.Illustration2Bitmaps[NpcInfo.IllustIndex];
 
             //布局 
             //水平排列
-            int width = 0;
+            int width = targetIllust == null ? 0 : Math.Min(400, targetIllust.Width);
             if (!imgRect.IsEmpty)
             {
                 textRect.X = imgRect.Width + 4;
             }
-            width = Math.Max(titleRect.Width, Math.Max(imgRect.Right, textRect.Right));
+            width = Math.Max(width, Math.Max(titleRect.Width, Math.Max(imgRect.Right, textRect.Right)));
             titleRect.X = (width - titleRect.Width) / 2;
+            {
+                var imgtextWidth = textRect.Right - imgRect.Left;
+                var offset = (width - imgtextWidth) / 2;
+                if (offset > 0)
+                {
+                    imgRect.X += offset;
+                    textRect.X += offset;
+                }
+            }
 
             //垂直居中
             int height = Math.Max(imgRect.Height, textRect.Height);
@@ -165,11 +178,34 @@ namespace WzComparerR2.CharaSimControl
                 textRect.Y += titleRect.Bottom + 4;
             }
 
+            int illustPicH = height;
+            if (targetIllust != null)
+            {
+                if (targetIllust.Width > 400 || targetIllust.Height > 400) //进行缩放
+                {
+                    double scale = Math.Min((double)400 / targetIllust.Width, (double)400 / targetIllust.Height);
+                    illustRect = new Rectangle(0, 0, (int)(targetIllust.Width * scale), (int)(targetIllust.Height * scale));
+                }
+                else
+                {
+                    illustRect = new Rectangle(0, 0, targetIllust.Width, targetIllust.Height);
+                }
+                if (!illustRect.IsEmpty)
+                {
+                    illustRect.X = (width - illustRect.Width) / 2;
+                }   
+                
+                height += 4 + 3 + 4 + 13 + 4 + illustRect.Height;
+                if (NpcInfo.Illustration2Bitmaps.Count > 1) height += 4 + 13;
+            }
+
             //绘制
             bmp = new Bitmap(width + 20, height + 20);
             titleRect.Offset(10, 10);
             imgRect.Offset(10, 10);
             textRect.Offset(10, 10);
+            illustPicH += 10;
+            illustRect.Offset(10, 0);
             g = Graphics.FromImage(bmp);
             //绘制背景
             GearGraphics.DrawNewTooltipBack(g, 0, 0, bmp.Width, bmp.Height);
@@ -187,6 +223,29 @@ namespace WzComparerR2.CharaSimControl
             foreach (var item in propBlocks)
             {
                 DrawText(g, item, textRect.Location);
+            }
+            if (targetIllust != null && !illustRect.IsEmpty)
+            {
+                illustPicH += 4;
+                {
+                    g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    RenderHelper.DrawV6SkillDotline(g, 12, bmp.Width - 12, illustPicH, GearGraphics.is22aniStyle);
+                    g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                }
+                illustPicH += 3 + 4;
+
+                GearGraphics.DrawPlainText(g, $"일러스트: {NpcInfo.IllustIndex + 1} / {NpcInfo.Illustration2Bitmaps.Count}", GearGraphics.ItemDetailFont, Color.FromArgb(255, 255, 255), 12, 130, ref illustPicH, 13);
+                illustPicH += 4;
+                illustRect.Offset(0, illustPicH);
+
+                g.DrawImage(targetIllust, illustRect);
+                illustPicH += illustRect.Height;
+
+                if (NpcInfo.Illustration2Bitmaps.Count > 1)
+                {
+                    illustPicH += 4;
+                    GearGraphics.DrawPlainText(g, $"- + 로 일러스트 전환 가능", GearGraphics.ItemDetailFont, Color.FromArgb(255, 255, 255), 12, 260, ref illustPicH, 13);
+                }
             }
             g.Dispose();
             if (illustration2Tooltip != null)

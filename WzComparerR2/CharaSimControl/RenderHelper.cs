@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using CharaSimResource;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -55,6 +56,17 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
             return rect;
+        }
+
+        public static void DrawV6SkillDotline(Graphics g, int x1, int x2, int y, bool use22Ani)
+        {
+            // here's a trick that we won't draw left and right part because it looks the same as background border.
+            var picCenter = use22Ani ? Resource.UIToolTipNew_img_Skill_Frame_dotline_c : Resource.UIToolTip_img_Skill_Frame_dotline_c;
+            using (var brush = new TextureBrush(picCenter))
+            {
+                brush.TranslateTransform(x1, y);
+                g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
+            }
         }
     }
 }

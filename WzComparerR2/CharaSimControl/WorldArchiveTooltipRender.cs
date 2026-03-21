@@ -49,7 +49,7 @@ namespace WzComparerR2.CharaSimControl
                     foreach (var pos in linePos)
                     {
                         g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                        DrawV6SkillDotline(g, 12, baseBmp.Width - 12, pos);
+                        RenderHelper.DrawV6SkillDotline(g, 12, baseBmp.Width - 12, pos, GearGraphics.is22aniStyle);
                         g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                     }
                     sx += baseBmp.Width;
@@ -169,17 +169,6 @@ namespace WzComparerR2.CharaSimControl
         private string[] SplitLine(string orgText)
         {
             return orgText.Split(new string[] { "\r\n", "\\r\\n", "\\r", "\\n", "\r", "\n" }, StringSplitOptions.None);
-        }
-
-        private void DrawV6SkillDotline(Graphics g, int x1, int x2, int y)
-        {
-            // here's a trick that we won't draw left and right part because it looks the same as background border.
-            var picCenter = GearGraphics.is22aniStyle ? Resource.UIToolTipNew_img_Skill_Frame_dotline_c : Resource.UIToolTip_img_Skill_Frame_dotline_c;
-            using (var brush = new TextureBrush(picCenter))
-            {
-                brush.TranslateTransform(x1, y);
-                g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
-            }
         }
 
         private Bitmap GetSpecialMobBitmap(int mobID)
