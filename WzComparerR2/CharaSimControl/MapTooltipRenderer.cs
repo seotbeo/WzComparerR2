@@ -226,14 +226,18 @@ namespace WzComparerR2.CharaSimControl
                 DrawMultilineText(g2, descBlock, descRect.Location, bmp2.Width - 15, 18, out int offsetY);
 
                 // 비트맵 크기 조절
-                Bitmap bmp3 = new Bitmap(bmp2.Width, bmp2.Height + offsetY);
-                Graphics g3 = Graphics.FromImage(bmp3);
-                g3.DrawImage(bmp2, 0, 0);
+                if (offsetY > 0)
+                {
+                    Bitmap bmp3 = new Bitmap(bmp2.Width, bmp2.Height + offsetY);
+                    Graphics g3 = Graphics.FromImage(bmp3);
+                    g3.DrawImage(bmp2, 0, 0);
+                    DrawMultilineText(g3, descBlock, descRect.Location, bmp2.Width - 15, 18, out offsetY); // redraw
 
-                bmp2.Dispose();
-                g2.Dispose();
-                bmp2 = bmp3;
-                g2 = g3;
+                    bmp2.Dispose();
+                    g2.Dispose();
+                    bmp2 = bmp3;
+                    g2 = g3;
+                }
 
                 mobRect.Offset(0, offsetY);
                 npcRect.Offset(0, offsetY);
