@@ -84,7 +84,7 @@ namespace WzComparerR2
             this.cmbRegion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbRegion.TabIndex = 0;
             this.cmbRegion.WatermarkColor = System.Drawing.Color.Gray;
-            this.cmbRegion.WatermarkText = "ワールド";
+            this.cmbRegion.WatermarkText = "월드";
             this.cmbRegion.SelectedValueChanged += new System.EventHandler(this.cmbRegion_SelectedValueChanged);
             // 
             // cmbType
@@ -101,7 +101,7 @@ namespace WzComparerR2
             this.cmbType.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbType.TabIndex = 2;
             this.cmbType.WatermarkColor = System.Drawing.Color.Gray;
-            this.cmbType.WatermarkText = "タイプ";
+            this.cmbType.WatermarkText = "유형";
             this.cmbType.SelectedValueChanged += new System.EventHandler(this.cmbType_SelectedValueChanged);
             // 
             // advTreeLife

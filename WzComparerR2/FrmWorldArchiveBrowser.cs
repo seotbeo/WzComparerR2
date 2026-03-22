@@ -34,7 +34,7 @@ namespace WzComparerR2
             cmbType.Items.AddRange(new[]
             {
                 new ComboItem("NPC"){ Value = 0 },
-                new ComboItem("몬스타"){ Value = 1 },
+                new ComboItem("몬스터"){ Value = 1 },
             });
             this.picWorldArchiveImg.MouseDoubleClick += (s, e) =>
             {
