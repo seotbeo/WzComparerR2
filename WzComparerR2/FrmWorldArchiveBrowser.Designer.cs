@@ -66,7 +66,7 @@ namespace WzComparerR2
             this.btnLocateExtraIllust.Size = new System.Drawing.Size(155, 23);
             this.btnLocateExtraIllust.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnLocateExtraIllust.TabIndex = 8;
-            this.btnLocateExtraIllust.Text = "추가 일러스트 찾기";
+            this.btnLocateExtraIllust.Text = "특별 조사 기록 찾아가기";
             this.btnLocateExtraIllust.Click += new System.EventHandler(this.btnLocateExtraIllust_Click);
             this.btnLocateExtraIllust.Enabled = false;
             // 
@@ -84,7 +84,7 @@ namespace WzComparerR2
             this.cmbRegion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbRegion.TabIndex = 0;
             this.cmbRegion.WatermarkColor = System.Drawing.Color.Gray;
-            this.cmbRegion.WatermarkText = "월드";
+            this.cmbRegion.WatermarkText = "지역";
             this.cmbRegion.SelectedValueChanged += new System.EventHandler(this.cmbRegion_SelectedValueChanged);
             // 
             // cmbType
@@ -184,7 +184,7 @@ namespace WzComparerR2
             // FrmWorldArchiveBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(770, 770);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnLocateExtraIllust);

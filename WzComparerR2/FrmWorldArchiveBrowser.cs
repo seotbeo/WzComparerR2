@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WzComparerR2.CharaSim;
+using WzComparerR2.CharaSimControl;
 using WzComparerR2.Common;
 using WzComparerR2.PluginBase;
 using WzComparerR2.WzLib;
@@ -18,7 +20,7 @@ namespace WzComparerR2
 {
     public partial class FrmWorldArchiveBrowser : DevComponents.DotNetBar.Office2007Form
     {
-        public FrmWorldArchiveBrowser()
+        public FrmWorldArchiveBrowser(MainForm parent)
         {
             InitializeComponent();
 #if NET6_0_OR_GREATER
@@ -50,18 +52,25 @@ namespace WzComparerR2
                     this.picWorldArchiveImg_Save();
                 }
             };
+
+            this._mainForm = parent;
         }
 
-        public Wz_Node EtcWaNode { get; set; }
-        public Wz_Node UiWaNode { get; set; }
-        public Wz_Node MobNode { get; set; }
-        public Wz_Node NpcNode { get; set; }
-        public StringLinker stringLinker { get; set; }
-        public MainForm _mainForm { get; set; }
+        private Wz_Node EtcWaNode { get; set; }
+        private Wz_Node UiWaNode { get; set; }
+        private Wz_Node MobNode { get; set; }
+        private Wz_Node NpcNode { get; set; }
+        private StringLinker stringLinker { get; set; }
+        private MainForm _mainForm { get; }
         private bool DarkMode;
         private Bitmap unscaledBmp;
         private Wz_Node currentExtraArtworkNode;
-        public int regionID
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hwnd, UInt32 wMsg, IntPtr wParam, IntPtr lParam);
+        private const int WM_SETREDRAW = 0xB;
+
+        private int regionID
         {
             get
             {
@@ -77,7 +86,7 @@ namespace WzComparerR2
             }
         }
 
-        public int typeID
+        private int typeID
         {
             get
             {
@@ -91,6 +100,25 @@ namespace WzComparerR2
                 item.Value = value;
                 cmbType.SelectedItem = item;
             }
+        }
+
+        public void SetStringLinker(StringLinker sl)
+        {
+            this.stringLinker = sl;
+        }
+
+        public void SetWzNodes(Wz_Node etcWaNode, Wz_Node uiWaNode, Wz_Node mobNode, Wz_Node npcNode)
+        {
+            this.EtcWaNode = etcWaNode;
+            this.UiWaNode = uiWaNode;
+            this.MobNode = mobNode;
+            this.NpcNode = npcNode;
+        }
+
+        public void ResetState()
+        {
+            regionID = 0;
+            typeID = 0;
         }
 
         private async void btnExport_Click(object sender, EventArgs e)
@@ -414,24 +442,34 @@ namespace WzComparerR2
 
         private void UpdateText(string text)
         {
-            this.richDescription.Clear();
-            this.richDescription.AppendText(text);
-            this.richDescription.Select(0, text.Length);
-            this.richDescription.SelectionColor = DarkMode ? Color.LightGray : System.Drawing.SystemColors.ControlText;
-            this.richDescription.SelectionFont = new Font("Noto Sans KR", 14f);
-            this.richDescription.Rtf = Regex.Replace(
-                this.richDescription.Rtf,
-                "#s#(.*?)#s#",
-                "{\\strike $1\\strike0}",
-                RegexOptions.Singleline
-                );
-            this.richDescription.Rtf = Regex.Replace(
-                this.richDescription.Rtf,
-                "#e(.*?)#n",
-                "{\\b $1\\b0}",
-                RegexOptions.Singleline
-                );
-            this.richDescription.Select(0, 0);
+            SendMessage(this.richDescription.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+            try
+            {
+                this.richDescription.Clear();
+                this.richDescription.AppendText(text);
+                this.richDescription.Select(0, text.Length);
+                this.richDescription.SelectionColor = DarkMode ? Color.LightGray : System.Drawing.SystemColors.ControlText;
+                //this.richDescription.SelectionFont = new Font("Noto Sans KR", 14f);
+                this.richDescription.SelectionFont = GearGraphics.WorldArchiveFont;
+                this.richDescription.Rtf = Regex.Replace(
+                    this.richDescription.Rtf,
+                    "#s#(.*?)#s#",
+                    "{\\strike $1\\strike0}",
+                    RegexOptions.Singleline
+                    );
+                this.richDescription.Rtf = Regex.Replace(
+                    this.richDescription.Rtf,
+                    "#e(.*?)#n",
+                    "{\\b $1\\b0}",
+                    RegexOptions.Singleline
+                    );
+                this.richDescription.Select(0, 0);
+            }
+            finally
+            {
+                SendMessage(this.richDescription.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+                this.richDescription.Refresh();
+            }
         }
     }
 }

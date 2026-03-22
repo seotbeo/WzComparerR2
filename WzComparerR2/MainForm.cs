@@ -3995,7 +3995,7 @@ namespace WzComparerR2
             Wz_Node waUiNode = PluginManager.FindWz(Wz_Type.UI)?.FindNodeByPath("UIworldArchive.img");
             if (etcWaNode == null || waUiNode == null)
             {
-                ToastNotification.Show(this, $"오류: 월드 아카이브는 이 클라이언트에 구현되지 않았습니다.", null, 2000, eToastGlowColor.Red, eToastPosition.TopCenter);
+                ToastNotification.Show(this, $"오류: 클라이언트에서 월드 아카이브 정보를 찾을 수 없습니다.", null, 2000, eToastGlowColor.Red, eToastPosition.TopCenter);
                 return;
             }
             foreach (Form form in Application.OpenForms)
@@ -4007,15 +4007,10 @@ namespace WzComparerR2
                     return;
                 }
             }
-            FrmWorldArchiveBrowser frmWorldArchiveBrowser = new FrmWorldArchiveBrowser();
-            frmWorldArchiveBrowser.EtcWaNode = etcWaNode;
-            frmWorldArchiveBrowser.UiWaNode = waUiNode;
-            frmWorldArchiveBrowser.MobNode = PluginManager.FindWz(Wz_Type.Mob);
-            frmWorldArchiveBrowser.NpcNode = PluginManager.FindWz(Wz_Type.Npc);
-            frmWorldArchiveBrowser.stringLinker = this.stringLinker;
-            frmWorldArchiveBrowser.regionID = 0;
-            frmWorldArchiveBrowser.typeID = 0;
-            frmWorldArchiveBrowser._mainForm = this;
+            FrmWorldArchiveBrowser frmWorldArchiveBrowser = new FrmWorldArchiveBrowser(this);
+            frmWorldArchiveBrowser.SetStringLinker(this.stringLinker);
+            frmWorldArchiveBrowser.SetWzNodes(etcWaNode, waUiNode, PluginManager.FindWz(Wz_Type.Mob), PluginManager.FindWz(Wz_Type.Npc));
+            frmWorldArchiveBrowser.ResetState();
             frmWorldArchiveBrowser.Show();
         }
 

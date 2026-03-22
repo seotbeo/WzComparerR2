@@ -73,6 +73,7 @@ namespace WzComparerR2.CharaSimControl
         public static Font ItemDetailFont2 { get; private set; }
         public static Font EquipDetailFont2 { get; private set; }
         public static Font AchievementTitleFont { get; private set; }
+        public static Font WorldArchiveFont { get; private set; }
         public static Font FamiliarNameFont { get; private set; }
 
         public static void SetFontFamily(string fontName)
@@ -135,6 +136,11 @@ namespace WzComparerR2.CharaSimControl
                     FamiliarNameFont.Dispose();
                     FamiliarNameFont = null;
                 }
+                if (WorldArchiveFont != null)
+                {
+                    WorldArchiveFont.Dispose();
+                    WorldArchiveFont = null;
+                }
                 var bytes = Resource.NotoSansKRBold;
                 IntPtr ptr = Marshal.AllocCoTaskMem(bytes.Length);
                 Marshal.Copy(bytes, 0, ptr, bytes.Length);
@@ -144,12 +150,14 @@ namespace WzComparerR2.CharaSimControl
                 if (fm != null)
                 {
                     FamiliarNameFont = new Font(fm, 15f, FontStyle.Bold, GraphicsUnit.Pixel);
+                    WorldArchiveFont = new Font(fm, 12f, GraphicsUnit.Point);
                 }
                 else throw new Exception();
             }
             catch
             {
                 FamiliarNameFont = new Font("Noto Sans KR", 15f, FontStyle.Bold, GraphicsUnit.Pixel);
+                WorldArchiveFont = new Font("Noto Sans KR", 12f, GraphicsUnit.Point);
             }
         }
 
