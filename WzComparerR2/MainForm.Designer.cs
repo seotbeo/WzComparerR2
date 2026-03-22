@@ -288,6 +288,7 @@
             this.btnRootNode = new DevComponents.DotNetBar.ButtonX();
             this.clbRootNode = new System.Windows.Forms.CheckedListBox();
             this.btnSkillTooltipExport = new DevComponents.DotNetBar.ButtonX();
+            this.btnWorldArchiveBrowser = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainerPBv = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainerPB1 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainerPB2 = new DevComponents.DotNetBar.ItemContainer();
@@ -836,10 +837,18 @@
             // 
             this.itemContainer34.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.itemContainer34.Name = "itemContainer34";
+            this.itemContainer34.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.btnWorldArchiveBrowser});
             // 
             // 
             // 
             this.itemContainer34.TitleStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            //
+            // btnWorldArchiveBrowser
+            //
+            this.btnWorldArchiveBrowser.Name = "btnWorldArchiveBrowser";
+            this.btnWorldArchiveBrowser.Text = "월드 아카이브";
+            this.btnWorldArchiveBrowser.Click += new System.EventHandler(this.btnWorldArchiveBrowser_Click);
             // 
             // itemContainer35
             // 
@@ -3757,6 +3766,7 @@
         private DevComponents.DotNetBar.ButtonX btnRootNode;
         private System.Windows.Forms.CheckedListBox clbRootNode;
         private DevComponents.DotNetBar.ButtonX btnSkillTooltipExport;
+        private DevComponents.DotNetBar.ButtonItem btnWorldArchiveBrowser;
         private DevComponents.DotNetBar.ItemContainer itemContainerPBv;
         private DevComponents.DotNetBar.ItemContainer itemContainerPB1;
         private DevComponents.DotNetBar.ItemContainer itemContainerPB2;
