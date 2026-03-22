@@ -113,7 +113,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
+        public static Skill CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             Skill skill = new Skill();
             int skillID;
@@ -300,11 +300,11 @@ namespace WzComparerR2.CharaSim
                 Wz_Node forceNode = null;
                 if (skill.SkillID / 10000 == 3001 || skill.SkillID / 10000 == 3100 || skill.SkillID / 10000 == 3110 || skill.SkillID / 10000 == 3111 || skill.SkillID / 10000 == 3112)
                 {
-                    forceNode = findNode2.Invoke(string.Format("UI\\UIWindow2.img\\Skill\\main\\Force\\{0}", (Int32.Parse(skill.common["forceCon"]) - 1) / 30), wzf);
+                    forceNode = findNode.Invoke(string.Format("UI\\UIWindow2.img\\Skill\\main\\Force\\{0}", (Int32.Parse(skill.common["forceCon"]) - 1) / 30), wzf);
                 }
                 else if (skill.SkillID / 10000 / 1000 == 10)
                 {
-                    forceNode = findNode2.Invoke(string.Format("UI\\UIWindow2.img\\SkillZero\\main\\Alpha\\{0}", skill.SkillID / 1000 % 10), wzf);
+                    forceNode = findNode.Invoke(string.Format("UI\\UIWindow2.img\\SkillZero\\main\\Alpha\\{0}", skill.SkillID / 1000 % 10), wzf);
                 }
                 if (forceNode != null)
                 {

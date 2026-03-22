@@ -75,7 +75,7 @@ namespace WzComparerR2
             {
                 return bp;
             }
-            node = node.HandleFullUol(findNode);
+            node = node.HandleFullUol(findNode, wzf);
 
             //获取linkNode
             var linkNode = node.GetLinkedSourceNode(findNode, wzf);

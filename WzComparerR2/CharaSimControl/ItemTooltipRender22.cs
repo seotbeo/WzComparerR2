@@ -122,7 +122,7 @@ namespace WzComparerR2.CharaSimControl
                             Wz_Node imgNode = node0.FindNodeByPath(imgName, true);
                             if (imgNode != null)
                             {
-                                Gear gear = Gear.CreateFromNode(imgNode, path => PluginManager.FindWz(path), this.SourceWzFile);
+                                Gear gear = Gear.CreateFromNode(imgNode, PluginManager.FindWz, this.SourceWzFile);
                                 if (gear != null)
                                 {
                                     gear.Props[GearPropType.timeLimited] = 0;
@@ -245,7 +245,8 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.item.DamageSkinID != null && ShowDamageSkin)
             {
-                DamageSkin damageSkin = DamageSkin.CreateFromNode(PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz) ?? DamageSkin.CreateFromNode(PluginManager.FindWz($@"Effect\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz);
+                DamageSkin damageSkin = DamageSkin.CreateFromNode(PluginManager.FindWz($@"Etc\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile) ??
+                    DamageSkin.CreateFromNode(PluginManager.FindWz($@"Effect\DamageSkin.img\{item.DamageSkinID}", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
                 if (damageSkin != null)
                 {
                     setItemBmp = RenderDamageSkin(damageSkin);
@@ -264,7 +265,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (this.item.Specs.TryGetValue(ItemSpecType.morph, out long morphID) && morphID > 0)
             {
-                Morph morph = Morph.CreateFromNode(PluginManager.FindWz($@"Morph\{morphID:D4}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz, this.SourceWzFile);
+                Morph morph = Morph.CreateFromNode(PluginManager.FindWz($@"Morph\{morphID:D4}.img", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
                 if (morph != null)
                 {
                     setItemBmp = RenderMorph(morph);

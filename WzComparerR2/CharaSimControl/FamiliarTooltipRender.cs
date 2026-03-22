@@ -49,7 +49,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap baseTooltip = Resource.UIFamiliar_img_familiarCard_backgrnd;
 
             // Get Mob image and name
-            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz, this.SourceWzFile);
+            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
             Point alignOrigin = new Point(161, 200);
             Point mobOrigin = new Point(0, 0);
             int mobXoffset = 0;
@@ -174,7 +174,7 @@ namespace WzComparerR2.CharaSimControl
             Bitmap baseTooltipTop = Resource.UIFamiliar_img_ToolTip__BackGround_0_0;
             Bitmap baseTooltipBottom = Resource.UIFamiliar_img_ToolTip__BackGround_2;
             // Get Mob image and name
-            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, PluginManager.FindWz, this.SourceWzFile);
+            Mob mob = Mob.CreateFromNode(PluginManager.FindWz($@"Mob\{familiar.MobID.ToString().PadLeft(7, '0')}.img", this.SourceWzFile), PluginManager.FindWz, this.SourceWzFile);
             Point alignOrigin = new Point(165, 131);
             Point mobOrigin = new Point(0, 0);
             int mobXoffset = 0;

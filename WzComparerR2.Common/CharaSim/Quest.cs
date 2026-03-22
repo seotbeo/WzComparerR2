@@ -54,7 +54,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static Quest CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null, int? fromInfoNode = null)
+        public static Quest CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null, int? fromInfoNode = null)
         {
             if (node == null) return null;
 
@@ -124,7 +124,7 @@ namespace WzComparerR2.CharaSim
             }
 
             Wz_Node check0Node = fromInfoNode == null ? node.FindNodeByPath("Check\\0").ResolveUol()
-                : findNode2.Invoke(string.Format("Quest/Check.img/{0}/0", quest.ID), wzf);
+                : findNode.Invoke(string.Format("Quest/Check.img/{0}/0", quest.ID), wzf);
             if (check0Node != null)
             {
                 foreach (var propNode in check0Node.Nodes)
@@ -133,8 +133,8 @@ namespace WzComparerR2.CharaSim
                     {
                         case "npc":
                             var npcID = propNode.GetValueEx<int>(0);
-                            Wz_Node npcNode = findNode2.Invoke(string.Format("Npc/{0:D7}.img", npcID), wzf);
-                            quest.Check0Npc = Npc.CreateFromNode(npcNode, findNode, findNode2, wzf); break;
+                            Wz_Node npcNode = findNode.Invoke(string.Format("Npc/{0:D7}.img", npcID), wzf);
+                            quest.Check0Npc = Npc.CreateFromNode(npcNode, findNode, wzf); break;
                         case "lvmin":
                             quest.Lvmin = propNode.GetValueEx<int>(0); break;
                         case "lvmax":
@@ -144,7 +144,7 @@ namespace WzComparerR2.CharaSim
             }
 
             Wz_Node check1Node = fromInfoNode == null ? node.FindNodeByPath("Check\\1").ResolveUol()
-                : findNode2.Invoke(string.Format("Quest/Check.img/{0}/1", quest.ID), wzf);
+                : findNode.Invoke(string.Format("Quest/Check.img/{0}/1", quest.ID), wzf);
             if (check1Node != null)
             {
                 foreach (var propNode in check1Node.Nodes)

@@ -40,7 +40,7 @@ namespace WzComparerR2.CharaSim
             Wz_Node standNode = node.FindNodeByPath("stand\\0").ResolveUol();
             if (standNode != null)
             {
-                familiar.FamiliarCover = BitmapOrigin.CreateFromNode(standNode, findNode);
+                familiar.FamiliarCover = BitmapOrigin.CreateFromNode(standNode, findNode, wzf);
             }
 
             Wz_Node infoNode = node.FindNodeByPath("info").ResolveUol();

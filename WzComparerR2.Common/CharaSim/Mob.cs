@@ -70,7 +70,7 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static Mob CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
+        public static Mob CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null) return null;
 
@@ -153,7 +153,7 @@ namespace WzComparerR2.CharaSim
                 Wz_Node linkNode = null;
                 if (mobInfo.Link != null && findNode != null)
                 {
-                    linkNode = findNode2(string.Format("Mob\\{0:d7}.img", mobInfo.Link), wzf);
+                    linkNode = findNode(string.Format("Mob\\{0:d7}.img", mobInfo.Link), wzf);
                 }
                 if (linkNode == null)
                 {
@@ -165,7 +165,7 @@ namespace WzComparerR2.CharaSim
                 foreach (var action in new[] { @"stand\0", @"move\0", @"fly\0", @"info\thumbnail", @"info\default\0" })
                 {
                     var actNode = linkNode.FindNodeByPath(action);
-                    imageFrame = BitmapOrigin.CreateFromNode(actNode, findNode);
+                    imageFrame = BitmapOrigin.CreateFromNode(actNode, findNode, wzf);
                     if (imageFrame.Bitmap != null && !(imageFrame.Bitmap.Width == 1 && imageFrame.Bitmap.Height == 1))
                     {
                         break;

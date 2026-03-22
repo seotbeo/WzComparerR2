@@ -59,7 +59,7 @@ namespace WzComparerR2.CharaSim
 
         //public LifeAnimateCollection Animates { get; private set; }
 
-        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null, GetSpineDefaultFunc getSpineDefaultFunc = null)
+        public static Npc CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null, GetSpineDefaultFunc getSpineDefaultFunc = null)
         {
             if (node == null) return null;
 
@@ -169,9 +169,9 @@ namespace WzComparerR2.CharaSim
             if (npcInfo.Default.Bitmap == null)
             {
                 Wz_Node linkNode = null;
-                if (npcInfo.Link != null && findNode2 != null)
+                if (npcInfo.Link != null && findNode != null)
                 {
-                    linkNode = findNode2(string.Format("Npc\\{0:d7}.img", npcInfo.Link), wzf);
+                    linkNode = findNode(string.Format("Npc\\{0:d7}.img", npcInfo.Link), wzf);
                 }
                 if (linkNode == null)
                 {

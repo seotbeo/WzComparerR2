@@ -19,7 +19,7 @@ namespace WzComparerR2.CharaSim
         public BitmapOrigin Icon { get; set; }
         public BitmapOrigin IconRaw { get; set; }
 
-        public static GearSealedInfo CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode)
+        public static GearSealedInfo CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             GearSealedInfo info = new GearSealedInfo();
 
@@ -32,12 +32,12 @@ namespace WzComparerR2.CharaSim
                         break;
 
                     case "icon":
-                        info.Icon = BitmapOrigin.CreateFromNode(child, findNode);
+                        info.Icon = BitmapOrigin.CreateFromNode(child, findNode, wzf);
                         info.HasIcon = true;
                         break;
 
                     case "iconRaw":
-                        info.IconRaw = BitmapOrigin.CreateFromNode(child, findNode);
+                        info.IconRaw = BitmapOrigin.CreateFromNode(child, findNode, wzf);
                         info.HasIcon = true;
                         break;
 

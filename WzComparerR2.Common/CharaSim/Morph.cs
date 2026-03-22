@@ -26,7 +26,7 @@ namespace WzComparerR2.CharaSim
         public bool Kaiser { get; set; }
         public BitmapOrigin Default { get; set; }
 
-        public static Morph CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
+        public static Morph CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null) return null;
 

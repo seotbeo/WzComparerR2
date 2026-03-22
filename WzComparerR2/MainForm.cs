@@ -3668,7 +3668,7 @@ namespace WzComparerR2
                     }
                     else if (Regex.IsMatch(skillNode.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\\d+$"))
                     {
-                        Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, PluginManager.FindWz);
+                        Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
                         obj = skill;
                     }
                     break;
@@ -3683,28 +3683,28 @@ namespace WzComparerR2
                 case Wz_Type.Mob:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                    var mob = Mob.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = mob;
                     break;
 
                 case Wz_Type.Morph:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var morph = Morph.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                    var morph = Morph.CreateFromNode(image.Node, PluginManager.FindWz);
                     obj = morph;
                     break;
 
                 case Wz_Type.Npc:
                     if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                         return;
-                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz, getSpineDefaultFunc: this.pictureBoxEx1.GetSpineDefault);
+                    var npc = Npc.CreateFromNode(image.Node, PluginManager.FindWz, getSpineDefaultFunc: this.pictureBoxEx1.GetSpineDefault);
                     obj = npc;
                     break;
 
                 case Wz_Type.Quest:
                     Quest quest = null;
                     if (!((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract()))
-                        quest = Quest.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                        quest = Quest.CreateFromNode(image.Node, PluginManager.FindWz);
                     else if (quest == null)
                     {
                         Wz_Node questInfoNode = selectedNode;
@@ -3712,7 +3712,7 @@ namespace WzComparerR2
                         int questID = 0;
                         if (m.Success && Int32.TryParse(m.Result("$1"), out questID))
                         {
-                            quest = Quest.CreateFromNode(questInfoNode, PluginManager.FindWz, PluginManager.FindWz, fromInfoNode: questID);
+                            quest = Quest.CreateFromNode(questInfoNode, PluginManager.FindWz, fromInfoNode: questID);
                         }
                     }
                     obj = quest;
@@ -3732,7 +3732,7 @@ namespace WzComparerR2
                     {
                         if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
                             return;
-                        Achievement achievement = Achievement.CreateFromNode(image.Node, PluginManager.FindWz, PluginManager.FindWz);
+                        Achievement achievement = Achievement.CreateFromNode(image.Node, PluginManager.FindWz);
                         obj = achievement;
                     }
                     break;
@@ -4599,7 +4599,7 @@ namespace WzComparerR2
                                     }
                                     skillName = sr.Name;
                                     labelX2.Text = string.Format("내보내는 중: {0} - {1}", j.Text, skillName);
-                                    Skill skill = Skill.CreateFromNode(j, PluginManager.FindWz, PluginManager.FindWz);
+                                    Skill skill = Skill.CreateFromNode(j, PluginManager.FindWz);
                                     if (skill != null)
                                     {
                                         skill.Level = skill.MaxLevel;
@@ -4648,7 +4648,7 @@ namespace WzComparerR2
                                             }
                                             skillName = sr.Name;
                                             labelX2.Text = string.Format("내보내는 중: {0} - {1}", skillNode.Text, skillName);
-                                            Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, PluginManager.FindWz);
+                                            Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
                                             if (skill != null)
                                             {
                                                 skill.Level = skill.MaxLevel;

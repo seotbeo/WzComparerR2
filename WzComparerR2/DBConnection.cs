@@ -99,7 +99,7 @@ namespace WzComparerR2
 
                 foreach (Wz_Node skillNode in skillListNode.Nodes)
                 {
-                    Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz, PluginManager.FindWz);
+                    Skill skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
                     if (skill == null)
                         continue;
 
@@ -351,7 +351,7 @@ namespace WzComparerR2
                                 sw.WriteLine("<tr><td>技能名称</td><td>{0} (id:{1})</td></tr>", sr == null ? "null" : sr.Name, skillId);
                             }
 
-                            Skill skill = Skill.CreateFromNode(skill8000.Nodes[skillId.ToString("D7")], PluginManager.FindWz, PluginManager.FindWz);
+                            Skill skill = Skill.CreateFromNode(skill8000.Nodes[skillId.ToString("D7")], PluginManager.FindWz);
                             if (skill != null)
                             {
                                 skill.Level = skill.MaxLevel;

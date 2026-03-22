@@ -38,7 +38,7 @@ namespace WzComparerR2.CharaSim
         public bool HasRewards { get { return this.Rewards.Count > 0; } }
         public bool Hide { get { return this.Block == "hide"; } }
 
-        public static Achievement CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, GlobalFindNodeFunction2 findNode2, Wz_File wzf = null)
+        public static Achievement CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null) return null;
 

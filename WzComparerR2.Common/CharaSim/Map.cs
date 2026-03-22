@@ -36,7 +36,7 @@ namespace WzComparerR2.CharaSim
         public List<MiniMapIcon> MiniMapPortals { get; set; }
         public List<MiniMapIcon> MiniMapIlluminantClusters { get; set; }
 
-        public static Map CreateFromNode(Wz_Node node, GlobalFindNodeFunction2 findNode, Wz_File wzf = null)
+        public static Map CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null) return null;
 

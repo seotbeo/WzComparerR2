@@ -958,7 +958,7 @@ namespace WzComparerR2.CharaSim
                             break;
 
                         case "option": //附加潜能信息
-                            Wz_Node itemWz = findNode !=null? findNode("Item\\ItemOption.img"):null;
+                            Wz_Node itemWz = findNode !=null? findNode("Item\\ItemOption.img", wzf) :null;
                             if (itemWz == null)
                                 break;
                             int optIdx = 0;
@@ -1078,7 +1078,7 @@ namespace WzComparerR2.CharaSim
                             {
                                 foreach (Wz_Node levelInfoNode in sealedInfo.Nodes)
                                 {
-                                    GearSealedInfo info = GearSealedInfo.CreateFromNode(levelInfoNode, findNode);
+                                    GearSealedInfo info = GearSealedInfo.CreateFromNode(levelInfoNode, findNode, wzf);
                                     int lv;
                                     Int32.TryParse(levelInfoNode.Text, out lv);
                                     info.Level = lv;
@@ -1247,7 +1247,7 @@ namespace WzComparerR2.CharaSim
             }
 
             //检查道具默认的剪刀次数
-            var cuttableCountOverride = findNode?.Invoke(@$"Etc\KarmaScissor_WZ2.img\ItemList\{gear.ItemID}")?.GetValueEx<int>();
+            var cuttableCountOverride = findNode?.Invoke(@$"Etc\KarmaScissor_WZ2.img\ItemList\{gear.ItemID}", wzf)?.GetValueEx<int>();
             if (cuttableCountOverride != null && cuttableCountOverride > 0)
             {
                 gear.Props[GearPropType.CuttableCount] = cuttableCountOverride.Value;
@@ -1261,18 +1261,18 @@ namespace WzComparerR2.CharaSim
 
             if (Gear.IsFace(gear.type))
             {
-                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801284\info\icon"), findNode, wzf);
-                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801284\info\iconRaw"), findNode, wzf);
+                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801284\info\icon", wzf), findNode, wzf);
+                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801284\info\iconRaw", wzf), findNode, wzf);
             }
             if (Gear.IsHair(gear.type))
             {
-                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801283\info\icon"), findNode, wzf);
-                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801283\info\iconRaw"), findNode, wzf);
+                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801283\info\icon", wzf), findNode, wzf);
+                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801283\info\iconRaw", wzf), findNode, wzf);
             }
             if (gear.type == GearType.head)
             {
-                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801577\info\icon"), findNode, wzf);
-                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801577\info\iconRaw"), findNode, wzf);
+                gear.Icon = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801577\info\icon", wzf), findNode, wzf);
+                gear.IconRaw = BitmapOrigin.CreateFromNode(findNode(@"Item\Install\0380.img\03801577\info\iconRaw", wzf), findNode, wzf);
             }
 
             /*

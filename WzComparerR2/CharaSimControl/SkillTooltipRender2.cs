@@ -73,7 +73,7 @@ namespace WzComparerR2.CharaSimControl
                 Wz_Node imgNode = PluginBase.PluginManager.FindWz(string.Format(@"Character\TamingMob\{0:D8}.img", vehicleID), this.SourceWzFile);
                 if (imgNode != null)
                 {
-                    Gear gear = Gear.CreateFromNode(imgNode, path => PluginBase.PluginManager.FindWz(path), this.SourceWzFile);
+                    Gear gear = Gear.CreateFromNode(imgNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     if (gear != null)
                     {
                         ridingGearBmp = RenderLinkRidingGear(gear);
@@ -344,7 +344,7 @@ namespace WzComparerR2.CharaSimControl
                 Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AddAttackToolTipDescSkill / 10000, Skill.AddAttackToolTipDescSkill), this.SourceWzFile);
                 if (skillNode != null)
                 {
-                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, PluginBase.PluginManager.FindWz, this.SourceWzFile);
+                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     icon = skill.Icon;
                 }
                 if (icon.Bitmap != null)
@@ -377,7 +377,7 @@ namespace WzComparerR2.CharaSimControl
                 Wz_Node skillNode = PluginBase.PluginManager.FindWz(string.Format(@"Skill\{0}.img\skill\{1}", Skill.AssistSkillLink / 10000, Skill.AssistSkillLink), this.SourceWzFile);
                 if (skillNode != null)
                 {
-                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, PluginBase.PluginManager.FindWz, this.SourceWzFile);
+                    Skill skill = Skill.CreateFromNode(skillNode, PluginBase.PluginManager.FindWz, this.SourceWzFile);
                     icon = skill.Icon;
                 }
                 if (icon.Bitmap != null)
