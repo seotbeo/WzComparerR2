@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using WzComparerR2.CharaSim;
 using WzComparerR2.PluginBase;
 using WzComparerR2.WzLib;
@@ -74,6 +75,10 @@ namespace WzComparerR2.CharaSimControl
                 waDesc = "(정보 없음)";
             }
             waDesc = waDesc.Replace("#e", "#$^e").Replace("#n", "#$$");
+            waDesc = Regex.Replace(waDesc, $@"#s#(.+?)#s#", m =>
+            {
+                return "#$^s" + m.Groups[1].Value + "#$$";
+            });
 
             var waColorTable = new Dictionary<string, Color>()
             {
@@ -82,6 +87,7 @@ namespace WzComparerR2.CharaSimControl
             var waFontTable = new Dictionary<string, Font>()
             {
                 { "^e", GearGraphics.EquipMDMoris9FontBold },
+                { "^s", GearGraphics.EquipMDMoris9FontStrikeout },
             };
 
             bool drawLines = false;

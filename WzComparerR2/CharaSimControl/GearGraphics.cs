@@ -63,6 +63,7 @@ namespace WzComparerR2.CharaSimControl
         public static readonly Font ItemReqLevelFont = new Font("돋움", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9Font = new Font("돋움", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9FontBold = new Font("돋움", 11f, FontStyle.Bold, GraphicsUnit.Pixel);
+        public static readonly Font EquipMDMoris9FontStrikeout = new Font("돋움", 11f, FontStyle.Strikeout, GraphicsUnit.Pixel);
         public static readonly Font ItemGulimFont = new Font("굴림", 12f, GraphicsUnit.Pixel);
         public static readonly Font ItemGulimFontBold = new Font("굴림", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
         public static readonly Font NewCTFamiliarNameFont = new Font("Noto Sans SC", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
