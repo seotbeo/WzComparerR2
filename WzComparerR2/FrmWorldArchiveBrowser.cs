@@ -155,16 +155,12 @@ namespace WzComparerR2
                     UpdateText(worldDescNode.GetValue<string>().Replace("\\r", "\r").Replace("\\n", "\n"));
                 }
             }
+            DisposeImages();
             var worldIllustNode = UiWaNode.FindNodeByPath($"regionSelect\\main\\world\\{this.regionID}", true);
             if (worldIllustNode != null)
             {
                 BitmapOrigin bo = BitmapOrigin.CreateFromNode(worldIllustNode, PluginManager.FindWz);
                 this.picWorldArchiveImg.Image = bo.Bitmap;
-                this.unscaledBmp = null;
-            }
-            else
-            {
-                this.picWorldArchiveImg.Image = null;
             }
         }
 
@@ -265,16 +261,12 @@ namespace WzComparerR2
             {
                 Int32.TryParse((this.advTreeMap.SelectedNode.Tag as Wz_Node).Text, out mapID);
             }
+            DisposeImages();
             Wz_Node illustNode = UiWaNode.FindNodeByPath($"detail\\main\\regionillust\\{this.regionID}\\{mapID}", true);
             if (illustNode != null)
             {
                 BitmapOrigin bo = BitmapOrigin.CreateFromNode(illustNode, PluginManager.FindWz);
                 this.picWorldArchiveImg.Image = bo.Bitmap;
-                this.unscaledBmp = null;
-            }
-            else
-            {
-                this.picWorldArchiveImg = null;
             }
             Wz_Node descNode = EtcWaNode.FindNodeByPath($"collectionInfo\\{this.regionID}\\{mapID}\\regionDesc", true);
             if (descNode != null)
@@ -293,18 +285,27 @@ namespace WzComparerR2
             {
                 return;
             }
-            var TypeID = this.typeID;
-            double scale = 1.00;
             KeyValuePair<int, Wz_Node> kvp = this.advTreeLife.SelectedNode.Tag as KeyValuePair<int, Wz_Node>? ?? default;
             if (kvp.Value == null) return;
+
+            int LifeID = kvp.Key;
+            TryLocateExtraIllust(LifeID);
+
+            double scale = 1.00;
             Wz_Node scaleNode = kvp.Value.FindNodeByPath("scale");
             if (scaleNode != null)
             {
                 scale = scaleNode.GetValueEx<double>(100) / 100;
             }
+
+            Point offset = default;
+            Wz_Node offsetNode = kvp.Value.FindNodeByPath("offset");
+            if (offsetNode != null)
+            {
+                offset = offsetNode.GetValueEx<Wz_Vector>(null);
+            }
+
             Wz_Node descNode = kvp.Value.FindNodeByPath("desc");
-            int LifeID = kvp.Key;
-            TryLocateExtraIllust(LifeID);
             if (descNode != null)
             {
                 UpdateText(descNode.GetValue<string>().Replace("\\r", "\r").Replace("\\n", "\n"));
@@ -313,11 +314,11 @@ namespace WzComparerR2
             {
                 this.richDescription.Clear();
             }
+
             Bitmap bmp = null;
-            Bitmap altBmp = null;
             Wz_Node lifeNode;
             Wz_Node altImageNode;
-            switch (TypeID)
+            switch (this.typeID)
             {
                 case 0:
                     lifeNode = PluginManager.FindWz(Wz_Type.Npc)?.FindNodeByPath($"{LifeID:D7}.img", true);
@@ -330,7 +331,11 @@ namespace WzComparerR2
                     if (altImageNode != null)
                     {
                         BitmapOrigin bo = BitmapOrigin.CreateFromNode(altImageNode, PluginManager.FindWz);
-                        altBmp = bo.Bitmap;
+                        if (bo.Bitmap != null)
+                        {
+                            if (bmp != null) bmp.Dispose();
+                            bmp = bo.Bitmap;
+                        }
                     }
                     break;
                 case 1:
@@ -344,12 +349,19 @@ namespace WzComparerR2
                     if (altImageNode != null)
                     {
                         BitmapOrigin bo = BitmapOrigin.CreateFromNode(altImageNode, PluginManager.FindWz);
-                        altBmp = bo.Bitmap;
+                        if (bo.Bitmap != null)
+                        {
+                            if (bmp != null) bmp.Dispose();
+                            bmp = bo.Bitmap;
+                        }
                     }
                     break;
             }
-            this.unscaledBmp = altBmp ?? bmp;
-            this.picWorldArchiveImg.Image = ResizeImage(this.unscaledBmp, scale);
+            DisposeImages();
+            this.unscaledBmp = new Bitmap(bmp);
+            this.picWorldArchiveImg.Image = ResizeImage(this.unscaledBmp, scale, offset);
+
+            if (bmp != null) bmp.Dispose();
         }
 
         private void UpdateAdvTreeLife()
@@ -432,7 +444,7 @@ namespace WzComparerR2
             this.btnLocateExtraIllust.Enabled = (npcExtraArtworkNode != null);
         }
 
-        private Bitmap ResizeImage(Bitmap bmp, double scale)
+        private Bitmap ResizeImage(Bitmap bmp, double scale, Point offset)
         {
             if (bmp == null) return null;
             if (scale == 0)
@@ -440,10 +452,13 @@ namespace WzComparerR2
                 scale = Math.Min((double)this.picWorldArchiveImg.Width / bmp.Width, (double)this.picWorldArchiveImg.Height / bmp.Height);
             }
 
-            int w = (int)(bmp.Width * scale);
-            int h = (int)(bmp.Height * scale);
+            int imgW = (int)(bmp.Width * scale);
+            int imgH = (int)(bmp.Height * scale);
 
-            Bitmap result = new Bitmap(w, h);
+            int paddedW = imgW + Math.Abs(offset.X * 2);
+            int paddedH = imgH + Math.Abs(offset.Y * 2);
+
+            Bitmap result = new Bitmap(paddedW, paddedH);
 
             using (Graphics g = Graphics.FromImage(result))
             {
@@ -451,7 +466,7 @@ namespace WzComparerR2
                 g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 
-                g.DrawImage(bmp, new Rectangle(0, 0, w, h));
+                g.DrawImage(bmp, new Rectangle(Math.Max(0, offset.X * 2), Math.Max(0, offset.Y * 2), imgW, imgH));
             }
 
             return result;
@@ -486,6 +501,20 @@ namespace WzComparerR2
             {
                 SendMessage(this.richDescription.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
                 this.richDescription.Refresh();
+            }
+        }
+
+        private void DisposeImages()
+        {
+            if (this.unscaledBmp != null)
+            {
+                this.unscaledBmp.Dispose();
+                this.unscaledBmp = null;
+            }
+            if (this.picWorldArchiveImg.Image != null)
+            {
+                this.picWorldArchiveImg.Image.Dispose();
+                this.picWorldArchiveImg.Image = null;
             }
         }
     }

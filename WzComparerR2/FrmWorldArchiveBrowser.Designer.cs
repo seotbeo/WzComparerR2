@@ -203,7 +203,6 @@ namespace WzComparerR2
             this.Name = "FrmWorldArchiveBrowser";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "월드 아카이브";
-            this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.advTreeLife)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.advTreeMap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picWorldArchiveImg)).EndInit();
