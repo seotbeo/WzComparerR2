@@ -14,6 +14,7 @@ using WzComparerR2.CharaSim;
 using WzComparerR2.CharaSimControl;
 using WzComparerR2.Common;
 using WzComparerR2.PluginBase;
+using WzComparerR2.Rendering;
 using WzComparerR2.WzLib;
 
 namespace WzComparerR2
@@ -54,6 +55,7 @@ namespace WzComparerR2
             };
 
             this._mainForm = parent;
+            this.FormClosed += FrmWorldArchiveBrowser_FormClosed;
         }
 
         private Wz_Node EtcWaNode { get; set; }
@@ -64,6 +66,7 @@ namespace WzComparerR2
         private MainForm _mainForm { get; }
         private bool DarkMode;
         private Bitmap unscaledBmp;
+        private Bitmap illustMask;
         private Wz_Node currentExtraArtworkNode;
 
         [DllImport("user32.dll")]
@@ -160,7 +163,12 @@ namespace WzComparerR2
             if (worldIllustNode != null)
             {
                 BitmapOrigin bo = BitmapOrigin.CreateFromNode(worldIllustNode, PluginManager.FindWz);
-                this.picWorldArchiveImg.Image = bo.Bitmap;
+                if (bo.Bitmap != null)
+                {
+                    this.picWorldArchiveImg.Image = ApplyMask(bo.Bitmap);
+                    bo.Bitmap.Dispose();
+                    
+                }
             }
         }
 
@@ -266,7 +274,11 @@ namespace WzComparerR2
             if (illustNode != null)
             {
                 BitmapOrigin bo = BitmapOrigin.CreateFromNode(illustNode, PluginManager.FindWz);
-                this.picWorldArchiveImg.Image = bo.Bitmap;
+                if (bo.Bitmap != null)
+                {
+                    this.picWorldArchiveImg.Image = ApplyMask(bo.Bitmap);
+                    bo.Bitmap.Dispose();
+                }
             }
             Wz_Node descNode = EtcWaNode.FindNodeByPath($"collectionInfo\\{this.regionID}\\{mapID}\\regionDesc", true);
             if (descNode != null)
@@ -340,6 +352,7 @@ namespace WzComparerR2
             }
 
             Bitmap bmp = null;
+            Point imageOrigin = default;
             switch (imageType)
             {
                 case WorldArchiveImageType.Stand:
@@ -352,10 +365,12 @@ namespace WzComparerR2
                             case 0:
                                 Npc npc = Npc.CreateFromNode(lifeNode, PluginManager.FindWz);
                                 bmp = npc.Default.Bitmap;
+                                imageOrigin = npc.Default.Origin;
                                 break;
                             case 1:
                                 Mob mob = Mob.CreateFromNode(lifeNode, PluginManager.FindWz);
                                 bmp = mob.Default.Bitmap;
+                                imageOrigin = mob.Default.Origin;
                                 break;
                         }
                     }
@@ -368,6 +383,7 @@ namespace WzComparerR2
                         if (illustBO.Bitmap != null)
                         {
                             bmp = illustBO.Bitmap;
+                            imageOrigin = illustBO.Origin;
                         }
                         else goto case WorldArchiveImageType.Stand;
                     }
@@ -380,6 +396,7 @@ namespace WzComparerR2
                         if (bo.Bitmap != null)
                         {
                             bmp = bo.Bitmap;
+                            imageOrigin = bo.Origin;
                         }
                         else goto case WorldArchiveImageType.Stand;
                     }
@@ -388,9 +405,12 @@ namespace WzComparerR2
 
             DisposeImages();
             this.unscaledBmp = new Bitmap(bmp);
-            this.picWorldArchiveImg.Image = ResizeImage(this.unscaledBmp, scale, offset);
+            Bitmap resized = ResizeImage(this.unscaledBmp, scale, offset);
+
+            this.picWorldArchiveImg.Image = ApplyMask(resized);
 
             if (bmp != null) bmp.Dispose();
+            if (resized != null) resized.Dispose();
         }
 
         private void UpdateAdvTreeLife()
@@ -501,6 +521,23 @@ namespace WzComparerR2
             return result;
         }
 
+        private Bitmap ApplyMask(Bitmap source)
+        {
+            Bitmap mask = GetMaskBitmap();
+            Point maskOffset = new Point((source.Width - mask.Width) / 2, (source.Height - mask.Height) / 2);
+            Bitmap masked = BitmapUtils.ApplyAlphaMask_Format32bppArgb(source, mask, maskOffset);
+            return masked;
+        }
+
+        private Bitmap GetMaskBitmap()
+        {
+            if (this.illustMask == null)
+            {
+                this.illustMask = BitmapOrigin.CreateFromNode(UiWaNode?.FindNodeByPath($"detail\\main\\mask_illust", true), PluginManager.FindWz).Bitmap;
+            }
+            return this.illustMask;
+        }
+
         private void UpdateText(string text)
         {
             SendMessage(this.richDescription.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
@@ -544,6 +581,15 @@ namespace WzComparerR2
             {
                 this.picWorldArchiveImg.Image.Dispose();
                 this.picWorldArchiveImg.Image = null;
+            }
+        }
+
+        private void FrmWorldArchiveBrowser_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            DisposeImages();
+            if (this.illustMask != null)
+            {
+                this.illustMask.Dispose();
             }
         }
     }
