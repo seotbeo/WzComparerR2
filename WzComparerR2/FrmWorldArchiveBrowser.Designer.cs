@@ -33,6 +33,7 @@ namespace WzComparerR2
             this.cmbRegion = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.cmbType = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.advTreeLife = new DevComponents.AdvTree.AdvTree();
+            this.nodeConnector1 = new DevComponents.AdvTree.NodeConnector();
             this.elementStyle1 = new DevComponents.DotNetBar.ElementStyle();
             this.advTreeMap = new DevComponents.AdvTree.AdvTree();
             this.picWorldArchiveImg = new System.Windows.Forms.PictureBox();
@@ -117,10 +118,10 @@ namespace WzComparerR2
             this.advTreeLife.DoubleClickTogglesNode = false;
             this.advTreeLife.DragDropEnabled = false;
             this.advTreeLife.DragDropNodeCopyEnabled = false;
-            this.advTreeLife.ExpandWidth = 4;
             this.advTreeLife.HideSelection = true;
             this.advTreeLife.Location = new System.Drawing.Point(221, 44);
             this.advTreeLife.Name = "advTreeLife";
+            this.advTreeLife.NodesConnector = this.nodeConnector1;
             this.advTreeLife.NodeStyle = this.elementStyle1;
             this.advTreeLife.PathSeparator = ";";
             this.advTreeLife.Size = new System.Drawing.Size(202, 716);
@@ -214,6 +215,7 @@ namespace WzComparerR2
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbType;
         private DevComponents.AdvTree.AdvTree advTreeLife;
         private DevComponents.AdvTree.AdvTree advTreeMap;
+        private DevComponents.AdvTree.NodeConnector nodeConnector1;
         private DevComponents.DotNetBar.ElementStyle elementStyle1;
         private System.Windows.Forms.PictureBox picWorldArchiveImg;
         private DevComponents.DotNetBar.Controls.RichTextBoxEx richDescription;

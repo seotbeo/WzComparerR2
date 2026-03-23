@@ -198,13 +198,20 @@ namespace WzComparerR2
                 switch (this.typeID)
                 {
                     case 0:
-                        lifeNode = PluginManager.FindWz(Wz_Type.Npc)?.FindNodeByPath($"{LifeID:D7}.img");
+                        lifeNode = NpcNode?.FindNodeByPath($"{LifeID:D7}.img");
                         break;
                     case 1:
-                        lifeNode = PluginManager.FindWz(Wz_Type.Mob)?.FindNodeByPath($"{LifeID:D7}.img");
+                        lifeNode = MobNode?.FindNodeByPath($"{LifeID:D7}.img");
                         break;
                 }
-                _mainForm.RedirectToNode(lifeNode ?? (this.advTreeLife.SelectedNode.Tag as Wz_Node));
+                if (lifeNode == null && this.advTreeLife.SelectedNode.Tag is KeyValuePair<int, Wz_Node> kvp2)
+                {
+                    lifeNode = kvp2.Value;
+                }
+                if (lifeNode != null)
+                {
+                    _mainForm.RedirectToNode(lifeNode);
+                }
             }
         }
 
@@ -373,6 +380,8 @@ namespace WzComparerR2
                         Wz_Node idNode = node.FindNodeByPath("id");
                         if (idNode != null)
                         {
+                            var newNode = new Node($"{node.Text}");
+                            int count = 0;
                             foreach (var id in idNode.Nodes)
                             {
                                 var lifeID = id.GetValue<int>();
@@ -398,10 +407,18 @@ namespace WzComparerR2
                                         sr.Name = "(null)";
                                         break;
                                 }
-                                var newNode = new Node($"{sr.Name} ({lifeID})");
-                                newNode.Tag = new KeyValuePair<int, Wz_Node>(lifeID, node);
-                                this.advTreeLife.Nodes.Add(newNode);
+                                var childNode = new Node($"{sr.Name} ({lifeID})");
+                                childNode.Tag = new KeyValuePair<int, Wz_Node>(lifeID, node);
+                                if (count++ == 0)
+                                {
+                                    newNode = childNode;
+                                }
+                                else
+                                {
+                                    newNode.Nodes.Add(childNode);
+                                }
                             }
+                            this.advTreeLife.Nodes.Add(newNode);
                         }
                     }
                 }
