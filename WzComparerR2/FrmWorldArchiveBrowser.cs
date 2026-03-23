@@ -404,12 +404,10 @@ namespace WzComparerR2
             }
 
             DisposeImages();
-            this.unscaledBmp = new Bitmap(bmp);
+            this.unscaledBmp = bmp;
             Bitmap resized = ResizeImage(this.unscaledBmp, scale, offset);
-
             this.picWorldArchiveImg.Image = ApplyMask(resized);
 
-            if (bmp != null) bmp.Dispose();
             if (resized != null) resized.Dispose();
         }
 
@@ -523,6 +521,8 @@ namespace WzComparerR2
 
         private Bitmap ApplyMask(Bitmap source)
         {
+            if (source == null) return null;
+
             Bitmap mask = GetMaskBitmap();
             Point maskOffset = new Point((source.Width - mask.Width) / 2, (source.Height - mask.Height) / 2);
             Bitmap masked = BitmapUtils.ApplyAlphaMask_Format32bppArgb(source, mask, maskOffset);
