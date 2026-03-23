@@ -281,11 +281,13 @@ namespace WzComparerR2
 
         private void UpdateLifeImageInfo()
         {
-            if (this.advTreeLife.SelectedNode == null)
+            var targetNode = this.advTreeLife.SelectedNode;
+            if (targetNode == null)
             {
                 return;
             }
-            KeyValuePair<int, Wz_Node> kvp = this.advTreeLife.SelectedNode.Tag as KeyValuePair<int, Wz_Node>? ?? default;
+            if (targetNode.Parent != null) targetNode = targetNode.Parent;
+            KeyValuePair<int, Wz_Node> kvp = targetNode.Tag as KeyValuePair<int, Wz_Node>? ?? default;
             if (kvp.Value == null) return;
 
             int LifeID = kvp.Key;
@@ -305,6 +307,13 @@ namespace WzComparerR2
                 offset = offsetNode.GetValueEx<Wz_Vector>(null);
             }
 
+            WorldArchiveImageType imageType = WorldArchiveImageType.Stand;
+            Wz_Node imageTypeNode = kvp.Value.FindNodeByPath("imageType");
+            if (imageTypeNode != null)
+            {
+                imageType = (WorldArchiveImageType)imageTypeNode.GetValueEx<int>(0);
+            }
+
             Wz_Node descNode = kvp.Value.FindNodeByPath("desc");
             if (descNode != null)
             {
@@ -315,48 +324,68 @@ namespace WzComparerR2
                 this.richDescription.Clear();
             }
 
-            Bitmap bmp = null;
-            Wz_Node lifeNode;
-            Wz_Node altImageNode;
+            Wz_Node lifeNode = null;
+            Wz_Node altImageNode = null;
             switch (this.typeID)
             {
                 case 0:
-                    lifeNode = PluginManager.FindWz(Wz_Type.Npc)?.FindNodeByPath($"{LifeID:D7}.img", true);
+                    lifeNode = NpcNode?.FindNodeByPath($"{LifeID:D7}.img", true);
+                    altImageNode = UiWaNode.FindNodeByPath($"image\\npc\\{LifeID:D7}", true);
+                    break;
+
+                case 1:
+                    lifeNode = MobNode?.FindNodeByPath($"{LifeID:D7}.img", true);
+                    altImageNode = UiWaNode.FindNodeByPath($"image\\mob\\{LifeID:D7}", true);
+                    break;
+            }
+
+            Bitmap bmp = null;
+            switch (imageType)
+            {
+                case WorldArchiveImageType.Stand:
+                case WorldArchiveImageType.Fly:
+                case WorldArchiveImageType.Default:
                     if (lifeNode != null)
                     {
-                        Npc npc = Npc.CreateFromNode(lifeNode, PluginManager.FindWz);
-                        bmp = npc.Default.Bitmap;
-                    }
-                    altImageNode = UiWaNode.FindNodeByPath($"image\\npc\\{LifeID:D7}", true);
-                    if (altImageNode != null)
-                    {
-                        BitmapOrigin bo = BitmapOrigin.CreateFromNode(altImageNode, PluginManager.FindWz);
-                        if (bo.Bitmap != null)
+                        switch (this.typeID)
                         {
-                            if (bmp != null) bmp.Dispose();
-                            bmp = bo.Bitmap;
+                            case 0:
+                                Npc npc = Npc.CreateFromNode(lifeNode, PluginManager.FindWz);
+                                bmp = npc.Default.Bitmap;
+                                break;
+                            case 1:
+                                Mob mob = Mob.CreateFromNode(lifeNode, PluginManager.FindWz);
+                                bmp = mob.Default.Bitmap;
+                                break;
                         }
                     }
                     break;
-                case 1:
-                    lifeNode = PluginManager.FindWz(Wz_Type.Mob)?.FindNodeByPath($"{LifeID:D7}.img", true);
+
+                case WorldArchiveImageType.Illust:
                     if (lifeNode != null)
                     {
-                        Mob mob = Mob.CreateFromNode(lifeNode, PluginManager.FindWz);
-                        bmp = mob.Default.Bitmap;
+                        BitmapOrigin illustBO = BitmapOrigin.CreateFromNode(lifeNode.FindNodeByPath("info\\illustration2\\base"), PluginManager.FindWz);
+                        if (illustBO.Bitmap != null)
+                        {
+                            bmp = illustBO.Bitmap;
+                        }
+                        else goto case WorldArchiveImageType.Stand;
                     }
-                    altImageNode = UiWaNode.FindNodeByPath($"image\\mob\\{LifeID:D7}", true);
+                    break;
+
+                case WorldArchiveImageType.Custom:
                     if (altImageNode != null)
                     {
                         BitmapOrigin bo = BitmapOrigin.CreateFromNode(altImageNode, PluginManager.FindWz);
                         if (bo.Bitmap != null)
                         {
-                            if (bmp != null) bmp.Dispose();
                             bmp = bo.Bitmap;
                         }
+                        else goto case WorldArchiveImageType.Stand;
                     }
                     break;
             }
+
             DisposeImages();
             this.unscaledBmp = new Bitmap(bmp);
             this.picWorldArchiveImg.Image = ResizeImage(this.unscaledBmp, scale, offset);
