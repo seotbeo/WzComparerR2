@@ -8,6 +8,7 @@ namespace WzComparerR2.CharaSim
 {
     public enum WorldArchiveImageType
     {
+        Unknown = -1,
         Stand = 0,
         Illust = 1,
         Fly = 2,
