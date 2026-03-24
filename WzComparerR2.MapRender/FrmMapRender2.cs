@@ -189,7 +189,7 @@ namespace WzComparerR2.MapRender
             this.Components.Add(fpsCounter);
 
             this.ApplySetting();
-            SwitchResolution(Resolution.Window_800_600);
+            SwitchResolution(Resolution.Window_1366_768);
             base.Initialize();
 
             //init UI teleport
