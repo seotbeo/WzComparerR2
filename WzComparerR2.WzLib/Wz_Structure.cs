@@ -80,7 +80,7 @@ namespace WzComparerR2.WzLib
             calculate_img_count();
         }
 
-        public Wz_File LoadFile(string fileName, Wz_Node node, bool useBaseWz = false, bool loadWzAsFolder = false, string fallbackFileName = null)
+        public Wz_File LoadFile(string fileName, Wz_Node node, bool useBaseWz = false, bool loadWzAsFolder = false, string fallbackFileName = null, bool force = false)
         {
             Wz_File file = null;
 
@@ -100,6 +100,7 @@ namespace WzComparerR2.WzLib
                 node.Value = file;
                 file.Node = node;
                 file.FileStream.Position = file.Header.DataStartPosition;
+                if (force) throw new Exception(); // temp workaround for unknown pkg2 encryption
                 file.GetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
                 file.Header.DirEndPosition = file.FileStream.Position;
                 file.DetectWzType();
@@ -108,6 +109,31 @@ namespace WzComparerR2.WzLib
             }
             catch
             {
+                // temp workaround for unknown pkg2 encryption
+                if (file.Header.Signature == Wz_Header.PKG2)
+                {
+                    try
+                    {
+                        file.FindAllHits(file);
+                        file.retInited = true;
+                        file.ForceGetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
+                        file.Header.DirEndPosition = file.FileStream.Position;
+                        file.Forced = true;
+                        file.DetectWzType();
+                        file.DetectWzVersion();
+                        return file;
+                    }
+                    catch
+                    {
+                        if (file != null)
+                        {
+                            file.Close();
+                            this.wz_files.Remove(file);
+                        }
+                        throw;
+                    }
+                }
+
                 if (file != null)
                 {
                     file.Close();
@@ -189,12 +215,19 @@ namespace WzComparerR2.WzLib
                     this.encryption.DetectEncryption(file);
                 }
                 file.FileStream.Position = file.Header.DataStartPosition;
-                file.GetDirTree(tempNode);
+                try
+                {
+                    file.GetDirTree(tempNode);
+                }
+                catch
+                {
+                    file.ForceGetDirTree(tempNode);
+                }
                 return file.ImageCount == 0;
             }
         }
 
-        public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false, string fallbackFolder = null)
+        public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false, string fallbackFolder = null, bool force = false)
         {
             string baseName = Path.Combine(folder, Path.GetFileName(folder));
             string fallbackBaseName = fallbackFolder == null ? null : Path.Combine(fallbackFolder, Path.GetFileName(fallbackFolder));
@@ -244,7 +277,7 @@ namespace WzComparerR2.WzLib
             {
                 node = new Wz_Node(Path.GetFileName(entryWzFileName));
             }
-            var entryWzf = this.LoadFile(entryWzFileName, node, useBaseWz, true, Path.ChangeExtension(fallbackBaseName, ".wz"));
+            var entryWzf = this.LoadFile(entryWzFileName, node, useBaseWz, true, Path.ChangeExtension(fallbackBaseName, ".wz"), force: force);
 
             // load extra file
             if (lastWzIndex != null)
@@ -254,7 +287,7 @@ namespace WzComparerR2.WzLib
                     string extraFile = extraWzFileName(i);
                     string fallbackExtraFile = fallbackExtraWzFileName(i);
                     var tempNode = new Wz_Node(Path.GetFileName(extraFile));
-                    var extraWzf = this.LoadFile(extraFile, tempNode, false, true, fallbackExtraFile);
+                    var extraWzf = this.LoadFile(extraFile, tempNode, false, true, fallbackExtraFile, force: force);
 
                     /*
                      * there is a little hack here, we'll move all img to the entry file, and each img still refers to the original wzfile.
