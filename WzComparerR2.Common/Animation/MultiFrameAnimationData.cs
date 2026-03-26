@@ -53,7 +53,7 @@ namespace WzComparerR2.Animation
                     }
                 }
 
-                int delay = frameNode.Nodes["delay"].GetValueEx<int>(120);
+                int delay = Math.Abs(frameNode.Nodes["delay"].GetValueEx<int>(120));
                 int count = 0;
                 foreach (Wz_Node aniNode in frameNode.Nodes)
                 {

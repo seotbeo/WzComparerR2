@@ -112,7 +112,7 @@ namespace WzComparerR2.Animation
                             frame.RB = (propNode.Value as Wz_Vector).ToPoint();
                             break;
                         case "delay":
-                            frame.Delay = propNode.GetValue<int>();
+                            frame.Delay = Math.Abs(propNode.GetValue<int>());
                             break;
                         case "z":
                             frame.Z = propNode.GetValue<int>();
