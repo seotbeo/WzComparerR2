@@ -89,6 +89,7 @@ namespace WzComparerR2.WzLib.Utilities
 
         public string ReadString(IWzDecrypter decrypter)
         {
+            decrypter ??= Wz_Crypto.Wz_NonOpCryptoKey.Instance;
             long currentPos = this.BaseStream.Position;
 
             int size = this.ReadSByte();
@@ -156,6 +157,7 @@ namespace WzComparerR2.WzLib.Utilities
         // Introduced in KMST1198
         public string ReadPkg2DirString(IWzDecrypter decrypter)
         {
+            decrypter ??= Wz_Crypto.Wz_NonOpCryptoKey.Instance;
             long currentPos = this.BaseStream.Position;
 
             int size = this.ReadSByte();
@@ -196,7 +198,7 @@ namespace WzComparerR2.WzLib.Utilities
                 case 0x1B:
                     return this.ReadStringAt(this.ReadInt32() + this.StringReferenceOffsetBytes, decrypter);
                 default:
-                    throw new Exception($"Unexpected flag '{flag}' when reading string at {this.BaseStream.Position}.");
+                    throw new Exception(this.BuildUnexpectedFlagMessage(flag));
             }
         }
 
@@ -213,7 +215,68 @@ namespace WzComparerR2.WzLib.Utilities
                     this.SkipBytes(8);
                     return null;
                 default:
-                    throw new Exception($"Unexpected flag '{flag}' when reading string at {this.BaseStream.Position}.");
+                    throw new Exception(this.BuildUnexpectedFlagMessage(flag));
+            }
+        }
+
+        private string BuildUnexpectedFlagMessage(int flag)
+        {
+            string message = $"Unexpected flag '{flag}' (0x{flag:X2}) when reading string at {this.BaseStream.Position}.";
+            if (!this.BaseStream.CanSeek)
+            {
+                return message;
+            }
+
+            long originalPosition = this.BaseStream.Position;
+            try
+            {
+                long start = Math.Max(0, originalPosition - 8);
+                int byteCount = (int)Math.Min(this.BaseStream.Length - start, 24);
+                if (byteCount <= 0)
+                {
+                    return message;
+                }
+
+                byte[] buffer = new byte[byteCount];
+                this.BaseStream.Position = start;
+                int read = this.BaseStream.Read(buffer, 0, byteCount);
+                if (read <= 0)
+                {
+                    return message;
+                }
+
+                if (read != buffer.Length)
+                {
+                    Array.Resize(ref buffer, read);
+                }
+
+                int markerIndex = (int)Math.Max(0, originalPosition - start - 1);
+                var bytes = new System.Text.StringBuilder();
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        bytes.Append(' ');
+                    }
+
+                    if (i == markerIndex)
+                    {
+                        bytes.Append('[');
+                    }
+
+                    bytes.Append(buffer[i].ToString("X2"));
+
+                    if (i == markerIndex)
+                    {
+                        bytes.Append(']');
+                    }
+                }
+
+                return message + " Raw bytes: " + bytes;
+            }
+            finally
+            {
+                this.BaseStream.Position = originalPosition;
             }
         }
 

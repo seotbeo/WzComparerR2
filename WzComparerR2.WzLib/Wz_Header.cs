@@ -42,6 +42,7 @@ namespace WzComparerR2.WzLib
         public void ResetVersionDetector() => this.versionDetector?.Reset();
 
         public uint Pkg2Hash1 => this.versionDetector is Pkg2WzVersionDetector pkg2 ? pkg2.Hash1 : throw new NotSupportedException();
+        public uint Pkg2Hash2 => this.versionDetector is Pkg2WzVersionDetector pkg2 ? pkg2.Hash2 : throw new NotSupportedException();
 
         private IWzVersionDetector versionDetector;
 

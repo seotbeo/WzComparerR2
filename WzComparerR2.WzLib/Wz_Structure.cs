@@ -102,6 +102,12 @@ namespace WzComparerR2.WzLib
                 file.FileStream.Position = file.Header.DataStartPosition;
                 file.GetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
                 file.Header.DirEndPosition = file.FileStream.Position;
+
+                if (file.Header.Signature == Wz_Header.PKG2 && node.Nodes.Count == 0)
+                {
+                    file.RetryParsePkg2TreeWithCandidateVersions(useBaseWz, fileName, fallbackFileName);
+                }
+
                 file.DetectWzType();
                 file.DetectWzVersion();
                 return file;
@@ -171,7 +177,9 @@ namespace WzComparerR2.WzLib
             {
                 iniFile = Path.ChangeExtension(fallbackFileName, ".ini");
             }
-            if (!File.Exists(iniFile))
+            bool hasIniFile = File.Exists(iniFile);
+            bool hasShardFiles = HasCompanionShardFiles(fileName, fallbackFileName);
+            if (!hasIniFile && !hasShardFiles)
             {
                 return false;
             }
@@ -183,15 +191,51 @@ namespace WzComparerR2.WzLib
                 {
                     return false;
                 }
-                var tempNode = new Wz_Node();
-                if (!this.encryption.IsDirEncDetected(file))
+                try
                 {
-                    this.encryption.DetectEncryption(file);
+                    var tempNode = new Wz_Node();
+                    if (!this.encryption.IsDirEncDetected(file))
+                    {
+                        this.encryption.DetectEncryption(file);
+                    }
+                    file.FileStream.Position = file.Header.DataStartPosition;
+                    file.GetDirTree(tempNode);
+                    return file.ImageCount == 0;
                 }
-                file.FileStream.Position = file.Header.DataStartPosition;
-                file.GetDirTree(tempNode);
-                return file.ImageCount == 0;
+                catch
+                {
+                    return true;
+                }
             }
+        }
+
+        private static bool HasCompanionShardFiles(string fileName, string fallbackFileName = null)
+        {
+            static bool HasShard(string path)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return false;
+                }
+
+                string directory = Path.GetDirectoryName(path);
+                string baseName = Path.GetFileNameWithoutExtension(path);
+                string entryFileName = Path.GetFileName(path);
+                if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(baseName) || string.IsNullOrEmpty(entryFileName))
+                {
+                    return false;
+                }
+
+                return Directory.EnumerateFiles(directory, baseName + "_*.wz").Any()
+                    || Directory.EnumerateFiles(directory, "*.wz")
+                        .Any(file => !string.Equals(Path.GetFileName(file), entryFileName, StringComparison.OrdinalIgnoreCase))
+                    || Directory.EnumerateFiles(directory, "*.img").Any()
+                    || Directory.EnumerateDirectories(directory)
+                        .Select(TryGetFolderEntryWzFile)
+                        .Any(childEntry => !string.IsNullOrEmpty(childEntry));
+            }
+
+            return HasShard(fileName) || HasShard(fallbackFileName);
         }
 
         public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false, string fallbackFolder = null)
@@ -247,6 +291,7 @@ namespace WzComparerR2.WzLib
             var entryWzf = this.LoadFile(entryWzFileName, node, useBaseWz, true, Path.ChangeExtension(fallbackBaseName, ".wz"));
 
             // load extra file
+            var mergedExtraFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if (lastWzIndex != null)
             {
                 for (int i = 0, j = lastWzIndex.Value; i <= j; i++)
@@ -255,6 +300,11 @@ namespace WzComparerR2.WzLib
                     string fallbackExtraFile = fallbackExtraWzFileName(i);
                     var tempNode = new Wz_Node(Path.GetFileName(extraFile));
                     var extraWzf = this.LoadFile(extraFile, tempNode, false, true, fallbackExtraFile);
+                    mergedExtraFiles.Add(Path.GetFullPath(extraFile));
+                    if (!string.IsNullOrEmpty(fallbackExtraFile))
+                    {
+                        mergedExtraFiles.Add(Path.GetFullPath(fallbackExtraFile));
+                    }
 
                     /*
                      * there is a little hack here, we'll move all img to the entry file, and each img still refers to the original wzfile.
@@ -275,6 +325,86 @@ namespace WzComparerR2.WzLib
                     entryWzf.MergeWzFile(extraWzf);
                 }
             }
+
+            if (entryWzf.Node.Nodes.Count == 0)
+            {
+                foreach (string extraFile in EnumerateSiblingWzFiles(folder, entryWzFileName, mergedExtraFiles))
+                {
+                    string extraFileName = Path.GetFileName(extraFile);
+                    string fallbackExtraFile = fallbackFolder == null ? null : Path.Combine(fallbackFolder, extraFileName);
+                    var tempNode = new Wz_Node(extraFileName);
+                    var extraWzf = this.LoadFile(extraFile, tempNode, false, true, fallbackExtraFile);
+                    entryWzf.MergeWzFile(extraWzf);
+                }
+            }
+
+            if (entryWzf.Node.Nodes.Count == 0)
+            {
+                foreach (string childFolder in Directory.EnumerateDirectories(folder).OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                {
+                    string childEntryFile = TryGetFolderEntryWzFile(childFolder);
+                    if (string.IsNullOrEmpty(childEntryFile))
+                    {
+                        continue;
+                    }
+
+                    string childName = Path.GetFileName(childFolder);
+                    string fallbackChildFolder = fallbackFolder == null ? null : Path.Combine(fallbackFolder, childName);
+                    var childNode = entryWzf.Node.Nodes.Add(childName);
+                    this.LoadWzFolder(childFolder, ref childNode, false, fallbackChildFolder);
+                }
+            }
+
+            if (entryWzf.Node.Nodes.Count == 0)
+            {
+                foreach (string imgFile in Directory.EnumerateFiles(folder, "*.img").OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                {
+                    string imgName = Path.GetFileName(imgFile);
+                    var imgNode = entryWzf.Node.Nodes.Add(imgName);
+                    this.LoadImg(imgFile, imgNode);
+                }
+            }
+        }
+
+        private static IEnumerable<string> EnumerateSiblingWzFiles(string folder, string entryWzFileName, ISet<string> excludedFiles)
+        {
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                yield break;
+            }
+
+            string entryName = Path.GetFileName(entryWzFileName);
+            foreach (string file in Directory.EnumerateFiles(folder, "*.wz").OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+            {
+                string fullPath = Path.GetFullPath(file);
+                if (string.Equals(Path.GetFileName(file), entryName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                if (excludedFiles != null && excludedFiles.Contains(fullPath))
+                {
+                    continue;
+                }
+                yield return file;
+            }
+        }
+
+        private static string TryGetFolderEntryWzFile(string folder)
+        {
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                return null;
+            }
+
+            string folderName = Path.GetFileName(folder);
+            string sameNameEntry = Path.Combine(folder, folderName + ".wz");
+            if (File.Exists(sameNameEntry))
+            {
+                return sameNameEntry;
+            }
+
+            string[] wzFiles = Directory.EnumerateFiles(folder, "*.wz").Take(2).ToArray();
+            return wzFiles.Length == 1 ? wzFiles[0] : null;
         }
 
         public void LoadMsFile(string fileName)
