@@ -477,6 +477,17 @@ namespace WzComparerR2.MapRender.UI
                                 }
                             }
                             break;
+
+                        case IconType.Mob:
+                            {
+                                var texture = this.FindResource($"mob_{icon.MobIconType}") as TextureBase;
+                                if (texture != null)
+                                {
+                                    var rect = drawIconFunc(texture, icon.WorldPosition);
+                                    iconRectCache.Add(new IconRect() { Rect = rect, Tooltip = icon.Tooltip });
+                                }
+                            }
+                            break;
                     }
                 }
 
@@ -522,6 +533,19 @@ namespace WzComparerR2.MapRender.UI
                     addResource("arrowup");
                     addResource("another");
                 }
+
+                var mapHelperMobNode = mapHelperNode?.FindNodeByPath("mob");
+                if (mapHelperMobNode != null)
+                {
+                    foreach (var mobIcon in mapHelperMobNode.Nodes)
+                    {
+                        var texture = UIHelper.LoadTexture(mobIcon);
+                        if (texture != null)
+                        {
+                            this.Resources[$"mob_{mobIcon.Text}"] = texture;
+                        }
+                    }
+                }
             }
 
             private struct IconRect
@@ -537,6 +561,7 @@ namespace WzComparerR2.MapRender.UI
             public PointF WorldPosition { get; set; }
             public object Tooltip { get; set; }
             public string Tag { get; set; }
+            public int MobIconType { get; set; }
         }
 
         public enum IconType
@@ -552,6 +577,7 @@ namespace WzComparerR2.MapRender.UI
             Trunk,
             ArrowUp,
             Another,
+            Mob,
         }
 
         private sealed class UIMinimapResource : INinePatchResource<TextureBase>

@@ -319,15 +319,17 @@ namespace WzComparerR2.MapRender
             foreach (var mob in this.mapData.Scene.Mobs)
             {
                 var mobNode = PluginManager.FindWz(string.Format("Mob/{0:D7}.img/info", mob.ID));
-                if ((mobNode?.Nodes["minimap"].GetValueEx(0) ?? 0) != 0)
+                int minimapIconType;
+                if ((minimapIconType = mobNode?.Nodes["minimap"].GetValueEx(0) ?? 0) != 0)
                 {
                     var x = mob.X + mob.Controller.RelPos.X;
                     var y = mob.Y + mob.Controller.RelPos.Y;
                     this.ui.Minimap.Icons.Add(new UIMinimap2.MapIcon()
                     {
-                        IconType = UIMinimap2.IconType.Another,
+                        IconType = UIMinimap2.IconType.Mob,
                         WorldPosition = new EmptyKeys.UserInterface.PointF(x, y),
-                        Tag = "mob"
+                        Tag = "mob",
+                        MobIconType = minimapIconType,
                     });
                 }
             }
