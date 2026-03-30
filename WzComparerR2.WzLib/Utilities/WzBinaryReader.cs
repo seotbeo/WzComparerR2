@@ -188,6 +188,102 @@ namespace WzComparerR2.WzLib.Utilities
             }
         }
 
+        public string ReadPkg2DirStringForced(IWzDecrypter decrypter, byte nodeType, string fullpath = null)
+        {
+            int size = this.ReadSByte();
+            if (size < 0)
+            {
+                size = -size;
+                int byteSize = size * 2;
+                var buffer = ArrayPool<byte>.Shared.Rent(byteSize);
+                try
+                {
+                    this.BaseStream.ReadExactly(buffer, 0, byteSize);
+                    char[] result = new char[size];
+                    byte keyByte = 157;
+                    for (int i = 0; i < size; i++)
+                    {
+                        if (i == 0 || i % 4 == 0)
+                        {
+                            result[i] = (char)(buffer[i * 2] ^ keyByte);
+                        }
+                        else
+                        {
+                            result[i] = (char)(buffer[i * 2] ^ buffer[i * 2 - 1]);
+                        }
+                    }
+
+                    if (nodeType == 0x04)
+                    {
+                        if (size > 4)
+                        {
+                            char[] suffix = { '.', 'i', 'm', 'g' };
+                            for (int j = 0; j < 4; j++)
+                            {
+                                int index = size - 4 + j;
+                                if (result[index] != suffix[j])
+                                {
+                                    result[index] = suffix[j];
+                                    keyByte = (byte)(buffer[index * 2] ^ suffix[j]);
+                                    for (int i = index; i >= 0; i -= 4)
+                                    {
+                                        result[i] = (char)(buffer[i * 2] ^ keyByte);
+                                    }
+                                }
+                            }
+                        }
+                        return new string(result);
+                    }
+
+                    if (nodeType == 0x03)
+                    {
+                        try
+                        {
+                            string dir = fullpath == null ? null : Path.GetDirectoryName(fullpath);
+                            if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                            {
+                                foreach (string candidatePath in Directory.GetDirectories(dir))
+                                {
+                                    string candidate = Path.GetFileName(candidatePath);
+                                    if (!string.IsNullOrEmpty(candidate) && candidate.Length == size)
+                                    {
+                                        return candidate;
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                        }
+
+                        switch (size)
+                        {
+                            case 4:
+                                return "Cash";
+                            case 6:
+                                return "Dragon";
+                            case 7:
+                                return "_Canvas";
+                        }
+                    }
+
+                    return new string(result);
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
+            else if (size > 0)
+            {
+                throw new Exception($"Unexpected string length: {size}");
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
         public string ReadImageObjectTypeName(IWzDecrypter decrypter)
         {
             int flag = this.bReader.ReadByte();

@@ -18,6 +18,7 @@ namespace WzComparerR2.WzLib
 {
     public enum Wz_CryptoKeyType
     {
+        Forced = -999,
         Unknown = 0,
         BMS = 1,
         KMS = 2,
@@ -33,6 +34,7 @@ namespace WzComparerR2.WzLib
             this.keys_kms = new Wz_CryptoKey(iv_kms);
             this.keys_gms = new Wz_CryptoKey(iv_gms);
             this.keys_kmst1198 = Pkg2DirStringKey.Instance;
+            this.keys_forced = Pkg2DirStringKey.Instance;
             this.UseListWz = false;
             this.Pkg1EncType = Wz_CryptoKeyType.Unknown;
             this.List = new StringCollection();
@@ -245,6 +247,7 @@ namespace WzComparerR2.WzLib
         private IWzDecrypter keys_bms;
         private Wz_CryptoKey keys_gms, keys_kms;
         private IWzDecrypter keys_kmst1198;
+        private IWzDecrypter keys_forced;
 
         public bool UseListWz { get; private set; }
         public StringCollection List { get; private set; }
@@ -255,6 +258,8 @@ namespace WzComparerR2.WzLib
         public bool Pkg2DirEncDetected => this.Pkg2EncType != Wz_CryptoKeyType.Unknown;
         public IWzDecrypter Pkg1Keys => this.GetKeys(this.Pkg1EncType);
         public IWzDecrypter Pkg2Keys => this.GetKeys(this.Pkg2EncType);
+        public Wz_CryptoKeyType Pkg2ForcedEncType { get; set; }
+        public IWzDecrypter Pkg2KeysForced => this.GetKeys(this.Pkg2ForcedEncType);
 
         public bool IsDirEncDetected(Wz_File wzFile)
         {
@@ -272,6 +277,7 @@ namespace WzComparerR2.WzLib
             switch (keyType)
             {
                 case Wz_CryptoKeyType.Unknown: return null;
+                case Wz_CryptoKeyType.Forced: return this.keys_forced;
                 case Wz_CryptoKeyType.BMS: return this.keys_bms;
                 case Wz_CryptoKeyType.KMS: return this.keys_kms;
                 case Wz_CryptoKeyType.GMS: return this.keys_gms;
