@@ -102,7 +102,10 @@ namespace WzComparerR2.WzLib
                 file.FileStream.Position = file.Header.DataStartPosition;
                 if (force && file.Header.Signature == Wz_Header.PKG2)
                 {
-                    this.LoadForcedPkg2Tree(file, node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
+                    if (ShouldUseForcedPkg2TreeFallback(file, loadWzAsFolder, fileName))
+                    {
+                        this.LoadForcedPkg2Tree(file, node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
+                    }
                 }
                 else
                 {
@@ -112,7 +115,7 @@ namespace WzComparerR2.WzLib
                     if (file.Header.Signature == Wz_Header.PKG2 && node.Nodes.Count == 0)
                     {
                         file.RetryParsePkg2TreeWithCandidateVersions(useBaseWz, fileName, fallbackFileName);
-                        if (node.Nodes.Count == 0)
+                        if (node.Nodes.Count == 0 && ShouldUseForcedPkg2TreeFallback(file, loadWzAsFolder, fileName))
                         {
                             this.LoadForcedPkg2Tree(file, node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
                         }
@@ -141,6 +144,47 @@ namespace WzComparerR2.WzLib
             file.ForceGetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
             file.Header.DirEndPosition = file.FileStream.Position;
             file.Forced = true;
+        }
+
+        private static bool ShouldUseForcedPkg2TreeFallback(Wz_File file, bool loadWzAsFolder, string fileName)
+        {
+            if (file?.Header?.Signature != Wz_Header.PKG2)
+            {
+                return false;
+            }
+
+            string effectiveFileName = fileName ?? file.Header.FileName;
+            if (loadWzAsFolder && LooksLikeCompanionShardFile(effectiveFileName) && file.CanExposeAsStandaloneImage())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool LooksLikeCompanionShardFile(string fileName)
+        {
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            int underscoreIndex = name.LastIndexOf('_');
+            if (underscoreIndex <= 0 || underscoreIndex >= name.Length - 1)
+            {
+                return false;
+            }
+
+            for (int i = underscoreIndex + 1; i < name.Length; i++)
+            {
+                if (!char.IsDigit(name[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void LoadImg(string fileName)

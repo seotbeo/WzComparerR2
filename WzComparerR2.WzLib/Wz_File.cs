@@ -855,6 +855,11 @@ namespace WzComparerR2.WzLib
             }
         }
 
+        internal bool CanExposeAsStandaloneImage()
+        {
+            return this.TryGetStandaloneImageDataOffset(out _);
+        }
+
         private bool MatchesBytesAt(long position, byte[] expected)
         {
             if (expected == null || expected.Length == 0 || position < 0 || position + expected.Length > this.fileStream.Length)
