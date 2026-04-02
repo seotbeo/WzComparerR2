@@ -154,9 +154,9 @@ namespace WzComparerR2.WzLib
             }
 
             string effectiveFileName = fileName ?? file.Header.FileName;
-            if (loadWzAsFolder && LooksLikeCompanionShardFile(effectiveFileName) && file.CanExposeAsStandaloneImage())
+            if (loadWzAsFolder && LooksLikeCompanionShardFile(effectiveFileName))
             {
-                return false;
+                return !file.CanExposeAsStandaloneImageAtDefaultOffset();
             }
 
             return true;

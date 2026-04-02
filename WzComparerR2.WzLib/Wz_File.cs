@@ -1014,6 +1014,13 @@ namespace WzComparerR2.WzLib
             return this.TryGetStandaloneImageDataOffset(out _);
         }
 
+        internal bool CanExposeAsStandaloneImageAtDefaultOffset()
+        {
+            long defaultOffset = Math.Max(0, Math.Max(this.Header.DataStartPosition, this.Header.DirEndPosition));
+            return this.TryGetStandaloneImageDataOffset(out long dataOffset)
+                && dataOffset == defaultOffset;
+        }
+
         private bool MatchesBytesAt(long position, byte[] expected)
         {
             if (expected == null || expected.Length == 0 || position < 0 || position + expected.Length > this.fileStream.Length)
