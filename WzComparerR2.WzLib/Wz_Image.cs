@@ -29,8 +29,6 @@ namespace WzComparerR2.WzLib
         private bool extr;
         private bool chec;
         private bool checEnc;
-        private bool failedExtract;
-        private Exception lastExtractException;
         private Stream stream;
         private Wz_CryptoKeyType encType;
 
@@ -41,8 +39,8 @@ namespace WzComparerR2.WzLib
         public uint HashedOffset { get; set; }
         public uint HashedOffsetPosition { get; set; }
         public long Offset { get; set; }
-        public long ForcedOffset { get; set; } = -1;
-        
+        public long ForcedOffset { get; set; } = -1; // temp workaround for unknown pkg2 encryption
+
         public Wz_Node Node { get; private set; }
 
         public Wz_Node OwnerNode { get; set; }
@@ -70,6 +68,9 @@ namespace WzComparerR2.WzLib
                 return crypto.Pkg1Keys;
             }
         }
+
+        private bool failedExtract;
+        private Exception lastExtractException;
 
         public bool TryExtract()
         {

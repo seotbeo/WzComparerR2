@@ -137,56 +137,6 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        private void LoadForcedPkg2Tree(Wz_File file, Wz_Node node, bool useBaseWz, bool loadWzAsFolder, string fileName, string fallbackFileName)
-        {
-            file.FindAllHits(file);
-            file.retInited = true;
-            file.ForceGetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
-            file.Header.DirEndPosition = file.FileStream.Position;
-            file.Forced = true;
-        }
-
-        private static bool ShouldUseForcedPkg2TreeFallback(Wz_File file, bool loadWzAsFolder, string fileName)
-        {
-            if (file?.Header?.Signature != Wz_Header.PKG2)
-            {
-                return false;
-            }
-
-            string effectiveFileName = fileName ?? file.Header.FileName;
-            if (loadWzAsFolder && LooksLikeCompanionShardFile(effectiveFileName))
-            {
-                return !file.CanExposeAsStandaloneImageAtDefaultOffset();
-            }
-
-            return true;
-        }
-
-        private static bool LooksLikeCompanionShardFile(string fileName)
-        {
-            string name = Path.GetFileNameWithoutExtension(fileName);
-            if (string.IsNullOrEmpty(name))
-            {
-                return false;
-            }
-
-            int underscoreIndex = name.LastIndexOf('_');
-            if (underscoreIndex <= 0 || underscoreIndex >= name.Length - 1)
-            {
-                return false;
-            }
-
-            for (int i = underscoreIndex + 1; i < name.Length; i++)
-            {
-                if (!char.IsDigit(name[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public void LoadImg(string fileName)
         {
             this.WzNode = new Wz_Node(Path.GetFileName(fileName));
@@ -278,35 +228,6 @@ namespace WzComparerR2.WzLib
                     return true;
                 }
             }
-        }
-
-        private static bool HasCompanionShardFiles(string fileName, string fallbackFileName = null)
-        {
-            static bool HasShard(string path)
-            {
-                if (string.IsNullOrEmpty(path))
-                {
-                    return false;
-                }
-
-                string directory = Path.GetDirectoryName(path);
-                string baseName = Path.GetFileNameWithoutExtension(path);
-                string entryFileName = Path.GetFileName(path);
-                if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(baseName) || string.IsNullOrEmpty(entryFileName))
-                {
-                    return false;
-                }
-
-                return Directory.EnumerateFiles(directory, baseName + "_*.wz").Any()
-                    || Directory.EnumerateFiles(directory, "*.wz")
-                        .Any(file => !string.Equals(Path.GetFileName(file), entryFileName, StringComparison.OrdinalIgnoreCase))
-                    || Directory.EnumerateFiles(directory, "*.img").Any()
-                    || Directory.EnumerateDirectories(directory)
-                        .Select(TryGetFolderEntryWzFile)
-                        .Any(childEntry => !string.IsNullOrEmpty(childEntry));
-            }
-
-            return HasShard(fileName) || HasShard(fallbackFileName);
         }
 
         public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false, string fallbackFolder = null, bool force = false)
@@ -476,6 +397,85 @@ namespace WzComparerR2.WzLib
 
             string[] wzFiles = Directory.EnumerateFiles(folder, "*.wz").Take(2).ToArray();
             return wzFiles.Length == 1 ? wzFiles[0] : null;
+        }
+
+        private void LoadForcedPkg2Tree(Wz_File file, Wz_Node node, bool useBaseWz, bool loadWzAsFolder, string fileName, string fallbackFileName)
+        {
+            file.FindAllHits(file);
+            file.retInited = true;
+            file.ForceGetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
+            file.Header.DirEndPosition = file.FileStream.Position;
+            file.Forced = true;
+        }
+
+        private static bool ShouldUseForcedPkg2TreeFallback(Wz_File file, bool loadWzAsFolder, string fileName)
+        {
+            if (file?.Header?.Signature != Wz_Header.PKG2)
+            {
+                return false;
+            }
+
+            string effectiveFileName = fileName ?? file.Header.FileName;
+            if (loadWzAsFolder && LooksLikeCompanionShardFile(effectiveFileName))
+            {
+                return !file.CanExposeAsStandaloneImageAtDefaultOffset();
+            }
+
+            return true;
+        }
+
+        private static bool LooksLikeCompanionShardFile(string fileName)
+        {
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            int underscoreIndex = name.LastIndexOf('_');
+            if (underscoreIndex <= 0 || underscoreIndex >= name.Length - 1)
+            {
+                return false;
+            }
+
+            for (int i = underscoreIndex + 1; i < name.Length; i++)
+            {
+                if (!char.IsDigit(name[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool HasCompanionShardFiles(string fileName, string fallbackFileName = null)
+        {
+            static bool HasShard(string path)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return false;
+                }
+
+                string directory = Path.GetDirectoryName(path);
+                string baseName = Path.GetFileNameWithoutExtension(path);
+                string entryFileName = Path.GetFileName(path);
+                if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(baseName) || string.IsNullOrEmpty(entryFileName))
+                {
+                    return false;
+                }
+
+                return Directory.EnumerateFiles(directory, baseName + "_*.wz").Any()
+                    || Directory.EnumerateFiles(directory, "*.wz")
+                        .Any(file => !string.Equals(Path.GetFileName(file), entryFileName, StringComparison.OrdinalIgnoreCase))
+                    || Directory.EnumerateFiles(directory, "*.img").Any()
+                    || Directory.EnumerateDirectories(directory)
+                        .Select(TryGetFolderEntryWzFile)
+                        .Any(childEntry => !string.IsNullOrEmpty(childEntry));
+            }
+
+            return HasShard(fileName) || HasShard(fallbackFileName);
         }
 
         public void LoadMsFile(string fileName)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace WzComparerR2.WzLib.Utilities
@@ -89,7 +91,6 @@ namespace WzComparerR2.WzLib.Utilities
 
         public string ReadString(IWzDecrypter decrypter)
         {
-            decrypter ??= Wz_Crypto.Wz_NonOpCryptoKey.Instance;
             long currentPos = this.BaseStream.Position;
 
             int size = this.ReadSByte();
@@ -157,7 +158,6 @@ namespace WzComparerR2.WzLib.Utilities
         // Introduced in KMST1198
         public string ReadPkg2DirString(IWzDecrypter decrypter)
         {
-            decrypter ??= Wz_Crypto.Wz_NonOpCryptoKey.Instance;
             long currentPos = this.BaseStream.Position;
 
             int size = this.ReadSByte();
@@ -188,8 +188,11 @@ namespace WzComparerR2.WzLib.Utilities
             }
         }
 
+        #region temp workaround for unknown pkg2 encryption
         public string ReadPkg2DirStringForced(IWzDecrypter decrypter, byte nodeType, string fullpath = null)
         {
+            long currentPos = this.BaseStream.Position;
+
             int size = this.ReadSByte();
             if (size < 0)
             {
@@ -199,7 +202,8 @@ namespace WzComparerR2.WzLib.Utilities
                 try
                 {
                     this.BaseStream.ReadExactly(buffer, 0, byteSize);
-                    char[] result = new char[size];
+                    Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer.AsSpan(0, byteSize));
+                    Span<char> result = new char[size];
                     byte keyByte = 157;
                     for (int i = 0; i < size; i++)
                     {
@@ -212,49 +216,42 @@ namespace WzComparerR2.WzLib.Utilities
                             result[i] = (char)(buffer[i * 2] ^ buffer[i * 2 - 1]);
                         }
                     }
-
                     if (nodeType == 0x04)
                     {
                         if (size > 4)
                         {
-                            char[] suffix = { '.', 'i', 'm', 'g' };
+                            char[] code = { '.', 'i', 'm', 'g' };
                             for (int j = 0; j < 4; j++)
                             {
-                                int index = size - 4 + j;
-                                if (result[index] != suffix[j])
+                                if (result[size - 4 + j] != code[j])
                                 {
-                                    result[index] = suffix[j];
-                                    keyByte = (byte)(buffer[index * 2] ^ suffix[j]);
-                                    for (int i = index; i >= 0; i -= 4)
+                                    result[size - 4 + j] = code[j];
+                                    keyByte = (byte)(buffer[(size - 4 + j) * 2] ^ code[j]);
+                                    for (int i = size - 4 + j; i >= 0; i -= 4)
                                     {
                                         result[i] = (char)(buffer[i * 2] ^ keyByte);
                                     }
                                 }
                             }
                         }
-                        return new string(result);
+                        return result.ToString();
                     }
-
-                    if (nodeType == 0x03)
+                    else if (nodeType == 0x03) // dir
                     {
                         try
                         {
-                            string dir = fullpath == null ? null : Path.GetDirectoryName(fullpath);
-                            if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                            if (fullpath != null)
                             {
-                                foreach (string candidatePath in Directory.GetDirectories(dir))
+                                string dir = Path.GetDirectoryName(fullpath);
+                                List<string> cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                                string result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
+                                if (!string.IsNullOrEmpty(result_dir))
                                 {
-                                    string candidate = Path.GetFileName(candidatePath);
-                                    if (!string.IsNullOrEmpty(candidate) && candidate.Length == size)
-                                    {
-                                        return candidate;
-                                    }
+                                    return result_dir;
                                 }
                             }
                         }
-                        catch
-                        {
-                        }
+                        catch { }
 
                         switch (size)
                         {
@@ -266,8 +263,7 @@ namespace WzComparerR2.WzLib.Utilities
                                 return "_Canvas";
                         }
                     }
-
-                    return new string(result);
+                    return result.ToString();
                 }
                 finally
                 {
@@ -283,6 +279,7 @@ namespace WzComparerR2.WzLib.Utilities
                 return string.Empty;
             }
         }
+        #endregion
 
         public string ReadImageObjectTypeName(IWzDecrypter decrypter)
         {
@@ -294,7 +291,7 @@ namespace WzComparerR2.WzLib.Utilities
                 case 0x1B:
                     return this.ReadStringAt(this.ReadInt32() + this.StringReferenceOffsetBytes, decrypter);
                 default:
-                    throw new Exception(this.BuildUnexpectedFlagMessage(flag));
+                    throw new Exception($"Unexpected flag '{flag}' when reading string at {this.BaseStream.Position}.");
             }
         }
 
@@ -311,68 +308,7 @@ namespace WzComparerR2.WzLib.Utilities
                     this.SkipBytes(8);
                     return null;
                 default:
-                    throw new Exception(this.BuildUnexpectedFlagMessage(flag));
-            }
-        }
-
-        private string BuildUnexpectedFlagMessage(int flag)
-        {
-            string message = $"Unexpected flag '{flag}' (0x{flag:X2}) when reading string at {this.BaseStream.Position}.";
-            if (!this.BaseStream.CanSeek)
-            {
-                return message;
-            }
-
-            long originalPosition = this.BaseStream.Position;
-            try
-            {
-                long start = Math.Max(0, originalPosition - 8);
-                int byteCount = (int)Math.Min(this.BaseStream.Length - start, 24);
-                if (byteCount <= 0)
-                {
-                    return message;
-                }
-
-                byte[] buffer = new byte[byteCount];
-                this.BaseStream.Position = start;
-                int read = this.BaseStream.Read(buffer, 0, byteCount);
-                if (read <= 0)
-                {
-                    return message;
-                }
-
-                if (read != buffer.Length)
-                {
-                    Array.Resize(ref buffer, read);
-                }
-
-                int markerIndex = (int)Math.Max(0, originalPosition - start - 1);
-                var bytes = new System.Text.StringBuilder();
-                for (int i = 0; i < buffer.Length; i++)
-                {
-                    if (i > 0)
-                    {
-                        bytes.Append(' ');
-                    }
-
-                    if (i == markerIndex)
-                    {
-                        bytes.Append('[');
-                    }
-
-                    bytes.Append(buffer[i].ToString("X2"));
-
-                    if (i == markerIndex)
-                    {
-                        bytes.Append(']');
-                    }
-                }
-
-                return message + " Raw bytes: " + bytes;
-            }
-            finally
-            {
-                this.BaseStream.Position = originalPosition;
+                    throw new Exception($"Unexpected flag '{flag}' when reading string at {this.BaseStream.Position}.");
             }
         }
 
