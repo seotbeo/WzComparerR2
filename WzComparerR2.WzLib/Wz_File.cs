@@ -748,15 +748,155 @@ namespace WzComparerR2.WzLib
                     Array.Resize(ref buffer, read);
                 }
 
-                return buffer[0] == 0x73
-                    || buffer[0] == 0x1B
-                    || (buffer.Length >= 9 && Encoding.ASCII.GetString(buffer, 0, 9) == "#Property")
-                    || (buffer.Length >= 4 && Encoding.ASCII.GetString(buffer, 0, 4) == "Root");
+                if ((buffer.Length >= 9 && Encoding.ASCII.GetString(buffer, 0, 9) == "#Property")
+                    || (buffer.Length >= 4 && Encoding.ASCII.GetString(buffer, 0, 4) == "Root"))
+                {
+                    return true;
+                }
+
+                var reader = new WzBinaryReader(this.fileStream, false);
+                Wz_CryptoKeyType detectedEncType = this.Header?.Signature == Wz_Header.PKG2
+                    ? this.WzStructure?.encryption?.Pkg2EncType ?? Wz_CryptoKeyType.Unknown
+                    : this.WzStructure?.encryption?.Pkg1EncType ?? Wz_CryptoKeyType.Unknown;
+
+                if (detectedEncType != Wz_CryptoKeyType.Unknown
+                    && this.IsSupportedStandaloneImageRoot(reader, dataOffset, this.GetKeysOrNonOp(detectedEncType)))
+                {
+                    return true;
+                }
+
+                foreach (var keyType in new[] {
+                    Wz_CryptoKeyType.Unknown,
+                    Wz_CryptoKeyType.BMS,
+                    Wz_CryptoKeyType.KMS,
+                    Wz_CryptoKeyType.GMS,
+                    Wz_CryptoKeyType.KMST1198,
+                })
+                {
+                    if (keyType == detectedEncType)
+                    {
+                        continue;
+                    }
+
+                    if (this.IsSupportedStandaloneImageRoot(reader, dataOffset, this.GetKeysOrNonOp(keyType)))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
             finally
             {
                 this.fileStream.Position = originalPosition;
             }
+        }
+
+        private IWzDecrypter GetKeysOrNonOp(Wz_CryptoKeyType keyType)
+        {
+            return keyType == Wz_CryptoKeyType.Unknown
+                ? Wz_Crypto.Wz_NonOpCryptoKey.Instance
+                : this.WzStructure?.encryption?.GetKeys(keyType) ?? Wz_Crypto.Wz_NonOpCryptoKey.Instance;
+        }
+
+        private bool IsSupportedStandaloneImageRoot(WzBinaryReader reader, long dataOffset, IWzDecrypter decrypter)
+        {
+            reader.BaseStream.Position = dataOffset;
+            try
+            {
+                switch (reader.ReadImageObjectTypeName(decrypter))
+                {
+                    case "Property":
+                    case "Shape2D#Vector2D":
+                    case "Canvas":
+                    case "Shape2D#Convex2D":
+                    case "Sound_DX8":
+                    case "UOL":
+                    case "RawData":
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+            catch
+            {
+                reader.BaseStream.Position = dataOffset;
+                return this.TryProbeImplicitStandalonePropertyRoot(reader, decrypter);
+            }
+        }
+
+        private bool TryProbeImplicitStandalonePropertyRoot(WzBinaryReader reader, IWzDecrypter decrypter)
+        {
+            long startPosition = reader.BaseStream.Position;
+            try
+            {
+                int entries = reader.ReadCompressedInt32();
+                if (entries < 0 || entries > 0x100000)
+                {
+                    return false;
+                }
+
+                if (entries == 0)
+                {
+                    return true;
+                }
+
+                string firstName = reader.ReadImageString(decrypter);
+                if (!this.IsPlausibleStandalonePropertyName(firstName))
+                {
+                    return false;
+                }
+
+                return this.IsSupportedStandaloneValueType(reader.ReadByte());
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                reader.BaseStream.Position = startPosition;
+            }
+        }
+
+        private bool IsSupportedStandaloneValueType(byte flag)
+        {
+            switch (flag)
+            {
+                case 0x00:
+                case 0x02:
+                case 0x0B:
+                case 0x03:
+                case 0x13:
+                case 0x14:
+                case 0x04:
+                case 0x05:
+                case 0x08:
+                case 0x09:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsPlausibleStandalonePropertyName(string name)
+        {
+            if (string.IsNullOrEmpty(name) || name.Length > 255)
+            {
+                return false;
+            }
+
+            foreach (char c in name)
+            {
+                if (char.IsControl(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private bool TryGetPkg2StandaloneImageRootOffset(long searchStart, int maxSearchBytes, out long dataOffset)
@@ -770,7 +910,7 @@ namespace WzComparerR2.WzLib
             long originalPosition = this.fileStream.Position;
             try
             {
-                if (!this.TryReadCompressedInt32At(searchStart, out _, out int encodedSize))
+                if (!this.TryReadCompressedInt32At(searchStart, out int rootEntryCount, out int encodedSize))
                 {
                     return false;
                 }
@@ -792,6 +932,20 @@ namespace WzComparerR2.WzLib
                     }
 
                     long tableStart = position + markerBytes.Length;
+
+                    // Prefer the payload root implied by the repeated-count table layout.
+                    if (rootEntryCount > 0 && rootEntryCount <= 0x10000)
+                    {
+                        long exactPayloadRootOffset = tableStart + (long)rootEntryCount * sizeof(int);
+                        if (exactPayloadRootOffset > tableStart
+                            && exactPayloadRootOffset < this.fileStream.Length
+                            && this.IsStandaloneImageRootOffset(exactPayloadRootOffset))
+                        {
+                            dataOffset = exactPayloadRootOffset;
+                            return true;
+                        }
+                    }
+
                     long payloadRootOffset = this.FindNextLikelyImageRootOffset(tableStart, 0x400, out _);
                     if (payloadRootOffset <= tableStart)
                     {
@@ -906,40 +1060,26 @@ namespace WzComparerR2.WzLib
             try
             {
                 long endOffset = Math.Min(this.fileStream.Length, startOffset + maxSearchBytes);
-                int byteCount = (int)(endOffset - startOffset);
-                if (byteCount <= 0)
+                if (endOffset <= startOffset)
                 {
                     return -1;
                 }
 
-                byte[] buffer = new byte[byteCount];
-                this.fileStream.Position = startOffset;
-                int read = this.fileStream.Read(buffer, 0, buffer.Length);
-                if (read <= 0)
+                for (long position = startOffset; position < endOffset; position++)
                 {
-                    return -1;
-                }
-
-                for (int i = 0; i < read; i++)
-                {
-                    byte b = buffer[i];
-                    if (b == 0x73 || b == 0x1B)
+                    if (!this.IsStandaloneImageRootOffset(position))
                     {
-                        marker = "0x" + b.ToString("X2");
-                        return startOffset + i;
+                        continue;
                     }
 
-                    if (i + 9 <= read && Encoding.ASCII.GetString(buffer, i, 9) == "#Property")
+                    this.fileStream.Position = position;
+                    int first = this.fileStream.ReadByte();
+                    if (first >= 0)
                     {
-                        marker = "#Property";
-                        return startOffset + i;
+                        marker = "0x" + first.ToString("X2");
                     }
 
-                    if (i + 4 <= read && Encoding.ASCII.GetString(buffer, i, 4) == "Root")
-                    {
-                        marker = "Root";
-                        return startOffset + i;
-                    }
+                    return position;
                 }
 
                 return -1;

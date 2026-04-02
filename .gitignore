@@ -202,3 +202,4 @@ OldVer/
 
 # Ignore automatically generated BuildInfo.cs
 WzComparerR2/BuildInfo.cs
+.dev
