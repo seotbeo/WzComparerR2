@@ -21,7 +21,6 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-.test-build/
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -203,4 +202,3 @@ OldVer/
 
 # Ignore automatically generated BuildInfo.cs
 WzComparerR2/BuildInfo.cs
-.dev

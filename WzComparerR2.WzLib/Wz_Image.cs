@@ -575,89 +575,14 @@ namespace WzComparerR2.WzLib
 
                     string hex = read > 0 ? string.Join(" ", buffer.Select(b => b.ToString("X2"))) : "<empty>";
                     string ascii = read > 0 ? new string(buffer.Select(b => 0x20 <= b && b <= 0x7E ? (char)b : '.').ToArray()) : string.Empty;
-                    string pkg2Hint = this.BuildPkg2PayloadHint(buffer);
 
-                    return $"Failed to detect binary image root. name={this.Name}, encType={this.encType}, size={this.Size}, offset={this.Offset}, firstBytes={hex}, ascii={ascii}{pkg2Hint}";
+                    return $"Failed to detect binary image root. name={this.Name}, encType={this.encType}, size={this.Size}, offset={this.Offset}, firstBytes={hex}, ascii={ascii}";
                 }
             }
             catch (Exception ex)
             {
                 return $"Failed to detect binary image root. name={this.Name}, encType={this.encType}, size={this.Size}, offset={this.Offset}, probeError={ex.GetType().Name}: {ex.Message}";
             }
-        }
-
-        private string BuildPkg2PayloadHint(byte[] buffer)
-        {
-            if (buffer == null
-                || buffer.Length == 0
-                || this.WzFile is not Wz_File wzFile
-                || wzFile.Header?.Signature != Wz_Header.PKG2)
-            {
-                return string.Empty;
-            }
-
-            if (!TryReadLeadingCompressedInt(buffer, out int encryptedEntryCount))
-            {
-                return ", pkg2Candidates=<unavailable>";
-            }
-
-            uint hash1 = wzFile.Header.Pkg2Hash1;
-            uint hash2 = wzFile.Header.Pkg2Hash2;
-            var detector = new Wz_Header.Pkg2WzVersionDetector(hash1, hash2);
-            var candidates = new List<string>();
-            while (detector.TryGetNextVersion())
-            {
-                uint hashVersion = detector.HashVersion;
-                int decV1 = unchecked((int)(encryptedEntryCount ^ ((hash1 << 24) + (0x7F4A7C15u * hashVersion))));
-                int decV2 = unchecked((int)(encryptedEntryCount ^ ((hash1 << 16) + (0x21524111u * hashVersion))));
-
-                if (IsPlausiblePkg2EntryCount(decV1))
-                {
-                    candidates.Add($"wz={detector.WzVersion}/v1:{decV1}");
-                }
-
-                if (IsPlausiblePkg2EntryCount(decV2))
-                {
-                    candidates.Add($"wz={detector.WzVersion}/v2:{decV2}");
-                }
-
-                if (candidates.Count >= 8)
-                {
-                    break;
-                }
-            }
-
-            string candidateText = candidates.Count > 0 ? string.Join(" | ", candidates) : "<none plausible>";
-            return $", pkg2EncryptedCount={encryptedEntryCount}, pkg2Candidates={candidateText}";
-        }
-
-        private static bool TryReadLeadingCompressedInt(byte[] buffer, out int value)
-        {
-            value = 0;
-            if (buffer == null || buffer.Length == 0)
-            {
-                return false;
-            }
-
-            sbyte head = unchecked((sbyte)buffer[0]);
-            if (head != -128)
-            {
-                value = head;
-                return true;
-            }
-
-            if (buffer.Length < 5)
-            {
-                return false;
-            }
-
-            value = BitConverter.ToInt32(buffer, 1);
-            return true;
-        }
-
-        private static bool IsPlausiblePkg2EntryCount(int entryCount)
-        {
-            return entryCount > 0 && entryCount <= 0x200000;
         }
 
         private bool TryProbeImplicitPropertyRoot(WzBinaryReader reader, IWzDecrypter decrypter)
