@@ -26,6 +26,8 @@ namespace WzComparerR2.MapRender.Patches2
         public Rectangle FootholdArea { get; set; }
         public int GroupIndex { get; set; }
         public int LayerLevel { get; set; }
+        public FootholdItem PrevFH { get; set; }
+        public FootholdItem NextFH { get; set; }
         #endregion
 
         public static FootholdItem LoadFromNode(Wz_Node node)

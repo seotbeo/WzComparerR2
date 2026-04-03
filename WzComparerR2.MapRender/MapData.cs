@@ -139,16 +139,18 @@ namespace WzComparerR2.MapRender
             }
             if ((node = mapImgNode.Nodes["foothold"]) != null)
             {
+                this.FootholdManager = new FootholdManager();
                 this.Scene.FootholdContainerById.Clear();
+                int groupIndex = 0;
                 for (int i = 0; i <= 7; i++)
                 {
                     var fhLevel = node.Nodes[i.ToString()];
                     if (fhLevel != null)
                     {
-                        LoadFoothold(fhLevel, i);
+                        LoadFoothold(fhLevel, i, ref groupIndex);
                     }
                 }
-                FootholdManager.Build(this.Scene.Layers);
+                FootholdManager.Build();
             }
             if ((node = mapImgNode.Nodes["life"]) != null)
             {
@@ -313,12 +315,13 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void LoadFoothold(Wz_Node fhLayerNode, int level)
+        private void LoadFoothold(Wz_Node fhLayerNode, int level, ref int groupIndex)
         {
             var layerSceneNode = (LayerNode)this.Scene.Layers.Nodes[level];
 
             foreach (var group in fhLayerNode.Nodes)
             {
+                FootholdGroup fhGroup = new FootholdGroup(groupIndex++);
                 foreach (var node in group.Nodes)
                 {
                     var item = FootholdItem.LoadFromNode(node);
@@ -329,7 +332,9 @@ namespace WzComparerR2.MapRender
                     var fhSceneNode = new ContainerNode<FootholdItem>() { Item = item };
                     layerSceneNode.Foothold.Nodes.Add(fhSceneNode);
                     this.Scene.FootholdContainerById[item.ID] = fhSceneNode;
+                    fhGroup.Add(item);
                 }
+                FootholdManager.Add(fhGroup, level);
             }
         }
 

@@ -13,34 +13,33 @@ namespace WzComparerR2.MapRender
     {
         public List<FootholdGroup>[] FootholdGroups { get; set; } = Enumerable.Range(0, 8).Select(_ => new List<FootholdGroup>()).ToArray();
         public List<FootholdGroup> AllFootholdGroups { get; set; }
-        public Dictionary<int, FootholdItem> AllFootholdByID { get; set; }
-        private HashSet<int> checkedFH { get; set; } = new HashSet<int>();
+        public Dictionary<int, FootholdGroup> AllFootholdGroupsByID { get; set; }
+        public Dictionary<int, FootholdItem> AllFootholdByID { get; set; } = new();
         public Rectangle Area { get; set; } = Rectangle.Empty;
 
-        public void Build(SceneNode root)
+        public void Build()
         {
-            var groupIdx = 0;
-            for (int i = 0; i <= 7; i++)
-            {
-                FootholdGroups[i].Clear();
-                checkedFH.Clear();
-                var fhList = ((LayerNode)root.Nodes[i]).Foothold.Nodes.OfType<ContainerNode<FootholdItem>>()
-                    .Select(container => container.Item).ToList();
-                var fhById = fhList.ToDictionary(f => f.ID);
-
-                foreach (var fh in fhList)
-                {
-                    if (checkedFH.Contains(fh.ID))
-                        continue;
-
-                    var fhGroup = new FootholdGroup(groupIdx++);
-                    AddFootholdToGroup(fhGroup, fh, fhById);
-                    Add(fhGroup, i);
-                }
-            }
 
             AllFootholdGroups = FootholdGroups.SelectMany(g => g).ToList();
-            AllFootholdByID = AllFootholdGroups.SelectMany(g => g.Footholds).ToDictionary(f => f.ID);
+            AllFootholdGroupsByID = AllFootholdGroups.ToDictionary(g => g.Index);
+            AllFootholdByID.Clear();
+            foreach (var fh in AllFootholdGroups.SelectMany(g => g.Footholds))
+            {
+                AllFootholdByID[fh.ID] = fh;
+            }
+
+            for (int i = 0; i <= 7; i++)
+            {
+                Dictionary<int, FootholdItem> fhRef = new();
+                foreach (var fh in FootholdGroups[i].SelectMany(g => g.Footholds))
+                {
+                    fhRef[fh.ID] = fh;
+                }
+                foreach (var group in FootholdGroups[i])
+                {
+                    group.Build(fhRef, AllFootholdByID);
+                }
+            }
         }
 
         public void Add(FootholdGroup item, int layer)
@@ -61,28 +60,18 @@ namespace WzComparerR2.MapRender
 
         public int GetGroupIndexByFoothold(FootholdItem item)
         {
-            return item.GroupIndex;
+            return item?.GroupIndex ?? -1;
         }
 
         public FootholdGroup GetGroupByIndex(int index)
         {
-            return AllFootholdGroups.FirstOrDefault(g => g.Index == index);
-        }
-
-        public int GetLayerByFootholdIndex(int index)
-        {
-            if (GetFootholdByID(index, out var fh)) return GetLayerByFoothold(fh);
-            return -1;
+            AllFootholdGroupsByID.TryGetValue(index, out FootholdGroup group);
+            return group;
         }
 
         public int GetLayerByFoothold(FootholdItem item)
         {
-            return item.LayerLevel;
-        }
-
-        public List<FootholdItem> GetFootholds(FootholdGroup group)
-        {
-            return group.Footholds.ToList();
+            return item?.LayerLevel ?? -1;
         }
 
         public bool GetFootholdByID(int index, out FootholdItem fh)
@@ -167,22 +156,6 @@ namespace WzComparerR2.MapRender
             if (area < 0) return -1;
             return 0;
         }
-
-        private void AddFootholdToGroup(FootholdGroup group, FootholdItem fh, Dictionary<int, FootholdItem> fhRef)
-        {
-            if (!checkedFH.Add(fh.ID)) return;
-            fh.GroupIndex = group.Index;
-            group.Add(fh);
-
-            if (fh.Prev != 0 && fhRef.TryGetValue(fh.Prev, out var prevFH) && prevFH != null)
-            {
-                AddFootholdToGroup(group, prevFH, fhRef);
-            }
-            if (fh.Next != 0 && fhRef.TryGetValue(fh.Next, out var nextFH) && nextFH != null)
-            {
-                AddFootholdToGroup(group, nextFH, fhRef);
-            }
-        }
     }
 
     public class FootholdGroup
@@ -201,11 +174,31 @@ namespace WzComparerR2.MapRender
         public void Add(FootholdItem item)
         {
             Footholds.Add(item);
+            item.GroupIndex = this.Index;
             if (this.GroupArea == Rectangle.Empty)
             {
                 this.GroupArea = item.FootholdArea;
             }
             else this.GroupArea = Rectangle.Union(this.GroupArea, item.FootholdArea);
+        }
+
+        public void Build(Dictionary<int, FootholdItem> layerFootholdsByID, Dictionary<int, FootholdItem> allFootholdsByID)
+        {
+            foreach (var fh in Footholds)
+            {
+                FootholdItem prevFH = null;
+                FootholdItem nextFH = null;
+                if (fh.Prev != 0)
+                {
+                    if (layerFootholdsByID.TryGetValue(fh.Prev, out prevFH) || allFootholdsByID.TryGetValue(fh.Prev, out prevFH))
+                        fh.PrevFH = prevFH;
+                }
+                if (fh.Next != 0)
+                {
+                    if (layerFootholdsByID.TryGetValue(fh.Next, out nextFH) || allFootholdsByID.TryGetValue(fh.Next, out nextFH))
+                        fh.NextFH = nextFH;
+                }
+            }
         }
     }
 }
