@@ -32,12 +32,6 @@ namespace WzComparerR2
                 new ComboItem("ISO-8859-1 (GMS)"){ Value = 1252 },
                 new ComboItem("ASCII"){ Value = -1 },
             });
-
-            cmbWzVersionVerifyMode.Items.AddRange(new[]
-            {
-                new ComboItem("빠름"){ Value = WzLib.WzVersionVerifyMode.Fast },
-                new ComboItem("기본"){ Value = WzLib.WzVersionVerifyMode.Default },
-            });
         }
 
         public bool SortWzOnOpened
@@ -92,18 +86,6 @@ namespace WzComparerR2
             set { txtOpenAPIKey.Text = value; }
         }
 
-        public WzLib.WzVersionVerifyMode WzVersionVerifyMode
-        {
-            get { return ((cmbWzVersionVerifyMode.SelectedItem as ComboItem)?.Value as WzLib.WzVersionVerifyMode?) ?? default; }
-            set
-            {
-                var items = cmbWzVersionVerifyMode.Items.Cast<ComboItem>();
-                var item = items.FirstOrDefault(_item => _item.Value as WzLib.WzVersionVerifyMode? == value)
-                    ?? items.First();
-                cmbWzVersionVerifyMode.SelectedItem = item;
-            }
-        }
-
         public void Load(WcR2Config config)
         {
             this.SortWzOnOpened = config.SortWzOnOpened;
@@ -111,7 +93,6 @@ namespace WzComparerR2
             this.DefaultWzCodePage = config.WzEncoding;
             this.AutoDetectExtFiles = config.AutoDetectExtFiles;
             this.ImgCheckDisabled = config.ImgCheckDisabled;
-            this.WzVersionVerifyMode = config.WzVersionVerifyMode;
             this.AutoDetectUpdate = config.AutoDetectUpdate;
             this.NexonOpenAPIKey = config.NexonOpenAPIKey;
         }
@@ -123,7 +104,6 @@ namespace WzComparerR2
             config.WzEncoding = this.DefaultWzCodePage;
             config.AutoDetectExtFiles = this.AutoDetectExtFiles;
             config.ImgCheckDisabled = this.ImgCheckDisabled;
-            config.WzVersionVerifyMode = this.WzVersionVerifyMode;
             config.AutoDetectUpdate = this.AutoDetectUpdate;
             config.NexonOpenAPIKey = this.NexonOpenAPIKey;
         }

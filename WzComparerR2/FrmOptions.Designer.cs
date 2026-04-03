@@ -45,8 +45,6 @@
             this.chkWzSortByImgID = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkAutoDetectUpdate = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkImgCheckDisabled = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.cmbWzVersionVerifyMode = new DevComponents.DotNetBar.Controls.ComboBoxEx();
-            this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.labelXOpenAPIKey = new DevComponents.DotNetBar.LabelX();
             this.txtOpenAPIKey = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.chkHideAPIKey = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -143,8 +141,6 @@
             // 
             // superTabControlPanel1
             // 
-            this.superTabControlPanel1.Controls.Add(this.cmbWzVersionVerifyMode);
-            this.superTabControlPanel1.Controls.Add(this.labelX2);
             this.superTabControlPanel1.Controls.Add(this.chkImgCheckDisabled);
             this.superTabControlPanel1.Controls.Add(this.chkWzSortByImgID);
             this.superTabControlPanel1.Controls.Add(this.chkAutoCheckExtFiles);
@@ -304,33 +300,6 @@
             this.chkImgCheckDisabled.TabIndex = 6;
             this.chkImgCheckDisabled.Text = "Img 확인 비활성화";
             // 
-            // cmbWzVersionVerifyMode
-            // 
-            this.cmbWzVersionVerifyMode.DisplayMember = "Text";
-            this.cmbWzVersionVerifyMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbWzVersionVerifyMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbWzVersionVerifyMode.FormattingEnabled = true;
-            this.cmbWzVersionVerifyMode.ItemHeight = 15;
-            this.cmbWzVersionVerifyMode.Location = new System.Drawing.Point(86, 132);
-            this.cmbWzVersionVerifyMode.Name = "cmbWzVersionVerifyMode";
-            this.cmbWzVersionVerifyMode.Size = new System.Drawing.Size(121, 21);
-            this.cmbWzVersionVerifyMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cmbWzVersionVerifyMode.TabIndex = 8;
-            // 
-            // labelX2
-            // 
-            this.labelX2.AutoSize = true;
-            this.labelX2.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(14, 134);
-            this.labelX2.Name = "labelX2";
-            this.labelX2.Size = new System.Drawing.Size(68, 18);
-            this.labelX2.TabIndex = 7;
-            this.labelX2.Text = "Wz 버전 확인";
-            // 
             // labelXOpenAPIKey
             // 
             this.labelXOpenAPIKey.AutoSize = true;
@@ -416,7 +385,6 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkWzSortByImgID; 
         private DevComponents.DotNetBar.Controls.CheckBoxX chkAutoDetectUpdate;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkImgCheckDisabled;
-        private DevComponents.DotNetBar.Controls.ComboBoxEx cmbWzVersionVerifyMode;
         private DevComponents.DotNetBar.LabelX labelX2;
         private DevComponents.DotNetBar.LabelX labelXOpenAPIKey;
         private DevComponents.DotNetBar.Controls.TextBoxX txtOpenAPIKey;

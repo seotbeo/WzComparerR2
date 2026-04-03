@@ -215,7 +215,7 @@
             this.superTabItem1 = new DevComponents.DotNetBar.SuperTabItem();
             this.superTabControlPanel2 = new DevComponents.DotNetBar.SuperTabControlPanel();
             this.chkResolvePngLink = new DevComponents.DotNetBar.Controls.CheckBoxX();
-            this.chkEnableDarkMode = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.btnCustomCSS = new DevComponents.DotNetBar.ButtonX();
             this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
             this.chkOutputGearTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkOutputItemTooltip = new DevComponents.DotNetBar.Controls.CheckBoxX();
@@ -2603,7 +2603,7 @@
             // superTabControlPanel2
             // 
             this.superTabControlPanel2.Controls.Add(this.chkHashPngFileName);
-            this.superTabControlPanel2.Controls.Add(this.chkEnableDarkMode);
+            this.superTabControlPanel2.Controls.Add(this.btnCustomCSS);
             this.superTabControlPanel2.Controls.Add(this.chkOutputGearTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputItemTooltip);
             this.superTabControlPanel2.Controls.Add(this.chkOutputMapTooltip);
@@ -2646,19 +2646,21 @@
             this.chkResolvePngLink.TabIndex = 6;
             this.chkResolvePngLink.Text = "PNG 링크 따라가기";
             // 
-            // chkEnableDarkMode
+            // btnCustomCSS
             // 
             // 
             // 
             // 
-            this.chkEnableDarkMode.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkEnableDarkMode.Location = new System.Drawing.Point(314, 61);
-            this.chkEnableDarkMode.Name = "chkEnableDarkMode";
-            this.chkEnableDarkMode.Size = new System.Drawing.Size(140, 23);
-            this.chkEnableDarkMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkEnableDarkMode, new DevComponents.DotNetBar.SuperTooltipInfo("EnableDarkMode", "", "비교 결과 HTML을 다크 모드로 출력합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
-            this.chkEnableDarkMode.TabIndex = 9;
-            this.chkEnableDarkMode.Text = "다크 모드 활성화";
+            this.btnCustomCSS.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnCustomCSS.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnCustomCSS.Location = new System.Drawing.Point(484, 61);
+            this.btnCustomCSS.Name = "btnCustomCSS";
+            this.btnCustomCSS.Size = new System.Drawing.Size(100, 23);
+            this.btnCustomCSS.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.superTooltip1.SetSuperTooltip(this.btnCustomCSS, new DevComponents.DotNetBar.SuperTooltipInfo("색상 수정", "", "비교 결과 HTML의 색상을 수정합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 90)));
+            this.btnCustomCSS.TabIndex = 10;
+            this.btnCustomCSS.Text = "색상 수정";
+            this.btnCustomCSS.Click += new System.EventHandler(this.btnCustomCSS_Click);
             // 
             // chkHashPngFileName
             // 
@@ -2666,12 +2668,12 @@
             // 
             // 
             this.chkHashPngFileName.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkHashPngFileName.Location = new System.Drawing.Point(484, 61);
+            this.chkHashPngFileName.Location = new System.Drawing.Point(314, 61);
             this.chkHashPngFileName.Name = "chkHashPngFileName";
             this.chkHashPngFileName.Size = new System.Drawing.Size(140, 23);
             this.chkHashPngFileName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.superTooltip1.SetSuperTooltip(this.chkHashPngFileName, new DevComponents.DotNetBar.SuperTooltipInfo("HashPngFileName", "", "MD5 체크섬 값으로 PNG 파일 이름을 지정합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 80)));
-            this.chkHashPngFileName.TabIndex = 10;
+            this.chkHashPngFileName.TabIndex = 9;
             this.chkHashPngFileName.Text = "PNG 파일명 해시";
             // 
             // chkOutputGearTooltip
@@ -3744,7 +3746,7 @@
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex1;
         private DevComponents.DotNetBar.CheckBoxItem checkBoxItemRegex2;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;
-        private DevComponents.DotNetBar.Controls.CheckBoxX chkEnableDarkMode;
+        private DevComponents.DotNetBar.ButtonX btnCustomCSS;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputGearTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputItemTooltip;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkOutputMapTooltip;

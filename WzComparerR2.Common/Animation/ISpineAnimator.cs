@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Xna.Framework;
 
 namespace WzComparerR2.Animation
 {
@@ -17,6 +16,6 @@ namespace WzComparerR2.Animation
         Queue<string> NextAnimationName { get; set; }
         int CurrentTime { get; }
         void Render(Spine.SkeletonRenderer renderer);
-        Rectangle GetBounds(string slot);
+        Microsoft.Xna.Framework.Rectangle GetSlotBounds(string slot);
     }
 }

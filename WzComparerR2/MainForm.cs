@@ -330,7 +330,6 @@ namespace WzComparerR2
             Wz_Structure.DefaultEncoding = enc;
             Wz_Structure.DefaultAutoDetectExtFiles = config.AutoDetectExtFiles;
             Wz_Structure.DefaultImgCheckDisabled = config.ImgCheckDisabled;
-            Wz_Structure.DefaultWzVersionVerifyMode = config.WzVersionVerifyMode;
         }
 
         private void UpdateClbRootNode()
@@ -4394,7 +4393,6 @@ namespace WzComparerR2
                     comparer.OutputPng = chkOutputPng.Checked;
                     comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                     comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
-                    comparer.EnableDarkMode = chkEnableDarkMode.Checked;
                     if (chkOutputAll.Checked)
                     {
                         comparer.OutputGearTooltip = true;
@@ -4420,6 +4418,18 @@ namespace WzComparerR2
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);
                     comparer.StateDetailChanged += new EventHandler(comparer_StateDetailChanged);
+                    comparer.ColorTable = new List<System.Drawing.Color>()
+                    {
+                        CustomCSSConfig.Default.BackgroundColor,
+                        CustomCSSConfig.Default.NormalTextColor,
+                        CustomCSSConfig.Default.ChangedBackgroundColor,
+                        CustomCSSConfig.Default.AddedBackgroundColor,
+                        CustomCSSConfig.Default.RemovedBackgroundColor,
+                        CustomCSSConfig.Default.ChangedTextColor,
+                        CustomCSSConfig.Default.AddedTextColor,
+                        CustomCSSConfig.Default.RemovedTextColor,
+                        CustomCSSConfig.Default.HyperlinkColor
+                    };
                     try
                     {
                         Wz_File fileNew = openedWz[0].wz_files[0];
@@ -4729,6 +4739,21 @@ namespace WzComparerR2
                     }
                     labelItemStatus.Text = "내보내기 완료: " + exportedFolder;
 
+                }
+            }
+        }
+
+        private void btnCustomCSS_Click(object sender, EventArgs e)
+        {
+            ConfigManager.Reload();
+            var Setting = CustomCSSConfig.Default;
+            using (FrmCustomCSS frm = new FrmCustomCSS())
+            {
+                frm.LoadConfig(Setting);
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    frm.SaveConfig(Setting);
+                    ConfigManager.Save();
                 }
             }
         }

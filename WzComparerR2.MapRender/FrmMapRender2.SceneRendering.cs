@@ -181,8 +181,8 @@ namespace WzComparerR2.MapRender
                     {
                         SlotName = ie.SlotName,
                         Animation = ie.Animation,
-                        MapEvent = this.mapData.Events.Where(me => ie.ActionKeys.Contains(me.Index)),
-                        Rect = (animator as ISpineAnimator).GetBounds(ie.SlotName),
+                        MapEvent = this.mapData.MapEvents.Where(me => ie.ActionKeys.Contains(me.Index)),
+                        Rect = (animator as ISpineAnimator).GetSlotBounds(ie.SlotName),
                     };
                 }).Where(data => data.MapEvent != null || !string.IsNullOrEmpty(data.Animation));
 

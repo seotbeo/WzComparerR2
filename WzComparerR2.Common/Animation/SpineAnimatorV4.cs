@@ -135,14 +135,14 @@ namespace WzComparerR2.Animation
             return bound.GetBound();
         }
 
-        public Rectangle GetBounds(string slotName)
+        public Rectangle GetSlotBounds(string slotName)
         {
             Skeleton skeleton = this.Skeleton;
             if (!string.IsNullOrEmpty(slotName))
             {
                 Slot slot = skeleton.FindSlot(slotName);
                 if (slot != null)
-                    return GetBoundingBox(slot);
+                    return GetSlotBoundingBox(slot);
             }
             ModelBound bound = ModelBound.Empty;
             UpdateBounds(ref bound, skeleton);
@@ -178,7 +178,7 @@ namespace WzComparerR2.Animation
             }
         }
 
-        private Rectangle GetBoundingBox(Slot slot)
+        private Rectangle GetSlotBoundingBox(Slot slot)
         {
             ModelBound bound = ModelBound.Empty;
 

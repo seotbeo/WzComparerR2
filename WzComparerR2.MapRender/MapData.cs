@@ -22,7 +22,7 @@ namespace WzComparerR2.MapRender
             this.Scene = new MapScene();
             this.MiniMap = new MiniMap();
             this.Tooltips = new List<TooltipItem>();
-            this.Events = new List<MapEvent>();
+            this.MapEvents = new List<MapEvent>();
             this.FootholdManager = new FootholdManager();
             this.Date = DateTime.Now;
 
@@ -51,7 +51,7 @@ namespace WzComparerR2.MapRender
 
         public MapScene Scene { get; private set; }
         public IList<TooltipItem> Tooltips { get; private set; }
-        public List<MapEvent> Events { get; private set; }
+        public List<MapEvent> MapEvents { get; private set; }
         public FootholdManager FootholdManager { get; private set; }
         public DateTime Date { get; set; }
         public bool EnableMobMovement
@@ -190,7 +190,7 @@ namespace WzComparerR2.MapRender
             }
             if ((node = mapImgNode.Nodes["effect"]) != null)
             {
-                LoadEvents(node);
+                LoadMapEvents(node);
             }
 
             //计算地图大小
@@ -592,7 +592,7 @@ namespace WzComparerR2.MapRender
             this.Light = mapLight;
         }
 
-        private void LoadEvents(Wz_Node effectNode)
+        private void LoadMapEvents(Wz_Node effectNode)
         {
             foreach (var node in effectNode.Nodes)
             {
@@ -603,7 +603,7 @@ namespace WzComparerR2.MapRender
                 var tags = node.FindNodeByPath("tags").GetValueEx<string>(null);
                 var item = new MapEvent(index, type, defaultAnimation, changedAnimation, tags);
 
-                this.Events.Add(item);
+                this.MapEvents.Add(item);
             }
         }
 
