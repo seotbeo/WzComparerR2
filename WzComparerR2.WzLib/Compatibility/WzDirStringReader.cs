@@ -8,6 +8,7 @@ namespace WzComparerR2.WzLib.Compatibility
     public interface IPkg2DirStringReader
     {
         string ReadName(WzBinaryReader reader, bool isFirstEntry);
+        string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath);
     }
 
     /// <summary>
@@ -23,6 +24,11 @@ namespace WzComparerR2.WzLib.Compatibility
         private readonly IWzDecrypter keys;
 
         public string ReadName(WzBinaryReader reader, bool isFirstEntry)
+        {
+            return reader.ReadString(keys);
+        }
+
+        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
         {
             return reader.ReadString(keys);
         }
@@ -45,6 +51,11 @@ namespace WzComparerR2.WzLib.Compatibility
         public string ReadName(WzBinaryReader reader, bool isFirstEntry)
         {
             return isFirstEntry ? reader.ReadPkg2DirString(pkg2Keys) : reader.ReadString(pkg1Keys);
+        }
+
+        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
+        {
+            return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath) : reader.ReadString(pkg1Keys);
         }
     }
 }

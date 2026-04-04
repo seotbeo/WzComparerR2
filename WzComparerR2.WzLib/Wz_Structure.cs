@@ -169,6 +169,26 @@ namespace WzComparerR2.WzLib
                     }
                 }
 
+                // temp workaround for unknown pkg2 encryption
+                // brute-force search for all possible image offsets
+                if (file.Header.IsPkg2 && matchedProfile == null && file.CandidateImageInfos.Count == 0)
+                {
+                    if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header pkg2Header)
+                    {
+                        var unknownProfile = (UnknownPkg2Profile)WzVersionProfiles.GetUnknownPkg2Profile();
+                        pkg2Header.DirStringReader = unknownProfile.CreateDirStringReader(file, this.encryption);
+                        if (preReadResult.Pkg2DirEntryCounts.Count > 0)
+                        {
+                            file.ForcedCounts = new Queue<int>(preReadResult.Pkg2DirEntryCounts.Select(ec => ec.ActualEntryCount)); 
+                            var imgSearchCount = preReadResult.Pkg2DirEntryCounts.Sum(ec => ec.ActualImgCount);
+                            if (imgSearchCount >= 1)
+                            {
+                                file.FindAllHits(imgSearchCount);
+                            }
+                        }
+                    }
+                }
+
                 // 4. full dir tree read
                 node.Value = file;
                 file.Node = node;

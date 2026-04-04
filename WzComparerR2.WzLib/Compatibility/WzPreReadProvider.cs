@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using WzComparerR2.WzLib.Utilities;
 
 namespace WzComparerR2.WzLib.Compatibility
@@ -193,6 +194,7 @@ namespace WzComparerR2.WzLib.Compatibility
             {
                 EncryptedEntryCount = encryptedEntryCount,
                 ActualEntryCount = temp.Count,
+                ActualImgCount = temp.Count(e => e.NodeType == 0x04),
             });
 
             int dirCount = 0;
@@ -347,6 +349,7 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         public int EncryptedEntryCount;
         public int ActualEntryCount;
+        public int ActualImgCount;
     }
 
     #endregion

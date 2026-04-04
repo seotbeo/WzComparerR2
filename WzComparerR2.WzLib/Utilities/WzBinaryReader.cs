@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace WzComparerR2.WzLib.Utilities
@@ -158,6 +160,82 @@ namespace WzComparerR2.WzLib.Utilities
                     decrypter.Decrypt(buffer.AsSpan(0, byteSize));
                     Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer.AsSpan(0, byteSize));
                     return this.stringPool != null ? this.stringPool.GetOrAdd(currentPos, chars) : chars.ToString();
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
+            else if (size > 0)
+            {
+                throw new Exception($"Unexpected string length: {size}");
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        // temp workaround for unknown pkg2 encryption
+        public string ForceReadPkg2DirString(byte nodeType, string fullpath = null)
+        {
+            long currentPos = this.BaseStream.Position;
+
+            int size = this.ReadSByte();
+            if (size < 0)
+            {
+                size = -size;
+                int byteSize = size * 2;
+                var buffer = ArrayPool<byte>.Shared.Rent(byteSize);
+                try
+                {
+                    this.BaseStream.ReadExactly(buffer, 0, byteSize);
+                    Span<char> result = new char[size];
+                    byte keyByte = 157;
+                    if (nodeType == 0x04)
+                    {
+                        if (size > 4)
+                        {
+                            char[] code = { '.', 'i', 'm', 'g' };
+                            for (int j = 0; j < 4; j++)
+                            {
+                                if (result[size - 4 + j] != code[j])
+                                {
+                                    result[size - 4 + j] = code[j];
+                                    keyByte = (byte)(buffer[(size - 4 + j) * 2] ^ code[j]);
+                                    for (int i = size - 4 + j; i >= 0; i -= 4)
+                                    {
+                                        result[i] = (char)(buffer[i * 2] ^ keyByte);
+                                    }
+                                }
+                            }
+                        }
+                        return result.ToString();
+                    }
+                    else if (nodeType == 0x03) // dir
+                    {
+                        try
+                        {
+                            if (fullpath != null)
+                            {
+                                string dir = Path.GetDirectoryName(fullpath);
+                                List<string> cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                                string result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
+                                if (!string.IsNullOrEmpty(result_dir))
+                                {
+                                    return result_dir;
+                                }
+                            }
+                        }
+                        catch { }
+
+                        switch (size)
+                        {
+                            case 7:
+                                return "_Canvas";
+                        }
+                    }
+                    return result.ToString();
                 }
                 finally
                 {

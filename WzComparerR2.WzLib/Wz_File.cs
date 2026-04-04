@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -206,7 +207,7 @@ namespace WzComparerR2.WzLib
             }
             else if (this.header.IsPkg2)
             {
-                this.ReadDirTreePkg2(reader, parent, ref dirs);
+                this.ReadDirTreePkg2(reader, parent, ref dirs, fileName);
             }
             else
             {
@@ -366,12 +367,20 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        private void ReadDirTreePkg2(WzBinaryReader reader, Wz_Node parent, ref List<Wz_Directory> dirs)
+        private void ReadDirTreePkg2(WzBinaryReader reader, Wz_Node parent, ref List<Wz_Directory> dirs, string fileName = null)
         {
             var dirReader = ((Wz_Header.WzPkg2Header)this.Header).DirStringReader;
             var pkg2Calc = this.OffsetCalc as IPkg2ImageOffsetCalc;
             int encryptedEntryCount = reader.ReadCompressedInt32();
             int entryCount = pkg2Calc?.DecryptEntryCount(encryptedEntryCount) ?? 0;
+            int hitcount = 0;
+            long forcedOffset = -1;
+            bool force = false;
+            if (this.ForcedCounts.Count > 0)
+            {
+                entryCount = this.ForcedCounts.Dequeue();
+                force = true;
+            }
 
             List<Pkg2DirEntry> entries = new();
             for (int i = 0; i < entryCount; i++)
@@ -380,7 +389,13 @@ namespace WzComparerR2.WzLib
                 string name;
                 if (nodeType == 0x03 || nodeType == 0x04)
                 {
-                    name = dirReader.ReadName(reader, entries.Count == 0);
+                    name = force ? dirReader.ForceReadName(reader, entries.Count == 0, nodeType, fileName) : dirReader.ReadName(reader, entries.Count == 0);
+                }
+                else if (force && (nodeType == 0x80 || (-127 <= encryptedEntryCount && encryptedEntryCount <= 127 && nodeType == encryptedEntryCount)))
+                {
+                    // next byte is encryptedOffsetCount
+                    reader.BaseStream.Position--;
+                    break;
                 }
                 else
                 {
@@ -389,12 +404,25 @@ namespace WzComparerR2.WzLib
 
                 int size = reader.ReadCompressedInt32();
                 int cs32 = reader.ReadCompressedInt32();
+                if (force && nodeType == 0x04 && hitcount < this.CandidateImageInfos.Count)
+                {
+                    if (size == this.CandidateImageInfos[hitcount].Item2)
+                    {
+                        forcedOffset = this.CandidateImageInfos[hitcount].Item1;
+                    }
+                    else
+                    {
+                        forcedOffset = this.CandidateImageInfos.FirstOrDefault(t => size == t.Item2)?.Item1 ?? 0;
+                    }
+                    hitcount++;
+                }
                 entries.Add(new Pkg2DirEntry
                 {
                     NodeType = nodeType,
                     Name = name,
                     DataLength = size,
-                    Checksum = cs32
+                    Checksum = cs32,
+                    ForcedOffset = forcedOffset
                 });
             }
 
@@ -413,6 +441,8 @@ namespace WzComparerR2.WzLib
                             Wz_Image img = new Wz_Image(entry.Name, entry.DataLength, entry.Checksum, hashOffset, pos, this);
                             if (this.OffsetCalc != null)
                                 img.Offset = this.OffsetCalc.CalcOffset(pos, hashOffset);
+                            if (entry.ForcedOffset >= 0)
+                                img.Offset = entry.ForcedOffset;
                             Wz_Node childNode = parent.Nodes.Add(entry.Name);
                             childNode.Value = img;
                             img.OwnerNode = childNode;
@@ -543,6 +573,112 @@ namespace WzComparerR2.WzLib
             wz_File.ownerWzFile = this;
         }
 
+        #region temp workaround for unknown pkg2 encryption
+        public List<Tuple<long, long>> CandidateImageInfos { get; set; } = new();
+        public Queue<int> ForcedCounts { get; set; } = new();
+
+        public void FindAllHits(int maxSearchCount)
+        {
+            var reader = new WzBinaryReader(this.FileStream, false);
+            var originPos = reader.BaseStream.Position;
+            reader.BaseStream.Position = 0;
+
+            byte[] target = { 0x73, 0xF8, 0xFA, 0xD9, 0xC3 }; // 73 F8 FA D9 C3
+            reader.BaseStream.Position = 0;
+            var offsets = FindAllPatterns(reader, target, maxSearchCount);
+            var sizes = DiffAdjacent(offsets);
+            var count = offsets.Count;
+            if (count == sizes.Count + 1)
+            {
+                for (int i = 0; i < sizes.Count; i++)
+                {
+                    long offset = offsets[i];
+                    CandidateImageInfos.Add(new Tuple<long, long>(offset, sizes[i]));
+                }
+            }
+            reader.BaseStream.Position = originPos;
+        }
+
+        static List<long> FindAllPatterns(WzBinaryReader reader, byte[] pattern, int maxSearchCount)
+        {
+            if (pattern == null || pattern.Length == 0)
+                throw new ArgumentException("pattern must not be empty");
+
+            const int BufferSize = 256 * 1024;
+
+            int m = pattern.Length;
+            int overlap = m - 1;
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(BufferSize + overlap);
+            var positions = new List<long>();
+
+            var skip = new int[256];
+            for (int i = 0; i < skip.Length; i++)
+                skip[i] = m;
+
+            for (int i = 0; i < m - 1; i++)
+                skip[pattern[i]] = m - 1 - i;
+
+            long filePos = 0;
+
+            try
+            {
+                int bytesRead;
+                while ((bytesRead = reader.BaseStream.Read(buffer, overlap, BufferSize)) > 0)
+                {
+                    int total = bytesRead + overlap;
+                    int limit = total - m;
+                    int i = 0;
+
+                    while (i <= limit)
+                    {
+                        int j = m - 1;
+
+                        while (j >= 0 && buffer[i + j] == pattern[j])
+                            j--;
+
+                        if (j < 0)
+                        {
+                            long pos = filePos + i - overlap;
+                            if (pos >= 0)
+                                positions.Add(pos);
+
+                            i++;
+                        }
+                        else
+                        {
+                            i += skip[buffer[i + m - 1]];
+                        }
+                    }
+
+                    if (overlap > 0)
+                        Buffer.BlockCopy(buffer, total - overlap, buffer, 0, overlap);
+
+                    if (positions.Count >= maxSearchCount)
+                        break;
+
+                    filePos += bytesRead;
+                }
+
+                positions.Add(reader.BaseStream.Length);
+                return positions;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+
+        static List<long> DiffAdjacent(List<long> list)
+        {
+            var diffs = new List<long>();
+            if (list.Count <= 1) return diffs;
+
+            for (int i = 1; i < list.Count; i++)
+                diffs.Add(list[i] - list[i - 1]);
+
+            return diffs;
+        }
+        #endregion
 
         private struct Pkg2DirEntry
         {
@@ -550,6 +686,7 @@ namespace WzComparerR2.WzLib
             public string Name;
             public int DataLength;
             public int Checksum;
+            public long ForcedOffset;
         }
     }
 
