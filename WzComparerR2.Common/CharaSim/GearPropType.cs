@@ -204,6 +204,7 @@ namespace WzComparerR2.CharaSim
         reissueBan,
         collabo,
         isAbleCustomIllust,
+        activeSkillRing,
 
         //MSN专属属性
         blockUpgradeExtraOption,

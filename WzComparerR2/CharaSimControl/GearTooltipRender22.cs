@@ -1935,6 +1935,12 @@ namespace WzComparerR2.CharaSimControl
                 tags.Add(string.Join("#$r,# ", tempTags));
             }
             tempTags.Clear();
+            // 특수 스킬 반지
+            if (Gear.Props.TryGetValue(GearPropType.activeSkillRing, out value) && value != 0)
+            {
+                tags.Add($"#$r아이템 그룹 내 중복 장착 불가# (특수 스킬 반지)\n" + 
+                    $"#$r액티브 특수 스킬 반지 중복 장착 불가#");
+            }
 
             // 프리즘 불가
             if (Gear.Props.TryGetValue(GearPropType.noPrism, out value) && value != 0)
