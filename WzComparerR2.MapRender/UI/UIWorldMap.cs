@@ -94,6 +94,19 @@ namespace WzComparerR2.MapRender.UI
             canvas.Children.Add(title);
             this.SetDragTarget(title);
 
+            WorldMapArea mapArea = new WorldMapArea();
+            mapArea.Width = 640;
+            mapArea.Height = 480;
+            mapArea.InputBindings.Add(new InputBinding(new RelayCommand(MapArea_RightClick), new MouseGesture(MouseAction.RightClick)));
+            Canvas.SetLeft(mapArea, 7);
+            Canvas.SetTop(mapArea, 44);
+            canvas.Children.Add(mapArea);
+            this.SetBinding(CurrentWorldMapProperty, new Binding(Control.DataContextProperty) { Source = mapArea, Mode = BindingMode.OneWayToSource });
+            this.SetBinding(CurrentMapIDProperty, new Binding("CurrentMapID") { Source = mapArea, Mode = BindingMode.OneWayToSource });
+            this.SetBinding(SelectedQuestLimitIndexProperty, new Binding("SelectedQuestIndex") { Source = mapArea, Mode = BindingMode.OneWayToSource });
+            this.SetBinding(SelectedFogIndexProperty, new Binding("SelectedFogIndex") { Source = mapArea, Mode = BindingMode.OneWayToSource });
+            this.MapArea = mapArea;
+
             ComboBox cmbMaps = new ComboBox();
             cmbMaps.Width = 150;
             cmbMaps.Height = 20;
@@ -120,19 +133,6 @@ namespace WzComparerR2.MapRender.UI
             cmbFogList.SetBinding(ComboBox.SelectedIndexProperty, new Binding(UIWorldMap.SelectedFogIndexProperty) { Source = this, Mode = BindingMode.TwoWay });
             canvas.Children.Add(cmbFogList);
             this.CmbFogList = cmbFogList;
-
-            WorldMapArea mapArea = new WorldMapArea();
-            mapArea.Width = 640;
-            mapArea.Height = 480;
-            mapArea.InputBindings.Add(new InputBinding(new RelayCommand(MapArea_RightClick), new MouseGesture(MouseAction.RightClick)));
-            Canvas.SetLeft(mapArea, 7);
-            Canvas.SetTop(mapArea, 44);
-            canvas.Children.Add(mapArea);
-            this.SetBinding(CurrentWorldMapProperty, new Binding(Control.DataContextProperty) { Source = mapArea, Mode = BindingMode.OneWayToSource });
-            this.SetBinding(CurrentMapIDProperty, new Binding("CurrentMapID") { Source = mapArea, Mode = BindingMode.OneWayToSource });
-            this.SetBinding(SelectedQuestLimitIndexProperty, new Binding("SelectedQuestIndex") { Source = mapArea, Mode = BindingMode.OneWayToSource });
-            this.SetBinding(SelectedFogIndexProperty, new Binding("SelectedFogIndex") { Source = mapArea, Mode = BindingMode.OneWayToSource });
-            this.MapArea = mapArea;
 
             Button btnBack = new Button();
             btnBack.Width = 50;
