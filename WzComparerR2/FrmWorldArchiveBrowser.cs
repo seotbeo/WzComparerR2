@@ -152,6 +152,7 @@ namespace WzComparerR2
                         if (hideRegion)
                         {
                             regionName += " (숨겨짐)";
+                        }
                         var node = new Node(regionName);
                         node.Tag = mapNode;
                         this.advTreeMap.Nodes.Add(node);
