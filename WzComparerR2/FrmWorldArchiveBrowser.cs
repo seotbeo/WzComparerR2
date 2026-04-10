@@ -144,10 +144,15 @@ namespace WzComparerR2
             {
                 foreach (var mapNode in mapNodes.Nodes)
                 {
+                    bool hideRegion = mapNode.FindNodeByPath("hide").GetValueEx<int>(0) == 1;
                     Wz_Node regionNameNode = mapNode.FindNodeByPath("regionName");
                     if (regionNameNode != null)
                     {
-                        var node = new Node(regionNameNode.Value.ToString());
+                        string regionName = regionNameNode.Value.ToString();
+                        if (hideRegion)
+                        {
+                            regionName += " (숨겨짐)";
+                        var node = new Node(regionName);
                         node.Tag = mapNode;
                         this.advTreeMap.Nodes.Add(node);
                     }
@@ -167,7 +172,6 @@ namespace WzComparerR2
                 {
                     this.picWorldArchiveImg.Image = ApplyMask(bo.Bitmap);
                     bo.Bitmap.Dispose();
-                    
                 }
             }
         }
@@ -426,6 +430,7 @@ namespace WzComparerR2
                 {
                     foreach (var node in lifeNodes.Nodes)
                     {
+                        bool hideLife = node.FindNodeByPath("hide").GetValueEx<int>(0) == 1;
                         Wz_Node idNode = node.FindNodeByPath("id");
                         if (idNode != null)
                         {
@@ -456,7 +461,12 @@ namespace WzComparerR2
                                         sr.Name = "(null)";
                                         break;
                                 }
-                                var childNode = new Node($"{sr.Name} ({lifeID})");
+                                string lifeName = $"{sr.Name} ({lifeID})";
+                                if (hideLife)
+                                {
+                                    lifeName += " (숨겨짐)";
+                                }
+                                var childNode = new Node(lifeName);
                                 childNode.Tag = new KeyValuePair<int, Wz_Node>(lifeID, node);
                                 if (count++ == 0)
                                 {
