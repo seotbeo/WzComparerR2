@@ -287,12 +287,13 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
             {
-                TextRenderer.DrawText(g, "LIMITED 라벨", GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
+                Color limitedLabelTooltipColor = Color.FromArgb(Gear.LimitedLabel.TooltipNameColor);
+                TextRenderer.DrawText(g, Gear.LimitedLabel.TooltipName, GearGraphics.EquipMDMoris9Font, new Point(261, picH), limitedLabelTooltipColor, TextFormatFlags.HorizontalCenter);
                 picH += 15;
-                if (!string.IsNullOrEmpty(Gear.LabelGradeTooltip))
+                if (!string.IsNullOrEmpty(Gear.LimitedLabel.GradeTooltip))
                 {
-                    var limitedLabelText = Regex.Replace(Gear.LabelGradeTooltip, "%d", "0");
-                    TextRenderer.DrawText(g, limitedLabelText, GearGraphics.EquipMDMoris9Font, new Point(261, picH), Color.FromArgb(248, 196, 129), TextFormatFlags.HorizontalCenter);
+                    var limitedLabelText = Regex.Replace(Gear.LimitedLabel.GradeTooltip, "%d", "0");
+                    TextRenderer.DrawText(g, limitedLabelText, GearGraphics.EquipMDMoris9Font, new Point(261, picH), limitedLabelTooltipColor, TextFormatFlags.HorizontalCenter);
                     picH += 15;
                 }
             }
@@ -443,7 +444,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (Gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
                 {
-                    cashImg = Resource.CashShop_img_CashItem_label_15;
+                    cashImg = (Bitmap)Resource.ResourceManager.GetObject($"CashShop_img_CashItem_label_{Gear.LimitedLabel.IconLabelNum}");
                     cashOrigin = new Point(12, 12);
                 }
                 else if (Gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)

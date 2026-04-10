@@ -566,7 +566,7 @@ namespace WzComparerR2.CharaSimControl
                 }
                 else if (gear.Props.TryGetValue(GearPropType.limitedLabel, out value) && value > 0)
                 {
-                    cashImg = Resource.CashShop_img_CashItem_label_15;
+                    cashImg = (Bitmap)Resource.ResourceManager.GetObject($"CashShop_img_CashItem_label_{gear.LimitedLabel.IconLabelNum}");
                     cashOrigin = new Point(12, 12);
                 }
                 else if (gear.Props.TryGetValue(GearPropType.magicLayerWz2, out value) && value > 0)
