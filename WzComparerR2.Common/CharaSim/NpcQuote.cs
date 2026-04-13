@@ -50,22 +50,22 @@ namespace WzComparerR2.CharaSim
                 {
                     if (Regex.IsMatch(quoteNode.Text, @"^n\d+$"))
                     {
-                        npcQuote.NQuote[nQuoteIndex] = stringParse(quoteNode.Value.ToString(), stringLinker);
+                        npcQuote.NQuote[nQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
                         nQuoteIndex++;
                     }
                     else if (Regex.IsMatch(quoteNode.Text, @"^f\d+$"))
                     {
-                        npcQuote.FQuote[fQuoteIndex] = stringParse(quoteNode.Value.ToString(), stringLinker);
+                        npcQuote.FQuote[fQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
                         fQuoteIndex++;
                     }
                     else if (Regex.IsMatch(quoteNode.Text, @"^w\d+$"))
                     {
-                        npcQuote.WQuote[wQuoteIndex] = stringParse(quoteNode.Value.ToString(), stringLinker);
+                        npcQuote.WQuote[wQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
                         wQuoteIndex++;
                     }
                     else if (Regex.IsMatch(quoteNode.Text, @"^d\d+$"))
                     {
-                        npcQuote.DQuote[dQuoteIndex] = stringParse(quoteNode.Value.ToString(), stringLinker);
+                        npcQuote.DQuote[dQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
                         dQuoteIndex++;
                     }
                     else if (quoteNode.Text == "dialogue" || quoteNode.Text == "dialog")
@@ -73,7 +73,7 @@ namespace WzComparerR2.CharaSim
                         foreach (var dialogueNode in quoteNode.Nodes)
                         {
                             if (Int32.TryParse(dialogueNode.Text, out int dialogueId))
-                                npcQuote.SpecialQuote[dialogueId] = stringParse(dialogueNode.Value.ToString(), stringLinker);
+                                npcQuote.SpecialQuote[dialogueId] = stringParse(Convert.ToString(dialogueNode.Value), stringLinker);
                         }
                     }
                     else if (quoteNode.Text == "bubble")
@@ -84,7 +84,7 @@ namespace WzComparerR2.CharaSim
                             {
                                 foreach (var subNode2 in subNode.Nodes)
                                 {
-                                    npcQuote.NQuote[nQuoteIndex] = stringParse(subNode2.Value.ToString(), stringLinker);
+                                    npcQuote.NQuote[nQuoteIndex] = stringParse(Convert.ToString(subNode2.Value), stringLinker);
                                     nQuoteIndex++;
                                 }
                             }
