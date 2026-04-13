@@ -514,9 +514,11 @@ namespace WzComparerR2.MapRender.UI
                 var query = this.worldMaps.Where(_map => _map.MapList.Any(_spot => _spot.MapNo.Contains(mapID)))
                     .Select(_map =>
                     {
+                        HashSet<string> hs = new();
                         int level = 0;
                         for (var cur = _map; cur != null; cur = cur.ParentMapInfo)
                         {
+                            if (!hs.Add(cur.Name)) break;
                             level++;
                         }
                         return new { map = _map, level = level };
