@@ -75,6 +75,7 @@ namespace WzComparerR2.CharaSimControl
         public static Font AchievementTitleFont { get; private set; }
         public static Font WorldArchiveFont { get; private set; }
         public static Font FamiliarNameFont { get; private set; }
+        public static Dictionary<string, Dictionary<char, Size>> FontMeasureCache { get; private set; } = new();
 
         public static void SetFontFamily(string fontName)
         {
@@ -1006,6 +1007,11 @@ namespace WzComparerR2.CharaSimControl
             rectResult.Y = picH - rectResult.Height;
         }
 
+        public static string GetFontKey(Font font)
+        {
+            return $"{font.Name}_{font.Size}_{font.Style}";
+        }
+
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hwnd, UInt32 wMsg, IntPtr wParam, IntPtr lParam);
         private const int WM_SETREDRAW = 0xB;
@@ -1122,12 +1128,42 @@ namespace WzComparerR2.CharaSimControl
                 string text = sb.ToString();
                 string currentFontID = "";
                 Font currentFont = this.font;
+                string fontKey = GearGraphics.GetFontKey(currentFont);
+                Size koreanSize = default;
+                Size spaceSize = default;
+                Size numberSize = default;
+
                 Func<int, bool> isSingleKoreanChar = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '가' && text[runs[i].StartIndex] <= '힣';
-                var koreanSize = TR.MeasureText(g, "가", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                //var koreanSize = TR.MeasureText(g, "가", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 Func<int, bool> isSpace = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] == ' ';
-                var spaceSize = TR.MeasureText(g, " ", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                //var spaceSize = TR.MeasureText(g, " ", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
                 Func<int, bool> isNumber = (i) => i >= 0 && runs[i].Length == 1 && text[runs[i].StartIndex] >= '0' && text[runs[i].StartIndex] <= '9';
-                var numberSize = TR.MeasureText(g, "0", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                //var numberSize = TR.MeasureText(g, "0", font, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+
+                void UpdateSizes(string key)
+                {
+                    if (!GearGraphics.FontMeasureCache.ContainsKey(key))
+                    {
+                        GearGraphics.FontMeasureCache[key] = new();
+                    }
+                    if (!GearGraphics.FontMeasureCache[key].TryGetValue('가', out koreanSize))
+                    {
+                        koreanSize = TR.MeasureText(g, "가", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                        GearGraphics.FontMeasureCache[key]['가'] = koreanSize;
+                    }
+                    if (!GearGraphics.FontMeasureCache[key].TryGetValue(' ', out spaceSize))
+                    {
+                        spaceSize = TR.MeasureText(g, " ", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                        GearGraphics.FontMeasureCache[key][' '] = spaceSize;
+                    }
+                    if (!GearGraphics.FontMeasureCache[key].TryGetValue('0', out numberSize))
+                    {
+                        numberSize = TR.MeasureText(g, "0", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                        GearGraphics.FontMeasureCache[key]['0'] = numberSize;
+                    }
+                }
+                UpdateSizes(fontKey);
+
                 if (runs.Count > 0 && !runs.All(run => run.IsBreakLine))
                 {
                     fmt.SetMeasurableCharacterRanges(runs.Select(r => new CharacterRange(r.StartIndex, r.Length)).ToArray());
@@ -1141,9 +1177,8 @@ namespace WzComparerR2.CharaSimControl
                             {
                                 currentFontID = runs[i].FontID;
                                 currentFont = GetFont(runs[i].FontID);
-                                koreanSize = TR.MeasureText(g, "가", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                                spaceSize = TR.MeasureText(g, " ", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
-                                numberSize = TR.MeasureText(g, "0", currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                fontKey = GearGraphics.GetFontKey(currentFont);
+                                UpdateSizes(fontKey);
                             }
                             var prefixLayout = new Point();
                             if (isSingleKoreanChar(i - 1))
@@ -1171,7 +1206,22 @@ namespace WzComparerR2.CharaSimControl
                             else if (isNumber(i))
                                 currentLayout = numberSize;
                             else
-                                currentLayout = TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                            {
+                                //currentLayout = TR.MeasureText(g, text.Substring(runs[i].StartIndex, runs[i].Length), currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                var textSegment = text.Substring(runs[i].StartIndex, runs[i].Length);
+                                if (textSegment.Length == 1)
+                                {
+                                    if (!GearGraphics.FontMeasureCache[fontKey].TryGetValue(textSegment[0], out currentLayout))
+                                    {
+                                        currentLayout = TR.MeasureText(g, textSegment, currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                        GearGraphics.FontMeasureCache[fontKey][textSegment[0]] = currentLayout;
+                                    }
+                                }
+                                else
+                                {
+                                    currentLayout = TR.MeasureText(g, textSegment, currentFont, Size.Round(infinityRect.Size), TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+                                }
+                            }
 
                             layout = new RectangleF(prefixLayout, currentLayout);
                         }
