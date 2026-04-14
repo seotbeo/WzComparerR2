@@ -617,6 +617,7 @@ namespace WzComparerR2.MapRender.UI
                  "[Ctrl+S] 현재 화면만 캡쳐",
                  "",
                  "시뮬레이터 :",
+                 "[R] 모든 몬스터 초기화",
                  "[마우스 클릭] 몬스터 공격",
                  "[Ctrl+마우스 클릭] 몬스터 스킬 사용"
             };
