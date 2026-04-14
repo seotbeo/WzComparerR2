@@ -67,15 +67,19 @@ namespace WzComparerR2.MapRender
                 enableMobMovement = value;
                 var hs = new HashSet<int>();
                 this.moveLayerQueue.Clear();
+                this.addToLayerQueue.Clear();
                 foreach (var life in this.Scene.Mobs)
                 {
                     if (life.Controller != null)
                     {
-                        if (!value)
+                        if (!value && life.Controller.CanDie)
                         {
+                            if (!hs.Add(life.Controller.ID))
+                            {
+                                life.Controller.PlayRegenSound = false; // 소리 테러 방지
+                                life.Controller.PlayDieSound = false; // 소리 테러 방지
+                            }
                             life.Controller.SetDied(blockRevive: true);
-                            if (hs.Add(life.Controller.ID)) PlaySoundEff(life.Controller.ID, "Die");
-                            else life.Controller.PlayRegenSound = false; // 소리 테러 방지
                         }
                         life.Controller.MovementEnabled = value;
                     }
@@ -1243,6 +1247,13 @@ namespace WzComparerR2.MapRender
                 return null;
             }
 
+            bool SetAni(string name)
+            {
+                if (string.IsNullOrEmpty(name)) return false;
+                ani.SetAnimation(name);
+                return true;
+            }
+
             bool SetIfDifferent(string name)
             {
                 if (string.IsNullOrEmpty(name) || ani.GetCurrent() == name) return false;
@@ -1256,6 +1267,18 @@ namespace WzComparerR2.MapRender
                 ani.SetEffectAnimation(name);
                 return true;
             }
+
+            bc.MobHit += (o, e) =>
+            {
+                string aniName = Prefer("hit1", "hit");
+                if (aniName == null)
+                {
+                    bc.RecoverHit();
+                    return;
+                }
+                SetAni(aniName);
+                PlaySoundEff(bc.ID, "Damage");
+            };
 
             bc.StateChanged += (o, e) =>
             {
@@ -1305,7 +1328,8 @@ namespace WzComparerR2.MapRender
                             bc.RecoverDied();
                             return;
                         }
-                        SetIfDifferent(aniName);
+                        if (SetIfDifferent(aniName) && bc.PlayDieSound)
+                            PlaySoundEff(bc.ID, "Die");
                         return;
 
                     case BehaviorController.BaseState.Attack:
@@ -1315,7 +1339,8 @@ namespace WzComparerR2.MapRender
                             bc.EndAttack();
                             return;
                         }
-                        SetIfDifferent(aniName);
+                        if (SetIfDifferent(aniName))
+                            PlaySoundEff(bc.ID, life.Controller.SelectedAttack.Replace("attack", "Attack").Replace("skill", "Skill"));
                         SetEffectIfDifferent(aniName + "_effect");
                         return;
 

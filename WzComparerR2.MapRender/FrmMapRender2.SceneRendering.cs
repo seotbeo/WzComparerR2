@@ -379,31 +379,22 @@ namespace WzComparerR2.MapRender
                 var life = (LifeItem)item;
                 if (life.Type == LifeItem.LifeType.Mob)
                 {
-                    var ani = life.View.Animator as StateMachineAnimator;
-                    var soundEffPath = $@"Sound\Mob.img\{life.ID:D7}\";
-
                     if (life.Controller.CanHit && !ctrlOn)
                     {
                         life.Controller.DoDamage();
                         if (life.Controller.DecideDie())
                         {
                             life.Controller.SetDied();
-                            soundEffPath += "Die";
                         }
                         else
                         {
                             life.Controller.SetHit();
-                            soundEffPath += "Damage";
                         }
-
-                        PlaySoundEff(soundEffPath);
                     }
                     else if (life.Controller.CanAttack && ctrlOn)
                     {
-                        soundEffPath += life.Controller.DecideAttack().Replace("attack", "Attack").Replace("skill", "Skill");
+                        life.Controller.DecideAttack();
                         life.Controller.SetAttack();
-
-                        PlaySoundEff(soundEffPath);
                     }
                 }
             }

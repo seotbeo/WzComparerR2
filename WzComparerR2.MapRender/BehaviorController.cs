@@ -153,6 +153,7 @@ namespace WzComparerR2.MapRender
         public bool Summoned { get; }
         public bool PlayRegenMotion { get; }
         public bool PlayRegenSound { get; set; } = true;
+        public bool PlayDieSound { get; set; } = true;
         public bool FlipX { get; private set; }
         public bool MovementEnabled { get; set; }
         public bool Fixed { get; set; }
@@ -164,6 +165,7 @@ namespace WzComparerR2.MapRender
         public bool CanChase => this.hasChaseMotion;
         public bool CanAttack => (this.hasAttackMotion || this.hasSkillMotion) && this.bState == BaseState.Idle;
         public bool CanHit => this.bState == BaseState.Idle || this.bState == BaseState.Hit;
+        public bool CanDie => this.bState != BaseState.Died;
         public int CurFoothold => this.curFootholdID;
         public int CurLayerFoothold => this.curLayerFootholdID;
         public Vector2 RelPos => relPos;
@@ -283,6 +285,7 @@ namespace WzComparerR2.MapRender
         public void SetHit()
         {
             SetBaseState(BaseState.Hit);
+            OnMobHit(new HitEventArgs());
         }
 
         public void SetDied(bool blockRevive = false)
@@ -347,6 +350,7 @@ namespace WzComparerR2.MapRender
             Reset();
             SetHorizontalState(this.flying ? prev : HorizontalState.Stop);
             this.PlayRegenSound = true; // 리젠 소리 제한 해제
+            this.PlayDieSound = true; // 사망 소리 제한 해제
         }
 
         public void EndAttack()
@@ -1445,11 +1449,14 @@ namespace WzComparerR2.MapRender
         #region Events
         public event EventHandler<StateChangedEventArgs> StateChanged;
         public event EventHandler<LayerChangedEventArgs> LayerChanged;
+        public event EventHandler<HitEventArgs> MobHit;
 
         protected virtual void OnStateChanged(StateChangedEventArgs e)
             => StateChanged?.Invoke(this, e);
         protected virtual void OnLayerChanged(LayerChangedEventArgs e)
             => LayerChanged?.Invoke(this, e);
+        protected virtual void OnMobHit(HitEventArgs e)
+            => MobHit?.Invoke(this, e);
 
         private void SetBaseState(BaseState state, bool invoke = true)
         {
@@ -1524,6 +1531,13 @@ namespace WzComparerR2.MapRender
             // -1 == Fly
             public int PrevLayer { get; }
             public int NewLayer { get; }
+        }
+
+        public class HitEventArgs : EventArgs
+        {
+            public HitEventArgs()
+            {
+            }
         }
         #endregion
 
