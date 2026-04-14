@@ -1519,6 +1519,25 @@ namespace WzComparerR2.MapRender
             else return false;
         }
 
+        public void ResetAllMobs()
+        {
+            var hs = new HashSet<int>();
+            this.moveLayerQueue.Clear();
+            this.addToLayerQueue.Clear();
+            foreach (var life in this.Scene.Mobs)
+            {
+                if (life.Controller != null && life.Controller.CanDie)
+                {
+                    if (!hs.Add(life.Controller.ID))
+                    {
+                        life.Controller.PlayRegenSound = false; // 소리 테러 방지
+                        life.Controller.PlayDieSound = false; // 소리 테러 방지
+                    }
+                    life.Controller.SetDied(blockRevive: true);
+                }
+            }
+        }
+
         private void RequestMoveLayer(LifeItem lifeItem, int prev, int next)
         {
             if (lifeItem == null || prev == 0 || next == 0 || prev == next) return;

@@ -246,6 +246,9 @@ namespace WzComparerR2.MapRender
 
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => { renderEnv.Camera.AdjustRectEnabled = !renderEnv.Camera.AdjustRectEnabled; }), KeyCode.U, ModifierKeys.Control));
 
+            //몬스터 제어
+            this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => this.mapData?.ResetAllMobs()), KeyCode.R, ModifierKeys.None));
+
             //层隐藏
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => this.patchVisibility.BackVisible = !this.patchVisibility.BackVisible), KeyCode.D1, ModifierKeys.Control));
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => this.patchVisibility.ReactorVisible = !this.patchVisibility.ReactorVisible), KeyCode.D2, ModifierKeys.Control));
