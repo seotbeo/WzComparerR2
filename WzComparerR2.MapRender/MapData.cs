@@ -66,8 +66,6 @@ namespace WzComparerR2.MapRender
 
                 enableMobMovement = value;
                 var hs = new HashSet<int>();
-                this.moveLayerQueue.Clear();
-                this.addToLayerQueue.Clear();
                 foreach (var life in this.Scene.Mobs)
                 {
                     if (life.Controller != null)
@@ -1522,8 +1520,6 @@ namespace WzComparerR2.MapRender
         public void ResetAllMobs()
         {
             var hs = new HashSet<int>();
-            this.moveLayerQueue.Clear();
-            this.addToLayerQueue.Clear();
             foreach (var life in this.Scene.Mobs)
             {
                 if (life.Controller != null && life.Controller.CanDie)
