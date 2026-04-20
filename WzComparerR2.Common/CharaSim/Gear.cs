@@ -444,6 +444,30 @@ namespace WzComparerR2.CharaSim
             }
         }
 
+        public static bool CanPrism(GearType type)
+        {
+            switch (type)
+            {
+                case GearType.body:
+                case GearType.head:
+                case GearType.cap:
+                case GearType.faceAccessory:
+                case GearType.eyeAccessory:
+                case GearType.earrings:
+                case GearType.coat:
+                case GearType.longcoat:
+                case GearType.pants:
+                case GearType.shoes:
+                case GearType.glove:
+                case GearType.cape:
+                case GearType.shield:
+                case GearType.cashWeapon:
+                    return true;
+                default:
+                    return IsWeapon(type) ? true : false;
+            }
+        }
+
         /// <summary>
         /// 获取一个值，指示装备类型是否为双手武器。
         /// </summary>

@@ -1944,7 +1944,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             // 프리즘 불가
-            if (Gear.Props.TryGetValue(GearPropType.noPrism, out value) && value != 0)
+            if (Gear.CanPrism(Gear.type) && Gear.Props.TryGetValue(GearPropType.noPrism, out value) && value != 0)
             {
                 tags.Add(ItemStringHelper.GetGearPropString22(GearPropType.noPrism, value)[0]);
             }

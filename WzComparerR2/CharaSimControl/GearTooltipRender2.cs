@@ -1557,7 +1557,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.onlyEquip, value));
             }
-            if (Gear.Props.TryGetValue(GearPropType.noPrism, out value) && value != 0)
+            if (Gear.CanPrism(Gear.type) && Gear.Props.TryGetValue(GearPropType.noPrism, out value) && value != 0)
             {
                 tags.Add(ItemStringHelper.GetGearPropString(GearPropType.noPrism, value));
             }
