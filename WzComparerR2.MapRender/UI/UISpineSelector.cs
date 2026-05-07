@@ -154,7 +154,7 @@ namespace WzComparerR2.MapRender.UI
                 if (spineName != null)
                     animator.SelectedAnimationName = spineName;
                 else
-                    animator.SelectedAnimationIndex = 0;
+                    animator.SelectedAnimationIndex = -1;
             }
             for (int layer = 0; layer <= 7; layer++)
             {
@@ -165,7 +165,7 @@ namespace WzComparerR2.MapRender.UI
                     if (spineName != null)
                         animator.SelectedAnimationName = spineName;
                     else
-                        animator.SelectedAnimationIndex = 0;
+                        animator.SelectedAnimationIndex = -1;
                 }
             }
 
