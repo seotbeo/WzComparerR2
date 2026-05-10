@@ -266,9 +266,8 @@ namespace WzComparerR2.OpenAPI
             }
 
             var g = GetValue("weaponGender").ToString();
-            if (int.Parse(g) <= 0) g = "";
+            if (ret.Length == 3) ret += g;
 
-            ret += g;
             ret += id.ToString().PadLeft(3, '0');
             return ret;
         }
