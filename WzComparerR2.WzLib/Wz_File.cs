@@ -32,6 +32,7 @@ namespace WzComparerR2.WzLib
         private Wz_Type type;
         private List<Wz_File> mergedWzFiles;
         private Wz_File ownerWzFile;
+        public bool BypassToBF { get; private set; }
 
         /// <summary>
         /// The offset calculator assigned during version detection, used for dir tree reading and image offset calculation.
@@ -185,6 +186,22 @@ namespace WzComparerR2.WzLib
             return true;
 
         __failed:
+            while (true)
+            {
+                try
+                {
+                    if (br.ReadByte() == 0x80)
+                    {
+                        var dataStartPos = (int)this.fileStream.Position - 1;
+                        if (dataStartPos < 68) continue;
+                        else if (dataStartPos >= 140) break;
+                        this.Header = new Wz_Header.WzPkg2Header(Wz_Header.PKG2, "Unknown", fileName, 0, 0, filesize, dataStartPos, 0, 0);
+                        this.BypassToBF = true;
+                        return true;
+                    }
+                }
+                catch { break; }
+            }
             this.header = new Wz_Header(null, null, fileName, 0, 0, filesize, 0);
             return false;
         }
