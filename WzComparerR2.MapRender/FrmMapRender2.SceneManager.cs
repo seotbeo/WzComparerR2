@@ -580,7 +580,8 @@ namespace WzComparerR2.MapRender
         {
             if (this.mapData?.ID / 100 == 9932670)
             {
-                var bgmRegionsInfo = PluginManager.FindWz($@"Etc\MinigameClient.img\DimensionTower\fieldList\{this.mapData.ID}\bgmRegions");
+                var bgmRegionsInfo = PluginManager.FindWz($@"Etc\MinigameClient.img\DimensionTower\fieldList\{this.mapData.ID}\bgmRegions")
+                    ?? PluginManager.FindWz($@"Etc\MinigameClient.img\reverseDimensionTower\fieldList\{this.mapData.ID}\bgmRegions");
                 if (bgmRegionsInfo != null)
                 {
                     var regionNode = bgmRegionsInfo.Nodes.FirstOrDefault(n =>
@@ -605,15 +606,14 @@ namespace WzComparerR2.MapRender
                         bgm = "Bgm00/Silence";
                     }
 
-                    if (!string.IsNullOrEmpty(bgm))
+                    if (!string.IsNullOrEmpty(bgm) && this.mapData.Bgm != bgm)
                     {
-                        bool willSwitchBgm = this.mapData.Bgm != bgm;
                         this.mapData.Bgm = bgm;
                         Music newBgm = LoadBgm(this.mapData);
                         if (newBgm != null)
                         {
                             Task bgmTask = null;
-                            if (willSwitchBgm && this.bgm != null) //准备切换
+                            if (this.bgm != null) //准备切换
                             {
                                 bgmTask = FadeOut(this.bgm, 500);
                             }
@@ -624,7 +624,7 @@ namespace WzComparerR2.MapRender
                             }
 
                             this.bgm = newBgm;
-                            if (willSwitchBgm && this.bgm != null)
+                            if (this.bgm != null)
                             {
                                 bgmTask = FadeIn(this.bgm, 500);
                             }
