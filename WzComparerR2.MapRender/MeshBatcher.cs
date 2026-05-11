@@ -532,7 +532,7 @@ namespace WzComparerR2.MapRender
                     {
                         this.sprite = new SpriteBatchEx(this.GraphicsDevice);
                     }
-                    this.sprite.Begin(SpriteSortMode.Deferred, this.alphaBlendState, transformMatrix: this.matrix);
+                    this.sprite.Begin(SpriteSortMode.Deferred, this.alphaBlendState, SamplerState.PointClamp, transformMatrix: this.matrix);
                     break;
 
                 case ItemType.Skeleton:
@@ -561,7 +561,7 @@ namespace WzComparerR2.MapRender
                     {
                         this.sprite = new SpriteBatchEx(this.GraphicsDevice);
                     }
-                    this.sprite.Begin(SpriteSortMode.Deferred, BlendState.Additive, transformMatrix: this.matrix);
+                    this.sprite.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, transformMatrix: this.matrix);
                     break;
 
                 case ItemType.Sprite_BlendNonPremultiplied:
@@ -569,14 +569,14 @@ namespace WzComparerR2.MapRender
                     {
                         this.sprite = new SpriteBatchEx(this.GraphicsDevice);
                     }
-                    this.sprite.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, transformMatrix: this.matrix);
+                    this.sprite.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, transformMatrix: this.matrix);
                     break;
                 case ItemType.Sprite_BlendMask:
                     if (this.sprite == null)
                     {
                         this.sprite = new SpriteBatchEx(this.GraphicsDevice);
                     }
-                    this.sprite.Begin(SpriteSortMode.Deferred, this.maskState, transformMatrix: this.matrix);
+                    this.sprite.Begin(SpriteSortMode.Deferred, this.maskState, SamplerState.PointClamp, transformMatrix: this.matrix);
                     break;
 
                 case ItemType.MsSprite:
