@@ -724,6 +724,7 @@ namespace WzComparerR2.CharaSim
             {
                 case 2: // face
                 case 5:
+                case 8:
                     switch (check % 10)
                     {
                         case 0:
