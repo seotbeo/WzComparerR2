@@ -1336,7 +1336,19 @@ namespace WzComparerR2.MapRender
                     Capture(gameTime);
                 }
 
-                this.GraphicsDevice.Clear(Color.Black);
+                Color bgColor = Color.Black;
+                var config = MapRenderConfig.Default;
+                if (ColorWConverter.TryParse(config?.ScreenshotBackgroundColor?.Value, out var colorW))
+                {
+                    bgColor = new Color(colorW.PackedValue);
+                }
+                Color bgColorPMA = bgColor.A switch
+                {
+                    255 => bgColor,
+                    0 => Color.Transparent,
+                    _ => Color.FromNonPremultiplied(bgColor.ToVector4()),
+                };
+                this.GraphicsDevice.Clear(bgColorPMA);
                 if (this.mapData != null)
                 {
                     DrawScene(gameTime);
