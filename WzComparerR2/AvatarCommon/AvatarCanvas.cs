@@ -1728,7 +1728,7 @@ namespace WzComparerR2.AvatarCommon
                         layer.ZIndex = this.ZMap.IndexOf(skin.Z);
                         if (layer.ZIndex < 0)
                         {
-                            layer.ZIndex = this.ZMap.Count;
+                            layer.ZIndex = string.Equals(skin.Z, "default", StringComparison.OrdinalIgnoreCase) ? 0 : this.ZMap.Count;
                         }
                     }
                     else
