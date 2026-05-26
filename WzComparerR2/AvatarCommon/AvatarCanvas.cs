@@ -1022,12 +1022,6 @@ namespace WzComparerR2.AvatarCommon
                 }
             }
 
-            if (this.HideBody) // hide body chkbox
-            {
-                actionName = "hideBody";
-                bodyFrame = 0;
-            }
-
             if (!string.IsNullOrEmpty(actionName))
             {
                 bodyAction = GetActionFrame(actionName, bodyFrame);
@@ -1443,49 +1437,52 @@ namespace WzComparerR2.AvatarCommon
                         Skin skin = new Skin();
                         skin.Name = childNode.Text;
 
-                        if (SkinCache.ContainsKey(linkNode.FullPathToFile))
+                        if (!(partNode.IsBodyPart && this.HideBody))
                         {
-                            skin.Image = SkinCache[linkNode.FullPathToFile];
-                        }
-                        else
-                        {
-                            skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
-                            if (partNode.MixFrameNode != null)
+                            if (SkinCache.ContainsKey(linkNode.FullPathToFile))
                             {
-                                Wz_Node childMixNode = linkPartMixNode?.Nodes[childNode.Text];
-                                Wz_Node linkMixNode = childMixNode;
-                                while (linkMixNode?.Value is Wz_Uol uol)
+                                skin.Image = SkinCache[linkNode.FullPathToFile];
+                            }
+                            else
+                            {
+                                skin.Image = BitmapOrigin.CreateFromNode(linkNode, PluginBase.PluginManager.FindWz);
+                                if (partNode.MixFrameNode != null)
                                 {
-                                    linkMixNode = uol.HandleUol(linkMixNode);
-                                }
-                                if (linkMixNode == null)
-                                {
-                                    continue;
-                                }
-                                if (childMixNode.Text == "hairShade")
-                                {
-                                    linkMixNode = childMixNode.FindNodeByPath("0");
+                                    Wz_Node childMixNode = linkPartMixNode?.Nodes[childNode.Text];
+                                    Wz_Node linkMixNode = childMixNode;
+                                    while (linkMixNode?.Value is Wz_Uol uol)
+                                    {
+                                        linkMixNode = uol.HandleUol(linkMixNode);
+                                    }
                                     if (linkMixNode == null)
                                     {
                                         continue;
                                     }
-                                }
+                                    if (childMixNode.Text == "hairShade")
+                                    {
+                                        linkMixNode = childMixNode.FindNodeByPath("0");
+                                        if (linkMixNode == null)
+                                        {
+                                            continue;
+                                        }
+                                    }
 
-                                var mix = new BitmapOrigin(MixBitmaps(skin.Image.Bitmap, BitmapOrigin.CreateFromNode(linkMixNode, PluginBase.PluginManager.FindWz).Bitmap, partNode.MixRatio), skin.Image.Origin);
-                                skin.Image.Bitmap.Dispose();
-                                skin.Image = mix;
-                            }
-                            PrismDataCollection prismData = partNode.PrismData;
-                            if (prismData.Valid)
-                            {
-                                var prism = Prism.Apply(skin.Image, prismData.Get(pidx));
-                                if (prism.Bitmap != null)
-                                {
+                                    var mix = new BitmapOrigin(MixBitmaps(skin.Image.Bitmap, BitmapOrigin.CreateFromNode(linkMixNode, PluginBase.PluginManager.FindWz).Bitmap, partNode.MixRatio), skin.Image.Origin);
                                     skin.Image.Bitmap.Dispose();
-                                    skin.Image = prism;
+                                    skin.Image = mix;
                                 }
+                                PrismDataCollection prismData = partNode.PrismData;
+                                if (prismData.Valid)
+                                {
+                                    var prism = Prism.Apply(skin.Image, prismData.Get(pidx));
+                                    if (prism.Bitmap != null)
+                                    {
+                                        skin.Image.Bitmap.Dispose();
+                                        skin.Image = prism;
+                                    }
+                                }
+                                SkinCache.Add(linkNode.FullPathToFile, skin.Image);
                             }
-                            SkinCache.Add(linkNode.FullPathToFile, skin.Image);
                         }
 
                         var zNode = linkNode.FindNodeByPath("z");
@@ -1701,6 +1698,7 @@ namespace WzComparerR2.AvatarCommon
                 {
                     var layer = new AvatarLayer();
                     var bmp = skin.Image.Bitmap;
+                    if (bmp == null) continue;
                     var position = new Point(pos.X + skin.Offset.X - skin.Image.Origin.X,
                         pos.Y + skin.Offset.Y - skin.Image.Origin.Y);
 
@@ -1820,7 +1818,7 @@ namespace WzComparerR2.AvatarCommon
             {
                 //身体
                 Wz_Node bodyNode = FindBodyActionNode(bodyAction);
-                partNode.Add(new AvatarFrameData(bodyNode, null, 100, this.Head.PrismData));
+                partNode.Add(new AvatarFrameData(bodyNode, null, 100, this.Head.PrismData, true));
 
                 //计算面向
                 bool? face = bodyAction.Face; //扩展动作规定头部
@@ -1900,6 +1898,7 @@ namespace WzComparerR2.AvatarCommon
                 //其他部件
                 for (int i = 5; i < 16; i++)
                 {
+                    if (this.HideBody && i <= 12) continue; // HideBody 체크 시, Body 관련 장비 로드 x
                     var part = this.Parts[i];
                     if (part != null && part.Visible)
                     {
