@@ -661,22 +661,7 @@ namespace WzComparerR2.CharaSim
             if (code / 10000 == 172)
             {
                 var index = (code % 10000) / 100;
-                var type_list = new[]
-                {
-                    GearType.heroMedal, GearType.rosario, GearType.chain, // 0 1 2
-                    GearType.book1, GearType.book2, GearType.book3, // 3 4 5
-                    GearType.bowMasterFeather, GearType.crossBowThimble, GearType.relic, // 6 7 8
-                    GearType.nightLordPoutch, GearType.shadowerSheath, // 9 10
-                    GearType.viperWristband, GearType.captainSight, GearType.connonGunPowder, // 11 12 13
-                    GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, GearType.cygnusGem, // 14 15 16 17 18 19
-                    GearType.aranPendulum, GearType.magicArrow, GearType.card, GearType.orb, GearType.foxPearl, GearType.evanPaper, // 20 21 22 23 24 25
-                    GearType.demonShield, GearType.battlemageBall, GearType.wildHunterArrowHead, GearType.mailin, GearType.controller, GearType.ExplosivePill, GearType.demonShield, // 26 27 28 29 30 31 32
-                    GearType.novaMarrow, GearType.weaponBelt, GearType.transmitter, GearType.soulBangle, // 33 34 35 36
-                    GearType.hourGlass, GearType.chess, // 37 38
-                    GearType.bracelet, GearType.magicWing, GearType.hexSeeker, GearType.pathOfAbyss, // 39 40 41 42
-                    GearType.sacredJewel, GearType.ornament, GearType.fanTassel, // 43 44 45
-                };
-                return (index < type_list.Count()) ? type_list[index] : GearType.subWeapon;
+                return (AstraSubweaponTable.ContainsKey(index)) ? AstraSubweaponTable[index] : GearType.subWeapon;
             }
             return (GearType)(code / 10000);
         }
@@ -691,6 +676,70 @@ namespace WzComparerR2.CharaSim
 
             return -1;
         }
+
+        private static readonly Dictionary<int, GearType> AstraSubweaponTable = new Dictionary<int, GearType>()
+        {
+            { 0, GearType.heroMedal },
+            { 1, GearType.rosario },
+            { 2, GearType.chain },
+
+            { 3, GearType.book1 },
+            { 4, GearType.book2 },
+            { 5, GearType.book3 },
+
+            { 6, GearType.bowMasterFeather },
+            { 7, GearType.crossBowThimble },
+            { 8, GearType.relic },
+
+            { 9, GearType.nightLordPoutch },
+            { 10, GearType.shadowerSheath },
+            { 11, GearType.viperWristband },
+
+            { 12, GearType.captainSight },
+            { 13, GearType.connonGunPowder },
+
+            { 14, GearType.cygnusGem },
+            { 15, GearType.cygnusGem },
+            { 16, GearType.cygnusGem },
+            { 17, GearType.cygnusGem },
+            { 18, GearType.cygnusGem },
+            { 19, GearType.cygnusGem },
+
+            { 20, GearType.aranPendulum },
+            { 21, GearType.magicArrow },
+            { 22, GearType.card },
+            { 23, GearType.orb },
+            { 24, GearType.foxPearl },
+            { 25, GearType.evanPaper },
+
+            { 26, GearType.demonShield },
+            { 27, GearType.battlemageBall },
+            { 28, GearType.wildHunterArrowHead },
+            { 29, GearType.mailin },
+            { 30, GearType.controller },
+            { 31, GearType.ExplosivePill },
+            { 32, GearType.demonShield },
+
+            { 33, GearType.novaMarrow },
+            { 34, GearType.weaponBelt },
+            { 35, GearType.transmitter },
+            { 36, GearType.soulBangle },
+
+            { 37, GearType.hourGlass },
+            { 38, GearType.chess },
+
+            { 39, GearType.bracelet },
+            { 40, GearType.magicWing },
+            { 41, GearType.hexSeeker },
+            { 42, GearType.pathOfAbyss },
+
+            { 43, GearType.sacredJewel },
+            { 44, GearType.ornament },
+            { 45, GearType.fanTassel },
+
+            { 50, GearType.kodachi2 },
+            { 52, GearType.boxingSky },
+        };
 
         public static int GetGender(int code)
         {
