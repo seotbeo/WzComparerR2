@@ -153,7 +153,8 @@ namespace WzComparerR2.MapRender.Patches2
                         {
                             Vector2 sp = Vector2.Zero;
                             int st = 0;
-                            foreach (var moveNode in top_moveNode.Nodes)
+                            Wz_Node moveNode;
+                            for (int idx = 0; (moveNode = top_moveNode.FindNodeByPath(idx.ToString())) != null; idx++)
                             {
                                 var mn = new MoveNode()
                                 {

@@ -680,9 +680,9 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //测试y轴大小
-            int offsetY = wce.Min(bmp => bmp.OpOrigin.Y);
-            int height = wce.Max(bmp => bmp.Rectangle.Bottom);
             bool aniNameTag = resNode.FindNodeByPath("aniNameTag").GetValueEx(false);
+            int offsetY = aniNameTag ? 0 : wce.Min(bmp => bmp.OpOrigin.Y);
+            int height = aniNameTag ? 0 :wce.Max(bmp => bmp.Rectangle.Bottom);
 
             //测试宽度
             var font = GearGraphics.ItemDetailFont2;
@@ -737,33 +737,37 @@ namespace WzComparerR2.CharaSimControl
             }
             else // ani mode
             {
-                bool mixedAniMode = wce[1].Bitmap != null && (wce[1].Bitmap.Width > 1 || wce[1].Bitmap.Height > 1);
+                bool mixedAniMode = wce[1].Bitmap != null && (wce[1].Bitmap.Width > 1 || wce[1].Bitmap.Height > 1)
+                    || aniNameTag;
 
                 offsetY = Math.Min((!aniNameTag ? offsetY : 0), ani0.OpOrigin.Y);
                 height = Math.Max((!aniNameTag ? height : 0), ani0.Rectangle.Bottom);
 
-                int bgWidth = mixedAniMode || aniNameTag ? wce[1].Bitmap.Width : nameWidth;
+                int bgWidth = mixedAniMode ? wce[1].Bitmap.Width : nameWidth;
                 int left = center - bgWidth / 2;
                 int right = left + bgWidth;
                 int nameLeft = center - nameWidth / 2;
 
                 picH -= offsetY;
 
-                if (mixedAniMode || aniNameTag)
+                int shiftX = aniNameTag ? 0 : wce[1].Origin.X;
+                int shiftY = aniNameTag ? 0 : wce[1].Origin.Y;
+
+                if (mixedAniMode)
                 {
                     // draw legay center
                     // Note: item 1143360 (MILESTONE) does not render well, ignore it.
                     if (!aniNameTag) g.DrawImage(wce[1].Bitmap, left - wce[1].Origin.X, picH - wce[1].Origin.Y);
                     // draw ani0 based on bg center position
-                    g.DrawImage(ani0.Bitmap, left - (!aniNameTag ? wce[1].Origin.X : 0) - ani0.Origin.X, picH - (!aniNameTag ? wce[1].Origin.Y : 0) - ani0.Origin.Y);
+                    g.DrawImage(ani0.Bitmap, left - shiftX - ani0.Origin.X, picH - shiftY - ani0.Origin.Y);
                     if (!string.IsNullOrEmpty(tagName)) // draw name
                     {
                         using var brush = new SolidBrush(color);
                         // offsetX with bg for better alignment
-                        g.DrawString(tagName, font, brush, nameLeft - (!aniNameTag ? wce[1].Origin.X : 0), picH, fmt);
+                        g.DrawString(tagName, font, brush, nameLeft - shiftX, picH, fmt);
                     }
 
-                    rectResult.X = left - (!aniNameTag ? wce[1].Origin.X : 0) - ani0.Origin.X;
+                    rectResult.X = left - shiftX - ani0.Origin.X;
                     rectResult.Width = ani0.Bitmap.Width;
                 }
                 else

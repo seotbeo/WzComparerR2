@@ -1411,7 +1411,7 @@ namespace WzComparerR2.MapRender
             MoveNode curMoveNode = obj.View.CurrentMoveNode;
             if (curMoveNode == null || curMoveNode.MoveP <= 0)
             {
-                return new Vector2((float)movingX, (float)movingY);
+                return Vector2.Zero;
             }
             switch (obj.MoveType)
             {
