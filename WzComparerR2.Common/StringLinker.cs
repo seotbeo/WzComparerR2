@@ -23,6 +23,8 @@ namespace WzComparerR2.Common
             stringAchievement = new Dictionary<int, StringResult>();
             stringWorldArchiveMob = new Dictionary<int, StringResult>();
             stringWorldArchiveNpc = new Dictionary<int, StringResult>();
+            stringWorldArchiveMobByPath = new Dictionary<string, StringResult>();
+            stringWorldArchiveNpcByPath = new Dictionary<string, StringResult>();
             stringMonsterBook = new Dictionary<int, StringResult>();
         }
 
@@ -171,10 +173,17 @@ namespace WzComparerR2.Common
                                     Wz_Node messageNode = tree.FindNodeByPath("episode");
                                     if (messageNode != null)
                                     {
-                                        StringResult mbSr = new StringResult();
+                                        StringResult mbSr = null;
+                                        if (update)
+                                        {
+                                            try { mbSr = stringMonsterBook[id]; }
+                                            catch { }
+                                        }
+                                        if (mbSr == null) mbSr = new StringResult();
+
                                         mbSr.Name = stringMob[id].Name;
                                         mbSr.Desc = messageNode.Value.ToString();
-                                        stringMonsterBook.Add(id, mbSr);
+                                        stringMonsterBook[id] = mbSr;
                                     }
                                 }
                             }
@@ -308,6 +317,7 @@ namespace WzComparerR2.Common
                             {
                                 if (child.Text.StartsWith("h_") && int.TryParse(child.Text.Substring(2), out int level) && level > 0 && child.Value != null)
                                 {
+                                    strResult.SkillExtraH.RemoveAll(x => x.Key == level);
                                     strResult.SkillExtraH.Add(new KeyValuePair<int, string>(level, child.GetValue<string>()));
                                 }
                             }
@@ -488,15 +498,26 @@ namespace WzComparerR2.Common
                                                         {
                                                             desc = "(null)";
                                                         }
+
+                                                        StringResult strResult = null;
+                                                        string path = $"{node.Text}_{subNode.Text}_{subNode2.Text}_{mobNode.Text}";
+                                                        if (update)
+                                                        {
+                                                            try { strResult = stringWorldArchiveMobByPath[path]; }
+                                                            catch { }
+                                                        }
+                                                        if (strResult == null) strResult = new StringResult();
+
+                                                        strResult.Desc = desc ?? strResult.Desc;
+                                                        stringWorldArchiveMobByPath[path] = strResult;
+
                                                         foreach (var mobID in mobIDs)
                                                         {
                                                             if (!stringMob.ContainsKey(mobID))
                                                             {
                                                                 continue;
                                                             }
-                                                            StringResult strResult = new StringResult();
                                                             strResult.Name = stringMob[mobID].Name;
-                                                            strResult.Desc = desc;
                                                             stringWorldArchiveMob[mobID] = strResult;
                                                         }
                                                     }
@@ -515,15 +536,26 @@ namespace WzComparerR2.Common
                                                         {
                                                             desc = "(null)";
                                                         }
+
+                                                        StringResult strResult = null;
+                                                        string path = $"{node.Text}_{subNode.Text}_{subNode2.Text}_{npcNode.Text}";
+                                                        if (update)
+                                                        {
+                                                            try { strResult = stringWorldArchiveNpcByPath[path]; }
+                                                            catch { }
+                                                        }
+                                                        if (strResult == null) strResult = new StringResult();
+
+                                                        strResult.Desc = desc ?? strResult.Desc;
+                                                        stringWorldArchiveNpcByPath[path] = strResult;
+
                                                         foreach (var npcID in npcIDs)
                                                         {
                                                             if (!stringNpc.ContainsKey(npcID))
                                                             {
                                                                 continue;
                                                             }
-                                                            StringResult strResult = new StringResult();
                                                             strResult.Name = stringNpc[npcID].Name;
-                                                            strResult.Desc = desc;
                                                             stringWorldArchiveNpc[npcID] = strResult;
                                                         }
                                                     }
@@ -604,6 +636,8 @@ namespace WzComparerR2.Common
             stringAchievement.Clear();
             stringWorldArchiveMob.Clear();
             stringWorldArchiveNpc.Clear();
+            stringWorldArchiveMobByPath.Clear();
+            stringWorldArchiveNpcByPath.Clear();
             stringMonsterBook.Clear();
         }
 
@@ -629,6 +663,8 @@ namespace WzComparerR2.Common
         private Dictionary<int, StringResult> stringAchievement;
         private Dictionary<int, StringResult> stringWorldArchiveMob;
         private Dictionary<int, StringResult> stringWorldArchiveNpc;
+        private Dictionary<string, StringResult> stringWorldArchiveMobByPath;
+        private Dictionary<string, StringResult> stringWorldArchiveNpcByPath;
         private Dictionary<int, StringResult> stringMonsterBook;
 
         private string GetDefaultString(Wz_Node node, string searchNodeText)
