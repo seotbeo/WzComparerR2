@@ -93,8 +93,17 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public int GetMaxStar(Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons)
+        public int GetMaxStar(Dictionary<int, List<int>> loadedDestinyWeapons, Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons)
         {
+            if (IsGenesisWeapon)
+            {
+                if (IsDestinyWeapon(loadedDestinyWeapons, 2))
+                {
+                    return 25;
+                }
+                return 22;
+            }
+
             var astraIdx = GetAstraIndex(loadedAstraSubWeapons, this.ItemID);
             switch (astraIdx)
             {
@@ -210,18 +219,21 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public bool IsDestinyWeapon
+        public bool IsDestinyWeapon(Dictionary<int, List<int>> weaponList, int phase)
         {
-            get
-            {
-                if (IsGenesisWeapon &&
-                    this.Props.TryGetValue(GearPropType.reqLevel, out var equipLevel)
-                    && equipLevel == 250)
-                {
-                    return true;
-                }
-                return false;
-            }
+            return (weaponList.ContainsKey(phase) && weaponList[phase].Contains(this.ItemID));
+        }
+
+        public int[] GetGenesisSkillList(Dictionary<int, List<int>> weaponList)
+        {
+            if (IsDestinyWeapon(weaponList, 2))
+                return new[] { 80004115, 80004116, 80004118 };
+            else if (IsDestinyWeapon(weaponList, 1))
+                return new[] { 80003873, 80003874 };
+            else if (IsGenesisWeapon)
+                return new[] { 80002632, 80002633 };
+            else
+                return Array.Empty<int>();
         }
 
         public void Upgrade(Wz_Node infoNode, int count)

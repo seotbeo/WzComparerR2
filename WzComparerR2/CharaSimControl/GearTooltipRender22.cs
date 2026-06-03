@@ -227,14 +227,10 @@ namespace WzComparerR2.CharaSimControl
             picH = 10;
 
             // 스타포스 별
-            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
+            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedDestinyWeapons, CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
             if (maxStar == 30 && this.MaxStar25)
             {
                 maxStar -= 5;
-            }
-            if (maxStar >= 25 && Gear.IsGenesisWeapon)
-            {
-                maxStar = 22;
             }
             if (!Gear.GetBooleanValue(GearPropType.blockUpgradeStarforce))
             {
@@ -711,18 +707,16 @@ namespace WzComparerR2.CharaSimControl
 
                 if (Gear.IsGenesisWeapon)
                 {
-                    int destinySkill = 1241 * (Gear.IsDestinyWeapon ? 1 : 0);
-
-                    foreach (var skillID in new[] { 80002632, 80002633 })
+                    foreach (var skillID in Gear.GetGenesisSkillList(CharaSimLoader.LoadedDestinyWeapons))
                     {
                         string skillName;
-                        if (this.StringLinker?.StringSkill.TryGetValue(skillID + destinySkill, out var sr2) ?? false && sr2.Name != null)
+                        if (this.StringLinker?.StringSkill.TryGetValue(skillID, out var sr2) ?? false && sr2.Name != null)
                         {
                             skillName = sr2.Name;
                         }
                         else
                         {
-                            skillName = (skillID + destinySkill).ToString();
+                            skillName = skillID.ToString();
                         }
                         skillNames.Add(skillName);
                     }
@@ -1332,7 +1326,12 @@ namespace WzComparerR2.CharaSimControl
                     enhance_potential = 0;
                     enhance_addiPotential = 0;
                 }
-                if (Gear.IsDestinyWeapon)
+                if (Gear.IsDestinyWeapon(CharaSimLoader.LoadedDestinyWeapons, 2))
+                {
+                    enhance_potential = 12;
+                    enhance_addiPotential = 12;
+                }
+                else if (Gear.IsDestinyWeapon(CharaSimLoader.LoadedDestinyWeapons, 1))
                 {
                     enhance_potential = 11;
                     enhance_addiPotential = 11;
@@ -1456,6 +1455,11 @@ namespace WzComparerR2.CharaSimControl
                         g.DrawImage(GetPotentialGradeIcon(GearGrade.C), 15, picH);
                         GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, itemPotentialColorTable, 30, 305, ref picH, 16);
                         break;
+                    case 12:
+                        text = $"#${GetPotentialColorTag(GearGrade.C)}잠재능력 : 데스티니 무기 옵션 전승#";
+                        g.DrawImage(GetPotentialGradeIcon(GearGrade.C), 15, picH);
+                        GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, itemPotentialColorTable, 30, 305, ref picH, 16);
+                        break;
                 }
 
                 switch (enhance_addiPotential)
@@ -1500,6 +1504,11 @@ namespace WzComparerR2.CharaSimControl
                         break;
                     case 11:
                         text = $"#${GetPotentialColorTag(GearGrade.C)}에디셔널 잠재능력 : 제네시스 무기 옵션 상향 전승#";
+                        g.DrawImage(GetPotentialGradeIcon(GearGrade.C), 15, picH);
+                        GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, itemPotentialColorTable, 30, 305, ref picH, 16);
+                        break;
+                    case 12:
+                        text = $"#${GetPotentialColorTag(GearGrade.C)}에디셔널 잠재능력 : 데스티니 무기 옵션 전승#";
                         g.DrawImage(GetPotentialGradeIcon(GearGrade.C), 15, picH);
                         GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, itemPotentialColorTable, 30, 305, ref picH, 16);
                         break;

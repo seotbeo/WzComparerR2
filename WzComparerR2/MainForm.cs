@@ -3623,6 +3623,7 @@ namespace WzComparerR2
                         return;
                     CharaSimLoader.LoadSetItemsIfEmpty();
                     CharaSimLoader.LoadAstraSubWeaponsIfEmpty();
+                    CharaSimLoader.LoadDestinyWeaponsIfEmpty();
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty();
                     CharaSimLoader.LoadCommoditiesIfEmpty();
                     if (selectedNode.FullPathToFile.Contains("Familiar"))

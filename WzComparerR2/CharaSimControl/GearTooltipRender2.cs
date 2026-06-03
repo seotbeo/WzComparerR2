@@ -791,7 +791,7 @@ namespace WzComparerR2.CharaSimControl
             }
 
             //星星锤子
-            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons) > 0 && !Gear.GetBooleanValue(GearPropType.blockUpgradeStarforce))
+            if (hasTuc && Gear.Hammer > -1 && Gear.GetMaxStar(CharaSimLoader.LoadedDestinyWeapons, CharaSimLoader.LoadedAstraSubWeapons) > 0 && !Gear.GetBooleanValue(GearPropType.blockUpgradeStarforce))
             {
                 if (Gear.Hammer >= 1)
                 {
@@ -1511,18 +1511,16 @@ namespace WzComparerR2.CharaSimControl
                 Graphics g = Graphics.FromImage(genesisBitmap);
                 picHeight = 13;
 
-                int destinySkill = 1241 * (Gear.IsDestinyWeapon ? 1 : 0);
-
-                foreach (var skillID in new[] { 80002632, 80002633 })
+                foreach (var skillID in Gear.GetGenesisSkillList(CharaSimLoader.LoadedDestinyWeapons))
                 {
                     string skillName;
-                    if (this.StringLinker?.StringSkill.TryGetValue(skillID + destinySkill, out var sr) ?? false && sr.Name != null)
+                    if (this.StringLinker?.StringSkill.TryGetValue(skillID, out var sr) ?? false && sr.Name != null)
                     {
                         skillName = sr.Name;
                     }
                     else
                     {
-                        skillName = (skillID + destinySkill).ToString();
+                        skillName = skillID.ToString();
                     }
                     g.DrawString($"<{skillName}> 사용 가능", GearGraphics.ItemDetailFont, GearGraphics.GreenBrush2, 10, picHeight);
                     picHeight += 16;
@@ -1876,7 +1874,7 @@ namespace WzComparerR2.CharaSimControl
 
         private void DrawStar2(Graphics g, ref int picH)
         {
-            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
+            int maxStar = Math.Max(Gear.GetMaxStar(CharaSimLoader.LoadedDestinyWeapons, CharaSimLoader.LoadedAstraSubWeapons), Gear.Star);
             if (maxStar > 0)
             {
                 if (maxStar == 30 && this.MaxStar25)

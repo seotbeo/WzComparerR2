@@ -14,6 +14,7 @@ namespace WzComparerR2.CharaSim
         {
             LoadedSetItems = new Dictionary<int, SetItem>();
             LoadedAstraSubWeapons = new Dictionary<int, AstraSubWeaponInfo>();
+            LoadedDestinyWeapons = new Dictionary<int, List<int>>();
             LoadedExclusiveEquips = new Dictionary<int, ExclusiveEquip>();
             LoadedCommoditiesBySN = new Dictionary<int, Commodity>();
             LoadedCommoditiesByItemId = new Dictionary<int, Commodity>();
@@ -24,6 +25,7 @@ namespace WzComparerR2.CharaSim
 
         public static Dictionary<int, SetItem> LoadedSetItems { get; private set; }
         public static Dictionary<int, AstraSubWeaponInfo> LoadedAstraSubWeapons { get; private set; }
+        public static Dictionary<int, List<int>> LoadedDestinyWeapons { get; private set; }
 
         public static Dictionary<int, ExclusiveEquip> LoadedExclusiveEquips { get; private set; }
         public static Dictionary<int, Commodity> LoadedCommoditiesBySN { get; private set; }
@@ -125,6 +127,46 @@ namespace WzComparerR2.CharaSim
                     }
                 }
                 insert(jobID);
+            }
+        }
+
+
+        public static void LoadDestinyWeaponsIfEmpty(Wz_File sourceWzFile = null)
+        {
+            if (LoadedDestinyWeapons.Count == 0)
+            {
+                LoadDestinyWeapons(sourceWzFile);
+            }
+        }
+
+        public static void LoadDestinyWeapons(Wz_File sourceWzFile)
+        {
+            Wz_Node uiWz = PluginManager.FindWz(Wz_Type.UI, sourceWzFile);
+            if (uiWz == null)
+                return;
+            Wz_Node topUINode = uiWz.FindNodeByPath("UIWeaponQuest.img", true);
+            if (topUINode == null)
+                return;
+
+            LoadedDestinyWeapons.Clear();
+
+            List<KeyValuePair<int, Wz_Node>> destinyWeaponPhases = new List<KeyValuePair<int, Wz_Node>>()
+            {
+                new KeyValuePair<int, Wz_Node>(1, topUINode.FindNodeByPath("DestinyWeaponQuest\\rewardList\\3")),
+                new KeyValuePair<int, Wz_Node>(2, topUINode.FindNodeByPath("DestinySecondWeaponQuest\\rewardList\\3")),
+            };
+
+            foreach (var phase in destinyWeaponPhases)
+            {
+                if (phase.Value != null)
+                {
+                    List<int> temp = new List<int>();
+                    foreach (var job in phase.Value.Nodes)
+                    {
+                        temp.AddRange(job.Nodes.Select(n => n.GetValueEx<int>(0)));
+                    }
+                    LoadedDestinyWeapons[phase.Key] = temp;
+                }
             }
         }
 
@@ -239,6 +281,7 @@ namespace WzComparerR2.CharaSim
         {
             LoadedSetItems.Clear();
             LoadedAstraSubWeapons.Clear();
+            LoadedDestinyWeapons.Clear();
             LoadedExclusiveEquips.Clear();
             LoadedCommoditiesBySN.Clear();
             LoadedCommoditiesByItemId.Clear();

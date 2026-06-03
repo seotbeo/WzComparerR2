@@ -153,6 +153,7 @@ namespace WzComparerR2.Comparer
                     CharaSimLoader.ClearAll();
                     CharaSimLoader.LoadSetItemsIfEmpty(fileNew);
                     CharaSimLoader.LoadAstraSubWeaponsIfEmpty(fileNew);
+                    CharaSimLoader.LoadDestinyWeaponsIfEmpty(fileNew);
                     CharaSimLoader.LoadExclusiveEquipsIfEmpty(fileNew);
                     CharaSimLoader.LoadCommodities(fileOld, slotIdx: 1);
                     CharaSimLoader.LoadCommodities(fileNew, slotIdx: 0);
