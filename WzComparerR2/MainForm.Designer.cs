@@ -297,6 +297,13 @@
             this.buttonItemPBGA2 = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemPBGB1 = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemPBGB2 = new DevComponents.DotNetBar.ButtonItem();
+            this.itemContainerRB4 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainerPrefLan1 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainerPrefLan11 = new DevComponents.DotNetBar.ItemContainer();
+            this.itemContainerPrefLan12 = new DevComponents.DotNetBar.ItemContainer();
+            this.labelItemPrefLan = new DevComponents.DotNetBar.LabelItem();
+            this.comboBoxItemPrefLan = new DevComponents.DotNetBar.ComboBoxItem();
+            this.buttonItemApplyPrefLan = new DevComponents.DotNetBar.ButtonItem();
             this.ribbonControl1.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
@@ -1118,7 +1125,7 @@
             this.ribbonBar4.Dock = System.Windows.Forms.DockStyle.Left;
             this.ribbonBar4.DragDropSupport = true;
             this.ribbonBar4.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
-            this.itemContainer10});
+            this.itemContainerRB4});
             this.ribbonBar4.Location = new System.Drawing.Point(171, 0);
             this.ribbonBar4.Name = "ribbonBar4";
             this.ribbonBar4.Size = new System.Drawing.Size(168, 91);
@@ -1133,6 +1140,19 @@
             // 
             // 
             this.ribbonBar4.TitleStyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            // 
+            // itemContainerRB4
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerRB4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerRB4.Name = "itemContainerRB4";
+            this.itemContainerRB4.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.itemContainer10,
+            this.itemContainerPrefLan1});
+            // 
+            // 
             // 
             // itemContainer10
             // 
@@ -1253,7 +1273,7 @@
             // 
             this.comboItemSearchSetItem.Text = "세트 아이템";
             // 
-            // comboItemSearchQuest
+            // comboItemSearchAchievement
             // 
             this.comboItemSearchAchievement.Text = "업적";
             // 
@@ -1298,6 +1318,69 @@
             this.buttonItemClearStringWz.Name = "buttonItemClearStringWz";
             this.buttonItemClearStringWz.Text = "StringLinker 정리";
             this.buttonItemClearStringWz.Click += new System.EventHandler(this.buttonItemClearStringWz_Click);
+            // 
+            // itemContainerPrefLan1
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPrefLan1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPrefLan1.LayoutOrientation = DevComponents.DotNetBar.eOrientation.Vertical;
+            this.itemContainerPrefLan1.Name = "itemContainerPrefLan1";
+            this.itemContainerPrefLan1.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.itemContainerPrefLan11,
+            this.itemContainerPrefLan12});
+            // 
+            // 
+            // 
+            // itemContainerPrefLan11
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPrefLan11.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPrefLan11.Name = "itemContainerPrefLan2";
+            this.itemContainerPrefLan11.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.labelItemPrefLan,
+            this.comboBoxItemPrefLan});
+            // 
+            // 
+            // 
+            // labelItemPrefLan
+            // 
+            this.labelItemPrefLan.Name = "labelItemPrefLan";
+            this.labelItemPrefLan.Text = "선호 언어";
+            // 
+            // comboBoxItemPrefLan
+            // 
+            this.comboBoxItemPrefLan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxItemPrefLan.Items.Add(new DevComponents.Editors.ComboItem() { Text = "기본" });
+            this.comboBoxItemPrefLan.ComboWidth = 85;
+            this.comboBoxItemPrefLan.DropDownHeight = 160;
+            this.comboBoxItemPrefLan.ItemHeight = 16;
+            this.comboBoxItemPrefLan.Enabled = false;
+            this.comboBoxItemPrefLan.Name = "comboBoxItemPrefLan";
+            // 
+            // 
+            // itemContainerPrefLan12
+            // 
+            // 
+            // 
+            // 
+            this.itemContainerPrefLan12.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.itemContainerPrefLan12.HorizontalItemAlignment = DevComponents.DotNetBar.eHorizontalItemsAlignment.Right;
+            this.itemContainerPrefLan12.Name = "itemContainerPrefLan12";
+            this.itemContainerPrefLan12.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
+            this.buttonItemApplyPrefLan});
+            // 
+            // 
+            // 
+            // buttonItemApplyPrefLan
+            // 
+            this.buttonItemApplyPrefLan.Name = "buttonItemApplyPrefLan";
+            this.buttonItemApplyPrefLan.Text = "적용";
+            this.buttonItemApplyPrefLan.Enabled = false;
+            this.buttonItemApplyPrefLan.Click += new System.EventHandler(this.buttonItemApplyPrefLan_Click);
             // 
             // ribbonBar1
             // 
@@ -3777,5 +3860,12 @@
         private DevComponents.DotNetBar.ButtonItem buttonItemPBGA2;
         private DevComponents.DotNetBar.ButtonItem buttonItemPBGB1;
         private DevComponents.DotNetBar.ButtonItem buttonItemPBGB2;
+        private DevComponents.DotNetBar.ItemContainer itemContainerRB4;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPrefLan1;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPrefLan11;
+        private DevComponents.DotNetBar.ItemContainer itemContainerPrefLan12;
+        private DevComponents.DotNetBar.LabelItem labelItemPrefLan;
+        private DevComponents.DotNetBar.ComboBoxItem comboBoxItemPrefLan;
+        private DevComponents.DotNetBar.ButtonItem buttonItemApplyPrefLan;
     }
 }

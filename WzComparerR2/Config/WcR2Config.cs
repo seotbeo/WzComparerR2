@@ -19,6 +19,7 @@ namespace WzComparerR2.Config
             this.SortWzOnOpened = true;
             this.AutoDetectExtFiles = true;
             this.AutoDetectUpdate = true;
+            this.PreferredLanguage = string.Empty;
             //this.EnableAutoUpdate = true;
         }
 
@@ -132,6 +133,13 @@ namespace WzComparerR2.Config
         {
             get { return (ConfigItem<string>)this["nexonOpenAPIKey"]; }
             set { this["nexonOpenAPIKey"] = value; }
+        }
+
+        [ConfigurationProperty("preferredLanguage")]
+        public ConfigItem<string> PreferredLanguage
+        {
+            get { return (ConfigItem<string>)this["preferredLanguage"]; }
+            set { this["preferredLanguage"] = value; }
         }
 
         /// <summary>

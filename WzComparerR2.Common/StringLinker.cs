@@ -30,8 +30,8 @@ namespace WzComparerR2.Common
 
         public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
         {
-            //if (stringNode == null || itemNode == null || etcNode == null)
-                //return false;
+            if (stringNode == null && itemNode == null && etcNode == null && questNode == null)
+                return true;
 
             return Load(stringNode, itemNode, etcNode, questNode, update: true);
         }
