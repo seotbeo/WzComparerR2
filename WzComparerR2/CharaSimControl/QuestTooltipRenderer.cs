@@ -79,6 +79,7 @@ namespace WzComparerR2.CharaSimControl
             this.Margin_top = 0;
             this.Margin_right = 0;
             this.RewardRectnItems.Clear();
+            this.Quest.UpdateString(this.StringLinker);
             SetNpcImage();
 
             if (this.ShowAllStates)

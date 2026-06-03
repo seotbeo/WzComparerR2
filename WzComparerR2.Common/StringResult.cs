@@ -17,6 +17,7 @@ namespace WzComparerR2.Common
         public string FullPath { get; set; }
         public string StreetName { get; set; }
         public string MapName { get; set; }
+        public string Quest_DemandBase { get; set; }
 
         private List<KeyValuePair<string, string>> allValues;
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WzComparerR2.Common;
 using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
@@ -52,6 +53,21 @@ namespace WzComparerR2.CharaSim
             {
                 this._state = Math.Max(Math.Min(value, 2), 0);
             }
+        }
+
+        public void UpdateString(StringLinker sl)
+        {
+            StringResult sr;
+            if (!sl.StringQuest.TryGetValue(this.ID, out sr))
+                sr = new StringResult();
+
+            this.Name = sr.Name;
+            this.DemandBase = sr.Quest_DemandBase;
+            this.DemandSummary = sr["demandSummary"];
+            this.PlaceSummary = sr["placeSummary"];
+            this.RewardSummary = sr["rewardSummary"];
+            this.Summary = sr["summary"];
+            this.Desc = new[] { sr["0"], sr["1"], sr["2"] };
         }
 
         public static Quest CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null, int? fromInfoNode = null)
