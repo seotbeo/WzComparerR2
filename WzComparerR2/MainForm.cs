@@ -1631,7 +1631,7 @@ namespace WzComparerR2
             }
             else
             {
-                MessageBoxEx.Show($"StringLinker {(updateNode == null ? "초기화" : "업데이트")}에 실패했습니다.", "오류");
+                labelItemStatus.Text = $"StringLinker {(updateNode == null ? "초기화" : "업데이트")}에 실패했습니다.";
             }
         }
         #endregion
