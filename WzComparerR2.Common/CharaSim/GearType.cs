@@ -458,9 +458,9 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         thBlunt = 142,
         /// <summary>
-        /// 枪 1432
+        /// 枪 143
         /// </summary>
-        spear = 1432,
+        spear = 143,
         /// <summary>
         /// 그람 1433
         /// </summary>

@@ -492,7 +492,6 @@ namespace WzComparerR2.CharaSim
                 || (_type >= 152 && _type <= 159)
                 || type == GearType.boxingCannon
                 || type == GearType.chakram
-                || type == GearType.spear
                 || type == GearType.gram;
         }
 
@@ -630,7 +629,6 @@ namespace WzComparerR2.CharaSim
                 case 1259:
                 case 1403:
                 case 1404:
-                case 1432:
                 case 1433:
                 case 1712:
                 case 1713:
