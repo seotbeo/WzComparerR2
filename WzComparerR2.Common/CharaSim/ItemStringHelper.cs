@@ -721,6 +721,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.onmyouSen: return "음양선";
                 case GearType.kannaReifu: return "영부";
+
+                case GearType.gram: return "그람";
+                case GearType.keir: return "케이르";
                 default: return null;
             }
         }
@@ -885,6 +888,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.longSword:
                 case GearType.sacredJewel: return GetExtraJobReqString(161);
+                //18xxx
+                case GearType.gram:
+                case GearType.keir: return GetExtraJobReqString(181);
 
                 case GearType.celestialLight:
                 case GearType.compass: return GetExtraJobReqString(182);
@@ -929,6 +935,7 @@ namespace WzComparerR2.CharaSim
                 case 164: return "호영 착용 가능";
                 case 172: return "린 착용 가능";
                 case 175: return "묵현 착용 가능";
+                case 181: return "에릴 라이트 착용 가능";
                 case 182: return "시아 아스텔 착용 가능";
                 default: return null;
             }

@@ -491,7 +491,9 @@ namespace WzComparerR2.CharaSim
             return (_type >= 140 && _type <= 149)
                 || (_type >= 152 && _type <= 159)
                 || type == GearType.boxingCannon
-                || type == GearType.chakram;
+                || type == GearType.chakram
+                || type == GearType.spear
+                || type == GearType.gram;
         }
 
         public static bool IsMechanicGear(GearType type)
@@ -628,6 +630,8 @@ namespace WzComparerR2.CharaSim
                 case 1259:
                 case 1403:
                 case 1404:
+                case 1432:
+                case 1433:
                 case 1712:
                 case 1713:
                 case 1714:
@@ -751,6 +755,9 @@ namespace WzComparerR2.CharaSim
 
             { 50, GearType.kodachi2 },
             { 52, GearType.boxingSky },
+
+            { 53, GearType.compass },
+            { 54, GearType.keir },
         };
 
         public static int GetGender(int code)
