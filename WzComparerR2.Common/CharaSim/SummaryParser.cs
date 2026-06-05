@@ -313,14 +313,14 @@ namespace WzComparerR2.CharaSim
                 {
                     foreach (var tags in DiffSkillTags[(int)skillID])
                     {
-                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$g#" + tags + "#"));
                     }
                 }
                 if (!convertExtraProps && skill.ExtraPropNames.Count > 0)
                 {
                     foreach (var tags in skill.ExtraPropNames)
                     {
-                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$x" + tags + "#$1"));
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$x" + tags + "#"));
                     }
                 }
 
@@ -350,14 +350,14 @@ namespace WzComparerR2.CharaSim
                 {
                     foreach (var tags in DiffSkillTags[(int)skillID])
                     {
-                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$g#" + tags + "#$1"));
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$g#" + tags + "#"));
                     }
                 }
                 if (!convertExtraProps && skill.ExtraPropNames.Count > 0)
                 {
                     foreach (var tags in skill.ExtraPropNames)
                     {
-                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"([^a-zA-Z0-9])", @"#$x" + tags + "#$1"));
+                        h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$x" + tags + "#"));
                     }
                 }
 
