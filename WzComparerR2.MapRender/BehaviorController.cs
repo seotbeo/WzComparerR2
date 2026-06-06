@@ -35,7 +35,7 @@ namespace WzComparerR2.MapRender
             this.basePos = new Vector2(this.x, this.cy);
             this.relPos = Vector2.Zero;
             this.baseFlipX = life.Flip;
-            this.FlipX = this.baseFlipX;
+            this._flipX = this.baseFlipX;
             this.baseFoothold = life.Fh;
             this.baseFootholdGroup = FHManager.GetGroupIndexByFootholdIndex(this.baseFoothold);
             this.availableArea = this.FHManager.Area;
@@ -98,6 +98,7 @@ namespace WzComparerR2.MapRender
         private int fly_ToTargetDirY;
 
         private bool HasMoveTarget; // 이동 목표까지 상태 결정 차단
+        private bool _flipX;
         #endregion
 
         private ReadOnlyCollection<string> aniList;
@@ -154,7 +155,7 @@ namespace WzComparerR2.MapRender
         public bool PlayRegenMotion { get; }
         public bool PlayRegenSound { get; set; } = true;
         public bool PlayDieSound { get; set; } = true;
-        public bool FlipX { get; private set; }
+        public bool FlipX => this.MovementEnabled && !this.Fixed ? this._flipX : this.baseFlipX;
         public bool MovementEnabled { get; set; }
         public bool Fixed { get; set; }
         public bool BlockRevive { get; set; }
@@ -267,7 +268,7 @@ namespace WzComparerR2.MapRender
             this.finishFlyY = false;
             this.hSpeed = 0;
             this.vSpeed = 0;
-            this.FlipX = this.baseFlipX;
+            this._flipX = this.baseFlipX;
             InitCurFoothold(this.basePos);
             this.hp = 100;
         }
@@ -406,13 +407,13 @@ namespace WzComparerR2.MapRender
                         case 0:
                         case 1:
                             SetHorizontalState(HorizontalState.MoveL);
-                            this.FlipX = false;
+                            this._flipX = false;
                             break;
 
                         case 2:
                         case 3:
                             SetHorizontalState(HorizontalState.MoveR);
-                            this.FlipX = true;
+                            this._flipX = true;
                             break;
                     }
                 }
@@ -422,12 +423,12 @@ namespace WzComparerR2.MapRender
                     {
                         case 0:
                             SetHorizontalState(HorizontalState.MoveL);
-                            this.FlipX = false;
+                            this._flipX = false;
                             break;
 
                         case 1:
                             SetHorizontalState(HorizontalState.MoveR);
-                            this.FlipX = true;
+                            this._flipX = true;
                             break;
 
                         case 2:
@@ -671,7 +672,7 @@ namespace WzComparerR2.MapRender
                     var max = Math.Max(0, this.finalSpeed);
                     if (this.hState == HorizontalState.MoveL)
                     {
-                        this.FlipX = true;
+                        this._flipX = true;
                         this.hSpeed += Fly_Force * (float)elapsedTime.TotalSeconds;
                         if (this.hSpeed > max)
                         {
@@ -681,7 +682,7 @@ namespace WzComparerR2.MapRender
                     }
                     else if (this.hState == HorizontalState.MoveR)
                     {
-                        this.FlipX = false;
+                        this._flipX = false;
                         this.hSpeed += -Fly_Force * (float)elapsedTime.TotalSeconds;
                         if (this.hSpeed < -max)
                         {
@@ -744,7 +745,7 @@ namespace WzComparerR2.MapRender
         {
             if (this.hState == HorizontalState.MoveL) this.hState = HorizontalState.MoveR;
             else this.hState = HorizontalState.MoveL;
-            this.FlipX = !this.FlipX;
+            this._flipX = !this._flipX;
         }
 
         /// <summary>
@@ -1248,12 +1249,12 @@ namespace WzComparerR2.MapRender
                     this.fly_ToTargetDirY = dy < 0 ? -1 : 1;
                     if (fly_ToTargetDirX < 0)
                     {
-                        this.FlipX = false;
+                        this._flipX = false;
                         SetHorizontalState(HorizontalState.MoveL, invoke: false);
                     }
                     else if (fly_ToTargetDirX > 0)
                     {
-                        this.FlipX = true;
+                        this._flipX = true;
                         SetHorizontalState(HorizontalState.MoveR, invoke: false);
                     }
 
