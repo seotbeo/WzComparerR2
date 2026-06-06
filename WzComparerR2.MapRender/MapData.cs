@@ -79,7 +79,7 @@ namespace WzComparerR2.MapRender
                             }
                             life.Controller.SetDied(blockRevive: true);
                         }
-                        life.Controller.MovementEnabled = value;
+                        life.Controller.EnableMovement(value);
                     }
                 }
             }

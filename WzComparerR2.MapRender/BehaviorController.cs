@@ -156,7 +156,7 @@ namespace WzComparerR2.MapRender
         public bool PlayRegenSound { get; set; } = true;
         public bool PlayDieSound { get; set; } = true;
         public bool FlipX => this.MovementEnabled && !this.Fixed ? this._flipX : this.baseFlipX;
-        public bool MovementEnabled { get; set; }
+        public bool MovementEnabled { get; private set; }
         public bool Fixed { get; set; }
         public bool BlockRevive { get; set; }
         public bool ForceMoveStop => this.bState == BaseState.Hit || this.bState == BaseState.Died || this.bState == BaseState.Attack;
@@ -362,6 +362,12 @@ namespace WzComparerR2.MapRender
         public void EndRegen()
         {
             SetBaseState(BaseState.Idle);
+        }
+
+        public void EnableMovement(bool value)
+        {
+            this.MovementEnabled = value;
+            if (!this.Fixed) SetVerticalState(this.flying ? VerticalState.Fly : this.MovementEnabled ? VerticalState.Fall : VerticalState.Stop);
         }
 
         public void Update(TimeSpan elapsedTime)
