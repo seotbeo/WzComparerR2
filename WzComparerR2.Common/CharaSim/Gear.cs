@@ -315,6 +315,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.demonShield:
                 case GearType.soulShield:
                 case GearType.hourGlass:
+                case GearType.magicQuill:
                     return true;
 
                 default:
@@ -623,6 +624,7 @@ namespace WzComparerR2.CharaSim
                 case 1213:
                 case 1214:
                 case 1215:
+                case 1216:
                 case 1252:
                 case 1253:
                 case 1254:
@@ -633,6 +635,7 @@ namespace WzComparerR2.CharaSim
                 case 1712:
                 case 1713:
                 case 1714:
+                case 1726:
                     return (GearType)(code / 1000);
             }
             if (code / 10000 == 135)
@@ -682,9 +685,6 @@ namespace WzComparerR2.CharaSim
 
         public static int GetAstraIndex(Dictionary<int, AstraSubWeaponInfo> loadedAstraSubWeapons, int id)
         {
-            if (id / 10000 == 172)
-                return id % 10;
-
             if (loadedAstraSubWeapons.TryGetValue(id, out AstraSubWeaponInfo value))
                 return value.Index;
 

@@ -712,18 +712,21 @@ namespace WzComparerR2.CharaSim
                 case GearType.celestialLight: return "셀레스티얼 라이트";
                 case GearType.compass: return "컴파스";
 
+                case GearType.onmyouSen: return "음양선";
+                case GearType.kannaReifu: return "영부";
+
+                case GearType.gram: return "그람";
+                case GearType.keir: return "케이르";
+
+                case GearType.carta: return "카르타";
+                case GearType.magicQuill: return "마법깃펜";
+
                 case GearType.jewel: return "쥬얼";
                 case GearType.hourGlass: return "모래시계";
 
                 case GearType.arcaneSymbol: return "아케인심볼";
                 case GearType.authenticSymbol: return "어센틱심볼";
                 case GearType.grandAuthenticSymbol: return "그랜드 어센틱심볼";
-
-                case GearType.onmyouSen: return "음양선";
-                case GearType.kannaReifu: return "영부";
-
-                case GearType.gram: return "그람";
-                case GearType.keir: return "케이르";
                 default: return null;
             }
         }
@@ -894,6 +897,9 @@ namespace WzComparerR2.CharaSim
 
                 case GearType.celestialLight:
                 case GearType.compass: return GetExtraJobReqString(182);
+
+                case GearType.carta:
+                case GearType.magicQuill: return GetExtraJobReqString(192);
                 default: return null;
             }
         }
@@ -937,6 +943,7 @@ namespace WzComparerR2.CharaSim
                 case 175: return "묵현 착용 가능";
                 case 181: return "에릴 라이트 착용 가능";
                 case 182: return "시아 아스텔 착용 가능";
+                case 192: return "레테 착용 가능";
                 default: return null;
             }
         }
@@ -978,6 +985,7 @@ namespace WzComparerR2.CharaSim
                         case 16: extraJobNames.Add("아니마 직업군"); break;
                         case 17: extraJobNames.Add("강호 직업군"); break;
                         case 18: extraJobNames.Add("샤인 직업군"); break;
+                        case 19: extraJobNames.Add("마족 직업군"); break;
                     }
                 }
             }
@@ -1542,6 +1550,17 @@ namespace WzComparerR2.CharaSim
                 case 18512: return "샤인_해적(4차)";
                 case 18514: return "샤인_해적(6차)";
 
+                case 19000: return "레테";
+                case 19001:
+                case 19002:
+                case 19003:
+                case 19004: return "마족";
+                case 19200: return "레테(1차)";
+                case 19210: return "레테(2차)";
+                case 19211: return "레테(3차)";
+                case 19212: return "레테(4차)";
+                case 19214: return "레테(6차)";
+
 
                 case 40000: return "5차";
                 case 40001: return "5차(전사)";
@@ -1606,6 +1625,7 @@ namespace WzComparerR2.CharaSim
                             case 16: jobName = "5차(아니마)"; break; 
                             case 17: jobName = "5차(강호)"; break; 
                             case 18: jobName = "5차(샤인)"; break;
+                            case 19: jobName = "5차(마족)"; break;
                         }
                     }
                     else

@@ -161,6 +161,9 @@ namespace WzComparerR2.CharaSim
         /// 장검 1215
         /// </summary>
         longSword = 1215,
+        /// 카르타 1216
+        /// </summary>
+        carta = 1216,
         /// <summary>
         /// 灵魂手铳 122
         /// </summary>
@@ -567,6 +570,9 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         hourGlass = 17237,
         /// <summary>
+        /// 마법깃펜 1726
+        /// </summary>
+        magicQuill = 1726,
         /// 珠宝 178
         /// </summary>
         jewel = 178,
