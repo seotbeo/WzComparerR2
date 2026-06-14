@@ -177,6 +177,52 @@ namespace WzComparerR2.WzLib.Utilities
         }
 
         // temp workaround for unknown pkg2 encryption
+        public string ReadStringWDirNameContainer(byte nodeType, string fullpath, IWzDecrypter decrypter)
+        {
+            string ret = ReadString(decrypter);
+            return ret;
+            if (nodeType == 0x03)
+            {
+                try
+                {
+                    if (fullpath != null)
+                    {
+                        string dir = Path.GetDirectoryName(fullpath);
+                        List<string> cand_dir;
+                        if (DirNameContainer.Dirs.ContainsKey(dir))
+                        {
+                            cand_dir = DirNameContainer.Dirs[dir];
+                            int idx = cand_dir.IndexOf(ret);
+                            if (idx != -1)
+                            {
+                                cand_dir.RemoveAt(idx);
+                            }
+                        }
+                        else
+                        {
+                            if (fullpath.Contains("Base.wz"))
+                            {
+                                string parentDir = Directory.GetParent(dir)!.FullName;
+                                cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).Where(name => name != "Packs" && name != "Base").ToList();
+                            }
+                            else
+                            {
+                                cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                            }
+                            int idx = cand_dir.IndexOf(ret);
+                            if (idx != -1)
+                            {
+                                cand_dir.RemoveAt(idx);
+                            }
+                            DirNameContainer.Dirs[dir] = cand_dir;
+                        }
+                    }
+                }
+                catch { }
+            }
+            return ret;
+        }
+
         public string ForceReadPkg2DirString(byte nodeType, string fullpath = null)
         {
             long currentPos = this.BaseStream.Position;
@@ -218,9 +264,39 @@ namespace WzComparerR2.WzLib.Utilities
                         {
                             if (fullpath != null)
                             {
+                                string result_dir = null;
                                 string dir = Path.GetDirectoryName(fullpath);
-                                List<string> cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
-                                string result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
+                                List<string> cand_dir;
+                                if (DirNameContainer.Dirs.ContainsKey(dir))
+                                {
+                                    cand_dir = DirNameContainer.Dirs[dir];
+                                    result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
+                                    int idx = cand_dir.IndexOf(result_dir);
+                                    if (idx != -1)
+                                    {
+                                        cand_dir.RemoveAt(idx);
+                                    }
+                                }
+                                else
+                                {
+                                    if (fullpath.Contains("Base.wz"))
+                                    {
+                                        string parentDir = Directory.GetParent(dir)!.FullName;
+                                        cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).Where(name => name != "Packs" && name != "Base").ToList();
+                                    }
+                                    else
+                                    {
+                                        cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                                    }
+                                    result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
+                                    int idx = cand_dir.IndexOf(result_dir);
+                                    if (idx != -1)
+                                    {
+                                        cand_dir.RemoveAt(idx);
+                                    }
+                                    DirNameContainer.Dirs[dir] = cand_dir;
+                                }
+
                                 if (!string.IsNullOrEmpty(result_dir))
                                 {
                                     return result_dir;

@@ -1314,6 +1314,7 @@ namespace WzComparerR2
 
             Wz_Structure wz = new Wz_Structure();
             QueryPerformance.Start();
+            DirNameContainer.Dirs.Clear();
             labelItemStatus.Text = $"로드 중: {wzFilePath}";
             advTree1.BeginUpdate();
             try
@@ -1365,7 +1366,7 @@ namespace WzComparerR2
                 UpdateLanguageCombobox();
                 if (!this.stringLinker.HasValues)
                 {
-                    UpdateStringLinker(null, (this.comboBoxItemPrefLan.SelectedItem as DevComponents.Editors.ComboItem).Tag as Wz_Node);
+                    UpdateStringLinker(null, (this.comboBoxItemPrefLan.SelectedItem as DevComponents.Editors.ComboItem).Tag as Wz_Node, doStopWatch: false);
                     //this.stringLinker.Load(findStringWz(), findItemWz(), findEtcWz(), findQuestWz());
                 }
                 QueryPerformance.End();
@@ -1608,7 +1609,7 @@ namespace WzComparerR2
             this.comboBoxItemPrefLan.SelectedIndex = index >= 0 ? index : 0;
         }
 
-        private void UpdateStringLinker(Wz_Node baseNode, Wz_Node updateNode)
+        private void UpdateStringLinker(Wz_Node baseNode, Wz_Node updateNode, bool doStopWatch = true)
         {
             Wz_File stringWzFile = baseNode?.FindNodeByPath("String")?.GetNodeWzFile() ?? findStringWz();
             Wz_File itemWzFile = baseNode?.FindNodeByPath("Item")?.GetNodeWzFile() ?? findItemWz();
@@ -1620,14 +1621,21 @@ namespace WzComparerR2
             Wz_Node etcNode = updateNode?.FindNodeByPath("Etc");
             Wz_Node questNode = updateNode?.FindNodeByPath("Quest");
 
-            QueryPerformance.Start();
+            if (doStopWatch) QueryPerformance.Start();
             this.stringLinker.Clear();
             bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile) && stringLinker.Update(stringNode, itemNode, etcNode, questNode);
-            QueryPerformance.End();
+            if (doStopWatch) QueryPerformance.End();
             if (r)
             {
-                double ms = (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000);
-                labelItemStatus.Text = $"StringLinker {(updateNode == null ? "초기화" : "업데이트")} 완료: 소요 시간 " + ms + "ms";
+                if (doStopWatch)
+                {
+                    double ms = (Math.Round(QueryPerformance.GetLastInterval(), 4) * 1000);
+                    labelItemStatus.Text = $"StringLinker {(updateNode == null ? "초기화" : "업데이트")} 완료: 소요 시간 " + ms + "ms";
+                }
+                else
+                {
+                    labelItemStatus.Text = $"StringLinker {(updateNode == null ? "초기화" : "업데이트")} 완료";
+                }
             }
             else
             {

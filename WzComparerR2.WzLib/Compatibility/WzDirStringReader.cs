@@ -55,7 +55,7 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
         {
-            return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath) : reader.ReadString(pkg1Keys);
+            return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
         }
     }
 }
