@@ -588,6 +588,10 @@ namespace WzComparerR2.CharaSim
         /// </summary>
         petEquip = 180,
         /// <summary>
+        /// 장비가방 184
+        /// </summary>
+        equipBag = 184,
+        /// <summary>
         /// 骑兽 190
         /// </summary>
         taming = 190,

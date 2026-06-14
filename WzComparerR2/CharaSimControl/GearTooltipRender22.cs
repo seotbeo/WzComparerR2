@@ -456,71 +456,74 @@ namespace WzComparerR2.CharaSimControl
             picH += 18;
 
             // 착용 직업
-            string reqJobString = ItemStringHelper.GetExtraJobReqString(Gear.type, Gear.ReqSpecJobs.Count > 0, CharaSimLoader.LoadedAstraSubWeapons, Gear.ItemID);
-            if (reqJobString == null && Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value))
+            if (Gear.type != GearType.equipBag)
             {
-                reqJobString = ItemStringHelper.GetExtraJobReqString(value);
-            }
-            if (reqJobString == null && Gear.ReqSpecJobs.Count > 0)
-            {
-                // apply req order fix for CMS only
-                int[] specJobsList1 = new[] { 2, 22, 12, 32, 172 };
-                if (new HashSet<int>(specJobsList1).SetEquals(Gear.ReqSpecJobs))
+                string reqJobString = ItemStringHelper.GetExtraJobReqString(Gear.type, Gear.ReqSpecJobs.Count > 0, CharaSimLoader.LoadedAstraSubWeapons, Gear.ItemID);
+                if (reqJobString == null && Gear.Props.TryGetValue(GearPropType.reqSpecJob, out value))
                 {
-                    reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(specJobsList1), 210);
+                    reqJobString = ItemStringHelper.GetExtraJobReqString(value);
                 }
-                else
+                if (reqJobString == null && Gear.ReqSpecJobs.Count > 0)
                 {
-                    reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(Gear.ReqSpecJobs, isMsnClient), 210);
+                    // apply req order fix for CMS only
+                    int[] specJobsList1 = new[] { 2, 22, 12, 32, 172 };
+                    if (new HashSet<int>(specJobsList1).SetEquals(Gear.ReqSpecJobs))
+                    {
+                        reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(specJobsList1), 210);
+                    }
+                    else
+                    {
+                        reqJobString = JoinStringWithNewline(g, ", ", ItemStringHelper.GetExtraJobReqStringList(Gear.ReqSpecJobs, isMsnClient), 210);
+                    }
                 }
-            }
-            if (reqJobString == null)
-            {
-                List<string> reqJobList = new List<string>();
-                Gear.Props.TryGetValue(GearPropType.reqJob, out int reqJob);
-                switch (reqJob)
+                if (reqJobString == null)
                 {
-                    case -1:
-                        reqJobString = "초보자";
-                        break;
-                    case 0:
-                        reqJobString = "공용";
-                        break;
-                    default:
-                        for (int i = 0; i < 5; i++)
-                        {
-                            if ((reqJob & (1 << i)) != 0)
+                    List<string> reqJobList = new List<string>();
+                    Gear.Props.TryGetValue(GearPropType.reqJob, out int reqJob);
+                    switch (reqJob)
+                    {
+                        case -1:
+                            reqJobString = "초보자";
+                            break;
+                        case 0:
+                            reqJobString = "공용";
+                            break;
+                        default:
+                            for (int i = 0; i < 5; i++)
                             {
-                                switch (i)
+                                if ((reqJob & (1 << i)) != 0)
                                 {
-                                    case 0:
-                                        reqJobList.Add("전사");
-                                        break;
-                                    case 1:
-                                        reqJobList.Add("마법사");
-                                        break;
-                                    case 2:
-                                        reqJobList.Add("궁수");
-                                        break;
-                                    case 3:
-                                        reqJobList.Add("도적");
-                                        break;
-                                    case 4:
-                                        reqJobList.Add("해적");
-                                        break;
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            reqJobList.Add("전사");
+                                            break;
+                                        case 1:
+                                            reqJobList.Add("마법사");
+                                            break;
+                                        case 2:
+                                            reqJobList.Add("궁수");
+                                            break;
+                                        case 3:
+                                            reqJobList.Add("도적");
+                                            break;
+                                        case 4:
+                                            reqJobList.Add("해적");
+                                            break;
+                                    }
                                 }
                             }
-                        }
-                        break;
-                }
+                            break;
+                    }
 
-                if (reqJobList.Count > 0)
-                {
-                    reqJobString = string.Join(", ", reqJobList);
+                    if (reqJobList.Count > 0)
+                    {
+                        reqJobString = string.Join(", ", reqJobList);
+                    }
                 }
+                TextRenderer.DrawText(g, "착용 직업", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.Equip22BrushGray).Color, TextFormatFlags.NoPadding);
+                GearGraphics.DrawString(g, (string.IsNullOrEmpty(reqJobString) ? "공용" : reqJobString).Replace("착용", "").Replace("가능", "").Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 100, 308, ref picH, 16);
             }
-            TextRenderer.DrawText(g, "착용 직업", GearGraphics.EquipMDMoris9Font, new Point(15, picH), ((SolidBrush)GearGraphics.Equip22BrushGray).Color, TextFormatFlags.NoPadding);
-            GearGraphics.DrawString(g, (string.IsNullOrEmpty(reqJobString) ? "공용" : reqJobString).Replace("착용", "").Replace("가능", "").Trim(), GearGraphics.EquipMDMoris9Font, equip22ColorTable, 100, 308, ref picH, 16);
 
             // 요구 레벨
             this.Gear.Props.TryGetValue(GearPropType.reqLevel, out value2);
