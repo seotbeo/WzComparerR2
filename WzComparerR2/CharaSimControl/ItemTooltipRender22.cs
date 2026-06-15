@@ -740,7 +740,7 @@ namespace WzComparerR2.CharaSimControl
                 GearGraphics.DrawString(g, "#c[사용 가능한 명령어]#", GearGraphics.ItemGulimFont, item22ColorTable, descLeft, descRight, ref picH, LineHeight);
                 foreach (int l0 in commandLev.Values.OrderBy(i => i).Distinct())
                 {
-                    GearGraphics.DrawString(g, $"#cLv. {10} 이상 : {string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s))}#", GearGraphics.ItemGulimFont, item22ColorTable, descLeft, descRight, ref picH, LineHeight);
+                    GearGraphics.DrawString(g, $"#cLv. {l0} 이상 : {string.Join(", ", commandLev.Where(i => i.Value == l0).Select(i => i.Key).OrderBy(s => s))}#", GearGraphics.ItemGulimFont, item22ColorTable, descLeft, descRight, ref picH, LineHeight);
                 }
                 GearGraphics.DrawString(g, "#cTip. 펫의 레벨이 15가 되면 특정 말을 하도록 시킬 수 있습니다. 펫이 하는 말은 다른 유저에게 보이지 않습니다.#", GearGraphics.ItemGulimFont, item22ColorTable, descLeft, descRight, ref picH, LineHeight);
                 GearGraphics.DrawString(g, "#c예) /펫 [할 말]#", GearGraphics.ItemGulimFont, item22ColorTable, descLeft, descRight, ref picH, LineHeight);
