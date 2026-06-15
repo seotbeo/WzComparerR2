@@ -223,11 +223,11 @@ namespace WzComparerR2.WzLib.Utilities
             return ret;
         }
 
-        public string ForceReadPkg2DirString(byte nodeType, string fullpath = null)
+        public string ForceReadPkg2DirString(byte nodeType, string fullpath = null, bool read2bytes = false)
         {
             long currentPos = this.BaseStream.Position;
 
-            int size = this.ReadSByte();
+            int size = read2bytes ? this.ReadInt16() : this.ReadSByte();
             if (size < 0)
             {
                 size = -size;

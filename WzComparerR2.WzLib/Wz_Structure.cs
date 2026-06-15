@@ -107,7 +107,7 @@ namespace WzComparerR2.WzLib
                 WzVersionProfile matchedProfile = null;
 
                 // 2. detect version and assign OffsetCalc to wz_file
-                if (preReadResult != null)
+                if (preReadResult != null && !file.BypassToBF)
                 {
                     // Try cached profiles first
                     foreach (var cached in this.encryption.KnownProfiles)
@@ -156,7 +156,7 @@ namespace WzComparerR2.WzLib
                 }
 
                 // 3. detect string encryption, assign to crypto
-                if (preReadResult != null && matchedProfile != null)
+                if (preReadResult != null && matchedProfile != null && !file.BypassToBF)
                 {
                     if (!this.encryption.IsDirEncDetected(file))
                     {

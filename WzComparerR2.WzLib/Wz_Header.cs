@@ -77,6 +77,7 @@ namespace WzComparerR2.WzLib
 
         public bool IsPkg1 => this.Signature == PKG1;
         public bool IsPkg2 => this.Signature == PKG2;
+        public bool IsPkg2_2 = false;
 
         public bool VersionChecked { get; set; }
         public Wz_Capabilities Capabilities { get; internal set; }

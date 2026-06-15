@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using WzComparerR2.WzLib.Utilities;
 
 namespace WzComparerR2.WzLib.Compatibility
@@ -25,6 +26,7 @@ namespace WzComparerR2.WzLib.Compatibility
             new Pkg2PreReader(WzFileFormat.Pkg2Kmst1196, false),
             new Pkg2PreReader(WzFileFormat.Pkg2Kmst1198, true),
             new Pkg2PreReader(WzFileFormat.Pkg2Kmst1201, true, true),
+            new Pkg2_2PreReader(WzFileFormat.Pkg2Kmst1201, true, true),
         };
 
         public static IReadOnlyList<IWzPreReader> All => readers;
@@ -235,13 +237,147 @@ namespace WzComparerR2.WzLib.Compatibility
 
     #endregion
 
+    #region PKG2_encrypted_header
+    internal sealed class Pkg2_2PreReader : IWzPreReader
+    {
+        public Pkg2_2PreReader(WzFileFormat format, bool isPkg2DirString = false, bool supportRandomHeader = false)
+        {
+            this.format = format;
+            this.isPkg2DirString = isPkg2DirString;
+            this.supportRandomHeader = supportRandomHeader;
+        }
+
+
+
+        private readonly WzFileFormat format;
+        private readonly bool isPkg2DirString;
+        private readonly bool supportRandomHeader;
+
+        public bool TryPreRead(Wz_File wzFile, out WzPreReadResult result)
+        {
+            result = null;
+            if (!wzFile.Header.IsPkg2)
+                return false;
+
+            if (wzFile.Header.HasCapabilities(Wz_Capabilities.Pkg2RandomHeader) && !this.supportRandomHeader)
+            {
+                return false;
+            }
+
+            try
+            {
+                wzFile.FileStream.Position = wzFile.Header.DirStartPosition;
+                var reader = new WzBinaryReader(wzFile.FileStream, false);
+                long dirStartPos = wzFile.FileStream.Position;
+                result = new WzPreReadResult(this.format, new List<WzPreReadNodeInfo>(), dirStartPos, 0)
+                {
+                    Pkg2DirEntryCounts = new List<Pkg2DirEntryCount>(),
+                };
+                ReadTree(reader, result, this.isPkg2DirString);
+                result.DirEndPosition = reader.BaseStream.Position;
+                wzFile.Header.IsPkg2_2 = true;
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        private static void ReadTree(WzBinaryReader reader, WzPreReadResult result, bool isPkg2DirString)
+        {
+            int encryptedEntryCount = (int)reader.ReadCompressedInt64();
+            var temp = new List<Pkg2TempEntry>();
+
+            var crypto = new Wz_Crypto();
+            var bmsKey = crypto.GetKeys(Wz_CryptoKeyType.BMS);
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                long originPos = reader.BaseStream.Position;
+                byte nodeType = reader.ReadByte();
+                string name = "";
+                if (nodeType == 0x03 || nodeType == 0x04)
+                {
+                    if (result.FirstStringRawBytes == null && temp.Count == 0)
+                    {
+                        result.FirstStringRawBytes = WzPreReadHelper.ReadStringRawBytes(reader, isPkg2DirString, out var enc, true);
+                        result.FirstStringEncoding = enc;
+                    }
+                    else if (isPkg2DirString && result.SecondStringRawBytes == null && temp.Count == 1)
+                    {
+                        long originPos2 = reader.BaseStream.Position;
+                        result.SecondStringRawBytes = WzPreReadHelper.ReadStringRawBytes(reader, false, out var enc);
+                        result.SecondStringEncoding = enc;
+                        reader.BaseStream.Position = originPos2;
+                        name = reader.ReadString(bmsKey);
+                    }
+                    else
+                    {
+                        name = reader.ReadString(bmsKey);
+                        //WzPreReadHelper.SkipString(reader);
+                    }
+
+                    if (!Regex.IsMatch(name, @"^[\x20-\x7E]*$"))
+                    {
+                        reader.BaseStream.Position = originPos;
+                        break;
+                    }
+
+                    int size = reader.ReadCompressedInt32();
+                    reader.ReadCompressedInt32();
+                    temp.Add(new Pkg2TempEntry { NodeType = nodeType, DataLength = size });
+                }
+                else
+                {
+                    reader.BaseStream.Position--;
+                    break;
+                }
+            }
+
+            result.Pkg2DirEntryCounts.Add(new Pkg2DirEntryCount
+            {
+                EncryptedEntryCount = encryptedEntryCount,
+                ActualEntryCount = temp.Count,
+                ActualImgCount = temp.Count(e => e.NodeType == 0x04),
+            });
+
+            int dirCount = 0;
+            for (int i = 0; i < temp.Count; i++)
+            {
+                uint offsetPos = (uint)reader.BaseStream.Position;
+                uint hashedOffset = reader.ReadUInt32();
+                result.Nodes.Add(new WzPreReadNodeInfo
+                {
+                    NodeType = temp[i].NodeType,
+                    DataLength = temp[i].DataLength,
+                    HashedOffsetPosition = offsetPos,
+                    HashedOffset = hashedOffset,
+                });
+                if (temp[i].NodeType == 0x03) dirCount++;
+            }
+
+            for (int i = 0; i < dirCount; i++)
+                ReadTree(reader, result, isPkg2DirString);
+        }
+
+        private struct Pkg2TempEntry
+        {
+            public int NodeType;
+            public int DataLength;
+        }
+    }
+
+#endregion
+
     #region Shared helpers
 
     internal static class WzPreReadHelper
     {
-        public static byte[] ReadStringRawBytes(this WzBinaryReader reader, bool isPkg2DirString, out WzStringEncoding encoding)
+        public static byte[] ReadStringRawBytes(this WzBinaryReader reader, bool isPkg2DirString, out WzStringEncoding encoding, bool read2bytes = false)
         {
-            sbyte lenPrefix = reader.ReadSByte();
+            //sbyte lenPrefix = reader.ReadSByte();
+            short lenPrefix = read2bytes ? reader.ReadInt16() : reader.ReadSByte();
             if (isPkg2DirString)
             {
                 encoding = WzStringEncoding.UTF16;
