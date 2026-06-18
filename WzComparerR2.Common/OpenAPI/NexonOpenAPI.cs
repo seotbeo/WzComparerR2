@@ -571,7 +571,7 @@ namespace WzComparerR2.OpenAPI
         public static readonly int[] WeaponsKMS = { -1, 130, 131, 132, 133, 137, 138, 140, 141, 142,
             143, 144, 145, 146, 147, 148, 149, -1, 134, 152,
             153, -1, 136, 121, 122, 123, 124, 156, 157, 126,
-            158, 127, 128, 159, 129, 121, 1214, 1404, 1215 };
+            158, 127, 128, 159, 129, 121, 1214, 1404, 1215, 1216 };
 
 
         // https://github.com/HikariCalyx/WzComparerR2-JMS/blob/d9f2dab7691c5f7b9989c36a40186f1b6f3a9bf7/README.md
