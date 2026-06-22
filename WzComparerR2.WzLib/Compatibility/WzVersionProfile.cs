@@ -1,14 +1,41 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using WzComparerR2.WzLib.Utilities;
 
 namespace WzComparerR2.WzLib.Compatibility
 {
-    public abstract class WzVersionProfile
+    #region Format profile base
+
+    public interface IWzFormatProfile
     {
-        protected WzVersionProfile(WzFileFormat format, Wz_CryptoKeyType cryptoKeyType)
+        WzFileFormat Format { get; }
+        string Name { get; }
+        Wz_CryptoKeyType CryptoKeyType { get; }
+        bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult);
+        bool TryDetectCached(Wz_File wzFile, WzPreReadResult preReadResult, WzProfileCacheEntry cached);
+        WzProfileCacheEntry CreateCacheEntry(Wz_File wzFile);
+        void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType);
+        void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto);
+    }
+
+    public interface IWzFormatProfile<THeader, THash> : IWzFormatProfile
+        where THeader : Wz_Header
+    {
+        bool CanHandle(Wz_File wzFile, out THeader header);
+        IWzVersionIterator<THash> CreateVersionIterator(THeader header);
+        bool TryResolveCache(THeader header, WzProfileCacheEntry cache, out int wzVersion, out THash hashVersion);
+        WzProfileCacheEntry CreateCacheEntry(int wzVersion, THash hashVersion);
+        IWzImageOffsetCalc CreateOffsetCalc(THeader header, THash hashVersion);
+        WzFileReadContext CreateReadContext(THeader header, THash hashVersion, IWzImageOffsetCalc offsetCalc);
+        void DetectCryptoKeyType(Wz_File wzFile, THeader header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType);
+        IPkg2DirStringReader CreateDirStringReader(THeader header, Wz_Crypto crypto, THash hashVersion);
+    }
+
+    public abstract class WzFormatProfile<THeader, THash> : IWzFormatProfile<THeader, THash>
+        where THeader : Wz_Header
+    {
+        protected WzFormatProfile(WzFileFormat format, Wz_CryptoKeyType cryptoKeyType)
         {
             this.Format = format;
             this.CryptoKeyType = cryptoKeyType;
@@ -17,25 +44,63 @@ namespace WzComparerR2.WzLib.Compatibility
         public WzFileFormat Format { get; }
         public abstract string Name { get; }
         public Wz_CryptoKeyType CryptoKeyType { get; }
-        public abstract IWzVersionIterator CreateIterator(Wz_File wzFile);
-        public abstract bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult, IWzVersionIterator iterator);
-        public abstract IWzImageOffsetCalc CreateOffsetCalc(Wz_File wzFile, uint hashVersion);
 
-        public virtual IWzImageOffsetCalc CreateOffsetCalc(Wz_File wzFile)
+        public abstract bool CanHandle(Wz_File wzFile, out THeader header);
+        public abstract IWzVersionIterator<THash> CreateVersionIterator(THeader header);
+        public abstract bool TryResolveCache(THeader header, WzProfileCacheEntry cache, out int wzVersion, out THash hashVersion);
+        public abstract WzProfileCacheEntry CreateCacheEntry(int wzVersion, THash hashVersion);
+        public abstract IWzImageOffsetCalc CreateOffsetCalc(THeader header, THash hashVersion);
+        public abstract WzFileReadContext CreateReadContext(THeader header, THash hashVersion, IWzImageOffsetCalc offsetCalc);
+        protected abstract THash GetDetectedHashVersion(Wz_File wzFile, THeader header);
+
+        public virtual bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult)
         {
-            return CreateOffsetCalc(wzFile, wzFile.Header.HashVersion);
+            return WzFormatDetector.TryDetect(wzFile, preReadResult, this);
         }
 
-        public abstract void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType);
+        public bool TryDetectCached(Wz_File wzFile, WzPreReadResult preReadResult, WzProfileCacheEntry cached)
+        {
+            return WzFormatDetector.TryDetectCached(wzFile, preReadResult, this, cached);
+        }
+
+        public WzProfileCacheEntry CreateCacheEntry(Wz_File wzFile)
+        {
+            if (!this.CanHandle(wzFile, out var header))
+                throw new InvalidOperationException($"{this.Name} cannot create a cache entry for this file.");
+            return this.CreateCacheEntry(header.WzVersion, this.GetDetectedHashVersion(wzFile, header));
+        }
+
+        public void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        {
+            if (!this.CanHandle(wzFile, out var header))
+            {
+                pkg1KeyType = Wz_CryptoKeyType.Unknown;
+                pkg2KeyType = Wz_CryptoKeyType.Unknown;
+                return;
+            }
+
+            this.DetectCryptoKeyType(wzFile, header, crypto, preReadResult, out pkg1KeyType, out pkg2KeyType);
+        }
+
+        public virtual void DetectCryptoKeyType(Wz_File wzFile, THeader header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        {
+            pkg1KeyType = Wz_CryptoKeyType.Unknown;
+            pkg2KeyType = Wz_CryptoKeyType.Unknown;
+        }
+
+        public virtual IPkg2DirStringReader CreateDirStringReader(THeader header, Wz_Crypto crypto, THash hashVersion)
+        {
+            return null;
+        }
+
+        public virtual void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        {
+        }
 
         #region Shared crypto detection helpers
 
         private static readonly Wz_CryptoKeyType[] Pkg1LegacyCandidates = { Wz_CryptoKeyType.BMS, Wz_CryptoKeyType.KMS, Wz_CryptoKeyType.GMS };
 
-        /// <summary>
-        /// Apply wire mask (0xAA+i for ASCII, 0xAAAA+i for UTF16) then try each candidate key.
-        /// Called by both profile detection and Wz_Crypto fallback.
-        /// </summary>
         internal static Wz_CryptoKeyType DetectPkg1CryptoKeyType(ReadOnlySpan<byte> rawBytes, WzStringEncoding encoding, Wz_Crypto crypto)
         {
             Span<byte> masked = rawBytes.Length <= 256 ? stackalloc byte[rawBytes.Length] : new byte[rawBytes.Length];
@@ -43,9 +108,6 @@ namespace WzComparerR2.WzLib.Compatibility
             return TryMatchKeys(masked, encoding, crypto, Pkg1LegacyCandidates);
         }
 
-        /// <summary>
-        /// Try a single decrypter on raw bytes (no wire mask).
-        /// </summary>
         protected static bool TryMatchKey(ReadOnlySpan<byte> sourceBytes, WzStringEncoding encoding, IWzDecrypter decrypter)
         {
             Span<byte> buf = sourceBytes.Length <= 256 ? stackalloc byte[sourceBytes.Length] : new byte[sourceBytes.Length];
@@ -74,10 +136,7 @@ namespace WzComparerR2.WzLib.Compatibility
                 for (int i = 0; i < len; i++) chars[i] = (char)bytes[i];
                 return WzPreReadHelper.IsLegalNodeName(chars);
             }
-            else
-            {
-                return WzPreReadHelper.IsLegalNodeName(MemoryMarshal.Cast<byte, char>(bytes));
-            }
+            return WzPreReadHelper.IsLegalNodeName(MemoryMarshal.Cast<byte, char>(bytes));
         }
 
         private static void ApplyWireMask(ReadOnlySpan<byte> rawBytes, Span<byte> output, WzStringEncoding encoding)
@@ -95,92 +154,115 @@ namespace WzComparerR2.WzLib.Compatibility
         #endregion
     }
 
+    #endregion
+
     /// <summary>
-    /// Static registry of all known version profiles.
+    /// Static registry of all known format profiles.
     /// Profiles are ordered so that the most likely match for a given WzFileFormat is tried first.
     /// </summary>
-    public static class WzVersionProfiles
+    public static class WzFormatProfiles
     {
-        private static readonly WzVersionProfile[] allProfiles = new WzVersionProfile[]
+        private static readonly IWzFormatProfile[] allProfiles = new IWzFormatProfile[]
         {
             new Pkg1Profile(),
+            new Pkg2Profile64(1202, WzFileFormat.Pkg2Kmst1202, Pkg2OffsetVersion.KMST1202, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalc64V1()),
             new Pkg2Profile(1201, WzFileFormat.Pkg2Kmst1201, Pkg2OffsetVersion.KMST1199, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalcV4()),
             new Pkg2Profile(1200, WzFileFormat.Pkg2Kmst1198, Pkg2OffsetVersion.KMST1199, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalcV5()),
             new Pkg2Profile(1199, WzFileFormat.Pkg2Kmst1198, Pkg2OffsetVersion.KMST1199, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalcV4()),
             new Pkg2Profile(1198, WzFileFormat.Pkg2Kmst1198, Pkg2OffsetVersion.KMST1198, Wz_CryptoKeyType.KMST1198, new Pkg2HashVersionCalcV3()),
-            new Pkg2Profile(1197, WzFileFormat.Pkg2Kmst1196, Pkg2OffsetVersion.KMST1196, Wz_CryptoKeyType.BMS, new Pkg2HashVersionCalcV2()),  // BMS/KMS/GMS detected separately
+            new Pkg2Profile(1197, WzFileFormat.Pkg2Kmst1196, Pkg2OffsetVersion.KMST1196, Wz_CryptoKeyType.BMS, new Pkg2HashVersionCalcV2()),
             new Pkg2Profile(1196, WzFileFormat.Pkg2Kmst1196, Pkg2OffsetVersion.KMST1196, Wz_CryptoKeyType.BMS, new Pkg2HashVersionCalcV1()),
         };
 
-        private static readonly WzVersionProfile unknownPkg2Profile = new UnknownPkg2Profile(0, WzFileFormat.Pkg2Kmst1198, Pkg2OffsetVersion.KMST1199, Wz_CryptoKeyType.KMST1199, null);
-
-        public static IEnumerable<WzVersionProfile> GetCandidates(WzFileFormat format)
+        public static IEnumerable<IWzFormatProfile> GetCandidates(WzFileFormat format)
         {
-            foreach (var p in allProfiles)
+            foreach (var profile in allProfiles)
             {
-                if (p.Format == format)
-                    yield return p;
+                if (profile.Format == format)
+                    yield return profile;
             }
         }
 
-        public static WzVersionProfile GetUnknownPkg2Profile()
+        public static IWzFormatProfile GetByName(string name)
         {
-            return unknownPkg2Profile;
-        }
-
-        public static WzVersionProfile GetByName(string name)
-        {
-            foreach (var p in allProfiles)
+            foreach (var profile in allProfiles)
             {
-                if (string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase))
-                    return p;
+                if (string.Equals(profile.Name, name, StringComparison.OrdinalIgnoreCase))
+                    return profile;
             }
             return null;
+        }
+
+        public static Pkg2UnknownProfile64 GetPkg2UnknownProfile64()
+        {
+            return new Pkg2UnknownProfile64(1202, WzFileFormat.Pkg2Kmst1202, Pkg2OffsetVersion.KMST1202, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalc64V1());
         }
     }
 
     #region PKG1 profile
 
-    public sealed class Pkg1Profile : WzVersionProfile
+    public sealed class Pkg1Profile : WzFormatProfile<Wz_Header.WzPkg1Header, uint>
     {
         public Pkg1Profile() : base(WzFileFormat.Pkg1, Wz_CryptoKeyType.Unknown) { }
 
         public override string Name => "pkg1";
 
-        public override IWzVersionIterator CreateIterator(Wz_File wzFile)
+        public override bool CanHandle(Wz_File wzFile, out Wz_Header.WzPkg1Header header)
         {
-            var pkg1 = (Wz_Header.WzPkg1Header)wzFile.Header;
-            if (pkg1.IsEncverMissing)
-                return Pkg1VersionIterator.CreateFixed(777);
-            return new Pkg1VersionIterator(pkg1.EncryptedVersion);
+            header = wzFile.Header as Wz_Header.WzPkg1Header;
+            return header != null;
         }
 
-        public override bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult, IWzVersionIterator iterator)
+        public override IWzVersionIterator<uint> CreateVersionIterator(Wz_Header.WzPkg1Header header)
         {
-            if (preReadResult.Format != WzFileFormat.Pkg1)
+            if (header.IsEncverMissing)
+                return Pkg1VersionIterator.CreateFixed(777);
+            return new Pkg1VersionIterator(header.EncryptedVersion);
+        }
+
+        public override bool TryResolveCache(Wz_Header.WzPkg1Header header, WzProfileCacheEntry cache, out int wzVersion, out uint hashVersion)
+        {
+            wzVersion = cache.WzVersion;
+            hashVersion = unchecked((uint)cache.HashKey);
+            if (!string.Equals(cache.ProfileName, this.Name, StringComparison.OrdinalIgnoreCase))
                 return false;
 
-            return WzVersionDetectHelper.FastDetectWithPreReadNodes(wzFile, preReadResult, iterator,
-                (f, hv) => this.CreateOffsetCalc(f, hv));
+            var iterator = this.CreateVersionIterator(header);
+            while (iterator.TryGetNextVersion())
+            {
+                if (iterator.WzVersion == wzVersion && iterator.HashVersion == hashVersion)
+                    return true;
+            }
+            return false;
         }
 
-        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_File wzFile, uint hashVersion)
+        public override WzProfileCacheEntry CreateCacheEntry(int wzVersion, uint hashVersion)
         {
-            return new Pkg1OffsetCalc((uint)wzFile.Header.HeaderSize, hashVersion);
+            return new WzProfileCacheEntry(this.Name, wzVersion, hashVersion);
         }
 
-        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_Header.WzPkg1Header header, uint hashVersion)
+        {
+            return new Pkg1OffsetCalc((uint)header.HeaderSize, hashVersion);
+        }
+
+        public override WzFileReadContext CreateReadContext(Wz_Header.WzPkg1Header header, uint hashVersion, IWzImageOffsetCalc offsetCalc)
+        {
+            return new WzFileReadContext<uint>(hashVersion, hashVersion, offsetCalc, null);
+        }
+
+        protected override uint GetDetectedHashVersion(Wz_File wzFile, Wz_Header.WzPkg1Header header)
+        {
+            return ((WzFileReadContext<uint>)wzFile.ReadContext).HashVersion;
+        }
+
+        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Header.WzPkg1Header header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
         {
             pkg2KeyType = Wz_CryptoKeyType.Unknown;
-
             byte[] rawBytes = preReadResult.FirstStringRawBytes;
-            if (rawBytes == null || rawBytes.Length == 0)
-            {
-                pkg1KeyType = Wz_CryptoKeyType.Unknown;
-                return;
-            }
-
-            pkg1KeyType = DetectPkg1CryptoKeyType(rawBytes, preReadResult.FirstStringEncoding, crypto);
+            pkg1KeyType = rawBytes == null || rawBytes.Length == 0
+                ? Wz_CryptoKeyType.Unknown
+                : DetectPkg1CryptoKeyType(rawBytes, preReadResult.FirstStringEncoding, crypto);
         }
     }
 
@@ -188,14 +270,9 @@ namespace WzComparerR2.WzLib.Compatibility
 
     #region PKG2 profiles
 
-    public sealed class Pkg2Profile : WzVersionProfile
+    public sealed class Pkg2Profile : WzFormatProfile<Wz_Header.WzPkg2Header, uint>
     {
-        public Pkg2Profile(
-            int wzVersion,
-            WzFileFormat format,
-            Pkg2OffsetVersion offsetVersion,
-            Wz_CryptoKeyType cryptoKeyType,
-            IPkg2HashVersionCalc hashVersionCalc)
+        public Pkg2Profile(int wzVersion, WzFileFormat format, Pkg2OffsetVersion offsetVersion, Wz_CryptoKeyType cryptoKeyType, IPkg2HashVersionCalc<uint> hashVersionCalc)
             : base(format, cryptoKeyType)
         {
             this.WzVersion = wzVersion;
@@ -205,44 +282,62 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public int WzVersion { get; }
         public Pkg2OffsetVersion OffsetVersion { get; }
-        public IPkg2HashVersionCalc HashVersionCalc { get; }
-
+        public IPkg2HashVersionCalc<uint> HashVersionCalc { get; }
         public override string Name => $"pkg2_kmst{this.WzVersion}";
 
-        public override IWzVersionIterator CreateIterator(Wz_File wzFile)
+        public override bool CanHandle(Wz_File wzFile, out Wz_Header.WzPkg2Header header)
         {
-            var pkg2 = (Wz_Header.WzPkg2Header)wzFile.Header;
-            uint hash1 = pkg2.Hash1, hash2 = pkg2.Hash2;
+            header = wzFile.Header as Wz_Header.WzPkg2Header;
+            return header != null;
+        }
+
+        public override IWzVersionIterator<uint> CreateVersionIterator(Wz_Header.WzPkg2Header header)
+        {
+            uint hash1 = header.Hash1, hash2 = header.Hash2;
             var calc = this.HashVersionCalc;
             return new Pkg2VersionIterator(
                 this.WzVersion,
-                () => calc.CalcCandidates(hash1, hash2),
-                hv => calc.Verify(hash1, hash2, hv));
+                () => calc.CalcCandidates(hash1, hash2));
         }
 
-        public override bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult, IWzVersionIterator iterator)
+        public override bool TryResolveCache(Wz_Header.WzPkg2Header header, WzProfileCacheEntry cache, out int wzVersion, out uint hashVersion)
         {
-            if (preReadResult.Format != this.Format)
-                return false;
-
-            return WzVersionDetectHelper.FastDetectWithPreReadNodes(wzFile, preReadResult, iterator,
-                (f, hv) => this.CreateOffsetCalc(f, hv));
+            wzVersion = cache.WzVersion;
+            hashVersion = unchecked((uint)cache.HashKey);
+            return string.Equals(cache.ProfileName, this.Name, StringComparison.OrdinalIgnoreCase)
+                && wzVersion == this.WzVersion
+                && this.HashVersionCalc.Verify(header.Hash1, header.Hash2, hashVersion);
         }
 
-        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_File wzFile, uint hashVersion)
+        public override WzProfileCacheEntry CreateCacheEntry(int wzVersion, uint hashVersion)
         {
-            uint headerLen = (uint)wzFile.Header.HeaderSize;
-            uint hash1 = ((Wz_Header.WzPkg2Header)wzFile.Header).Hash1;
+            return new WzProfileCacheEntry(this.Name, wzVersion, hashVersion);
+        }
+
+        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_Header.WzPkg2Header header, uint hashVersion)
+        {
+            uint headerSize = (uint)header.HeaderSize;
+            uint hash1 = header.Hash1;
             return this.OffsetVersion switch
             {
-                Pkg2OffsetVersion.KMST1196 => new Pkg2OffsetCalcV1(headerLen, hashVersion, hash1),
-                Pkg2OffsetVersion.KMST1198 => new Pkg2OffsetCalcV2(headerLen, hashVersion, hash1),
-                Pkg2OffsetVersion.KMST1199 => new Pkg2OffsetCalcV3(headerLen, hashVersion, hash1),
+                Pkg2OffsetVersion.KMST1196 => new Pkg2OffsetCalcV1(headerSize, hashVersion, hash1),
+                Pkg2OffsetVersion.KMST1198 => new Pkg2OffsetCalcV2(headerSize, hashVersion, hash1),
+                Pkg2OffsetVersion.KMST1199 => new Pkg2OffsetCalcV3(headerSize, hashVersion, hash1),
                 _ => throw new ArgumentOutOfRangeException(nameof(OffsetVersion)),
             };
         }
 
-        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        public override WzFileReadContext CreateReadContext(Wz_Header.WzPkg2Header header, uint hashVersion, IWzImageOffsetCalc offsetCalc)
+        {
+            return new WzFileReadContext<uint>(hashVersion, hashVersion, offsetCalc, Pkg2DirTreeReadRule.Instance);
+        }
+
+        protected override uint GetDetectedHashVersion(Wz_File wzFile, Wz_Header.WzPkg2Header header)
+        {
+            return ((WzFileReadContext<uint>)wzFile.ReadContext).HashVersion;
+        }
+
+        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Header.WzPkg2Header header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
         {
             pkg1KeyType = Wz_CryptoKeyType.Unknown;
             pkg2KeyType = Wz_CryptoKeyType.Unknown;
@@ -253,28 +348,23 @@ namespace WzComparerR2.WzLib.Compatibility
 
             if (this.Format == WzFileFormat.Pkg2Kmst1196)
             {
-                // Legacy PKG2: same wire-mask + BMS/KMS/GMS probing as PKG1
                 var keyType = DetectPkg1CryptoKeyType(rawBytes, preReadResult.FirstStringEncoding, crypto);
                 pkg1KeyType = keyType;
                 pkg2KeyType = keyType;
                 return;
             }
 
-            // KMST 1198+: detect pkg2 key from first string
             if (this.WzVersion == 1198)
             {
                 if (TryMatchKey(rawBytes, WzStringEncoding.UTF16, crypto.GetKeys(Wz_CryptoKeyType.KMST1198)))
                     pkg2KeyType = Wz_CryptoKeyType.KMST1198;
             }
-            else if (this.WzVersion >= 1199 && wzFile.Header.VersionChecked)
+            else if (this.WzVersion >= 1199)
             {
-                uint hash1 = (wzFile.Header as Wz_Header.WzPkg2Header)?.Hash1 ?? 0;
-                uint hashVersion = wzFile.Header.HashVersion;
-                if (TryMatchKey(rawBytes, WzStringEncoding.UTF16, new Wz_Crypto.Pkg2DirStringKeyV2(hash1, hashVersion)))
+                if (TryMatchKey(rawBytes, WzStringEncoding.UTF16, new Wz_Crypto.Pkg2DirStringKeyV2(header.Hash1, ((WzFileReadContext<uint>)wzFile.ReadContext).HashVersion)))
                     pkg2KeyType = Wz_CryptoKeyType.KMST1199;
             }
 
-            // Detect pkg1 key from second string (standard encoding)
             byte[] secondBytes = preReadResult.SecondStringRawBytes;
             if (secondBytes != null && secondBytes.Length > 0)
             {
@@ -282,44 +372,37 @@ namespace WzComparerR2.WzLib.Compatibility
             }
         }
 
-        /// <summary>
-        /// Create a directory string reader for this profile, used by ReadDirTreePkg2.
-        /// Must be called after crypto detection has completed.
-        /// </summary>
-        public IPkg2DirStringReader CreateDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        public override IPkg2DirStringReader CreateDirStringReader(Wz_Header.WzPkg2Header header, Wz_Crypto crypto, uint hashVersion)
         {
             if (this.Format == WzFileFormat.Pkg2Kmst1196)
-            {
                 return new Pkg2LegacyDirStringReader(crypto.Pkg2Keys);
-            }
 
-            IWzDecrypter pkg2Keys;
-            if (this.CryptoKeyType == Wz_CryptoKeyType.KMST1199)
-            {
-                var pkg2 = (Wz_Header.WzPkg2Header)wzFile.Header;
-                pkg2Keys = new Wz_Crypto.Pkg2DirStringKeyV2(pkg2.Hash1, wzFile.Header.HashVersion);
-            }
-            else
-            {
-                pkg2Keys = crypto.Pkg2Keys;
-            }
+            IWzDecrypter pkg2Keys = this.CryptoKeyType == Wz_CryptoKeyType.KMST1199
+                ? new Wz_Crypto.Pkg2DirStringKeyV2(header.Hash1, hashVersion)
+                : crypto.Pkg2Keys;
             var pkg1Keys = crypto.Pkg1Keys ?? crypto.GetKeys(Wz_CryptoKeyType.BMS);
-            return new Pkg2KmstDirStringReader(pkg2Keys, pkg1Keys);
+            return new Pkg2MixedKeyDirStringReader(pkg2Keys, pkg1Keys);
+        }
+
+        public override void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        {
+            if (this.CanHandle(wzFile, out var header))
+            {
+                wzFile.ReadContext.DirStringReader = this.CreateDirStringReader(header, crypto, ((WzFileReadContext<uint>)wzFile.ReadContext).HashVersion);
+            }
         }
     }
 
     #endregion
 
-    #region PKG2 unknown profiles
+    #region PKG2 64-bit profile
 
-    public sealed class UnknownPkg2Profile : WzVersionProfile
+    /// <summary>
+    /// 64-bit PKG2 profile. Currently used by KMST1202+.
+    /// </summary>
+    public sealed class Pkg2Profile64 : WzFormatProfile<Wz_Header.WzPkg2Header64, ulong>
     {
-        public UnknownPkg2Profile(
-            int wzVersion,
-            WzFileFormat format,
-            Pkg2OffsetVersion offsetVersion,
-            Wz_CryptoKeyType cryptoKeyType,
-            IPkg2HashVersionCalc hashVersionCalc)
+        public Pkg2Profile64(int wzVersion, WzFileFormat format, Pkg2OffsetVersion offsetVersion, Wz_CryptoKeyType cryptoKeyType, IPkg2HashVersionCalc<ulong> hashVersionCalc)
             : base(format, cryptoKeyType)
         {
             this.WzVersion = wzVersion;
@@ -329,40 +412,225 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public int WzVersion { get; }
         public Pkg2OffsetVersion OffsetVersion { get; }
-        public IPkg2HashVersionCalc HashVersionCalc { get; }
+        public IPkg2HashVersionCalc<ulong> HashVersionCalc { get; }
+        public override string Name => $"pkg2_kmst{this.WzVersion}";
 
-        public override string Name => $"pkg2_unknown";
-
-        public override IWzVersionIterator CreateIterator(Wz_File wzFile)
+        public override bool CanHandle(Wz_File wzFile, out Wz_Header.WzPkg2Header64 header)
         {
-            return null;
+            header = wzFile.Header as Wz_Header.WzPkg2Header64;
+            return header != null;
         }
 
-        public override bool TryDetect(Wz_File wzFile, WzPreReadResult preReadResult, IWzVersionIterator iterator)
+        public override IWzVersionIterator<ulong> CreateVersionIterator(Wz_Header.WzPkg2Header64 header)
         {
-            if (preReadResult.Format != this.Format)
-                return false;
-
-            return true;
+            return new Pkg2VersionIterator64(this.WzVersion, header, this.HashVersionCalc);
         }
 
-        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_File wzFile, uint hashVersion)
+        public override bool TryResolveCache(Wz_Header.WzPkg2Header64 header, WzProfileCacheEntry cache, out int wzVersion, out ulong hashVersion)
         {
-            return null;
+            wzVersion = cache.WzVersion;
+            hashVersion = cache.HashKey;
+            return string.Equals(cache.ProfileName, this.Name, StringComparison.OrdinalIgnoreCase)
+                && wzVersion == this.WzVersion
+                && this.HashVersionCalc.Verify(header.Hash1, header.Hash2, hashVersion);
         }
 
-        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        public override WzProfileCacheEntry CreateCacheEntry(int wzVersion, ulong hashVersion)
+        {
+            return new WzProfileCacheEntry(this.Name, wzVersion, hashVersion);
+        }
+
+        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_Header.WzPkg2Header64 header, ulong hashVersion)
+        {
+            return this.OffsetVersion switch
+            {
+                Pkg2OffsetVersion.KMST1202 => new Pkg2OffsetCalc64V1((uint)header.HeaderSize, header.Hash1, hashVersion),
+                _ => throw new ArgumentOutOfRangeException(nameof(OffsetVersion)),
+            };
+        }
+
+        public override WzFileReadContext CreateReadContext(Wz_Header.WzPkg2Header64 header, ulong hashVersion, IWzImageOffsetCalc offsetCalc)
+        {
+            return new WzFileReadContext<ulong>(hashVersion, unchecked((uint)hashVersion), offsetCalc, Pkg2DirTreeReadRule64.Instance);
+        }
+
+        protected override ulong GetDetectedHashVersion(Wz_File wzFile, Wz_Header.WzPkg2Header64 header)
+        {
+            return ((WzFileReadContext<ulong>)wzFile.ReadContext).HashVersion;
+        }
+
+        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Header.WzPkg2Header64 header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
         {
             pkg1KeyType = Wz_CryptoKeyType.Unknown;
-            pkg2KeyType = Wz_CryptoKeyType.Unknown;
+            pkg2KeyType = this.CryptoKeyType;
         }
 
-        public IPkg2DirStringReader CreateDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        public override IPkg2DirStringReader CreateDirStringReader(Wz_Header.WzPkg2Header64 header, Wz_Crypto crypto, ulong hashVersion)
         {
-            var pkg1Keys = crypto.Pkg1Keys ?? crypto.GetKeys(Wz_CryptoKeyType.BMS);
-            return new Pkg2KmstDirStringReader(null, pkg1Keys);
+            var firstNameKey = new Wz_Crypto.Pkg2DirStringKeyV3(header.Hash1, hashVersion);
+            var pkg1Keys = crypto.GetKeys(Wz_CryptoKeyType.BMS);
+            return new Pkg2MixedKeyDirStringReader64(firstNameKey, pkg1Keys);
+        }
+
+        public override void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        {
+            if (this.CanHandle(wzFile, out var header))
+            {
+                wzFile.ReadContext.DirStringReader = this.CreateDirStringReader(header, crypto, ((WzFileReadContext<ulong>)wzFile.ReadContext).HashVersion);
+            }
+        }
+
+        /// <summary>
+        /// Iterator for 64-bit PKG2 hash version detection.
+        /// </summary>
+        private sealed class Pkg2VersionIterator64 : IWzVersionIterator<ulong>
+        {
+            private readonly Wz_Header.WzPkg2Header64 header;
+            private readonly IPkg2HashVersionCalc<ulong> calc;
+            private readonly int wzVersion;
+            private IReadOnlyList<ulong> candidates;
+            private int index;
+
+            public Pkg2VersionIterator64(int wzVersion, Wz_Header.WzPkg2Header64 header, IPkg2HashVersionCalc<ulong> calc)
+            {
+                this.wzVersion = wzVersion;
+                this.header = header;
+                this.calc = calc;
+                this.index = -1;
+            }
+
+            public int WzVersion => this.wzVersion;
+            public ulong HashVersion { get; private set; }
+
+            public bool TryGetNextVersion()
+            {
+                this.candidates ??= this.calc.CalcCandidates(header.Hash1, header.Hash2);
+                if (++this.index < this.candidates.Count)
+                {
+                    this.HashVersion = this.candidates[this.index];
+                    return true;
+                }
+                return false;
+            }
         }
     }
+    #endregion
 
+    #region PKG2 unknown profile
+
+    public sealed class Pkg2UnknownProfile64 : WzFormatProfile<Wz_Header.WzPkg2Header64, ulong>
+    {
+        public Pkg2UnknownProfile64(int wzVersion, WzFileFormat format, Pkg2OffsetVersion offsetVersion, Wz_CryptoKeyType cryptoKeyType, IPkg2HashVersionCalc<ulong> hashVersionCalc)
+            : base(format, cryptoKeyType)
+        {
+            this.WzVersion = wzVersion;
+            this.OffsetVersion = offsetVersion;
+            this.HashVersionCalc = hashVersionCalc;
+        }
+
+        public int WzVersion { get; }
+        public Pkg2OffsetVersion OffsetVersion { get; }
+        public IPkg2HashVersionCalc<ulong> HashVersionCalc { get; }
+        public override string Name => $"pkg2_kmst{this.WzVersion}";
+
+        public override bool CanHandle(Wz_File wzFile, out Wz_Header.WzPkg2Header64 header)
+        {
+            header = wzFile.Header as Wz_Header.WzPkg2Header64;
+            return header != null;
+        }
+
+        public override IWzVersionIterator<ulong> CreateVersionIterator(Wz_Header.WzPkg2Header64 header)
+        {
+            return new Pkg2VersionIterator64(this.WzVersion, header, this.HashVersionCalc);
+        }
+
+        public override bool TryResolveCache(Wz_Header.WzPkg2Header64 header, WzProfileCacheEntry cache, out int wzVersion, out ulong hashVersion)
+        {
+            wzVersion = cache.WzVersion;
+            hashVersion = cache.HashKey;
+            return string.Equals(cache.ProfileName, this.Name, StringComparison.OrdinalIgnoreCase)
+                && wzVersion == this.WzVersion
+                && this.HashVersionCalc.Verify(header.Hash1, header.Hash2, hashVersion);
+        }
+
+        public override WzProfileCacheEntry CreateCacheEntry(int wzVersion, ulong hashVersion)
+        {
+            return new WzProfileCacheEntry(this.Name, wzVersion, hashVersion);
+        }
+
+        public override IWzImageOffsetCalc CreateOffsetCalc(Wz_Header.WzPkg2Header64 header, ulong hashVersion)
+        {
+            return this.OffsetVersion switch
+            {
+                Pkg2OffsetVersion.KMST1202 => new Pkg2OffsetCalc64V1((uint)header.HeaderSize, header.Hash1, hashVersion),
+                _ => throw new ArgumentOutOfRangeException(nameof(OffsetVersion)),
+            };
+        }
+
+        public override WzFileReadContext CreateReadContext(Wz_Header.WzPkg2Header64 header, ulong hashVersion, IWzImageOffsetCalc offsetCalc)
+        {
+            return new WzFileReadContext<ulong>(hashVersion, unchecked((uint)hashVersion), offsetCalc, Pkg2DirTreeReadRule64.Instance);
+        }
+
+        protected override ulong GetDetectedHashVersion(Wz_File wzFile, Wz_Header.WzPkg2Header64 header)
+        {
+            return ((WzFileReadContext<ulong>)wzFile.ReadContext).HashVersion;
+        }
+
+        public override void DetectCryptoKeyType(Wz_File wzFile, Wz_Header.WzPkg2Header64 header, Wz_Crypto crypto, WzPreReadResult preReadResult, out Wz_CryptoKeyType pkg1KeyType, out Wz_CryptoKeyType pkg2KeyType)
+        {
+            pkg1KeyType = Wz_CryptoKeyType.Unknown;
+            pkg2KeyType = this.CryptoKeyType;
+        }
+
+        public override IPkg2DirStringReader CreateDirStringReader(Wz_Header.WzPkg2Header64 header, Wz_Crypto crypto, ulong hashVersion)
+        {
+            var firstNameKey = new Wz_Crypto.Pkg2DirStringKeyV3(header.Hash1, hashVersion);
+            var pkg1Keys = crypto.GetKeys(Wz_CryptoKeyType.BMS);
+            return new Pkg2MixedKeyDirStringReader64(firstNameKey, pkg1Keys);
+        }
+
+        public override void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto)
+        {
+            if (this.CanHandle(wzFile, out var header))
+            {
+                wzFile.ReadContext.DirStringReader = this.CreateDirStringReader(header, crypto, ((WzFileReadContext<ulong>)wzFile.ReadContext).HashVersion);
+            }
+        }
+
+        /// <summary>
+        /// Iterator for 64-bit PKG2 hash version detection.
+        /// </summary>
+        private sealed class Pkg2VersionIterator64 : IWzVersionIterator<ulong>
+        {
+            private readonly Wz_Header.WzPkg2Header64 header;
+            private readonly IPkg2HashVersionCalc<ulong> calc;
+            private readonly int wzVersion;
+            private IReadOnlyList<ulong> candidates;
+            private int index;
+
+            public Pkg2VersionIterator64(int wzVersion, Wz_Header.WzPkg2Header64 header, IPkg2HashVersionCalc<ulong> calc)
+            {
+                this.wzVersion = wzVersion;
+                this.header = header;
+                this.calc = calc;
+                this.index = -1;
+            }
+
+            public int WzVersion => this.wzVersion;
+            public ulong HashVersion { get; private set; }
+
+            public bool TryGetNextVersion()
+            {
+                this.candidates ??= this.calc.CalcCandidates(header.Hash1, header.Hash2);
+                if (++this.index < this.candidates.Count)
+                {
+                    this.HashVersion = this.candidates[this.index];
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
     #endregion
 }

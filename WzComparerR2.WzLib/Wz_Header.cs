@@ -10,6 +10,12 @@ using System.Runtime.Intrinsics.X86;
 
 namespace WzComparerR2.WzLib
 {
+    public interface IWzPkg2HashHeader<THash>
+    {
+        THash Hash1 { get; }
+        THash Hash2 { get; }
+    }
+
     public class Wz_Header
     {
         public const string PKG1 = "PKG1";
@@ -24,7 +30,6 @@ namespace WzComparerR2.WzLib
             this.DataSize = data_size;
             this.FileSize = file_size;
             this.DirStartPosition = dataStartPosition;
-            this.VersionChecked = false;
         }
 
         public class WzPkg1Header : Wz_Header
@@ -34,12 +39,8 @@ namespace WzComparerR2.WzLib
             {
                 this.EncryptedVersion = encryptedVersion;
                 this.IsEncverMissing = encverMissing;
-
                 if (encverMissing)
                 {
-                    this.WzVersion = 777;
-                    this.HashVersion = CalcHashVersion(777);
-                    this.VersionChecked = true;
                     this.Capabilities |= Wz_Capabilities.EncverMissing;
                 }
             }
@@ -48,22 +49,35 @@ namespace WzComparerR2.WzLib
             public bool IsEncverMissing { get; }
         }
 
-        public class WzPkg2Header : Wz_Header
+        public abstract class WzPkg2HeaderBase<THash> : Wz_Header, IWzPkg2HashHeader<THash>
         {
-            public WzPkg2Header(string signature, string copyright, string fileName, int headerSize, long dataSize, long fileSize, long dataStartPosition, uint hash1, uint hash2)
+            protected WzPkg2HeaderBase(string signature, string copyright, string fileName, int headerSize, long dataSize, long fileSize, long dataStartPosition, THash hash1, THash hash2)
                 : base(signature, copyright, fileName, headerSize, dataSize, fileSize, dataStartPosition)
             {
                 this.Hash1 = hash1;
                 this.Hash2 = hash2;
             }
 
-            public uint Hash1 { get; }
-            public uint Hash2 { get; }
+            public THash Hash1 { get; }
+            public THash Hash2 { get; }
+        }
 
-            /// <summary>
-            /// The PKG2 directory string reader assigned during crypto detection, used for dir tree reading.
-            /// </summary>
-            internal IPkg2DirStringReader DirStringReader { get; set; }
+        public class WzPkg2Header : WzPkg2HeaderBase<uint>
+        {
+            public WzPkg2Header(string signature, string copyright, string fileName, int headerSize, long dataSize, long fileSize, long dataStartPosition, uint hash1, uint hash2)
+                : base(signature, copyright, fileName, headerSize, dataSize, fileSize, dataStartPosition, hash1, hash2)
+            {
+            }
+        }
+
+        public class WzPkg2Header64 : WzPkg2HeaderBase<ulong>
+        {
+            public WzPkg2Header64(string signature, string copyright, string fileName, int headerSize, long dataSize, long fileSize, long dataStartPosition, ulong hash1, ulong hash2)
+                : base(signature, copyright, fileName, headerSize, dataSize, fileSize, dataStartPosition, hash1, hash2)
+            {
+                this.Capabilities |= Wz_Capabilities.Pkg2RandomHeader64;
+            }
+
         }
 
         public string Signature { get; private set; }
@@ -74,15 +88,12 @@ namespace WzComparerR2.WzLib
         public long DataSize { get; private set; }
         public long FileSize { get; private set; }
         public long DirStartPosition { get; private set; }
+        public int WzVersion { get; internal set; }
 
         public bool IsPkg1 => this.Signature == PKG1;
         public bool IsPkg2 => this.Signature == PKG2;
 
-        public bool VersionChecked { get; set; }
         public Wz_Capabilities Capabilities { get; internal set; }
-
-        public int WzVersion { get; internal set; }
-        public uint HashVersion { get; internal set; }
 
         public bool HasCapabilities(Wz_Capabilities cap)
         {

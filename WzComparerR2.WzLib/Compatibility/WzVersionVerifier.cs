@@ -13,20 +13,18 @@ using static WzComparerR2.WzLib.Utilities.MathHelper;
 namespace WzComparerR2.WzLib.Compatibility
 {
     #region Version iterators
-    public interface IWzVersionIterator
+    public interface IWzVersionIterator<THashVersion>
     {
         bool TryGetNextVersion();
-        void Reset();
         int WzVersion { get; }
-        uint HashVersion { get; }
-        bool IsMatch(int wzVersion, uint hashVersion);
+        THashVersion HashVersion { get; }
     }
 
     /// <summary>
     /// PKG1 version iterator. Supports ordinal iteration (matching encrypted version byte)
     /// and fixed mode (for encverMissing, wzVersion = 777).
     /// </summary>
-    public class Pkg1VersionIterator : IWzVersionIterator
+    public class Pkg1VersionIterator : IWzVersionIterator<uint>
     {
         private readonly int encryptedVersion;
         private readonly int fixedWzVersion;
@@ -72,7 +70,7 @@ namespace WzComparerR2.WzLib.Compatibility
                 ^ ((hashVersion >> 24) & 0xFF)
                 ^ ((hashVersion >> 16) & 0xFF)
                 ^ ((hashVersion >> 8) & 0xFF)
-                ^ ((hashVersion) & 0xFF);
+                ^ (hashVersion & 0xFF);
         }
 
         public bool TryGetNextVersion()
@@ -100,46 +98,23 @@ namespace WzComparerR2.WzLib.Compatibility
                     return true;
                 }
             }
-
+            
             return false;
         }
 
-        public bool IsMatch(int wzVersion, uint hashVersion)
-        {
-            if (IsFixed)
-                return wzVersion == fixedWzVersion && hashVersion == fixedHashVersion;
-
-            if (Wz_Header.CalcHashVersion(wzVersion) != hashVersion)
-                return false;
-            return CalcEncryptedVersion(hashVersion) == (uint)this.encryptedVersion;
-        }
-
-        public void Reset()
-        {
-            startVersion = -1;
-            WzVersion = 0;
-            HashVersion = 0;
-            hasReturned = false;
-        }
     }
 
-    /// <summary>
-    /// PKG2 version iterator. Candidates are lazily computed on first iteration.
-    /// IsMatch uses a lightweight O(1) verify function, avoiding expensive candidate enumeration.
-    /// </summary>
-    public class Pkg2VersionIterator : IWzVersionIterator
+    public class Pkg2VersionIterator : IWzVersionIterator<uint>
     {
-        public Pkg2VersionIterator(int wzVersion, Func<IReadOnlyList<uint>> candidatesFactory, Func<uint, bool> verifier)
+        public Pkg2VersionIterator(int wzVersion, Func<IReadOnlyList<uint>> candidatesFactory)
         {
             this.wzVersion = wzVersion;
             this.candidatesFactory = candidatesFactory;
-            this.verifier = verifier;
             this.index = -1;
         }
 
         private readonly int wzVersion;
         private readonly Func<IReadOnlyList<uint>> candidatesFactory;
-        private readonly Func<uint, bool> verifier;
         private IReadOnlyList<uint> candidates;
         private int index;
 
@@ -157,33 +132,21 @@ namespace WzComparerR2.WzLib.Compatibility
             return false;
         }
 
-        public bool IsMatch(int wzVersion, uint hashVersion)
-        {
-            if (wzVersion != this.wzVersion)
-                return false;
-            return this.verifier(hashVersion);
-        }
-
-        public void Reset()
-        {
-            this.index = -1;
-            this.HashVersion = 0;
-        }
     }
 
     /// <summary>
     /// Computes hash version candidates and verifies cached versions for PKG2 files.
     /// </summary>
-    public interface IPkg2HashVersionCalc
+    public interface IPkg2HashVersionCalc<THash>
     {
-        IReadOnlyList<uint> CalcCandidates(uint hash1, uint hash2);
-        bool Verify(uint hash1, uint hash2, uint hashVersion);
+        IReadOnlyList<THash> CalcCandidates(THash hash1, THash hash2);
+        bool Verify(THash hash1, THash hash2, THash hashVersion);
     }
 
     /// <summary>
     /// PKG2 hash version calculation for KMST 1196 (V1).
     /// </summary>
-    public sealed class Pkg2HashVersionCalcV1 : IPkg2HashVersionCalc
+    public sealed class Pkg2HashVersionCalcV1 : IPkg2HashVersionCalc<uint>
     {
         public IReadOnlyList<uint> CalcCandidates(uint hash1, uint hash2)
         {
@@ -199,7 +162,7 @@ namespace WzComparerR2.WzLib.Compatibility
     /// <summary>
     /// PKG2 hash version calculation for KMST 1197 (V2). Uses backtrack solver.
     /// </summary>
-    public sealed class Pkg2HashVersionCalcV2 : IPkg2HashVersionCalc
+    public sealed class Pkg2HashVersionCalcV2 : IPkg2HashVersionCalc<uint>
     {
         public IReadOnlyList<uint> CalcCandidates(uint hash1, uint hash2)
         {
@@ -236,7 +199,7 @@ namespace WzComparerR2.WzLib.Compatibility
     /// <summary>
     /// PKG2 hash version calculation for KMST 1198 (V3). Uses backtrack solver.
     /// </summary>
-    public sealed class Pkg2HashVersionCalcV3 : IPkg2HashVersionCalc
+    public sealed class Pkg2HashVersionCalcV3 : IPkg2HashVersionCalc<uint>
     {
         public IReadOnlyList<uint> CalcCandidates(uint hash1, uint hash2)
         {
@@ -273,7 +236,7 @@ namespace WzComparerR2.WzLib.Compatibility
     /// <summary>
     /// PKG2 hash version calculation for KMST 1199 (V4). Uses parallel brute-force with SIMD.
     /// </summary>
-    public class Pkg2HashVersionCalcV4 : IPkg2HashVersionCalc
+    public class Pkg2HashVersionCalcV4 : IPkg2HashVersionCalc<uint>
     {
         private const uint magic = Pkg2BacktrackSolver.Magic;
 
@@ -447,7 +410,7 @@ namespace WzComparerR2.WzLib.Compatibility
     /// <summary>
     /// PKG2 hash version calculation for KMST 1200 (V5). Similar to V4.
     /// </summary>
-    public sealed class Pkg2HashVersionCalcV5 : Pkg2HashVersionCalcV4, IPkg2HashVersionCalc
+    public sealed class Pkg2HashVersionCalcV5 : Pkg2HashVersionCalcV4, IPkg2HashVersionCalc<uint>
     {
         private const uint magic = Pkg2BacktrackSolver.Magic;
         private const uint magicV5 = 0x2A2C818B;
@@ -464,6 +427,24 @@ namespace WzComparerR2.WzLib.Compatibility
             uint mixedHash = Mix(preHash ^ 0x6D4C3B2A) ^ 0x91E10DA5;
             uint lt = ROL(hash1 ^ ((ushort)mixedHash + hashVersion + magic), (int)(((mixedHash ^ hashVersion) & 0xF) + (hash1 & 0xF)));
             return (lt ^ (preHash + mixedHash) ^ magicV5) == hash2;
+        }
+    }
+
+    /// <summary>
+    /// 64-bit PKG2 hash version calculation for KMST 1202.
+    /// </summary>
+    public sealed class Pkg2HashVersionCalc64V1 : IPkg2HashVersionCalc<ulong>
+    {
+        private const ulong Magic = 0xABCDEF0123456789UL;
+
+        public IReadOnlyList<ulong> CalcCandidates(ulong hash1, ulong hash2)
+        {
+            return new[] { hash1 ^ hash2 ^ Magic };
+        }
+
+        public bool Verify(ulong hash1, ulong hash2, ulong hashVersion)
+        {
+            return hashVersion == (hash1 ^ hash2 ^ Magic);
         }
     }
 
@@ -552,13 +533,19 @@ namespace WzComparerR2.WzLib.Compatibility
 
     #region Shared detection helpers
 
-    public static class WzVersionDetectHelper
+    public static class WzFormatDetector
     {
-        public static bool FastDetectWithPreReadNodes(Wz_File wzFile, WzPreReadResult preReadResult,
-            IWzVersionIterator iterator, OffsetCalcFactory createOffsetCalc)
+        public static bool TryDetect<THeader, THash>(Wz_File wzFile, WzPreReadResult preReadResult, IWzFormatProfile<THeader, THash> profile)
+            where THeader : Wz_Header
         {
+            if (!profile.CanHandle(wzFile, out var header) || preReadResult.Format != profile.Format)
+                return false;
+
+            var iterator = profile.CreateVersionIterator(header);
             var nodes = preReadResult.Nodes;
-            if (nodes.Count == 0)
+            bool hasOffsetSamples = nodes.Count > 0;
+            bool hasEntryCountSamples = HasPkg2EntryCountSamples(preReadResult);
+            if (!hasOffsetSamples && !hasEntryCountSamples)
                 return false;
 
             var imageSizes = new SizeRange[nodes.Count];
@@ -566,17 +553,14 @@ namespace WzComparerR2.WzLib.Compatibility
 
             while (iterator.TryGetNextVersion())
             {
-                var calc = createOffsetCalc(wzFile, iterator.HashVersion);
-
+                var calc = profile.CreateOffsetCalc(header, iterator.HashVersion);
                 if (!ValidateEntryCountsIfPkg2(preReadResult, calc))
                     continue;
 
-                if (ValidateOffsets(nodes, imageSizes, fileLen, preReadResult.DirStartPosition, preReadResult.DirEndPosition, calc))
+                if (!hasOffsetSamples || ValidateOffsets(nodes, imageSizes, fileLen, preReadResult.DirStartPosition, preReadResult.DirEndPosition, calc))
                 {
-                    wzFile.Header.WzVersion = iterator.WzVersion;
-                    wzFile.Header.HashVersion = iterator.HashVersion;
-                    wzFile.Header.VersionChecked = true;
-                    wzFile.OffsetCalc = calc;
+                    header.WzVersion = iterator.WzVersion;
+                    wzFile.ReadContext = profile.CreateReadContext(header, iterator.HashVersion, calc);
                     return true;
                 }
             }
@@ -584,25 +568,38 @@ namespace WzComparerR2.WzLib.Compatibility
             return false;
         }
 
-        public static bool FastDetectSingleVersion(Wz_File wzFile, WzPreReadResult preReadResult,
-            int wzVersion, uint hashVersion, OffsetCalcFactory createOffsetCalc)
+        private static bool HasPkg2EntryCountSamples(WzPreReadResult preReadResult)
         {
+            return preReadResult.Pkg2DirEntryCounts != null && preReadResult.Pkg2DirEntryCounts.Count > 0;
+        }
+
+        public static bool TryDetectCached<THeader, THash>(Wz_File wzFile, WzPreReadResult preReadResult,
+            IWzFormatProfile<THeader, THash> profile, WzProfileCacheEntry cacheEntry)
+            where THeader : Wz_Header
+        {
+            if (!profile.CanHandle(wzFile, out var header) || preReadResult.Format != profile.Format)
+                return false;
+            if (!profile.TryResolveCache(header, cacheEntry, out int wzVersion, out THash hashVersion))
+                return false;
+
             var nodes = preReadResult.Nodes;
             if (nodes.Count == 0)
-                return false;
+            {
+                var emptyCalc = profile.CreateOffsetCalc(header, hashVersion);
+                header.WzVersion = wzVersion;
+                wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, emptyCalc);
+                return true;
+            }
 
             var imageSizes = new SizeRange[nodes.Count];
             long fileLen = wzFile.FileStream.Length;
-
-            var calc = createOffsetCalc(wzFile, hashVersion);
+            var calc = profile.CreateOffsetCalc(header, hashVersion);
 
             if (ValidateEntryCountsIfPkg2(preReadResult, calc)
                 && ValidateOffsets(nodes, imageSizes, fileLen, preReadResult.DirStartPosition, preReadResult.DirEndPosition, calc))
             {
-                wzFile.Header.WzVersion = wzVersion;
-                wzFile.Header.HashVersion = hashVersion;
-                wzFile.Header.VersionChecked = true;
-                wzFile.OffsetCalc = calc;
+                header.WzVersion = wzVersion;
+                wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, calc);
                 return true;
             }
 
@@ -616,7 +613,7 @@ namespace WzComparerR2.WzLib.Compatibility
 
             foreach (var ec in preReadResult.Pkg2DirEntryCounts)
             {
-                if (pkg2Calc.DecryptEntryCount(ec.EncryptedEntryCount) != ec.ActualEntryCount)
+                if (Pkg2ImageOffsetCalcHelper.DecryptEntryCount(pkg2Calc, ec.EncryptedEntryCount) != ec.ActualEntryCount)
                     return false;
             }
             return true;

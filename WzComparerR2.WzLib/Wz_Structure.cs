@@ -27,11 +27,14 @@ namespace WzComparerR2.WzLib
         public Wz_Node WzNode;
         public int img_number;
         public bool has_basewz;
-        public bool sorted; //暂时弃用
 
         public Encoding TextEncoding { get; set; }
         public bool AutoDetectExtFiles { get; set; }
         public bool ImgCheckDisabled { get; set; }
+
+        // Known profile cache: populated after successful detection, used as fast path for subsequent files.
+        // TODO: allow external management of the cache.
+        internal WzProfileDetectionCache ProfileCache { get; } = new();
 
         public void Clear()
         {
@@ -49,7 +52,6 @@ namespace WzComparerR2.WzLib
             this.img_number = 0;
             this.has_basewz = false;
             this.WzNode = null;
-            this.sorted = false;
         }
 
         public void calculate_img_count()
@@ -104,36 +106,33 @@ namespace WzComparerR2.WzLib
                     }
                 }
 
-                WzVersionProfile matchedProfile = null;
+                IWzFormatProfile matchedProfile = null;
 
-                // 2. detect version and assign OffsetCalc to wz_file
-                if (preReadResult != null)
+                // 2. detect version and assign readRule to wz_file
+                if (preReadResult != null && !file.BypassToBF)
                 {
                     // Try cached profiles first
-                    foreach (var cached in this.encryption.KnownProfiles)
+                    foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
                     {
-                        var cachedProfile = WzVersionProfiles.GetByName(cached.ProfileName);
-                        if (cachedProfile != null && cachedProfile.Format == preReadResult.Format)
+                        foreach (var cached in this.ProfileCache.GetCandidates(profile.Name))
                         {
-                            var iter = cachedProfile.CreateIterator(file);
-                            if (iter.IsMatch(cached.WzVersion, cached.HashVersion)
-                                && WzVersionDetectHelper.FastDetectSingleVersion(file, preReadResult,
-                                    cached.WzVersion, cached.HashVersion,
-                                    (f, hv) => cachedProfile.CreateOffsetCalc(f, hv)))
+                            if (profile.TryDetectCached(file, preReadResult, cached))
                             {
-                                matchedProfile = cachedProfile;
+                                matchedProfile = profile;
+                                this.ProfileCache.MarkHit(cached);
                                 break;
                             }
                         }
+                        if (matchedProfile != null)
+                            break;
                     }
 
                     // Full detection: iterate candidate profiles
                     if (matchedProfile == null)
                     {
-                        foreach (var profile in WzVersionProfiles.GetCandidates(preReadResult.Format))
+                        foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
                         {
-                            var iter = profile.CreateIterator(file);
-                            if (profile.TryDetect(file, preReadResult, iter))
+                            if (profile.TryDetect(file, preReadResult))
                             {
                                 matchedProfile = profile;
                                 break;
@@ -144,39 +143,30 @@ namespace WzComparerR2.WzLib
                     // Cache on success
                     if (matchedProfile != null)
                     {
-                        var entry = new Wz_Crypto.KnownProfileEntry(matchedProfile.Name, file.Header.WzVersion, file.Header.HashVersion);
-                        int idx = this.encryption.KnownProfiles.FindIndex(e => e.ProfileName == entry.ProfileName
-                            && e.WzVersion == file.Header.WzVersion
-                            && e.HashVersion == file.Header.HashVersion);
-                        if (idx >= 0)
-                            this.encryption.KnownProfiles[idx] = entry;
-                        else
-                            this.encryption.KnownProfiles.Add(entry);
+                        this.ProfileCache.Upsert(matchedProfile.CreateCacheEntry(file));
                     }
                 }
 
                 // 3. detect string encryption, assign to crypto
-                if (preReadResult != null && matchedProfile != null)
+                if (preReadResult != null && matchedProfile != null && !file.BypassToBF)
                 {
                     if (!this.encryption.IsDirEncDetected(file))
                     {
                         this.DetectCryptoKeyType(file, matchedProfile, preReadResult);
                     }
 
-                    if (matchedProfile is Pkg2Profile pkg2Profile && file.Header is Wz_Header.WzPkg2Header pkg2Header)
-                    {
-                        pkg2Header.DirStringReader = pkg2Profile.CreateDirStringReader(file, this.encryption);
-                    }
+                    matchedProfile.AssignDirStringReader(file, this.encryption);
                 }
 
                 // temp workaround for unknown pkg2 encryption
                 // brute-force search for all possible image offsets
                 if (file.Header.IsPkg2 && matchedProfile == null && file.CandidateImageInfos.Count == 0)
                 {
-                    if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header pkg2Header)
+                    if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header64 pkg2Header)
                     {
-                        var unknownProfile = (UnknownPkg2Profile)WzVersionProfiles.GetUnknownPkg2Profile();
-                        pkg2Header.DirStringReader = unknownProfile.CreateDirStringReader(file, this.encryption);
+                        var profile = WzFormatProfiles.GetPkg2UnknownProfile64();
+                        file.ReadContext = profile.CreateReadContext(file.Header as Wz_Header.WzPkg2Header64, 0, null);
+                        profile.AssignDirStringReader(file, this.encryption);
                         if (preReadResult.Pkg2DirEntryCounts.Count > 0)
                         {
                             file.ForcedCounts = new Queue<int>(preReadResult.Pkg2DirEntryCounts.Select(ec => ec.ActualEntryCount)); 
@@ -434,7 +424,7 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        private void DetectCryptoKeyType(Wz_File file, WzVersionProfile profile, WzPreReadResult preReadResult)
+        private void DetectCryptoKeyType(Wz_File file, IWzFormatProfile profile, WzPreReadResult preReadResult)
         {
             profile.DetectCryptoKeyType(file, this.encryption, preReadResult, out var pkg1KeyType, out var pkg2KeyType);
             if (pkg1KeyType != Wz_CryptoKeyType.Unknown)
