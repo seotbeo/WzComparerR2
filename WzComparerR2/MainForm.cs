@@ -1363,6 +1363,8 @@ namespace WzComparerR2
                 advTree1.Nodes.Add(node);
                 this.openedWz.Add(wz);
                 OnWzOpened(new WzStructureEventArgs(wz)); //触发事件
+
+                labelItemStatus.Text = $"로드 중: StringLinker 초기화 중";
                 UpdateLanguageCombobox();
                 if (!this.stringLinker.HasValues)
                 {
