@@ -177,7 +177,7 @@ namespace WzComparerR2.Text
 
         protected abstract Rectangle[] MeasureChars(int startIndex, int length);
 
-        protected abstract void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string ColorID, string FontID, string ImageID, int ImageHeight);
+        protected abstract void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string ColorID, string FontID, string ImageID, int imageWidth, int ImageHeight);
 
         private List<PositionedText> LayoutRuns(List<Run> runs, int width, ref int y, int lineHeight, TextAlignment alignment)
         {
@@ -384,6 +384,7 @@ namespace WzComparerR2.Text
                             ColorID = colorID,
                             FontID = fontID,
                             ImageID = run.ImageID,
+                            ImageWidth = run.ImageWidth,
                             ImageHeight = run.ImageHeight
                         });
                         curX += run.Width;
@@ -406,7 +407,7 @@ namespace WzComparerR2.Text
         {
             foreach (PositionedText text in texts)
             {
-                this.Flush(sb, text.StartIndex, text.Length, text.X, text.Y, text.ColorID, text.FontID, text.ImageID, text.ImageHeight);
+                this.Flush(sb, text.StartIndex, text.Length, text.X, text.Y, text.ColorID, text.FontID, text.ImageID, text.ImageWidth, text.ImageHeight);
             }
         }
 
@@ -419,6 +420,7 @@ namespace WzComparerR2.Text
             public string ColorID;
             public string FontID;
             public string ImageID;
+            public int ImageWidth;
             public int ImageHeight;
         }
     }

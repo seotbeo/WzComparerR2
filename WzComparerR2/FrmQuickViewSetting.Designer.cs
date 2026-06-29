@@ -113,6 +113,10 @@
             this.chkShowItemPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowGearPurchasePrice = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkShowSkillValuesByJob = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.labelXSkillLevelViewMode = new DevComponents.DotNetBar.LabelX();
+            this.comboBoxExSkillLevelViewMode = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.comboItemSkillLevelViewMode1 = new DevComponents.Editors.ComboItem();
+            this.comboItemSkillLevelViewMode2 = new DevComponents.Editors.ComboItem();
             ((System.ComponentModel.ISupportInitialize)(this.superTabControl1)).BeginInit();
             this.superTabControl1.SuspendLayout();
             this.superTabControlPanel1.SuspendLayout();
@@ -189,13 +193,67 @@
             this.superTabControlPanel1.Controls.Add(this.comboBoxEx1);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX2);
             this.superTabControlPanel1.Controls.Add(this.checkBoxX1);
+            this.superTabControlPanel1.Controls.Add(this.labelXSkillLevelViewMode);
+            this.superTabControlPanel1.Controls.Add(this.comboBoxExSkillLevelViewMode);
             this.superTabControlPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.superTabControlPanel1.Location = new System.Drawing.Point(62, 0);
+            this.superTabControlPanel1.Location = new System.Drawing.Point(72, 0);
             this.superTabControlPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.superTabControlPanel1.Name = "superTabControlPanel1";
             this.superTabControlPanel1.Size = new System.Drawing.Size(293, 293);
             this.superTabControlPanel1.TabIndex = 0;
             this.superTabControlPanel1.TabItem = this.superTabItem1;
+            this.superTabControlPanel1.AutoScroll = true;
+            this.superTabControlPanel1.AutoScrollMargin = new System.Drawing.Size(0, 15);
+            // 
+            // checkBoxX10
+            // 
+            this.checkBoxX10.AutoSize = true;
+            this.checkBoxX10.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX10.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX10.Location = new System.Drawing.Point(15, 9);
+            this.checkBoxX10.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX10.Name = "checkBoxX10";
+            this.checkBoxX10.Size = new System.Drawing.Size(138, 18);
+            this.checkBoxX10.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX10.TabIndex = 1;
+            this.checkBoxX10.Text = "스킬 세부 속성 표시";
+            // 
+            // checkBoxX1
+            // 
+            this.checkBoxX1.AutoSize = true;
+            this.checkBoxX1.BackColor = System.Drawing.Color.Transparent;
+            this.chkShowReqSkill.AutoSize = true;
+            this.chkShowReqSkill.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX1.Location = new System.Drawing.Point(15, 33);
+            this.checkBoxX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX1.Name = "checkBoxX1";
+            this.checkBoxX1.Size = new System.Drawing.Size(109, 18);
+            this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX1.TabIndex = 2;
+            this.checkBoxX1.Text = "스킬 코드 표시";
+            // 
+            // checkBoxX2
+            // 
+            this.checkBoxX2.AutoSize = true;
+            this.checkBoxX2.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX2.Location = new System.Drawing.Point(15, 57);
+            this.checkBoxX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX2.Name = "checkBoxX2";
+            this.checkBoxX2.Size = new System.Drawing.Size(121, 18);
+            this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX2.TabIndex = 3;
+            this.checkBoxX2.Text = "스킬 딜레이 표시";
             // 
             // checkBoxX16
             // 
@@ -212,6 +270,54 @@
             this.checkBoxX16.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.checkBoxX16.TabIndex = 4;
             this.checkBoxX16.Text = "스킬 범위 표시";
+            // 
+            // chkShowReqSkill
+            // 
+            this.chkShowReqSkill.AutoSize = true;
+            this.chkShowReqSkill.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.chkShowReqSkill.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.chkShowReqSkill.Location = new System.Drawing.Point(15, 105);
+            this.chkShowReqSkill.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.chkShowReqSkill.Name = "chkShowReqSkill";
+            this.chkShowReqSkill.Size = new System.Drawing.Size(109, 18);
+            this.chkShowReqSkill.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.chkShowReqSkill.TabIndex = 5;
+            this.chkShowReqSkill.Text = "필요 스킬 표시";
+            // 
+            // checkBoxX13
+            // 
+            this.checkBoxX13.AutoSize = true;
+            this.checkBoxX13.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX13.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX13.Location = new System.Drawing.Point(15, 129);
+            this.checkBoxX13.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX13.Name = "checkBoxX13";
+            this.checkBoxX13.Size = new System.Drawing.Size(180, 18);
+            this.checkBoxX13.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX13.TabIndex = 6;
+            this.checkBoxX13.Text = "cooltimeMS 초 단위로 변환";
+            // 
+            // checkBoxX14
+            // 
+            this.checkBoxX14.AutoSize = true;
+            this.checkBoxX14.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX14.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX14.Location = new System.Drawing.Point(15, 153);
+            this.checkBoxX14.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBoxX14.Name = "checkBoxX14";
+            this.checkBoxX14.Size = new System.Drawing.Size(138, 18);
+            this.checkBoxX14.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX14.TabIndex = 7;
+            this.checkBoxX14.Text = "PerM 퍼센트로 변환";
             // 
             // checkBoxX15
             // 
@@ -243,132 +349,7 @@
             this.chkShowSkillValuesByJob.Size = new System.Drawing.Size(109, 18);
             this.chkShowSkillValuesByJob.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkShowSkillValuesByJob.TabIndex = 9;
-            this.chkShowSkillValuesByJob.Text = "직업별 스킬 수치 표시";
-            // 
-            // checkBoxX14
-            // 
-            this.checkBoxX14.AutoSize = true;
-            this.checkBoxX14.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.checkBoxX14.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.checkBoxX14.Location = new System.Drawing.Point(15, 153);
-            this.checkBoxX14.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxX14.Name = "checkBoxX14";
-            this.checkBoxX14.Size = new System.Drawing.Size(138, 18);
-            this.checkBoxX14.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.checkBoxX14.TabIndex = 7;
-            this.checkBoxX14.Text = "PerM 퍼센트로 변환";
-            // 
-            // checkBoxX13
-            // 
-            this.checkBoxX13.AutoSize = true;
-            this.checkBoxX13.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.checkBoxX13.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.checkBoxX13.Location = new System.Drawing.Point(15, 129);
-            this.checkBoxX13.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxX13.Name = "checkBoxX13";
-            this.checkBoxX13.Size = new System.Drawing.Size(180, 18);
-            this.checkBoxX13.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.checkBoxX13.TabIndex = 6;
-            this.checkBoxX13.Text = "cooltimeMS 초 단위로 변환";
-            // 
-            // checkBoxX10
-            // 
-            this.checkBoxX10.AutoSize = true;
-            this.checkBoxX10.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.checkBoxX10.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.checkBoxX10.Location = new System.Drawing.Point(15, 9);
-            this.checkBoxX10.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxX10.Name = "checkBoxX10";
-            this.checkBoxX10.Size = new System.Drawing.Size(138, 18);
-            this.checkBoxX10.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.checkBoxX10.TabIndex = 1;
-            this.checkBoxX10.Text = "스킬 세부 속성 표시";
-            // 
-            // labelX3
-            // 
-            this.labelX3.AutoSize = true;
-            this.labelX3.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelX3.Location = new System.Drawing.Point(15, 243);
-            this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(236, 30);
-            this.labelX3.TabIndex = 11;
-            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
-            // 
-            // comboBoxEx2
-            // 
-            this.comboBoxEx2.DisplayMember = "Text";
-            this.comboBoxEx2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxEx2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxEx2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.comboBoxEx2.FormattingEnabled = true;
-            this.comboBoxEx2.ItemHeight = 15;
-            this.comboBoxEx2.Items.AddRange(new object[] {
-            this.comboItem5,
-            this.comboItem6,
-            this.comboItem7,
-            this.comboItem8,
-            this.comboItem9,
-            this.comboItem10});
-            this.comboBoxEx2.Location = new System.Drawing.Point(110, 221);
-            this.comboBoxEx2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.comboBoxEx2.Name = "comboBoxEx2";
-            this.comboBoxEx2.Size = new System.Drawing.Size(104, 21);
-            this.comboBoxEx2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.comboBoxEx2.TabIndex = 11;
-            // 
-            // comboItem5
-            // 
-            this.comboItem5.Text = "1";
-            // 
-            // comboItem6
-            // 
-            this.comboItem6.Text = "5";
-            // 
-            // comboItem7
-            // 
-            this.comboItem7.Text = "10";
-            // 
-            // comboItem8
-            // 
-            this.comboItem8.Text = "15";
-            // 
-            // comboItem9
-            // 
-            this.comboItem9.Text = "30";
-            // 
-            // comboItem10
-            // 
-            this.comboItem10.Text = "32";
-            // 
-            // labelX2
-            // 
-            this.labelX2.AutoSize = true;
-            this.labelX2.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(15, 225);
-            this.labelX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.labelX2.Name = "labelX2";
-            this.labelX2.Size = new System.Drawing.Size(89, 18);
-            this.labelX2.TabIndex = 10;
-            this.labelX2.Text = "레벨 간격 설정";
+            this.chkShowSkillValuesByJob.Text = "(미사용)직업별 스킬 수치 표시";
             // 
             // labelX1
             // 
@@ -398,10 +379,10 @@
             this.comboItem2,
             this.comboItem3,
             this.comboItem4});
-            this.comboBoxEx1.Location = new System.Drawing.Point(110, 197);
+            this.comboBoxEx1.Location = new System.Drawing.Point(110, 200);
             this.comboBoxEx1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBoxEx1.Name = "comboBoxEx1";
-            this.comboBoxEx1.Size = new System.Drawing.Size(104, 21);
+            this.comboBoxEx1.Size = new System.Drawing.Size(130, 21);
             this.comboBoxEx1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.comboBoxEx1.TabIndex = 10;
             // 
@@ -421,55 +402,124 @@
             // 
             this.comboItem4.Text = "Lv.Max+2";
             // 
-            // checkBoxX2
+            // labelX2
             // 
-            this.checkBoxX2.AutoSize = true;
-            this.checkBoxX2.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.checkBoxX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.checkBoxX2.Location = new System.Drawing.Point(15, 57);
-            this.checkBoxX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxX2.Name = "checkBoxX2";
-            this.checkBoxX2.Size = new System.Drawing.Size(121, 18);
-            this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.checkBoxX2.TabIndex = 3;
-            this.checkBoxX2.Text = "스킬 딜레이 표시";
-            // 
-            // checkBoxX1
-            // 
-            this.checkBoxX1.AutoSize = true;
-            this.checkBoxX1.BackColor = System.Drawing.Color.Transparent;
-            this.chkShowReqSkill.AutoSize = true;
-            this.chkShowReqSkill.BackColor = System.Drawing.Color.Transparent;
+            this.labelX2.AutoSize = true;
+            this.labelX2.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.checkBoxX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.checkBoxX1.Location = new System.Drawing.Point(15, 33);
-            this.checkBoxX1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxX1.Name = "checkBoxX1";
-            this.checkBoxX1.Size = new System.Drawing.Size(109, 18);
-            this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.checkBoxX1.TabIndex = 2;
-            this.checkBoxX1.Text = "스킬 코드 표시";
+            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX2.Location = new System.Drawing.Point(15, 225);
+            this.labelX2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX2.Name = "labelX2";
+            this.labelX2.Size = new System.Drawing.Size(89, 18);
+            this.labelX2.TabIndex = 11;
+            this.labelX2.Text = "레벨 간격 설정";
             // 
-            // chkShowReqSkill
+            // comboBoxEx2
             // 
-            this.chkShowReqSkill.AutoSize = true;
-            this.chkShowReqSkill.BackColor = System.Drawing.Color.Transparent;
+            this.comboBoxEx2.DisplayMember = "Text";
+            this.comboBoxEx2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxEx2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxEx2.FormattingEnabled = true;
+            this.comboBoxEx2.ItemHeight = 15;
+            this.comboBoxEx2.Items.AddRange(new object[] {
+            this.comboItem5,
+            this.comboItem6,
+            this.comboItem7,
+            this.comboItem8,
+            this.comboItem9,
+            this.comboItem10});
+            this.comboBoxEx2.Location = new System.Drawing.Point(110, 221);
+            this.comboBoxEx2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboBoxEx2.Name = "comboBoxEx2";
+            this.comboBoxEx2.Size = new System.Drawing.Size(130, 21);
+            this.comboBoxEx2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.comboBoxEx2.TabIndex = 12;
+            // 
+            // comboItem5
+            // 
+            this.comboItem5.Text = "1";
+            // 
+            // comboItem6
+            // 
+            this.comboItem6.Text = "5";
+            // 
+            // comboItem7
+            // 
+            this.comboItem7.Text = "10";
+            // 
+            // comboItem8
+            // 
+            this.comboItem8.Text = "15";
+            // 
+            // comboItem9
+            // 
+            this.comboItem9.Text = "30";
+            // 
+            // comboItem10
+            // 
+            this.comboItem10.Text = "32";
+            // 
+            // labelXSkillLevelViewMode
+            // 
+            this.labelXSkillLevelViewMode.AutoSize = true;
+            this.labelXSkillLevelViewMode.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.chkShowReqSkill.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.chkShowReqSkill.Location = new System.Drawing.Point(15, 105);
-            this.chkShowReqSkill.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.chkShowReqSkill.Name = "chkShowReqSkill";
-            this.chkShowReqSkill.Size = new System.Drawing.Size(109, 18);
-            this.chkShowReqSkill.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.chkShowReqSkill.TabIndex = 5;
-            this.chkShowReqSkill.Text = "필요 스킬 표시";
+            this.labelXSkillLevelViewMode.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelXSkillLevelViewMode.Location = new System.Drawing.Point(15, 246);
+            this.labelXSkillLevelViewMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelXSkillLevelViewMode.Name = "labelXSkillLevelViewMode";
+            this.labelXSkillLevelViewMode.Size = new System.Drawing.Size(89, 18);
+            this.labelXSkillLevelViewMode.TabIndex = 13;
+            this.labelXSkillLevelViewMode.Text = "레벨 보기 방식";
+            // 
+            // comboBoxExSkillLevelViewMode
+            // 
+            this.comboBoxExSkillLevelViewMode.DisplayMember = "Text";
+            this.comboBoxExSkillLevelViewMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxExSkillLevelViewMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxExSkillLevelViewMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxExSkillLevelViewMode.FormattingEnabled = true;
+            this.comboBoxExSkillLevelViewMode.ItemHeight = 15;
+            this.comboBoxExSkillLevelViewMode.Items.AddRange(new object[] {
+            this.comboItemSkillLevelViewMode1,
+            this.comboItemSkillLevelViewMode2,
+            });
+            this.comboBoxExSkillLevelViewMode.Location = new System.Drawing.Point(110, 242);
+            this.comboBoxExSkillLevelViewMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboBoxExSkillLevelViewMode.Name = "comboBoxExSkillLevelViewMode";
+            this.comboBoxExSkillLevelViewMode.Size = new System.Drawing.Size(130, 21);
+            this.comboBoxExSkillLevelViewMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.comboBoxExSkillLevelViewMode.TabIndex = 14;
+            // 
+            // comboItemSkillLevelViewMode1
+            // 
+            this.comboItemSkillLevelViewMode1.Text = "현재 + 다음 레벨";
+            // 
+            // comboItemSkillLevelViewMode2
+            // 
+            this.comboItemSkillLevelViewMode2.Text = "현재 + 다른 레벨";
+            // 
+            // labelX3
+            // 
+            this.labelX3.AutoSize = true;
+            this.labelX3.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelX3.Location = new System.Drawing.Point(15, 264);
+            this.labelX3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.labelX3.Name = "labelX3";
+            this.labelX3.Size = new System.Drawing.Size(236, 30);
+            this.labelX3.TabIndex = 15;
+            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
             // 
             // superTabItem1
             // 
@@ -1294,7 +1344,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 332);
+            this.ClientSize = new System.Drawing.Size(370, 332);
             this.Controls.Add(this.superTabControl1);
             this.Controls.Add(this.panelEx1);
             this.DoubleBuffered = true;
@@ -1414,5 +1464,9 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowItemPurchasePrice;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowGearPurchasePrice;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkShowSkillValuesByJob;
+        private DevComponents.DotNetBar.LabelX labelXSkillLevelViewMode;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxExSkillLevelViewMode;
+        private DevComponents.Editors.ComboItem comboItemSkillLevelViewMode1;
+        private DevComponents.Editors.ComboItem comboItemSkillLevelViewMode2;
     }
 }

@@ -27,6 +27,7 @@ namespace WzComparerR2.CharaSim
 
         private int level;
         private int perJobIndex;
+        private int comparisonLevel;
         internal List<Dictionary<string, string>> levelCommon;
         internal Dictionary<string, string> common;
 
@@ -59,6 +60,7 @@ namespace WzComparerR2.CharaSim
                     || this.SkillID / 100000 == 4000; //fix for evan
                 int maxLevel = canBreakLevel ? 100 : this.MaxLevel;
                 level = Math.Max(0, Math.Min(value, maxLevel));
+                comparisonLevel = Math.Max(1, level);
             }
         }
 
@@ -68,6 +70,18 @@ namespace WzComparerR2.CharaSim
             set
             {
                 perJobIndex = Math.Max(0, Math.Min(value, this.AttackInfo.Count - 1));
+            }
+        }
+
+        public int ComparisonLevel
+        {
+            get { return comparisonLevel; }
+            set
+            {
+                bool canBreakLevel = this.CombatOrders || this.VSkill
+                    || this.SkillID / 100000 == 4000; //fix for evan
+                int maxLevel = canBreakLevel ? 100 : this.MaxLevel;
+                comparisonLevel = Math.Max(1, Math.Min(value, maxLevel));
             }
         }
 
@@ -348,5 +362,11 @@ namespace WzComparerR2.CharaSim
             Key = prop;
             Value = value;
         }
+    }
+
+    public enum SkillLevelViewMode
+    {
+        CurrentAndNext,
+        CurrentAndSelected,
     }
 }

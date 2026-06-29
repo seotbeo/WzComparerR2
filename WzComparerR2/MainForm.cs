@@ -254,6 +254,7 @@ namespace WzComparerR2
             tooltipQuickView.SkillRender.DisplayCooltimeMSAsSec = Setting.Skill.DisplayCooltimeMSAsSec;
             tooltipQuickView.SkillRender.DisplayPermyriadAsPercent = Setting.Skill.DisplayPermyriadAsPercent;
             tooltipQuickView.SkillRender.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
+            tooltipQuickView.SkillRender.LevelViewMode = (SkillLevelViewMode)Setting.Skill.SkillLevelViewMode;
 
             this.skillDefaultLevel = Setting.Skill.DefaultLevel;
             this.skillInterval = Setting.Skill.IntervalLevel;
@@ -4122,6 +4123,25 @@ namespace WzComparerR2
                         skill.Level += this.skillInterval;
                         frm.Refresh();
                         return;
+
+                    case Keys.Right:
+                        if (!e.Control)
+                        {
+                            skill.ComparisonLevel += 1;
+                            doMove = false;
+                            frm.Refresh();
+                            return;
+                        }
+                        break;
+                    case Keys.Left:
+                        if (!e.Control)
+                        {
+                            skill.ComparisonLevel -= 1;
+                            doMove = false;
+                            frm.Refresh();
+                            return;
+                        }
+                        break;
                 }
             }
 
@@ -4670,6 +4690,7 @@ namespace WzComparerR2
                             tooltip.ShowObjectID = Setting.Skill.ShowID;
                             tooltip.ShowDelay = Setting.Skill.ShowDelay;
                             tooltip.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
+                            tooltip.LevelViewMode = (SkillLevelViewMode)Setting.Skill.SkillLevelViewMode;
                             tooltip.Enable22AniStyle = Setting.Misc.Enable22AniStyle;
                             foreach (var i in selectedJob)
                             {

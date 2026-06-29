@@ -36,11 +36,19 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowSkillValuesByJob { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
+        public SkillLevelViewMode LevelViewMode { get; set; }
         public Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
         public Wz_Node SourceWzNode { get; set; } = null;
 
         public TooltipRender LinkRidingGearRender { get; set; }
         public string ParsedHdesc { get; set; }
+
+        private static readonly Dictionary<string, Bitmap> ImageTable = new Dictionary<string, Bitmap>()
+        {
+            { "0", Resource.UIToolTip_img_Skill_Icon_0 },
+            { "1", Resource.UIToolTip_img_Skill_Icon_1 },
+            { "2", Resource.UIToolTip_img_Skill_Icon_2 },
+        };
 
         public override Bitmap Render()
         {
@@ -157,7 +165,7 @@ namespace WzComparerR2.CharaSimControl
             var v6SkillSummaryFontColorTable = new Dictionary<string, Color>()
             {
                 { "c", GearGraphics.SkillSummaryOrangeTextColor },
-                { "$g", GearGraphics.gearCyanColor }, // color for skill prop changes comparison
+                { "$g", GearGraphics.SkillHighlightColor }, // color for skill prop changes comparison
                 { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
             };
 
@@ -292,6 +300,7 @@ namespace WzComparerR2.CharaSimControl
                 ConvertPerM = this.DisplayPermyriadAsPercent,
                 IgnoreEvalError = this.IgnoreEvalError,
                 EndColorOnNewLine = true,
+                LevelViewMode = this.LevelViewMode,
             };
 
             if (Skill.Level > 0)
@@ -305,24 +314,33 @@ namespace WzComparerR2.CharaSimControl
                         if (Skill.VSkillValue == 1) Skill.Level = 30;
                     }
                 }
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, Skill.SkillID, DiffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob);
-                GearGraphics.DrawString(g, "[현재레벨 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                if (Skill.SkillID / 10000 / 1000 == 10 && Skill.Level == 1 && Skill.ReqLevel > 0)
+                string nowLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.Level != Skill.ComparisonLevel ?
+                    $"[현재레벨 #$g{Skill.Level}{SummaryParams.Default.BracketIcon}{Skill.ComparisonLevel}#]" :
+                    $"[현재레벨 {Skill.Level}]";
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, DiffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob);
+                GearGraphics.DrawString(g, nowLevel, GearGraphics.ItemDetailFont, null, null, SkillTooltipRender2.ImageTable, region.LevelDescLeft, region.TextRight, ref picH, 16, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                if (Skill.SkillID / 10000 / 1000 == 10 && Skill.ReqLevel > 0 &&
+                    (this.LevelViewMode == SkillLevelViewMode.CurrentAndNext && Skill.Level == 1 || this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.ComparisonLevel == 1))
                 {
                     GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
                 if (hStr != null)
                 {
                     ParsedHdesc = hStr;
-                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                    GearGraphics.DrawString(g, hStr, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, null, SkillTooltipRender2.ImageTable, region.LevelDescLeft, region.TextRight, ref picH, 16, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
                 }
             }
 
-            if (Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
+            if ((this.LevelViewMode == SkillLevelViewMode.CurrentAndNext || Skill.Level == 0) &&
+                Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions, overrideSkillCommon: skillCommon, convertExtraProps: !this.ShowSkillValuesByJob);
-                GearGraphics.DrawString(g, "[다음레벨 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                if (Skill.SkillID / 10000 / 1000 == 10 && (Skill.Level + 1) == 1 && Skill.ReqLevel > 0)
+                int targetLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected ? Skill.ComparisonLevel : Skill.Level + 1;
+                skillSummaryOptions.LevelViewMode = SkillLevelViewMode.CurrentAndNext;
+                string hStr = SummaryParser.GetSkillSummary(Skill, targetLevel, sr, SummaryParams.Default, skillSummaryOptions, overrideSkillCommon: skillCommon, convertExtraProps: !this.ShowSkillValuesByJob);
+                skillSummaryOptions.LevelViewMode = this.LevelViewMode;
+
+                GearGraphics.DrawString(g, "[다음레벨 " + targetLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                if (Skill.SkillID / 10000 / 1000 == 10 && targetLevel == 1 && Skill.ReqLevel > 0)
                 {
                     GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
@@ -530,7 +548,7 @@ namespace WzComparerR2.CharaSimControl
             // calculate width and height
             var box = this.Skill.AttackInfo.Values.Select(list => list.Count + 1);
             int picH = Margin;
-            extraWidth += Interval;
+            extraWidth += Margin + Interval;
             List<int> rows = new List<int>();
             int count = 0;
             foreach (int h in box)
@@ -555,7 +573,7 @@ namespace WzComparerR2.CharaSimControl
             var v6SkillSummaryFontColorTable = new Dictionary<string, Color>()
             {
                 { "c", GearGraphics.SkillSummaryOrangeTextColor },
-                { "$g", GearGraphics.gearCyanColor }, // color for skill prop changes comparison
+                { "$g", GearGraphics.SkillHighlightColor }, // color for skill prop changes comparison
                 { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
             };
 
@@ -565,6 +583,7 @@ namespace WzComparerR2.CharaSimControl
                 ConvertPerM = this.DisplayPermyriadAsPercent,
                 IgnoreEvalError = this.IgnoreEvalError,
                 EndColorOnNewLine = true,
+                LevelViewMode = this.LevelViewMode,
             };
 
             picH = Margin;
@@ -578,7 +597,6 @@ namespace WzComparerR2.CharaSimControl
                 {
                     List<string> values = new List<string>();
                     bool showCurLv = Skill.Level > 0;
-                    bool showNextLv = Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo;
                     string tag = $"attackInfo/{kv.Key}/{prop.Key}";
                     bool containsTag = false;
                     if (doHighlight && DiffSkillTags[Skill.SkillID].Contains(tag))
@@ -588,19 +606,23 @@ namespace WzComparerR2.CharaSimControl
 
                     if (showCurLv)
                     {
-                        //values.Add($"{(showCurLv ^ showNextLv ? "" : "[현재 레벨] ")}{SummaryParser.CalcSingleProp(Skill.Level, prop.Key, prop.Value, skillSummaryOptions)}");
-                        values.Add($"{SummaryParser.CalcSingleProp(Skill.Level, prop.Key, prop.Value, skillSummaryOptions)}");
+                        var val = SummaryParser.CalcSingleProp(Skill.Level, prop.Key, prop.Value, skillSummaryOptions);
+                        if (this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.Level != Skill.ComparisonLevel)
+                        {
+                            var val2 = SummaryParser.CalcSingleProp(Skill.ComparisonLevel, prop.Key, prop.Value, skillSummaryOptions);
+                            if (val != val2)
+                            {
+                                values.Add($"#$g{val}{SummaryParams.Default.BracketIcon}{val2}#");
+                            }
+                            else values.Add(val);
+                        }
+                        else values.Add(val);
                     }
-                    /*
-                    if (showNextLv)
-                    {
-                        values.Add($"{(showCurLv ^ showNextLv ? "" : "[다음 레벨] ")}{SummaryParser.CalcSingleProp(Skill.Level + 1, prop.Key, prop.Value, skillSummaryOptions)}");
-                    }
-                    */
-                    if (containsTag)
-                        GearGraphics.DrawString(g, $"    #$g{prop.Key} {string.Join(", ", values)}#", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
-                    else
-                        GearGraphics.DrawString(g, $"    #$x{prop.Key}# {string.Join(", ", values)}", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
+
+                    string finalText = containsTag ?
+                        $"    #$g{prop.Key} {string.Join(", ", values)}#" :
+                        $"    #$x{prop.Key}# {string.Join(", ", values)}";
+                    GearGraphics.DrawString(g, finalText, GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, null, SkillTooltipRender2.ImageTable, sx + Margin, sx + Interval * 2, ref picH, Line_Height, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
                 }
                 if (++count == rows[col])
                 {

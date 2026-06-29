@@ -84,5 +84,12 @@ namespace WzComparerR2.Config
             get { return (int)this["intervalLevel"]; }
             set { this["intervalLevel"] = value; }
         }
+
+        [ConfigurationProperty("skillLevelViewMode", DefaultValue = 1)]
+        public int SkillLevelViewMode
+        {
+            get { return (int)this["skillLevelViewMode"]; }
+            set { this["skillLevelViewMode"] = value; }
+        }
     }
 }

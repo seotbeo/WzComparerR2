@@ -342,6 +342,7 @@ namespace WzComparerR2.CharaSimControl
             tooltip.SkillRender.DisplayCooltimeMSAsSec = Setting.Skill.DisplayCooltimeMSAsSec;
             tooltip.SkillRender.DisplayPermyriadAsPercent = Setting.Skill.DisplayPermyriadAsPercent;
             tooltip.SkillRender.IgnoreEvalError = Setting.Skill.IgnoreEvalError;
+            tooltip.SkillRender.LevelViewMode = (SkillLevelViewMode)Setting.Skill.SkillLevelViewMode;
 
             tooltip.GearRender.ShowObjectID = false;
             tooltip.GearRender.ShowSpeed = Setting.Gear.ShowWeaponSpeed;

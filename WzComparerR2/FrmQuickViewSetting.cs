@@ -52,6 +52,7 @@ namespace WzComparerR2
             this.chkShowMiniMapMob.Enabled = this.chkShowMiniMap.Checked;
             this.chkShowMiniMapNpc.Enabled = this.chkShowMiniMap.Checked;
             this.chkShowMiniMapPortal.Enabled = this.chkShowMiniMap.Checked;
+            this.comboBoxExSkillLevelViewMode.SelectedIndex = 1;
         }
 
         [Link]
@@ -140,6 +141,24 @@ namespace WzComparerR2
         {
             get { return chkShowSkillValuesByJob.Checked; }
             set { chkShowSkillValuesByJob.Checked = value; }
+        }
+
+
+        [Link]
+        public int Skill_SkillLevelViewMode
+        {
+            get { return comboBoxExSkillLevelViewMode.SelectedIndex; }
+            set
+            {
+                try
+                {
+                    comboBoxExSkillLevelViewMode.SelectedIndex = value;
+                }
+                catch
+                {
+                    comboBoxExSkillLevelViewMode.SelectedIndex = 1;
+                }
+            }
         }
 
         [Link]

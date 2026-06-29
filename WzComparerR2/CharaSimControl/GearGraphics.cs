@@ -276,6 +276,7 @@ namespace WzComparerR2.CharaSimControl
 
         public static readonly Color SkillSummaryOrangeTextColor = Color.FromArgb(255, 204, 0);
         public static readonly Brush SkillSummaryOrangeTextBrush = new SolidBrush(SkillSummaryOrangeTextColor);
+        public static readonly Color SkillHighlightColor = Color.FromArgb(51, 255, 255);
 
         public static readonly Brush Equip22BrushGray = new SolidBrush(Color.FromArgb(183, 191, 197));
         public static readonly Brush Equip22BrushDarkGray = new SolidBrush(Color.FromArgb(133, 145, 159));
@@ -384,7 +385,7 @@ namespace WzComparerR2.CharaSimControl
         }
 
         public static void DrawString(Graphics g, string s, Font font, IDictionary<string, Color> fontColorTable, IDictionary<string, Font> fontTable, IDictionary<string, Bitmap> imageTable,
-            int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, int strictlyAlignLeft = 0, Color defaultColor = default)
+            int x, int x1, ref int y, int height, TextAlignment alignment = TextAlignment.Left, int strictlyAlignLeft = 0, Color defaultColor = default, TRImageAlignment ImageVerticalAlignment = TRImageAlignment.Top)
         {
             if (s == null)
                 return;
@@ -396,6 +397,7 @@ namespace WzComparerR2.CharaSimControl
                 r.FontColorTable = fontColorTable;
                 r.FontTable = fontTable;
                 r.ImageTable = imageTable;
+                r.ImageVerticalAlignment = ImageVerticalAlignment;
                 r.StrictlyAlignLeft = strictlyAlignLeft;
                 r.DrawString(g, s, font, x, x1, ref y, height, alignment, defaultColor);
             }
@@ -1039,6 +1041,7 @@ namespace WzComparerR2.CharaSimControl
             public IDictionary<string, Color> FontColorTable { get; set; }
             public IDictionary<string, Font> FontTable { get; set; }
             public IDictionary<string, Bitmap> ImageTable { get; set; }
+            public TRImageAlignment ImageVerticalAlignment { get; set; }
 
             const int MAX_RANGES = 32;
             StringFormat fmt;
@@ -1288,7 +1291,7 @@ namespace WzComparerR2.CharaSimControl
                 return rects;
             }
 
-            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string imageID, int imageHeight)
+            protected override void Flush(StringBuilder sb, int startIndex, int length, int x, int y, string colorID, string fontID, string imageID, int imageWidth, int imageHeight)
             {
                 string content = sb.ToString(startIndex, length);
                 colorID = colorID ?? string.Empty;
@@ -1302,15 +1305,27 @@ namespace WzComparerR2.CharaSimControl
                     switch (colorID)
                     {
                         case "c": color = GearGraphics.OrangeBrushColor; break;
-                        case "$g": color = GearGraphics.gearCyanColor; break;
+                        case "$g": color = GearGraphics.SkillHighlightColor; break;
                         default: color = this.defaultColor; break;
                     }
                 }
                 font = GetFont(fontID);
                 if ((this.ImageTable?.TryGetValue(imageID, out bmp) ?? false) && bmp != null) // ImageTable로 전달된 이미지 그리기
                 {
-                    var dx = Math.Max((32 - bmp.Width) / 2, 0);
-                    var dy = -Math.Max(Math.Min(bmp.Height, imageHeight) - font.Height, 0);
+                    var dx = Math.Max((imageWidth - bmp.Width) / 2, 0);
+                    int dy = font.Height - Math.Min(bmp.Height, imageHeight);
+                    switch (this.ImageVerticalAlignment)
+                    {
+                        case TRImageAlignment.Top:
+                            dy = Math.Min(dy, 0);
+                            break;
+                        case TRImageAlignment.Center:
+                            dy = dy / 2 - 1;
+                            break;
+                        case TRImageAlignment.Bottom:
+                            dy = Math.Max(dy, 0);
+                            break;
+                    }
                     g.DrawImage(bmp, this.drawX + x + dx, y + dy);
                     return;
                 }
@@ -1345,6 +1360,13 @@ namespace WzComparerR2.CharaSimControl
                 if (fmt != null)
                     fmt.Dispose();
             }
+        }
+
+        public enum TRImageAlignment
+        {
+            Top,
+            Center,
+            Bottom,
         }
     }
 }

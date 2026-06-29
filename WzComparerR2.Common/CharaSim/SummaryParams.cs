@@ -14,6 +14,9 @@ namespace WzComparerR2.CharaSim
         private string gEnd;
         private string xStart;
         private string xEnd;
+        private string bracketIcon;
+        private string arrowLeftIcon;
+        private string arrowRightIcon;
 
         /// <summary>
         /// 获取或设置回车符(\r)的替换字符串。
@@ -87,6 +90,24 @@ namespace WzComparerR2.CharaSim
             set { xEnd = value; }
         }
 
+        public string BracketIcon
+        {
+            get { return bracketIcon; }
+            set { bracketIcon = value; }
+        }
+
+        public string ArrowLeftIcon
+        {
+            get { return arrowLeftIcon; }
+            set { arrowLeftIcon = value; }
+        }
+
+        public string ArrowRightIcon
+        {
+            get { return arrowRightIcon; }
+            set { arrowRightIcon = value; }
+        }
+
         /// <summary>
         /// 获取默认的替换字符串组合。
         /// </summary>
@@ -104,6 +125,9 @@ namespace WzComparerR2.CharaSim
                     gEnd = @"#",
                     xStart = @"#$x",
                     xEnd = @"#",
+                    bracketIcon = @" #@0/8/9@ ", // keep in sync with SkillTooltipRender2.ImageTable
+                    arrowLeftIcon = @"#@1/14/9@",
+                    arrowRightIcon = @"#@2/17/9@",
                 };
             }
         }

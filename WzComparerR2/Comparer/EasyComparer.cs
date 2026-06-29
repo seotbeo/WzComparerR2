@@ -765,6 +765,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].SourceWzFile = WzFileNewOld[i];
                 tooltipRenderNewOld[i].DiffSkillTags = this.DiffSkillTags;
                 tooltipRenderNewOld[i].IgnoreEvalError = true;
+                tooltipRenderNewOld[i].LevelViewMode = SkillLevelViewMode.CurrentAndNext;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
                 tooltipRenderNewOld[i].ShowSkillValuesByJob = true;
             }

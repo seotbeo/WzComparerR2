@@ -15,7 +15,7 @@ namespace WzComparerR2.CharaSim
             GlobalVariableMapping["comboConAran"] = "aranComboCon";
         }
 
-        public static string GetSkillSummary(string H, int Level, Dictionary<string, string> CommonProps, SummaryParams param, SkillSummaryOptions options = default)
+        public static string GetSkillSummary(string H, int Level, Dictionary<string, string> CommonProps, SummaryParams param, SkillSummaryOptions options = default, int comparisonLevel = 0)
         {
             if (H == null) return null;
 
@@ -63,6 +63,13 @@ namespace WzComparerR2.CharaSim
                         try
                         {
                             decimal val = Calculator.Parse(prop.ToLower(), Level);
+                            decimal val2 = comparisonLevel > 0 ? Calculator.Parse(prop.ToLower(), comparisonLevel) : val;
+                            bool highlightVal = false;
+                            if (val != val2 && options.LevelViewMode == SkillLevelViewMode.CurrentAndSelected)
+                            {
+                                highlightVal = true;
+                                sb.Append(param.GStart);
+                            }
                             if (options.ConvertCooltimeMS && propKey == "cooltimeMS")
                             {
                                 sb.AppendFormat("{0:f2}", val / 1000);
@@ -74,6 +81,37 @@ namespace WzComparerR2.CharaSim
                             else
                             {
                                 sb.Append(val);
+                            }
+
+                            if (highlightVal)
+                            {
+                                bool addPercent = idx + len + 1 < H.Length && H[idx + len + 1] == '%';
+                                if (addPercent)
+                                {
+                                    sb.Append("%");
+                                }
+
+                                sb.Append(param.BracketIcon);
+
+                                if (options.ConvertCooltimeMS && propKey == "cooltimeMS")
+                                {
+                                    sb.AppendFormat("{0:f2}", val2 / 1000);
+                                }
+                                else if (options.ConvertPerM && propKey.EndsWith("PerM", StringComparison.Ordinal))
+                                {
+                                    sb.AppendFormat("{0:f1}", val2 / 100);
+                                }
+                                else
+                                {
+                                    sb.Append(val2);
+                                }
+                                if (addPercent)
+                                {
+                                    sb.Append("%");
+                                    idx++;
+                                }
+
+                                sb.Append(param.GEnd);
                             }
                         }
                         catch
@@ -285,7 +323,9 @@ namespace WzComparerR2.CharaSim
             return GetSkillSummary(skill, skill.Level, sr, param);
         }
 
-        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default, bool doHighlight = false, Dictionary<string, string> overrideSkillCommon = null, int? skillID = null, Dictionary<int, HashSet<string>> DiffSkillTags = null, bool convertExtraProps = true)
+        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default,
+            bool doHighlight = false, Dictionary<string, string> overrideSkillCommon = null, Dictionary<int, HashSet<string>> DiffSkillTags = null,
+            bool convertExtraProps = true)
         {
             if (skill == null || sr == null)
                 return null;
@@ -309,9 +349,9 @@ namespace WzComparerR2.CharaSim
                 }
                 var levelCommon = level <= skill.levelCommon.Count ? skill.levelCommon[level - 1] : skill.common;
 
-                if (doHighlight && DiffSkillTags != null && skillID != null)
+                if (doHighlight && DiffSkillTags != null)
                 {
-                    foreach (var tags in DiffSkillTags[(int)skillID])
+                    foreach (var tags in DiffSkillTags[skill.SkillID])
                     {
                         h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$g#" + tags + "#"));
                     }
@@ -324,7 +364,7 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                return GetSkillSummary(h, level, levelCommon, param, options);
+                return GetSkillSummary(h, level, levelCommon, param, options, comparisonLevel: skill.ComparisonLevel);
             }
             else
             {
@@ -346,9 +386,9 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                if (doHighlight && DiffSkillTags != null && skillID != null)
+                if (doHighlight && DiffSkillTags != null)
                 {
-                    foreach (var tags in DiffSkillTags[(int)skillID])
+                    foreach (var tags in DiffSkillTags[skill.SkillID])
                     {
                         h = (h == null ? null : Regex.Replace(h, "#" + tags + @"(?=[^a-zA-Z0-9]|$)", @"#$g#" + tags + "#"));
                     }
@@ -361,7 +401,7 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, param, options);
+                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, param, options, comparisonLevel: skill.ComparisonLevel);
             }
         }
 
@@ -374,5 +414,6 @@ namespace WzComparerR2.CharaSim
         public bool ConvertPerM { get; set; }
         public bool IgnoreEvalError { get; set; }
         public bool EndColorOnNewLine { get; set; }
+        public SkillLevelViewMode LevelViewMode { get; set; }
     }
 }
