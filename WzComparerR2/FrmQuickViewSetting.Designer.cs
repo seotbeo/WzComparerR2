@@ -496,6 +496,7 @@
             this.comboBoxExSkillLevelViewMode.Size = new System.Drawing.Size(130, 21);
             this.comboBoxExSkillLevelViewMode.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.comboBoxExSkillLevelViewMode.TabIndex = 14;
+            this.comboBoxExSkillLevelViewMode.SelectedIndexChanged += this.comboBoxExSkillLevelViewMode_SelectedIndexChanged;
             // 
             // comboItemSkillLevelViewMode1
             // 
@@ -519,7 +520,7 @@
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(236, 30);
             this.labelX3.TabIndex = 15;
-            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
+            this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 비교 레벨 설정 <b>← →</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
             // 
             // superTabItem1
             // 

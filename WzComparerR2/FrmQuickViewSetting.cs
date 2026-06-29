@@ -53,6 +53,7 @@ namespace WzComparerR2
             this.chkShowMiniMapNpc.Enabled = this.chkShowMiniMap.Checked;
             this.chkShowMiniMapPortal.Enabled = this.chkShowMiniMap.Checked;
             this.comboBoxExSkillLevelViewMode.SelectedIndex = 1;
+            SetLabelX3Text();
         }
 
         [Link]
@@ -432,6 +433,25 @@ namespace WzComparerR2
                 }
                 catch { }
             }
+        }
+
+        private void SetLabelX3Text()
+        {
+            switch (this.comboBoxExSkillLevelViewMode.SelectedIndex)
+            {
+                default:
+                case 0:
+                    this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
+                    break;
+                case 1:
+                    this.labelX3.Text = "1레벨씩 증가 및 감소 <b>- +</b> <br/> 레벨간격을 설정한 만큼 증가 및 감소 <b>[ ]</b> <br/> 비교할 다른 레벨 설정 <b>← →</b> <br/> 기준 직업 변경 <b>PgUp PgDn</b> <br/> 모든 직업별 수치 표시 <b>End</b>";
+                    break;
+            }
+        }
+
+        private void comboBoxExSkillLevelViewMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetLabelX3Text();
         }
 
         private void ChkShowMiniMap_CheckedChanged(object sender, System.EventArgs e)
