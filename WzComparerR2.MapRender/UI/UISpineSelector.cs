@@ -196,6 +196,7 @@ namespace WzComparerR2.MapRender.UI
                     ComboBox cmb = new ComboBox();
                     cmb.ItemsSource = (item.View.Animator as ISpineAnimator).Animations;
                     cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex;
+                    cmb.MinWidth = 100;
                     cmb.Height = 24;
                     Grid.SetRow(cmb, row++);
                     Grid.SetColumn(cmb, 1);
@@ -221,6 +222,7 @@ namespace WzComparerR2.MapRender.UI
                     ComboBox cmb = new ComboBox();
                     cmb.ItemsSource = (item.View.Animator as ISpineAnimator).Animations;
                     cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex;
+                    cmb.MinWidth = 100;
                     cmb.Height = 24;
                     Grid.SetRow(cmb, row++);
                     Grid.SetColumn(cmb, 1);
