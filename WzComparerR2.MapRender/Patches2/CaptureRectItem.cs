@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,11 @@ namespace WzComparerR2.MapRender.Patches2
     {
         public CaptureRectItem()
         {
+            this.ShowRect = true;
             this.CanResize = true;
-            this.MinSize = new Microsoft.Xna.Framework.Vector2(25, 25);
+            this.SnapOnFoothold = false;
+            this.MinRectSize = new Point(25, 25);
+            this.RectAreaColorNormal = new Color(204, 204, 204);
         }
     }
 }

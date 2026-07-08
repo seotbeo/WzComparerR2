@@ -153,7 +153,7 @@ namespace WzComparerR2.MapRender
             var mapData = new MapData(this.Services.GetService<IRandom>());
             mapData.Load(this.mapImgLoading.Node, resLoader);
             mapData.SoundEffPlayer = PlaySoundEff;
-            mapData.LoadMobResource = LoadMobResource;
+            mapData.LoadSceneItemResource = LoadSceneItemResource;
 
             //处理bgm
             Music newBgm = LoadBgm(mapData);

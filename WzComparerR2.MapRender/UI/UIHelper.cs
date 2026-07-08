@@ -33,6 +33,8 @@ namespace WzComparerR2.MapRender.UI
         public static IDisposable RegisterClickEvent<T>(UIElement root, UIElement control, Func<UIElement, PointF, T> getItemFunc,
             Action<T, PointF, bool> onMouseDown = null,
             Action<T, PointF, PointF, bool> onMouseMove = null,
+            Action<T> onMouseEnter = null,
+            Action<T> onMouseLeave = null,
             Action<T, PointF, bool> onClick = null)
         {
             var holder = new ClickEventHolder<T>(root, control)
@@ -40,6 +42,8 @@ namespace WzComparerR2.MapRender.UI
                 GetItemFunc = getItemFunc,
                 MouseDownFunc = onMouseDown,
                 MouseMoveFunc = onMouseMove,
+                MouseEnterFunc = onMouseEnter,
+                MouseLeaveFunc = onMouseLeave,
                 ClickFunc = onClick,
             };
             holder.Register();
@@ -139,9 +143,12 @@ namespace WzComparerR2.MapRender.UI
             public Func<UIElement, PointF, T> GetItemFunc { get; set; }
             public Action<T, PointF, bool> MouseDownFunc { get; set; }
             public Action<T, PointF, PointF, bool> MouseMoveFunc { get; set; }
+            public Action<T> MouseEnterFunc { get; set; }
+            public Action<T> MouseLeaveFunc { get; set; }
             public Action<T, PointF, bool> ClickFunc { get; set; }
 
-            private T item;
+            private T leftClickeditem;
+            private T hoveringItem;
             private bool ctrlOn => (this.Root as MapRenderUIRoot)?.CtrlOn ?? false;
             private PointF prevMousePos = new PointF(0, 0);
 
@@ -164,10 +171,10 @@ namespace WzComparerR2.MapRender.UI
                 if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
                 {
                     var pos = e.GetPosition(this.Control);
-                    this.item = GetItemFunc.Invoke(this.Control, pos);
-                    if (item != null)
+                    this.leftClickeditem = GetItemFunc.Invoke(this.Control, pos);
+                    if (leftClickeditem != null)
                     {
-                        this.MouseDownFunc?.Invoke(item, pos, ctrlOn);
+                        this.MouseDownFunc?.Invoke(leftClickeditem, pos, ctrlOn);
                     }
                     this.prevMousePos = pos;
                 }
@@ -175,11 +182,21 @@ namespace WzComparerR2.MapRender.UI
 
             private void OnMouseMove(object sender, MouseEventArgs e)
             {
-                if (this.item != null)
+                if (GetItemFunc != null)
                 {
                     var pos = e.GetPosition(this.Control);
-                    this.MouseMoveFunc?.Invoke(item, prevMousePos, pos, ctrlOn);
-                    this.prevMousePos = pos;
+                    T item = GetItemFunc.Invoke(this.Control, pos);
+                    if (this.leftClickeditem != null)
+                    {
+                        this.MouseMoveFunc?.Invoke(this.leftClickeditem, prevMousePos, pos, ctrlOn);
+                        this.prevMousePos = pos;
+                    }
+                    if (!object.Equals(item, this.hoveringItem))
+                    {
+                        if (this.hoveringItem != null) this.MouseLeaveFunc?.Invoke(this.hoveringItem);
+                        if (item != null) this.MouseEnterFunc?.Invoke(item);
+                    }
+                    this.hoveringItem = item;
                 }
             }
 
@@ -189,11 +206,11 @@ namespace WzComparerR2.MapRender.UI
                 {
                     var pos = e.GetPosition(this.Control);
                     T item = GetItemFunc.Invoke(this.Control, pos);
-                    if (item != null && object.Equals(item, this.item))
+                    if (item != null && object.Equals(item, this.leftClickeditem))
                     {
                         this.ClickFunc?.Invoke(item, pos, ctrlOn);
                     }
-                    this.item = default(T);
+                    this.leftClickeditem = default(T);
                     this.prevMousePos = pos;
                 }
             }

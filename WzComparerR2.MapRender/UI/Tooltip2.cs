@@ -126,6 +126,10 @@ namespace WzComparerR2.MapRender.UI
             {
                 return DrawItem(gameTime, env, (PortalItem.ItemTooltip)target);
             }
+            else if (target is SkillItem)
+            {
+                return DrawItem(gameTime, env, (SkillItem)target);
+            }
             else if (target is UIWorldMap.MapSpotTooltip)
             {
                 return DrawItem(gameTime, env, (UIWorldMap.MapSpotTooltip)target);
@@ -751,6 +755,31 @@ namespace WzComparerR2.MapRender.UI
             }
             size.Y = current.Y;
             return new TooltipContent() { blocks = blocks, textures = textures, size = size };
+        }
+
+        private TooltipContent DrawItem(GameTime gameTime, RenderEnv env, SkillItem item)
+        {
+            var blocks = new List<TextBlock>();
+            Vector2 size = Vector2.Zero;
+            Vector2 current = Vector2.Zero;
+
+            blocks.Add(PrepareTextBlock(env.Fonts.TooltipTitleFont, item.Name, ref current, Color.LightYellow));
+            current += new Vector2(4, 4);
+            blocks.Add(PrepareTextBlock(env.Fonts.TooltipContentFont, "ID: " + item.ID.ToString("d7"), ref current, Color.White));
+            size.X = Math.Max(size.X, current.X);
+            current = new Vector2(0, current.Y + 16);
+
+            Vector2 size2 = Vector2.Zero;
+            var blocks2 = new List<TextBlock>();
+            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "범위", ref current, Color.White, ref size2.X));
+            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, $"좌: {item.Rect.Left}, 우: {item.Rect.Right}", ref current, Color.White, ref size2.X));
+            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, $"상: {item.Rect.Top}, 하: {item.Rect.Bottom}", ref current, Color.White, ref size2.X));
+            blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, $"영역: {item.Rect.Width}×{item.Rect.Height}", ref current, Color.White, ref size2.X));
+            size.X = Math.Max(size.X, size2.X);
+            current.Y += size2.Y;
+            size.Y = current.Y;
+
+            return new TooltipContent() { blocks = blocks, size = size };
         }
 
         private TooltipContent DrawItem(GameTime gameTime, RenderEnv env, UIWorldMap.MapLinkTooltip item)

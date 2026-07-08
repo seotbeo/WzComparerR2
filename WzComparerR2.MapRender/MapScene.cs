@@ -82,6 +82,7 @@ namespace WzComparerR2.MapRender
                 Sky = new ContainerNode(),
                 SkyWhale = new ContainerNode(),
                 IlluminantCluster = new ContainerNode(),
+                Skill = new ContainerNode(),
             });
         }
 
@@ -94,6 +95,7 @@ namespace WzComparerR2.MapRender
         public ContainerNode Sky { get; private set; }
         public ContainerNode SkyWhale { get; private set; }
         public ContainerNode IlluminantCluster { get; private set; }
+        public ContainerNode Skill { get; private set; }
     }
 
     public class ContainerNode : SceneNode

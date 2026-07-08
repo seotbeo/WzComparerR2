@@ -402,11 +402,11 @@ namespace WzComparerR2.MapRender
         {
             Rectangle[] region = null;
             int count;
-            Measure(mesh, ref region, out count);
+            Measure(null, mesh, ref region, out count);
             return region;
         }
 
-        public void Measure(MeshItem mesh, ref Rectangle[] region, out int count)
+        public void Measure(Patches2.SceneItem item, MeshItem mesh, ref Rectangle[] region, out int count)
         {
             Rectangle rect = Rectangle.Empty;
 
@@ -437,7 +437,22 @@ namespace WzComparerR2.MapRender
                 return;
             }
 
-            if (mesh.RenderObject is Frame)
+            if (item is Patches2.DraggableItem draggableItem)
+            {
+                rect = draggableItem.Rect;
+                rect.X += draggableItem.X;
+                rect.Y += draggableItem.SnapY ?? draggableItem.Y;
+                if (mesh.FlipX)
+                {
+                    rect.X = 2 * draggableItem.X - rect.X - rect.Width;
+                }
+
+                count = 1;
+                EnsureArraySize(ref region, count);
+                region[0] = rect;
+                return;
+            }
+            else if (mesh.RenderObject is Frame)
             {
                 var frame = (Frame)mesh.RenderObject;
                 rect = frame.Rectangle;

@@ -157,6 +157,12 @@ namespace WzComparerR2.MapRender
                             pSystem.Update(elapsed);
                         }
                     }
+                    else if (item is SkillItem)
+                    {
+                        var skill = (SkillItem)item;
+                        (skill.View.Animator as WzComparerR2.Controls.AnimationItem)?.Update(elapsed);
+                        skill.View.Time += (int)elapsed.TotalMilliseconds;
+                    }
                 }
             }
             else
@@ -250,7 +256,8 @@ namespace WzComparerR2.MapRender
             {
                 var mouseTarget = this.allItems.Reverse<ItemRect>().FirstOrDefault(item =>
                 {
-                    return item.rect.Contains(mouse) && (item.item is LifeItem || item.item is PortalItem || item.item is IlluminantClusterItem || item.item is ReactorItem || (item.item is ObjItem && (item.item as ObjItem).Obstacle));
+                    return item.rect.Contains(mouse) && (item.item is LifeItem || item.item is PortalItem || item.item is IlluminantClusterItem || item.item is ReactorItem ||
+                    (item.item is ObjItem && (item.item as ObjItem).Obstacle) || item.item is SkillItem);
                 });
                 target = mouseTarget.item;
             }
@@ -404,6 +411,11 @@ namespace WzComparerR2.MapRender
         private void OnDraggableItemMouseDown(DraggableItem item, PointF mousePos, bool ctrlOn)
         {
             Rectangle rect = item.Rect;
+            rect.Offset(item.Position);
+            if (item.FlipX)
+            {
+                rect.X = 2 * item.X - rect.X - rect.Width;
+            }
             float cameraScale = this.renderEnv.Camera.Scale;
             Point worldMousePos = this.renderEnv.Camera.CameraToWorld(new Point((int)mousePos.X, (int)mousePos.Y));
             int x = worldMousePos.X;
@@ -469,65 +481,162 @@ namespace WzComparerR2.MapRender
             {
                 Rectangle rect = item.Rect;
                 float cameraScale = this.renderEnv.Camera.Scale;
-                // 이동 거리만 필요 -> 월드 좌표 변환 계산 x
-                var dx = (int)((nextMousePos.X - prevMousePos.X) / cameraScale);
-                var dy = (int)((nextMousePos.Y - prevMousePos.Y) / cameraScale);
-                var minX = (int)item.MinSize.X;
-                var minY = (int)item.MinSize.Y;
-
-                if (item.ClickedPos == DraggableItemClickedPos.Center)
-                {
-                    rect.X += dx;
-                    rect.Y += dy;
-                }
-                else if (item.CanResize)
-                {
-                    if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Left) // L
-                    {
-                        var pdx = dx;
-                        rect.Width -= dx;
-                        if (rect.Width < minX)
-                        {
-                            pdx -= Math.Max(0, minX - rect.Width);
-                            rect.Width = minX;
-                        }
-                        rect.X += pdx;
-                    }
-                    if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.Top) // T
-                    {
-                        var pdy = dy;
-                        rect.Height -= dy;
-                        if (rect.Height < minY)
-                        {
-                            pdy -= Math.Max(0, minY - rect.Height);
-                            rect.Height = minY;
-                        }
-                        rect.Y += pdy;
-                    }
-                    if (item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.Right) // R
-                    {
-                        rect.Width += dx;
-                    }
-                    if (item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Bottom) // B
-                    {
-                        rect.Height += dy;
-                    }
-                }
-
-                rect.Width = Math.Max(minX, rect.Width);
-                rect.Height = Math.Max(minY, rect.Height);
-                item.Rect = rect;
+                Point worldPrevMousePos = this.renderEnv.Camera.CameraToWorld(new Point((int)prevMousePos.X, (int)prevMousePos.Y));
+                Point worldNextMousePos = this.renderEnv.Camera.CameraToWorld(new Point((int)nextMousePos.X, (int)nextMousePos.Y));
+                var dx = worldNextMousePos.X - worldPrevMousePos.X;
+                var dy = worldNextMousePos.Y - worldPrevMousePos.Y;
+                var minX = item.MinRectSize.X;
+                var minY = item.MinRectSize.Y;
 
                 if (item is CaptureRectItem)
                 {
+                    if (item.ClickedPos == DraggableItemClickedPos.Center)
+                    {
+                        rect.X += dx;
+                        rect.Y += dy;
+                    }
+                    else if (item.CanResize)
+                    {
+                        if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Left) // L
+                        {
+                            var pdx = dx;
+                            rect.Width -= dx;
+                            if (rect.Width < minX)
+                            {
+                                pdx -= Math.Max(0, minX - rect.Width);
+                                rect.Width = minX;
+                            }
+                            rect.X += pdx;
+                        }
+                        if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.Top) // T
+                        {
+                            var pdy = dy;
+                            rect.Height -= dy;
+                            if (rect.Height < minY)
+                            {
+                                pdy -= Math.Max(0, minY - rect.Height);
+                                rect.Height = minY;
+                            }
+                            rect.Y += pdy;
+                        }
+                        if (item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.Right) // R
+                        {
+                            rect.Width += dx;
+                        }
+                        if (item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Bottom) // B
+                        {
+                            rect.Height += dy;
+                        }
+                    }
+
+                    rect.Width = Math.Max(minX, rect.Width);
+                    rect.Height = Math.Max(minY, rect.Height);
+                    item.Rect = rect;
+
                     if (UIOptionsInstance != null) LoadCaptureRectOptionData(UIOptionsInstance.DataContext as UIOptionsDataModel);
                 }
+                else if (item is SkillItem)
+                {
+                    if (this.removeSkill) return;
+
+                    if (item.ClickedPos == DraggableItemClickedPos.Center)
+                    {
+                        item.X += dx;
+                        item.Y += dy;
+
+                        if (item.SnapOnFoothold)
+                        {
+                            FootholdItem nearestFoothold = FindNearestFoothold(item.X, item.Y);
+                            if (nearestFoothold != null)
+                            {
+                                var snapY = this.mapData?.FootholdManager.GetYOnFoothold(nearestFoothold, item.X) ?? item.Y;
+                                item.SnapY = snapY;
+                            }
+                            else item.SnapY = null;
+                        }
+                    }
+                    else if (item.CanResize)
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
             }
+        }
+
+        private FootholdItem FindNearestFoothold(int x, int y, int threshold = 20)
+        {
+            if (this.mapData == null) return null;
+
+            FootholdItem selectedBelow = null;
+            FootholdItem selectedUpper = null;
+            FootholdItem finalSelected = null;
+            var belowY = int.MaxValue;
+            var upperY = int.MinValue;
+            foreach (var group in this.mapData.FootholdManager.AllFootholdGroups.Where(g => x >= g.GroupArea.Left && x <= g.GroupArea.Right))
+            {
+                foreach (var fh in group.Footholds.Where(fh => !fh.IsWall && x >= fh.FootholdArea.Left && x <= fh.FootholdArea.Right).Select(fh =>
+                {
+                    return new
+                    {
+                        Foothold = fh,
+                        Y = this.mapData.FootholdManager.GetYOnFoothold(fh, x)
+                    };
+                }))
+                {
+                    if (fh.Y < belowY && fh.Y >= y)
+                    {
+                        selectedBelow = fh.Foothold;
+                        belowY = fh.Y;
+                    }
+                    else if (fh.Y > upperY && fh.Y <= y)
+                    {
+                        selectedUpper = fh.Foothold;
+                        upperY = fh.Y;
+                    }
+                }
+            }
+            if (selectedBelow != null || selectedUpper != null)
+            {
+                if (y - upperY <= threshold)
+                {
+                    finalSelected = selectedUpper;
+                }
+                else if (belowY - y <= threshold)
+                {
+                    finalSelected = selectedBelow;
+                }
+            }
+            return finalSelected;
         }
 
         private void OnDraggableItemClick(DraggableItem item, PointF mousePos, bool ctrlOn)
         {
             item.ClickedPos = DraggableItemClickedPos.None;
+            if (item is SkillItem skill && this.removeSkill)
+            {
+                this.mapData?.UnsummonSkill(skill);
+            }
+            if (item.SnapOnFoothold)
+            {
+                item.Y = item.SnapY ?? item.Y;
+                item.SnapY = null;
+            }
+        }
+
+        private void OnDraggableItemMouseEnter(DraggableItem item)
+        {
+            if (item is SkillItem)
+            {
+                item.MouseHovering = true;
+            }
+        }
+
+        private void OnDraggableItemMouseLeave(DraggableItem item)
+        {
+            if (item is SkillItem)
+            {
+                item.MouseHovering = false;
+            }
         }
 
         private void DrawScene(GameTime gameTime)
@@ -567,7 +676,7 @@ namespace WzComparerR2.MapRender
                 //缓存绘图区域
                 {
                     int rectCount;
-                    this.batcher.Measure(kv.Value, ref rects, out rectCount);
+                    this.batcher.Measure(kv.Key, kv.Value, ref rects, out rectCount);
                     if (kv.Value.RenderObject is Frame)
                     {
                         var frame = (Frame)kv.Value.RenderObject;
@@ -579,6 +688,10 @@ namespace WzComparerR2.MapRender
                             rects[i].X -= (int)(origin.X / cameraScale);
                             rects[i].Y -= (int)(origin.Y / cameraScale);
                             allItems.Add(new ItemRect() { item = kv.Key, rect = rects[i] });
+                            if (kv.Key is DraggableItem)
+                            {
+                                allDraggableItems.Add(new ItemRect() { item = kv.Key, rect = rects[i] });
+                            }
                         }
                     }
                 }
@@ -588,6 +701,11 @@ namespace WzComparerR2.MapRender
 
             //在场景之上绘制额外标记
             DrawFootholds(gameTime);
+
+            if (!prepareCapture)
+            {
+                DrawCaptureRect(gameTime);
+            }
             this.batcher.End();
 
             // apply light map
@@ -858,7 +976,7 @@ namespace WzComparerR2.MapRender
                 foreach (var rect in rectList)
                 {
                     var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new RectMesh(rect, color, 1, alpha: 0.3);
+                    meshItem.RenderObject = new RectMesh(rect, color, 1, alpha: 0.1);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
                 }
@@ -872,7 +990,6 @@ namespace WzComparerR2.MapRender
                 var camera = this.renderEnv.Camera;
                 var cameraScale = this.renderEnv.Camera.Scale;
                 var origin = camera.Origin;
-                this.batcher.Begin(origin, (float)(gameTime.TotalGameTime.TotalSeconds % 1000), cameraScale);
 
                 Rectangle rect = this.renderEnv.Camera.WorldRect;
                 if (!this.CaptureRect.IsEmpty)
@@ -882,7 +999,7 @@ namespace WzComparerR2.MapRender
                 if (!rect.IsEmpty)
                 {
                     var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new RectMesh(rect, new Color(204, 204, 204), 5);
+                    meshItem.RenderObject = new RectMesh(rect, this.CaptureRectItem.GetRectAreaColor(1), 5);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
 
@@ -892,7 +1009,6 @@ namespace WzComparerR2.MapRender
                     rect.Height += this.CaptureRectItem.ResizeAreaIn + this.CaptureRectItem.ResizeAreaOut;
                     this.allDraggableItems.Add(new ItemRect() { item = this.CaptureRectItem, rect = rect });
                 }
-                this.batcher.End();
             }
         }
 
@@ -1156,6 +1272,25 @@ namespace WzComparerR2.MapRender
                             kvList.Add(new KeyValuePair<SceneItem, MeshItem>(item, meshLifeEffect));
                         }
                     }
+                    else if (item is DraggableItem drag)
+                    {
+                        if (drag.ShowRect)
+                        {
+                            var meshDragRect = this.batcher.MeshPop();
+                            var dragRect = drag.Rect;
+                            dragRect.X += drag.X;
+                            dragRect.Y += drag.SnapY ?? drag.Y;
+                            meshDragRect.FlipX = mesh.FlipX;
+                            if (meshDragRect.FlipX)
+                            {
+                                dragRect.X = 2 * drag.X - dragRect.X - dragRect.Width;
+                            }
+                            meshDragRect.Z0 = mesh.Z0;
+                            meshDragRect.Z1 = mesh.Z1 - 1;
+                            meshDragRect.RenderObject = new RectMesh(dragRect, drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
+                            kvList.Add(new KeyValuePair<SceneItem, MeshItem>(drag, meshDragRect));
+                        }
+                    }
                 }
                 kvList.Sort((kv1, kv2) => kv1.Value.CompareTo(kv2.Value));
                 foreach (var kv in kvList)
@@ -1239,6 +1374,13 @@ namespace WzComparerR2.MapRender
                     if (patchVisibility.EffectVisible)
                     {
                         return GetMeshParticle((ParticleItem)item);
+                    }
+                    break;
+
+                case SkillItem skill:
+                    if (true)
+                    {
+                        return GetMeshSkill(skill);
                     }
                     break;
             }
@@ -1487,6 +1629,35 @@ namespace WzComparerR2.MapRender
             return mesh;
         }
 
+        private MeshItem GetMeshSkill(SkillItem skill)
+        {
+            var renderObj = GetRenderObject(skill.View.Animator);
+            if (renderObj == null)
+            {
+                return null;
+            }
+            if (skill.Rect.IsEmpty)
+            {
+                switch (skill.View.Animator)
+                {
+                    case FrameAnimator frameAni:
+                        skill.Rect = frameAni.Data.GetBound();
+                        break;
+                    case AnimationItem aniItem:
+                        // For spine animation, we don't know how to calculate the correct cx and cy
+                        skill.Rect = aniItem.Measure();
+                        break;
+                }
+            }
+            var mesh = batcher.MeshPop();
+            mesh.RenderObject = renderObj;
+            mesh.Position = new Vector2(skill.X, skill.SnapY ?? skill.Y);
+            mesh.FlipX = skill.FlipX;
+            mesh.Z0 = skill.Index;
+            mesh.Z1 = 0;
+            return mesh;
+        }
+
         private object GetRenderObject(object animator, bool flip = false, int alpha = 255, bool effectAni = false)
         {
             if (animator is FrameAnimator frameAni)
@@ -1654,9 +1825,9 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void LoadMobResource(LifeItem mob)
+        private void LoadSceneItemResource(SceneItem item)
         {
-            this.mapData.LoadResource(resLoader, mob);
+            this.mapData.LoadResource(resLoader, item);
         }
     }
 }

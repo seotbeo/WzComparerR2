@@ -108,6 +108,11 @@ namespace WzComparerR2.MapRender.UI
             this.AppendMessage(msgText, new Color(255, 255, 0), Color.Transparent);
         }
 
+        public void AppendTextWarning(string msgText)
+        {
+            this.AppendMessage(msgText, new Color(255, 0, 0), Color.Transparent);
+        }
+
         public void AppendMessage(string msgText, Color foreColor, Color backColor)
         {
             var border = new Border();

@@ -619,7 +619,8 @@ namespace WzComparerR2.MapRender.UI
                  "시뮬레이터 :",
                  "[R] 모든 몬스터 초기화",
                  "[마우스 클릭] 몬스터 공격",
-                 "[Ctrl+마우스 클릭] 몬스터 스킬 사용"
+                 "[Ctrl+마우스 클릭] 몬스터 스킬 사용",
+                 "[Del] 소환된 스킬 삭제",
             };
 
             foreach (var tip in tips)

@@ -12,15 +12,83 @@ namespace WzComparerR2.MapRender.Patches2
         {
         }
 
+        public bool MouseHovering { get; set; }
+        public bool ShowRect { get; set; } = true;
         public bool CanResize { get; set; } = false;
+        public bool SnapOnFoothold { get; set; } = true;
+        public bool FlipX { get; set; } = false;
         public int ResizeAreaIn { get; set; } = 15;
         public int ResizeAreaOut { get; set; } = 10;
+        public int RectColorType { get; set; } = 1;
+        public int X
+        {
+            get { return this.Position.X; }
+            set
+            {
+                var pos = this.Position;
+                pos.X = value;
+                this.Position = pos;
+            }
+        }
+        public int Y
+        {
+            get { return this.Position.Y; }
+            set
+            {
+                var pos = this.Position;
+                pos.Y = value;
+                this.Position = pos;
+            }
+        }
+        public int? SnapY { get; set; } = null;
         public Rectangle Rect { get; set; } = new Rectangle();
-        public Vector2 Origin { get; set; } = Vector2.Zero;
-        public Vector2 Position { get; set; } = Vector2.Zero;
-        public Vector2 MinSize { get; set; } = Vector2.Zero;
-
+        public Point Position { get; set; } = Point.Zero;
+        public Point MinRectSize { get; set; } = Point.Zero;
+        /// <summary>
+        /// 기본 사각형 색상
+        /// </summary>
+        public Color RectAreaColorNormal { get; set; }
+        /// <summary>
+        /// 기본 사각형 색상
+        /// </summary>
+        public Color RectAreaColorNormalMouseHover { get; set; }
+        /// <summary>
+        /// 삭제 사각형 색상
+        /// </summary>
+        public Color RectAreaColorDelete { get; set; }
+        /// <summary>
+        /// 기본 사각형 색상
+        /// </summary>
+        public Color RectAreaColorDeleteMouseHover { get; set; }
         public DraggableItemClickedPos ClickedPos { get; set; } = DraggableItemClickedPos.None;
+
+        public Color GetRectAreaColor(int index)
+        {
+            if (this.MouseHovering)
+            {
+                switch (index)
+                {
+                    case 1:
+                        return RectAreaColorNormalMouseHover;
+                    case 2:
+                        return RectAreaColorDeleteMouseHover;
+                    default:
+                        return Color.White;
+                }
+            }
+            else
+            {
+                switch (index)
+                {
+                    case 1:
+                        return RectAreaColorNormal;
+                    case 2:
+                        return RectAreaColorDelete;
+                    default:
+                        return Color.White;
+                }
+            }
+        }
     }
 
     public enum DraggableItemClickedPos
