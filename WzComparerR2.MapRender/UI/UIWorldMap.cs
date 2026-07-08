@@ -549,7 +549,7 @@ namespace WzComparerR2.MapRender.UI
             return item;
         }
 
-        private void OnMapAreaClick(object obj, bool ctrlOn)
+        private void OnMapAreaClick(object obj, PointF mousePos, bool ctrlOn)
         {
             if (obj is MapLink)
             {

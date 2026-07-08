@@ -19,7 +19,7 @@ namespace WzComparerR2.MapRender.UI
 {
     static class UIHelper
     {
-        public static IDisposable RegisterClickEvent<T>(UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, bool> onClick)
+        public static IDisposable RegisterClickEvent<T>(UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, PointF, bool> onClick)
         {
             var holder = new ClickEventHolder<T>(control)
             {
@@ -30,11 +30,16 @@ namespace WzComparerR2.MapRender.UI
             return holder;
         }
 
-        public static IDisposable RegisterClickEvent<T>(UIElement root, UIElement control, Func<UIElement, PointF, T> getItemFunc, Action<T, bool> onClick)
+        public static IDisposable RegisterClickEvent<T>(UIElement root, UIElement control, Func<UIElement, PointF, T> getItemFunc,
+            Action<T, PointF, bool> onMouseDown = null,
+            Action<T, PointF, PointF, bool> onMouseMove = null,
+            Action<T, PointF, bool> onClick = null)
         {
             var holder = new ClickEventHolder<T>(root, control)
             {
                 GetItemFunc = getItemFunc,
+                MouseDownFunc = onMouseDown,
+                MouseMoveFunc = onMouseMove,
                 ClickFunc = onClick,
             };
             holder.Register();
@@ -132,20 +137,25 @@ namespace WzComparerR2.MapRender.UI
             public UIElement Root { get; private set; }
             public UIElement Control { get; private set; }
             public Func<UIElement, PointF, T> GetItemFunc { get; set; }
-            public Action<T, bool> ClickFunc { get; set; }
+            public Action<T, PointF, bool> MouseDownFunc { get; set; }
+            public Action<T, PointF, PointF, bool> MouseMoveFunc { get; set; }
+            public Action<T, PointF, bool> ClickFunc { get; set; }
 
             private T item;
             private bool ctrlOn => (this.Root as MapRenderUIRoot)?.CtrlOn ?? false;
+            private PointF prevMousePos = new PointF(0, 0);
 
             public void Register()
             {
                 this.Control.MouseDown += this.OnMouseDown;
+                this.Control.MouseMove += this.OnMouseMove;
                 this.Control.MouseUp += this.OnMouseUp;
             }
 
             public void Deregister()
             {
                 this.Control.MouseDown -= this.OnMouseDown;
+                this.Control.MouseMove -= this.OnMouseMove;
                 this.Control.MouseUp -= this.OnMouseUp;
             }
 
@@ -153,7 +163,23 @@ namespace WzComparerR2.MapRender.UI
             {
                 if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
                 {
-                    this.item = GetItemFunc.Invoke(this.Control, e.GetPosition(this.Control));
+                    var pos = e.GetPosition(this.Control);
+                    this.item = GetItemFunc.Invoke(this.Control, pos);
+                    if (item != null)
+                    {
+                        this.MouseDownFunc?.Invoke(item, pos, ctrlOn);
+                    }
+                    this.prevMousePos = pos;
+                }
+            }
+
+            private void OnMouseMove(object sender, MouseEventArgs e)
+            {
+                if (this.item != null)
+                {
+                    var pos = e.GetPosition(this.Control);
+                    this.MouseMoveFunc?.Invoke(item, prevMousePos, pos, ctrlOn);
+                    this.prevMousePos = pos;
                 }
             }
 
@@ -161,12 +187,14 @@ namespace WzComparerR2.MapRender.UI
             {
                 if (GetItemFunc != null && e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
                 {
-                    T item = GetItemFunc.Invoke(this.Control, e.GetPosition(this.Control));
+                    var pos = e.GetPosition(this.Control);
+                    T item = GetItemFunc.Invoke(this.Control, pos);
                     if (item != null && object.Equals(item, this.item))
                     {
-                        this.ClickFunc?.Invoke(item, ctrlOn);
+                        this.ClickFunc?.Invoke(item, pos, ctrlOn);
                     }
                     this.item = default(T);
+                    this.prevMousePos = pos;
                 }
             }
 

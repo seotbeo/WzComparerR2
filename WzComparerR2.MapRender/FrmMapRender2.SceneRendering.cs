@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.Controls;
 using WzComparerR2.MapRender.Effects;
 using WzComparerR2.PluginBase;
+using EmptyKeys.UserInterface;
 
 namespace WzComparerR2.MapRender
 {
@@ -335,7 +336,7 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void OnSceneItemClick(SceneItem item, bool ctrlOn)
+        private void OnSceneItemClick(SceneItem item, PointF mousePos, bool ctrlOn)
         {
             if (item is PortalItem)
             {
@@ -400,6 +401,135 @@ namespace WzComparerR2.MapRender
             }
         }
 
+        private void OnDraggableItemMouseDown(DraggableItem item, PointF mousePos, bool ctrlOn)
+        {
+            Rectangle rect = item.Rect;
+            float cameraScale = this.renderEnv.Camera.Scale;
+            Point worldMousePos = this.renderEnv.Camera.CameraToWorld(new Point((int)mousePos.X, (int)mousePos.Y));
+            int x = worldMousePos.X;
+            int y = worldMousePos.Y;
+
+            if (item.CanResize)
+            {
+                int inner = item.ResizeAreaIn;
+                int outer = item.ResizeAreaOut;
+                if (rect.Left - outer <= x && x < rect.Left + inner && rect.Top - outer <= y && y < rect.Top + inner)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.TopLeft;
+                }
+                else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Top + inner)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.TopRight;
+                }
+                else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Bottom - inner <= y && y < rect.Bottom + outer)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.BottomRight;
+                }
+                else if (rect.Left - outer <= x && x < rect.Left + inner && rect.Bottom - inner <= y && y < rect.Bottom + outer)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.BottomLeft;
+                }
+                else if (rect.Left - outer <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Top + inner)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Top;
+                }
+                else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Bottom + outer)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Right;
+                }
+                else if (rect.Left - outer <= x && x < rect.Right + outer && rect.Bottom - inner <= y && y < rect.Bottom + outer)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Bottom;
+                }
+                else if (rect.Left - outer <= x && x < rect.Left + inner && rect.Top - outer <= y && y < rect.Bottom + outer)
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Left;
+                }
+                else if (rect.Contains(x, y))
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Center;
+                }
+            }
+            else
+            {
+                if (rect.Contains(x, y))
+                {
+                    item.ClickedPos = DraggableItemClickedPos.Center;
+                }
+                else
+                {
+                    item.ClickedPos = DraggableItemClickedPos.None;
+                }
+            }
+        }
+
+        private void OnDraggableItemMouseMove(DraggableItem item, PointF prevMousePos, PointF nextMousePos, bool ctrlOn)
+        {
+            if (item.ClickedPos != DraggableItemClickedPos.None)
+            {
+                Rectangle rect = item.Rect;
+                float cameraScale = this.renderEnv.Camera.Scale;
+                // 이동 거리만 필요 -> 월드 좌표 변환 계산 x
+                var dx = (int)((nextMousePos.X - prevMousePos.X) / cameraScale);
+                var dy = (int)((nextMousePos.Y - prevMousePos.Y) / cameraScale);
+                var minX = (int)item.MinSize.X;
+                var minY = (int)item.MinSize.Y;
+
+                if (item.ClickedPos == DraggableItemClickedPos.Center)
+                {
+                    rect.X += dx;
+                    rect.Y += dy;
+                }
+                else if (item.CanResize)
+                {
+                    if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Left) // L
+                    {
+                        var pdx = dx;
+                        rect.Width -= dx;
+                        if (rect.Width < minX)
+                        {
+                            pdx -= Math.Max(0, minX - rect.Width);
+                            rect.Width = minX;
+                        }
+                        rect.X += pdx;
+                    }
+                    if (item.ClickedPos == DraggableItemClickedPos.TopLeft || item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.Top) // T
+                    {
+                        var pdy = dy;
+                        rect.Height -= dy;
+                        if (rect.Height < minY)
+                        {
+                            pdy -= Math.Max(0, minY - rect.Height);
+                            rect.Height = minY;
+                        }
+                        rect.Y += pdy;
+                    }
+                    if (item.ClickedPos == DraggableItemClickedPos.TopRight || item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.Right) // R
+                    {
+                        rect.Width += dx;
+                    }
+                    if (item.ClickedPos == DraggableItemClickedPos.BottomRight || item.ClickedPos == DraggableItemClickedPos.BottomLeft || item.ClickedPos == DraggableItemClickedPos.Bottom) // B
+                    {
+                        rect.Height += dy;
+                    }
+                }
+
+                rect.Width = Math.Max(minX, rect.Width);
+                rect.Height = Math.Max(minY, rect.Height);
+                item.Rect = rect;
+
+                if (item is CaptureRectItem)
+                {
+                    if (UIOptionsInstance != null) LoadCaptureRectOptionData(UIOptionsInstance.DataContext as UIOptionsDataModel);
+                }
+            }
+        }
+
+        private void OnDraggableItemClick(DraggableItem item, PointF mousePos, bool ctrlOn)
+        {
+            item.ClickedPos = DraggableItemClickedPos.None;
+        }
+
         private void DrawScene(GameTime gameTime)
         {
             if (this.mapData == null)
@@ -420,6 +550,7 @@ namespace WzComparerR2.MapRender
             }
 
             allItems.Clear();
+            allDraggableItems.Clear();
             var camera = this.renderEnv.Camera;
             var cameraScale = this.renderEnv.Camera.Scale;
             var origin = camera.Origin;
@@ -754,6 +885,12 @@ namespace WzComparerR2.MapRender
                     meshItem.RenderObject = new RectMesh(rect, new Color(204, 204, 204), 5);
                     this.batcher.Draw(meshItem);
                     this.batcher.MeshPush(meshItem);
+
+                    rect.X -= (int)(origin.X / cameraScale) + this.CaptureRectItem.ResizeAreaIn;
+                    rect.Y -= (int)(origin.Y / cameraScale) + this.CaptureRectItem.ResizeAreaIn;
+                    rect.Width += this.CaptureRectItem.ResizeAreaIn + this.CaptureRectItem.ResizeAreaOut;
+                    rect.Height += this.CaptureRectItem.ResizeAreaIn + this.CaptureRectItem.ResizeAreaOut;
+                    this.allDraggableItems.Add(new ItemRect() { item = this.CaptureRectItem, rect = rect });
                 }
                 this.batcher.End();
             }

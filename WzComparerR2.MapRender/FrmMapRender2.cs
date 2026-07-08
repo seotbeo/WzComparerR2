@@ -145,6 +145,7 @@ namespace WzComparerR2.MapRender
         float opacity;
 
         List<ItemRect> allItems = new List<ItemRect>();
+        List<ItemRect> allDraggableItems = new List<ItemRect>();
         List<KeyValuePair<SceneItem, MeshItem>> drawableItemsCache = new List<KeyValuePair<SceneItem, MeshItem>>();
         MapRenderUIRoot ui;
         Tooltip2 tooltip;
@@ -160,7 +161,25 @@ namespace WzComparerR2.MapRender
         bool isExiting;
 
         bool CamaraChangedEffState = true;
-        Rectangle CaptureRect = new Rectangle();
+        CaptureRectItem CaptureRectItem = new CaptureRectItem();
+        Rectangle CaptureRect
+        {
+            get { return this.CaptureRectItem?.Rect ?? Rectangle.Empty; }
+            set { this.CaptureRectItem.Rect = value; }
+        }
+
+        UIOptions _uiOptionsInstance;
+        UIOptions UIOptionsInstance
+        {
+            get
+            {
+                if (_uiOptionsInstance == null)
+                {
+                    _uiOptionsInstance = CreateUIOptions();
+                }
+                return _uiOptionsInstance;
+            }
+        }
 
         protected override void Initialize()
         {
@@ -206,6 +225,26 @@ namespace WzComparerR2.MapRender
             base.OnDeactivated(sender, args);
         }
 
+        private UIOptions CreateUIOptions()
+        {
+            var uiWnd = new UIOptions
+            {
+                DataContext = new UIOptionsDataModel(),
+                Visibility = EmptyKeys.UserInterface.Visibility.Hidden,
+                Parent = this.ui
+            };
+
+            uiWnd.OK += UIOption_OK;
+            uiWnd.Cancel += UIOption_Cancel;
+            uiWnd.ResetSCRect += UIOption_ResetSCRect;
+            uiWnd.ChkForceClickEvent += UIOption_ChkForceClickEvent;
+            uiWnd.Visible += UiWnd_Visible;
+
+            this.ui.Windows.Add(uiWnd);
+
+            return uiWnd;
+        }
+
         private void BindingUIInput()
         {
             //键盘事件
@@ -219,24 +258,7 @@ namespace WzComparerR2.MapRender
             //选项界面
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ =>
             {
-                var uiWnd = this.ui.Windows.OfType<UIOptions>().FirstOrDefault();
-                if (uiWnd == null)
-                {
-                    uiWnd = new UIOptions();
-                    uiWnd.DataContext = new UIOptionsDataModel();
-                    uiWnd.OK += UIOption_OK;
-                    uiWnd.Cancel += UIOption_Cancel;
-                    uiWnd.ResetSCRect += UIOption_ResetSCRect;
-                    uiWnd.ChkForceClickEvent += UIOption_ChkForceClickEvent;
-                    uiWnd.Visible += UiWnd_Visible;
-                    uiWnd.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-                    this.ui.Windows.Add(uiWnd);
-                    uiWnd.Parent = this.ui;
-                }
-                else
-                {
-                    uiWnd.Toggle();
-                }
+                UIOptionsInstance.Toggle();
             }), KeyCode.Escape, ModifierKeys.None));
 
             //截图
@@ -433,8 +455,6 @@ namespace WzComparerR2.MapRender
                 //鼠标移动
                 bool isMouseDown = false;
                 var direction2 = Vector2.Zero;
-                int captureRectClickedPos = -1;
-                Point prevMousePos = Point.Zero;
 
                 Action<EmptyKeys.UserInterface.Input.MouseEventArgs> calcMouseMoveDir = e =>
                 {
@@ -462,67 +482,6 @@ namespace WzComparerR2.MapRender
                         isMouseDown = true;
                         calcMouseMoveDir(e);
                     }
-                    else if (e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
-                    {
-                        if (this.patchVisibility.CaptureRectVisible)
-                        {
-                            Rectangle rect = this.renderEnv.Camera.WorldRect;
-                            if (!this.CaptureRect.IsEmpty)
-                            {
-                                rect = this.CaptureRect;
-                            }
-
-                            //  1 | 5 | 2
-                            //  8 | 0 | 6
-                            //  4 | 7 | 3
-                            var mouse = this.renderEnv.Input.MousePosition;
-                            var mousePos = this.renderEnv.Camera.CameraToWorld(mouse);
-                            int x = mousePos.X;
-                            int y = mousePos.Y;
-                            int inner = 15;
-                            int outer = 10;
-                            int pos = -1;
-                            if (rect.Left - outer <= x && x < rect.Left + inner && rect.Top - outer <= y && y < rect.Top + inner)
-                            {
-                                pos = 1;
-                            }
-                            else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Top + inner)
-                            {
-                                pos = 2;
-                            }
-                            else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Bottom - inner <= y && y < rect.Bottom + outer)
-                            {
-                                pos = 3;
-                            }
-                            else if (rect.Left - outer <= x && x < rect.Left + inner && rect.Bottom - inner <= y && y < rect.Bottom + outer)
-                            {
-                                pos = 4;
-                            }
-                            else if (rect.Left - outer <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Top + inner)
-                            {
-                                pos = 5;
-                            }
-                            else if (rect.Right - inner <= x && x < rect.Right + outer && rect.Top - outer <= y && y < rect.Bottom + outer)
-                            {
-                                pos = 6;
-                            }
-                            else if (rect.Left - outer <= x && x < rect.Right + outer && rect.Bottom - inner <= y && y < rect.Bottom + outer)
-                            {
-                                pos = 7;
-                            }
-                            else if (rect.Left - outer <= x && x < rect.Left + inner && rect.Top - outer <= y && y < rect.Bottom + outer)
-                            {
-                                pos = 8;
-                            }
-                            else if (rect.Contains(x, y))
-                            {
-                                pos = 0;
-                            }
-
-                            captureRectClickedPos = pos;
-                            prevMousePos = mousePos;
-                        }
-                    }
                 };
                 this.ui.MouseDown += mouseBtnEv;
                 this.attachedEvent.Add(EventDisposable(mouseBtnEv, _ev => this.ui.MouseDown -= _ev));
@@ -532,63 +491,6 @@ namespace WzComparerR2.MapRender
                     if (isMouseDown)
                     {
                         calcMouseMoveDir(e);
-                    }
-                    if (captureRectClickedPos >= 0)
-                    {
-                        var mouse = this.renderEnv.Input.MousePosition;
-                        var mousePos = this.renderEnv.Camera.CameraToWorld(mouse);
-                        var dx = mousePos.X - prevMousePos.X;
-                        var dy = mousePos.Y - prevMousePos.Y;
-                        var minX = 25;
-                        var minY = 25;
-                        Rectangle rect = this.renderEnv.Camera.WorldRect;
-                        if (!this.CaptureRect.IsEmpty)
-                        {
-                            rect = this.CaptureRect;
-                        }
-
-                        if (captureRectClickedPos == 0)
-                        {
-                            rect.X += dx;
-                            rect.Y += dy;
-                        }
-                        if (captureRectClickedPos == 1 || captureRectClickedPos == 4 || captureRectClickedPos == 8) // L
-                        {
-                            var pdx = dx;
-                            rect.Width -= dx;
-                            if (rect.Width < minX)
-                            {
-                                pdx -= Math.Max(0, minX - rect.Width);
-                                rect.Width = minX;
-                            }
-                            rect.X += pdx;
-                        }
-                        if (captureRectClickedPos == 1 || captureRectClickedPos == 2 || captureRectClickedPos == 5) // T
-                        {
-                            var pdy = dy;
-                            rect.Height -= dy;
-                            if (rect.Height < minY)
-                            {
-                                pdy -= Math.Max(0, minY - rect.Height);
-                                rect.Height = minY;
-                            }
-                            rect.Y += pdy;
-                        }
-                        if (captureRectClickedPos == 2 || captureRectClickedPos == 3 || captureRectClickedPos == 6) // R
-                        {
-                            rect.Width += dx;
-                        }
-                        if (captureRectClickedPos == 3 || captureRectClickedPos == 4 || captureRectClickedPos == 7) // B
-                        {
-                            rect.Height += dy;
-                        }
-
-                        rect.Width = Math.Max(minX, rect.Width);
-                        rect.Height = Math.Max(minY, rect.Height);
-                        this.CaptureRect = rect;
-                        var uiWnd = this.ui.Windows.OfType<UIOptions>().FirstOrDefault();
-                        if (uiWnd != null) LoadCaptureRectOptionData(uiWnd.DataContext as UIOptionsDataModel);
-                        prevMousePos = mousePos;
                     }
                 };
                 this.ui.MouseMove += mouseEv;
@@ -600,11 +502,6 @@ namespace WzComparerR2.MapRender
                     {
                         isMouseDown = false;
                         direction2 = Vector2.Zero;
-                    }
-                    else if (e.ChangedButton == EmptyKeys.UserInterface.Input.MouseButton.Left)
-                    {
-                        captureRectClickedPos = -1;
-                        prevMousePos = Point.Zero;
                     }
                 };
                 this.ui.MouseUp += mouseBtnEv;
@@ -657,8 +554,25 @@ namespace WzComparerR2.MapRender
                     });
                     return mouseTarget.item;
                 },
-                this.OnSceneItemClick);
+                onClick: this.OnSceneItemClick);
             this.attachedEvent.Add(disposable);
+
+            var disposable_draggableItemEvent = UIHelper.RegisterClickEvent<DraggableItem>(this.ui, this.ui.ContentControl,
+                (sender, point) =>
+                {
+                    var cameraScale = this.renderEnv.Camera.Scale;
+                    int x = (int)(point.X / cameraScale);
+                    int y = (int)(point.Y / cameraScale);
+                    var mouseTarget = this.allDraggableItems.Reverse<ItemRect>().FirstOrDefault(item =>
+                    {
+                        return item.rect.Contains(x, y) && (item.item is DraggableItem);
+                    });
+                    return mouseTarget.item as DraggableItem;
+                },
+                onMouseDown: this.OnDraggableItemMouseDown,
+                onMouseMove: this.OnDraggableItemMouseMove,
+                onClick: this.OnDraggableItemClick);
+            this.attachedEvent.Add(disposable_draggableItemEvent);
 
             this.ui.InputBindings.Add(new KeyBinding(new RelayCommand(_ => {
                 if (this.ui.Visibility == Visibility.Visible)
@@ -1641,6 +1555,8 @@ namespace WzComparerR2.MapRender
                 model.ScTop = src.Top.ToString();
                 model.ScRight = src.Right.ToString();
                 model.ScBottom = src.Bottom.ToString();
+
+                this.CaptureRect = src;
             }
             else
             {
