@@ -40,6 +40,10 @@ namespace WzComparerR2.MapRender.Patches2
                 this.Position = pos;
             }
         }
+        public int RenderY
+        {
+            get { return this.SnapY ?? this.Y; }
+        }
         public int? SnapY { get; set; } = null;
         public Rectangle Rect { get; set; } = new Rectangle();
         public Point Position { get; set; } = Point.Zero;

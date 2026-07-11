@@ -546,7 +546,7 @@ namespace WzComparerR2.MapRender
 
                         if (item.SnapOnFoothold)
                         {
-                            FootholdItem nearestFoothold = FindNearestFoothold(item.X, item.Y);
+                            FootholdItem nearestFoothold = this.mapData?.FootholdManager.FindNearestFoothold(item.X, item.Y);
                             if (nearestFoothold != null)
                             {
                                 var snapY = this.mapData?.FootholdManager.GetYOnFoothold(nearestFoothold, item.X) ?? item.Y;
@@ -561,52 +561,6 @@ namespace WzComparerR2.MapRender
                     }
                 }
             }
-        }
-
-        private FootholdItem FindNearestFoothold(int x, int y, int threshold = 20)
-        {
-            if (this.mapData == null) return null;
-
-            FootholdItem selectedBelow = null;
-            FootholdItem selectedUpper = null;
-            FootholdItem finalSelected = null;
-            var belowY = int.MaxValue;
-            var upperY = int.MinValue;
-            foreach (var group in this.mapData.FootholdManager.AllFootholdGroups.Where(g => x >= g.GroupArea.Left && x <= g.GroupArea.Right))
-            {
-                foreach (var fh in group.Footholds.Where(fh => !fh.IsWall && x >= fh.FootholdArea.Left && x <= fh.FootholdArea.Right).Select(fh =>
-                {
-                    return new
-                    {
-                        Foothold = fh,
-                        Y = this.mapData.FootholdManager.GetYOnFoothold(fh, x)
-                    };
-                }))
-                {
-                    if (fh.Y < belowY && fh.Y >= y)
-                    {
-                        selectedBelow = fh.Foothold;
-                        belowY = fh.Y;
-                    }
-                    else if (fh.Y > upperY && fh.Y <= y)
-                    {
-                        selectedUpper = fh.Foothold;
-                        upperY = fh.Y;
-                    }
-                }
-            }
-            if (selectedBelow != null || selectedUpper != null)
-            {
-                if (y - upperY <= threshold)
-                {
-                    finalSelected = selectedUpper;
-                }
-                else if (belowY - y <= threshold)
-                {
-                    finalSelected = selectedBelow;
-                }
-            }
-            return finalSelected;
         }
 
         private void OnDraggableItemClick(DraggableItem item, PointF mousePos, bool ctrlOn)
@@ -1279,7 +1233,7 @@ namespace WzComparerR2.MapRender
                             var meshDragRect = this.batcher.MeshPop();
                             var dragRect = drag.Rect;
                             dragRect.X += drag.X;
-                            dragRect.Y += drag.SnapY ?? drag.Y;
+                            dragRect.Y += drag.RenderY;
                             meshDragRect.FlipX = mesh.FlipX;
                             if (meshDragRect.FlipX)
                             {
@@ -1294,8 +1248,8 @@ namespace WzComparerR2.MapRender
                             {
                                 var meshLines = this.batcher.MeshPop();
                                 var lines = new List<Point>();
-                                lines.Add(new Point(dragRect.Left, drag.SnapY ?? drag.Y));
-                                lines.Add(new Point(dragRect.Right, drag.SnapY ?? drag.Y));
+                                lines.Add(new Point(dragRect.Left, drag.RenderY));
+                                lines.Add(new Point(dragRect.Right, drag.RenderY));
                                 lines.Add(new Point(drag.X, dragRect.Top));
                                 lines.Add(new Point(drag.X, dragRect.Bottom));
                                 meshLines.Z0 = mesh.Z0;
@@ -1665,7 +1619,7 @@ namespace WzComparerR2.MapRender
             }
             var mesh = batcher.MeshPop();
             mesh.RenderObject = renderObj;
-            mesh.Position = new Vector2(skill.X, skill.SnapY ?? skill.Y);
+            mesh.Position = new Vector2(skill.X, skill.RenderY);
             mesh.FlipX = skill.FlipX;
             mesh.Z0 = skill.Index;
             mesh.Z1 = 0;

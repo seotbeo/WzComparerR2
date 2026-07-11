@@ -441,7 +441,7 @@ namespace WzComparerR2.MapRender
             {
                 rect = draggableItem.Rect;
                 rect.X += draggableItem.X;
-                rect.Y += draggableItem.SnapY ?? draggableItem.Y;
+                rect.Y += draggableItem.RenderY;
                 if (mesh.FlipX)
                 {
                     rect.X = 2 * draggableItem.X - rect.X - rect.Width;

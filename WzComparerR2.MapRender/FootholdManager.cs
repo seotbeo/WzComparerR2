@@ -12,14 +12,13 @@ namespace WzComparerR2.MapRender
     public class FootholdManager
     {
         public List<FootholdGroup>[] FootholdGroups { get; set; } = Enumerable.Range(0, 8).Select(_ => new List<FootholdGroup>()).ToArray();
-        public List<FootholdGroup> AllFootholdGroups { get; set; }
-        public Dictionary<int, FootholdGroup> AllFootholdGroupsByID { get; set; }
+        public List<FootholdGroup> AllFootholdGroups { get; set; } = new();
+        public Dictionary<int, FootholdGroup> AllFootholdGroupsByID { get; set; } = new();
         public Dictionary<int, FootholdItem> AllFootholdByID { get; set; } = new();
         public Rectangle Area { get; set; } = Rectangle.Empty;
 
         public void Build()
         {
-
             AllFootholdGroups = FootholdGroups.SelectMany(g => g).ToList();
             AllFootholdGroupsByID = AllFootholdGroups.ToDictionary(g => g.Index);
             AllFootholdByID.Clear();
@@ -103,6 +102,48 @@ namespace WzComparerR2.MapRender
                 return (int)(fh.Y1 + (fh.Y2 - fh.Y1) * t);
             }
             return Math.Min(fh.Y1, fh.Y2);
+        }
+
+        public FootholdItem FindNearestFoothold(int x, int y, int threshold = 20)
+        {
+            FootholdItem selectedBelow = null;
+            FootholdItem selectedUpper = null;
+            FootholdItem finalSelected = null;
+            var belowY = int.MaxValue;
+            var upperY = int.MinValue;
+            foreach (var group in this.AllFootholdGroups.Where(g => x >= g.GroupArea.Left && x <= g.GroupArea.Right))
+            {
+                foreach (var fh in group.Footholds.Where(fh => !fh.IsWall && x >= fh.FootholdArea.Left && x <= fh.FootholdArea.Right).Select(fh =>
+                {
+                    return new
+                    {
+                        Foothold = fh,
+                        Y = this.GetYOnFoothold(fh, x)
+                    };
+                }))
+                {
+                    if (fh.Y < belowY && fh.Y >= y)
+                    {
+                        selectedBelow = fh.Foothold;
+                        belowY = fh.Y;
+                    }
+                    else if (fh.Y > upperY && fh.Y <= y)
+                    {
+                        selectedUpper = fh.Foothold;
+                        upperY = fh.Y;
+                    }
+                }
+            }
+
+            var distanceBelow = selectedBelow != null ? belowY - y : int.MaxValue;
+            var distanceUpper = selectedUpper != null ? y - upperY : int.MaxValue;
+            var nearestDistance = Math.Min(distanceBelow, distanceUpper);
+            if (nearestDistance <= threshold)
+            {
+                finalSelected = distanceBelow < distanceUpper ? selectedBelow : selectedUpper;
+            }
+
+            return finalSelected;
         }
 
         public static bool GetCandidateGroups(FootholdGroup group, Vector2 pos1, Vector2 pos2, int margin = 20)
