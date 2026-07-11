@@ -127,7 +127,7 @@ namespace WzComparerR2.WzLib.Compatibility
             return Pkg2PreReadTreeWalker.TryPreRead(wzFile, this.rule, out result);
         }
     }
-    
+
     internal sealed class Pkg2PreReader64 : IWzPreReader
     {
         public Pkg2PreReader64(WzFileFormat format)
@@ -235,68 +235,69 @@ namespace WzComparerR2.WzLib.Compatibility
                 }
             }
 
-            int dirCount = 0;
-            for (int i = 0; i < entries.Count; i++)
+            do
             {
-                if (entries[i].NodeType == 0x03)
-                    dirCount++;
-            }
+                rule.ValidateOffsetSection(reader, header, entries.Count);
 
-            if (rule.ValidateImageLength && isTopLevel && dirCount == 0)
-            {
-                bool matched = false;
-                for (int count = entries.Count; count >= 0; count--)
+                result.Pkg2DirEntryCounts.Add(new Pkg2DirEntryCount
                 {
-                    long offsetStart = count == 0 ? entriesStartPosition : entries[count - 1].EndPosition;
-                    long dirEndPosition = offsetStart + count * 4L;
-                    if (dirEndPosition > fileLen)
-                        continue;
+                    EncryptedEntryCount = header.EncryptedEntryCount,
+                    ActualEntryCount = entries.Count,
+                    ActualImgCount = entries.Count(e => e.NodeType == 0x04),
+                });
 
-                    long imageDataLengthSum = 0;
-                    for (int i = 0; i < count; i++)
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    uint offsetPos = (uint)reader.BaseStream.Position;
+                    uint hashedOffset = reader.ReadUInt32();
+                    result.Nodes.Add(new WzPreReadNodeInfo
                     {
-                        if (entries[i].NodeType == 0x04)
-                            imageDataLengthSum += entries[i].DataLength;
+                        NodeType = entries[i].NodeType,
+                        DataLength = entries[i].DataLength,
+                        HashedOffsetPosition = offsetPos,
+                        HashedOffset = hashedOffset,
+                    });
+                }
+
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    if (entries[i].NodeType == 0x03)
+                        ReadTree(reader, result, rule, context, fileLen, false);
+                }
+
+                if (isTopLevel && rule.ValidateImageLength)
+                {
+                    // Validate the total image length against the file length.
+                    long dirEndPos = reader.BaseStream.Position;
+                    long imageTotalLength = 0;
+                    foreach (var node in result.Nodes)
+                    {
+                        if (node.NodeType == 0x04)
+                        {
+                            imageTotalLength += node.DataLength;
+                        }
                     }
-
-                    if (imageDataLengthSum == fileLen - dirEndPosition)
+                    if (dirEndPos + imageTotalLength > fileLen)
                     {
-                        if (count < entries.Count)
-                            entries.RemoveRange(count, entries.Count - count);
-                        reader.BaseStream.Position = offsetStart;
-                        matched = true;
-                        break;
+                        // rollback 1 entry and try again.
+                        if (entries.Count > 1)
+                        {
+                            entries.RemoveAt(entries.Count - 1);
+                            reader.BaseStream.Position = entries[entries.Count - 1].EndPosition;
+                            result.Pkg2DirEntryCounts.Clear();
+                            result.Nodes.Clear();
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidDataException("PKG2 image length exceeds file length.");
+                        }
                     }
                 }
 
-                if (!matched)
-                    throw new InvalidDataException("PKG2 top-level image length validation failed.");
+                break;
             }
-
-            rule.ValidateOffsetSection(reader, header, entries.Count);
-
-            result.Pkg2DirEntryCounts.Add(new Pkg2DirEntryCount
-            {
-                EncryptedEntryCount = header.EncryptedEntryCount,
-                ActualEntryCount = entries.Count,
-                ActualImgCount = entries.Count(e => e.NodeType == 0x04),
-            });
-
-            for (int i = 0; i < entries.Count; i++)
-            {
-                uint offsetPos = (uint)reader.BaseStream.Position;
-                uint hashedOffset = reader.ReadUInt32();
-                result.Nodes.Add(new WzPreReadNodeInfo
-                {
-                    NodeType = entries[i].NodeType,
-                    DataLength = entries[i].DataLength,
-                    HashedOffsetPosition = offsetPos,
-                    HashedOffset = hashedOffset,
-                });
-            }
-
-            for (int i = 0; i < dirCount; i++)
-                ReadTree(reader, result, rule, context, fileLen, false);
+            while (true);
         }
 
         private static void ReadOneEntry(WzBinaryReader reader, WzPreReadResult result, IPkg2PreReadRule rule, Pkg2PreReadContext context, int entryIndex, List<Pkg2PreReadEntry> entries)
