@@ -1561,7 +1561,8 @@ namespace WzComparerR2.MapRender
             }
             var path = $@"Skill\{img}.img\skill\{id:D7}\{aniPath}";
             var skillNode = PluginManager.FindWz(path);
-            SkillItem skill = SkillItem.Create(name, id, x, y, l, t, r, b, index: Scene.Fly.Skill.Slots.Count, flip, skillNode);
+            var zindex = Scene.Fly.Skill.Slots.Count > 0 ? Scene.Fly.Skill.Slots.Max(s => s.Index) + 1 : 0;
+            SkillItem skill = SkillItem.Create(name, id, x, y, l, t, r, b, index: zindex, flip, skillNode);
             if (skillNode != null && skill != null)
             {
                 LoadSceneItemResource?.Invoke(skill);
