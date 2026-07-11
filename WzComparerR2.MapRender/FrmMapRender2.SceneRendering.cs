@@ -1289,6 +1289,20 @@ namespace WzComparerR2.MapRender
                             meshDragRect.Z1 = mesh.Z1 - 1;
                             meshDragRect.RenderObject = new RectMesh(dragRect, drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
                             kvList.Add(new KeyValuePair<SceneItem, MeshItem>(drag, meshDragRect));
+
+                            if (this.patchVisibility.FootHoldVisible)
+                            {
+                                var meshLines = this.batcher.MeshPop();
+                                var lines = new List<Point>();
+                                lines.Add(new Point(dragRect.Left, drag.SnapY ?? drag.Y));
+                                lines.Add(new Point(dragRect.Right, drag.SnapY ?? drag.Y));
+                                lines.Add(new Point(drag.X, dragRect.Top));
+                                lines.Add(new Point(drag.X, dragRect.Bottom));
+                                meshLines.Z0 = mesh.Z0;
+                                meshLines.Z1 = mesh.Z1 + 1;
+                                meshLines.RenderObject = new LineListMesh(lines.ToArray(), drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
+                                kvList.Add(new KeyValuePair<SceneItem, MeshItem>(drag, meshLines));
+                            }
                         }
                     }
                 }
