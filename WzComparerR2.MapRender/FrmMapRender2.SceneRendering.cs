@@ -1252,6 +1252,7 @@ namespace WzComparerR2.MapRender
                                 lines.Add(new Point(dragRect.Right, drag.RenderY));
                                 lines.Add(new Point(drag.X, dragRect.Top));
                                 lines.Add(new Point(drag.X, dragRect.Bottom));
+                                meshLines.FlipX = mesh.FlipX;
                                 meshLines.Z0 = mesh.Z0;
                                 meshLines.Z1 = mesh.Z1 + 1;
                                 meshLines.RenderObject = new LineListMesh(lines.ToArray(), drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
