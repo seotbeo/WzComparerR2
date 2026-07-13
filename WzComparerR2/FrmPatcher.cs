@@ -805,6 +805,20 @@ namespace WzComparerR2
             }
         }
 
+        private void ChkDeadPatch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkDeadPatch.Checked)
+            {
+                this.chkPrePatch.Checked = true;
+                this.chkPrePatch.Enabled = false;
+            }
+            else
+            {
+                this.chkPrePatch.Checked = false;
+                this.chkPrePatch.Enabled = true;
+            }
+        }
+
         class PatcherSession
         {
             public PatcherSession()

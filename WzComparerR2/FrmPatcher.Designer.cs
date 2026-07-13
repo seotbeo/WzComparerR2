@@ -170,10 +170,11 @@
             this.chkDeadPatch.Name = "chkDeadPatch";
             this.chkDeadPatch.Size = new System.Drawing.Size(82, 16);
             this.chkDeadPatch.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("즉시 패치", "", "각 파일을 패치한 후 즉시 원본 파일에 덮어씁니다. 임시 파일이 필요한 공간을 줄일 수 있으나, 중간에 중단될 경우 위험할 수 있습니다.\r\n\r\nKMST1125 유형의 패치의 경우, " +
+            this.superTooltip1.SetSuperTooltip(this.chkDeadPatch, new DevComponents.DotNetBar.SuperTooltipInfo("즉시 패치", "", "각 파일을 패치한 후 즉시 원본 파일에 덮어씁니다. 임시 파일이 필요한 공간을 줄일 수 있으나, 중간에 중단될 경우 위험할 수 있습니다.\r\nKMST1125 유형의 패치의 경우, " +
             "패치 요약을 활성화 해야 동작합니다.", null, null, DevComponents.DotNetBar.eTooltipColor.System, true, false, new System.Drawing.Size(180, 180)));
             this.chkDeadPatch.TabIndex = 7;
             this.chkDeadPatch.Text = "즉시 패치";
+            this.chkDeadPatch.CheckedChanged += ChkDeadPatch_CheckedChanged;
             // 
             // chkPrePatch
             // 
