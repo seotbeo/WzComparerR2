@@ -36,6 +36,7 @@ namespace WzComparerR2.CharaSimControl
         public bool ShowSkillValuesByJob { get; set; } = false;
         public bool IsWideMode { get; set; } = true;
         public bool Enable22AniStyle { get; set; }
+        public bool CompareMode { get; set; } = false;
         public SkillLevelViewMode LevelViewMode { get; set; }
         public Dictionary<int, HashSet<string>> DiffSkillTags { get; set; } = new Dictionary<int, HashSet<string>>();
         public Wz_Node SourceWzNode { get; set; } = null;
@@ -306,9 +307,9 @@ namespace WzComparerR2.CharaSimControl
             if (Skill.Level > 0)
             {
                 // set custom color for skill prop changes
-                if (doHighlight)
+                if (CompareMode)
                 {
-                    if (Skill.SkillID / 100000 == 4000)
+                    if (Skill.SkillID / 100000 == 4000 && Skill.MaxLevel > 1)
                     {
                         if (Skill.VSkillValue == 2) Skill.Level = 60;
                         if (Skill.VSkillValue == 1) Skill.Level = 30;
