@@ -768,6 +768,7 @@ namespace WzComparerR2.Comparer
                 tooltipRenderNewOld[i].LevelViewMode = SkillLevelViewMode.CurrentAndNext;
                 tooltipRenderNewOld[i].Enable22AniStyle = CharaSimConfig.Default.Misc.Enable22AniStyle;
                 tooltipRenderNewOld[i].ShowSkillValuesByJob = true;
+                tooltipRenderNewOld[i].CompareMode = true;
             }
 
             foreach (var skillID in OutputSkillTooltipIDs)
