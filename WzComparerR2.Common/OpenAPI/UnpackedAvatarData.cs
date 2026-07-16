@@ -419,6 +419,7 @@ namespace WzComparerR2.OpenAPI
                 ret.Brightness = GetValue($"{type.ToLower()}Prism{index}Brightness");
                 ret.Saturation = GetValue($"{type.ToLower()}Prism{index}Saturation");
                 ret.Hue = GetValue($"{type.ToLower()}Prism{index}Hue");
+                ret.ConvertPureBlack = false;
                 ret.Valid = true;
             }
             else
@@ -557,6 +558,7 @@ namespace WzComparerR2.OpenAPI
         public int Hue { get; set; }
         public int Saturation { get; set; }
         public int Brightness { get; set; }
+        public bool ConvertPureBlack { get; set; }
 
         public bool HasValues()
         {

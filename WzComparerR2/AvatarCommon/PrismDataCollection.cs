@@ -64,16 +64,16 @@ namespace WzComparerR2.AvatarCommon
             }
         }
 
-        public void Set(PrismDataType datatype, int type, int hue, int saturation, int brightness)
+        public void Set(PrismDataType datatype, int type, int hue, int saturation, int brightness, bool convertPureBlack)
         {
             switch (datatype)
             {
                 case PrismDataType.Default:
-                    this.PrismData_Default.Set(type, hue, saturation, brightness);
+                    this.PrismData_Default.Set(type, hue, saturation, brightness, convertPureBlack);
                     break;
 
                 case PrismDataType.WeaponEffect:
-                    this.PrismData_WeaponEffect.Set(type, hue, saturation, brightness);
+                    this.PrismData_WeaponEffect.Set(type, hue, saturation, brightness, convertPureBlack);
                     break;
             }
         }

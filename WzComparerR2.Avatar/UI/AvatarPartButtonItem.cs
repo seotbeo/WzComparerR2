@@ -178,6 +178,7 @@ namespace WzComparerR2.Avatar.UI
             this.SubItems.Add(this.sliderSaturation);
             this.SubItems.Add(this.labelBrightness);
             this.SubItems.Add(this.sliderBrightness);
+            this.SubItems.Add(this.chkConvertPureBlack);
         }
 
         public void PrismIndexChanged(int value)
@@ -256,6 +257,21 @@ namespace WzComparerR2.Avatar.UI
 
                 prismData.Brightness = value;
                 partPrismData.Brightness = value;
+            }
+        }
+
+        public void PrismConvertPureBlackChanged(bool value)
+        {
+            var part = this.Tag as AvatarPart;
+            if (part != null)
+            {
+                PrismDataCollection.PrismDataType pidx = 0;
+                Enum.TryParse(this.PrismIndex.ToString(), out pidx);
+                PrismData prismData = this.PrismData.Get(pidx);
+                PrismData partPrismData = part.PrismData.Get(pidx);
+
+                prismData.ConvertPureBlack = value;
+                partPrismData.ConvertPureBlack = value;
             }
         }
 

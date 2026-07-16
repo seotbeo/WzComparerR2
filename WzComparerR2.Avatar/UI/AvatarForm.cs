@@ -584,7 +584,7 @@ namespace WzComparerR2.Avatar.UI
                     if (prismValid)
                     {
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}";
+                        partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}{(prismData.ConvertPureBlack ? "PB" : "")}";
                     }
                     if (prism2Valid)
                     {
@@ -593,7 +593,7 @@ namespace WzComparerR2.Avatar.UI
                             partsID[i] += $"+0h0s100v100";
                         }
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.WeaponEffect);
-                        partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}";
+                        partsID[i] += $"+{prismData.Type}h{prismData.Hue}s{prismData.Saturation}v{prismData.Brightness}{(prismData.ConvertPureBlack ? "PB" : "")}";
                     }
                 }
             }
@@ -881,7 +881,7 @@ namespace WzComparerR2.Avatar.UI
                     else
                     {
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, prismData.Type, prismData.Hue, prismData.Saturation, prismData.Brightness);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, prismData);
                         btn.SetIcon(icon, part.HasPrism);
                     }
                     btn.Tag = part;
@@ -915,6 +915,7 @@ namespace WzComparerR2.Avatar.UI
                     btn.labelHue.MouseDown += LabelHue_MouseDown;
                     btn.labelSaturation.MouseDown += LabelSaturation_MouseDown;
                     btn.labelBrightness.MouseDown += LabelBrightness_MouseDown;
+                    btn.chkConvertPureBlack.CheckedChanged += ChkConvertPureBlack_CheckedChanged;
                     itemPanel1.Items.Add(btn);
                 }
             }
@@ -1139,7 +1140,7 @@ namespace WzComparerR2.Avatar.UI
                     if (part != avatar.Head && btn.PrismIndex == 0)
                     {
                         var iconPrismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData.Type, iconPrismData.Hue, iconPrismData.Saturation, iconPrismData.Brightness);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData);
                         btn.SetIcon(icon, part.HasPrism);
                     }
                 }
@@ -1162,7 +1163,7 @@ namespace WzComparerR2.Avatar.UI
                     if (part != avatar.Head && btn.PrismIndex == 0)
                     {
                         var iconPrismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData.Type, iconPrismData.Hue, iconPrismData.Saturation, iconPrismData.Brightness);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData);
                         btn.SetIcon(icon, part.HasPrism);
                     }
 
@@ -1188,7 +1189,7 @@ namespace WzComparerR2.Avatar.UI
                     if (part != avatar.Head && btn.PrismIndex == 0)
                     {
                         var iconPrismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData.Type, iconPrismData.Hue, iconPrismData.Saturation, iconPrismData.Brightness);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData);
                         btn.SetIcon(icon, part.HasPrism);
                     }
 
@@ -1214,7 +1215,7 @@ namespace WzComparerR2.Avatar.UI
                     if (part != avatar.Head && btn.PrismIndex == 0)
                     {
                         var iconPrismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData.Type, iconPrismData.Hue, iconPrismData.Saturation, iconPrismData.Brightness);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData);
                         btn.SetIcon(icon, part.HasPrism);
                     }
 
@@ -1253,6 +1254,28 @@ namespace WzComparerR2.Avatar.UI
                 slider.Value = 0;
             }
         }
+        
+        private void ChkConvertPureBlack_CheckedChanged(object sender, EventArgs e)
+        {
+            var btn = (sender as BaseItem).Parent as AvatarPartButtonItem;
+            if (btn != null)
+            {
+                var part = btn.Tag as AvatarPart;
+                if (part != null)
+                {
+                    btn.PrismConvertPureBlackChanged(btn.chkConvertPureBlack.Checked);
+                    if (this.isUpdatingBtnItem) return;
+                    this.UpdateDisplay();
+                    this.SetButtonText(part, btn);
+                    if (part != avatar.Head && btn.PrismIndex == 0)
+                    {
+                        var iconPrismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
+                        using Bitmap icon = Prism.Apply(part.Icon.Bitmap, iconPrismData);
+                        btn.SetIcon(icon, part.HasPrism);
+                    }
+                }
+            }
+        }
 
         private void SetButtonText(AvatarPart part, AvatarPartButtonItem btn)
         {
@@ -1281,7 +1304,7 @@ namespace WzComparerR2.Avatar.UI
                     if (part.PrismData.IsValid(PrismDataCollection.PrismDataType.Default))
                     {
                         var prismData = part.PrismData.Get(PrismDataCollection.PrismDataType.Default);
-                        text += string.Format("\r\n{0}\r\n색조 {1}, 채도 {2}, 명도 {3}\r\n{4}+{5}h{6}s{7}v{8}",
+                        text += string.Format("\r\n{0}\r\n색조 {1}, 채도 {2}, 명도 {3}\r\n{4}+{5}h{6}s{7}v{8}{9}",
                             prismData.GetColorType(),
                             prismData.Hue,
                             $"{(prismData.Saturation > 100 ? "+" : "")}{prismData.Saturation - 100}",
@@ -1290,12 +1313,13 @@ namespace WzComparerR2.Avatar.UI
                             prismData.Type,
                             prismData.Hue,
                             prismData.Saturation,
-                            prismData.Brightness);
+                            prismData.Brightness,
+                            (prismData.ConvertPureBlack ? "PB" : ""));
                     }
                     if (part.PrismData.IsValid(PrismDataCollection.PrismDataType.WeaponEffect))
                     {
                         var prismData2 = part.PrismData.Get(PrismDataCollection.PrismDataType.WeaponEffect);
-                        text += string.Format("\r\n무기 이펙트: {0}\r\n색조 {1}, 채도 {2}, 명도 {3}\r\n{4}+{5}h{6}s{7}v{8}",
+                        text += string.Format("\r\n무기 이펙트: {0}\r\n색조 {1}, 채도 {2}, 명도 {3}\r\n{4}+{5}h{6}s{7}v{8}{9}",
                         prismData2.GetColorType(),
                         prismData2.Hue,
                         $"{(prismData2.Saturation > 100 ? "+" : "")}{prismData2.Saturation - 100}",
@@ -1304,7 +1328,8 @@ namespace WzComparerR2.Avatar.UI
                         prismData2.Type,
                         prismData2.Hue,
                         prismData2.Saturation,
-                        prismData2.Brightness);
+                        prismData2.Brightness,
+                        (prismData2.ConvertPureBlack ? "PB" : ""));
                     }
                 }
             }
@@ -2266,7 +2291,7 @@ namespace WzComparerR2.Avatar.UI
             {
                 if (prism.Brightness > 0 && prism.Saturation > 0 && prism.Hue >= 0)
                 {
-                    return $"+{prism.ColorType}h{prism.Hue}s{prism.Saturation}v{prism.Brightness}";
+                    return $"+{prism.ColorType}h{prism.Hue}s{prism.Saturation}v{prism.Brightness}{(prism.ConvertPureBlack ? "PB" : "")}";
                 }
                 else
                 {
@@ -2842,7 +2867,7 @@ namespace WzComparerR2.Avatar.UI
 
         private void LoadCode_ApplyPrism(AvatarPart part, string prismStr)
         {
-            var prismMatches = Regex.Matches(prismStr, @"\+(\d+)h(\d+)s(\d+)v(\d+)");
+            var prismMatches = Regex.Matches(prismStr, @"\+(\d+)h(\d+)s(\d+)v(\d+)(PB)?");
             if (prismMatches.Count >= 2)
             {
                 GearType partType = Gear.GetGearType(part.ID.Value);
@@ -2854,7 +2879,7 @@ namespace WzComparerR2.Avatar.UI
                         && Int32.TryParse(prismMatch.Groups[3].Value, out int saturation)
                         && Int32.TryParse(prismMatch.Groups[4].Value, out int brightness))
                     {
-                        part.PrismData.Set(PrismDataCollection.PrismDataType.WeaponEffect, type, hue, saturation, brightness);
+                        part.PrismData.Set(PrismDataCollection.PrismDataType.WeaponEffect, type, hue, saturation, brightness, prismMatch.Groups[5].Success);
                     }
                 }
             }
@@ -2866,7 +2891,7 @@ namespace WzComparerR2.Avatar.UI
                     && Int32.TryParse(prismMatch.Groups[3].Value, out int saturation)
                     && Int32.TryParse(prismMatch.Groups[4].Value, out int brightness))
                 {
-                    part.PrismData.Set(PrismDataCollection.PrismDataType.Default, type, hue, saturation, brightness);
+                    part.PrismData.Set(PrismDataCollection.PrismDataType.Default, type, hue, saturation, brightness, prismMatch.Groups[5].Success);
                 }
             }
         }

@@ -14,6 +14,7 @@ namespace WzComparerR2.AvatarCommon
             this.Hue = 0;
             this.Saturation = 100;
             this.Brightness = 100;
+            this.ConvertPureBlack = false;
         }
 
         public PrismData(int type, int hue, int saturation, int brightness)
@@ -22,12 +23,14 @@ namespace WzComparerR2.AvatarCommon
             this.Hue = hue;
             this.Saturation = saturation;
             this.Brightness = brightness;
+            this.ConvertPureBlack = false;
         }
 
         public int Type;
         public int Hue;
         public int Saturation;
         public int Brightness;
+        public bool ConvertPureBlack;
 
         public bool Valid
         {
@@ -42,12 +45,13 @@ namespace WzComparerR2.AvatarCommon
             this.Brightness = 100;
         }
 
-        public void Set(int type, int hue, int saturation, int brightness)
+        public void Set(int type, int hue, int saturation, int brightness, bool convertPureBlack)
         {
             this.Type = type;
             this.Hue = hue;
             this.Saturation = saturation;
             this.Brightness = brightness;
+            this.ConvertPureBlack = convertPureBlack;
 
             if (!this.Valid)
             {

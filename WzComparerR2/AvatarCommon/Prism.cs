@@ -12,15 +12,20 @@ namespace WzComparerR2.AvatarCommon
     {
         public static BitmapOrigin Apply(BitmapOrigin src, PrismData prismData, bool isEffect = false)
         {
-            return Apply(src, prismData.Type, prismData.Hue, prismData.Saturation, prismData.Brightness, isEffect);
+            return Apply(src, prismData.Type, prismData.Hue, prismData.Saturation, prismData.Brightness, isEffect, prismData.ConvertPureBlack);
         }
 
-        public static BitmapOrigin Apply(BitmapOrigin src, int type, int hue, int saturation, int brightness, bool isEffect = false)
+        public static BitmapOrigin Apply(BitmapOrigin src, int type, int hue, int saturation, int brightness, bool isEffect = false, bool convertPureBlack = false)
         {
-            return new BitmapOrigin(Apply(src.Bitmap, type, hue, saturation, brightness, isEffect), src.Origin);
+            return new BitmapOrigin(Apply(src.Bitmap, type, hue, saturation, brightness, isEffect, convertPureBlack), src.Origin);
         }
 
-        public static unsafe Bitmap Apply(Bitmap src, int type, int hue, int saturation, int brightness, bool isEffect = false)
+        public static Bitmap Apply(Bitmap src, PrismData prismData, bool isEffect = false)
+        {
+            return Apply(src, prismData.Type, prismData.Hue, prismData.Saturation, prismData.Brightness, isEffect, prismData.ConvertPureBlack);
+        }
+
+        public static unsafe Bitmap Apply(Bitmap src, int type, int hue, int saturation, int brightness, bool isEffect = false, bool convertPureBlack = false)
         {
             if (src == null) return null;
             if (!Valid(type, hue, saturation, brightness))
@@ -47,7 +52,7 @@ namespace WzComparerR2.AvatarCommon
 
                     bool convert = CheckColorType(type, ref hsv);
                     bool not16bitcolor = false;
-                    if ((rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
+                    if ((!convertPureBlack && rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
                     {
                         convert = false;
                     }
@@ -85,7 +90,7 @@ namespace WzComparerR2.AvatarCommon
                             {
                                 dv2 = (brightness - 100) / 100f * hsv.Saturation * temp_brightness;
                             }
-                            else if (hsv.Brightness > 0)
+                            else
                             {
                                 ds2 = (brightness - 100) / 100f * -temp_saturation;
                                 dv2 = (brightness - 100) / 100f * (15 - 12 * hsv.Saturation) / 15 * (1 - temp_brightness);
