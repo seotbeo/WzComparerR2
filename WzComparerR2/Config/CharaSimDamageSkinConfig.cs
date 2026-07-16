@@ -43,7 +43,7 @@ namespace WzComparerR2.Config
             set { this["displayUnitOnSingleLine"] = value; }
         }
 
-        [ConfigurationProperty("damageSkinNumber", DefaultValue = (long)1234567890)]
+        [ConfigurationProperty("damageSkinNumber", DefaultValue = 1_2345_6789_0000L)]
         public long DamageSkinNumber
         {
             get { return (long)this["damageSkinNumber"]; }
