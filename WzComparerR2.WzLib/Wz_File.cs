@@ -41,7 +41,7 @@ namespace WzComparerR2.WzLib
         private Wz_Type type;
         private List<Wz_File> mergedWzFiles;
         private Wz_File ownerWzFile;
-        public bool BypassToBF { get; private set; }
+        public bool UnknownPkg2 { get; private set; }
 
         internal WzFileReadContext ReadContext { get; set; }
 
@@ -207,7 +207,7 @@ namespace WzComparerR2.WzLib
             return true;
 
         __failed:
-            br.BaseStream.Position = 150;
+            br.BaseStream.Position = 200;
             while (true)
             {
                 try
@@ -215,10 +215,10 @@ namespace WzComparerR2.WzLib
                     if (br.ReadByte() == 0x80)
                     {
                         var dataStartPos = (int)this.fileStream.Position - 1;
-                        if (dataStartPos >= 180) break;
+                        if (dataStartPos >= 230) break;
                         this.header = new Wz_Header.WzPkg2Header64(Wz_Header.PKG2, null, fileName, dataStartPos, 0, filesize, dataStartPos, 0, 0);
                         this.Header.Capabilities |= Wz_Capabilities.Pkg2RandomHeader;
-                        this.BypassToBF = true;
+                        this.UnknownPkg2 = true;
                         return true;
                     }
                 }
@@ -511,6 +511,7 @@ namespace WzComparerR2.WzLib
                 int cs32 = reader.ReadCompressedInt32();
                 if (force && nodeType == 0x04 && hitcount < this.CandidateImageInfos.Count)
                 {
+                    /*
                     if (size == this.CandidateImageInfos[hitcount].Item2)
                     {
                         forcedOffset = this.CandidateImageInfos[hitcount].Item1;
@@ -519,6 +520,9 @@ namespace WzComparerR2.WzLib
                     {
                         forcedOffset = this.CandidateImageInfos.FirstOrDefault(t => size == t.Item2)?.Item1 ?? 0;
                     }
+                    */
+                    forcedOffset = this.CandidateImageInfos[hitcount].Item1;
+                    size = (int)this.CandidateImageInfos[hitcount].Item2;
                     hitcount++;
                 }
                 entries.Add(new Pkg2DirEntry
@@ -547,6 +551,11 @@ namespace WzComparerR2.WzLib
                                 img.Offset = context.OffsetCalc.CalcOffset(pos, hashOffset);
                             if (entry.ForcedOffset >= 0)
                                 img.Offset = entry.ForcedOffset;
+                            if (force)
+                            {
+                                img.Checksum = 0;
+                                img.IgnoreChecksum = true;
+                            }
                             Wz_Node childNode = parent.Nodes.Add(entry.Name);
                             childNode.Value = img;
                             img.OwnerNode = childNode;

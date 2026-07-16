@@ -587,7 +587,7 @@ namespace WzComparerR2.WzLib.Compatibility
         {
             var firstNameKey = new Wz_Crypto.Pkg2DirStringKeyV3(header.Hash1, hashVersion);
             var pkg1Keys = crypto.GetKeys(Wz_CryptoKeyType.BMS);
-            return new Pkg2MixedKeyDirStringReader64(firstNameKey, pkg1Keys);
+            return new Pkg2MixedKeyDirStringReader64_UNK(firstNameKey, pkg1Keys);
         }
 
         public override void AssignDirStringReader(Wz_File wzFile, Wz_Crypto crypto)

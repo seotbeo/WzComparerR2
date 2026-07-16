@@ -97,7 +97,7 @@ namespace WzComparerR2.WzLib
 
                 // 1. pre-read
                 WzPreReadResult preReadResult = null;
-                foreach (var preReader in WzPreReaders.All)
+                foreach (var preReader in (file.UnknownPkg2 ? WzPreReaders.All_UNK : WzPreReaders.All))
                 {
                     if (preReader.TryPreRead(file, out var result))
                     {
@@ -109,7 +109,7 @@ namespace WzComparerR2.WzLib
                 IWzFormatProfile matchedProfile = null;
 
                 // 2. detect version and assign readRule to wz_file
-                if (preReadResult != null && !file.BypassToBF)
+                if (preReadResult != null && !file.UnknownPkg2)
                 {
                     // Try cached profiles first
                     foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
@@ -148,7 +148,7 @@ namespace WzComparerR2.WzLib
                 }
 
                 // 3. detect string encryption, assign to crypto
-                if (preReadResult != null && matchedProfile != null && !file.BypassToBF)
+                if (preReadResult != null && matchedProfile != null && !file.UnknownPkg2)
                 {
                     if (!this.encryption.IsDirEncDetected(file))
                     {

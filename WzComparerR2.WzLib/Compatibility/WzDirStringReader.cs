@@ -83,4 +83,26 @@ namespace WzComparerR2.WzLib.Compatibility
             return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath, true) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
         }
     }
+
+    internal sealed class Pkg2MixedKeyDirStringReader64_UNK : IPkg2DirStringReader
+    {
+        public Pkg2MixedKeyDirStringReader64_UNK(IWzDecrypter firstNameKey, IWzDecrypter pkg1Keys)
+        {
+            this.firstNameKey = firstNameKey;
+            this.pkg1Keys = pkg1Keys;
+        }
+
+        private readonly IWzDecrypter firstNameKey;
+        private readonly IWzDecrypter pkg1Keys;
+
+        public string ReadName(WzBinaryReader reader, bool isFirstEntry)
+        {
+            return isFirstEntry ? reader.ReadPkg2DirStringV2(firstNameKey) : reader.ReadString(pkg1Keys);
+        }
+
+        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
+        {
+            return reader.ForceReadPkg2DirString(nodeType, fullpath, true);
+        }
+    }
 }

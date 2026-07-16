@@ -28,7 +28,13 @@ namespace WzComparerR2.WzLib.Compatibility
             new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1202),
         };
 
+        private static readonly IWzPreReader[] readers_UNK = new IWzPreReader[]
+        {
+            new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1202),
+        };
+
         public static IReadOnlyList<IWzPreReader> All => readers;
+        public static IReadOnlyList<IWzPreReader> All_UNK => readers_UNK;
     }
 
     #region PKG1
@@ -133,6 +139,21 @@ namespace WzComparerR2.WzLib.Compatibility
         public Pkg2PreReader64(WzFileFormat format)
         {
             this.rule = new Pkg2PreReadRule64();
+        }
+
+        private readonly IPkg2PreReadRule rule;
+
+        public bool TryPreRead(Wz_File wzFile, out WzPreReadResult result)
+        {
+            return Pkg2PreReadTreeWalker.TryPreRead(wzFile, rule, out result);
+        }
+    }
+
+    internal sealed class Pkg2PreReader64_UNK : IWzPreReader
+    {
+        public Pkg2PreReader64_UNK(WzFileFormat format)
+        {
+            this.rule = new Pkg2PreReadRule64_UNK();
         }
 
         private readonly IPkg2PreReadRule rule;
@@ -455,6 +476,64 @@ namespace WzComparerR2.WzLib.Compatibility
             else
             {
                 WzPreReadHelper.SkipString(reader);
+            }
+        }
+
+        public void ValidateOffsetSection(WzBinaryReader reader, Pkg2DirHeader header, int actualEntryCount)
+        {
+            // KMST1202 has no encrypted offset-count prefix.
+        }
+    }
+
+    internal sealed class Pkg2PreReadRule64_UNK : IPkg2PreReadRule
+    {
+        public WzFileFormat Format => WzFileFormat.Pkg2Kmst1202;
+        public bool AllowEntryBoundaryProbe => true;
+        public bool ValidateImageLength => false;
+
+        public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
+        {
+            context = new Pkg2PreReadContext();
+            if (!wzFile.Header.IsPkg2)
+                return false;
+            if (wzFile.Header is not Wz_Header.WzPkg2Header64 header64)
+                return false;
+
+            context.IsPkg2DirString = true;
+            context.Header64 = header64;
+            return true;
+        }
+
+        public Pkg2DirHeader ReadDirectoryHeader(WzBinaryReader reader, Pkg2PreReadContext context)
+        {
+            return new Pkg2DirHeader
+            {
+                EncryptedEntryCount = reader.ReadCompressedInt64(),
+                IsFixedEntryCount = false,
+                FixedEntryCount = 0,
+            };
+        }
+
+        public bool IsDirectoryTerminator(byte nodeType, Pkg2DirHeader header)
+        {
+            return false;
+        }
+
+        public void ReadEntryName(WzBinaryReader reader, WzPreReadResult result, Pkg2PreReadContext context, int entryIndex)
+        {
+            if (result.FirstStringRawBytes == null && entryIndex == 0)
+            {
+                result.FirstStringRawBytes = WzPreReadHelper.ReadPkg2DirStringV2RawBytes(reader, out var enc);
+                result.FirstStringEncoding = enc;
+            }
+            else if (result.SecondStringRawBytes == null && entryIndex == 1)
+            {
+                result.SecondStringRawBytes = WzPreReadHelper.ReadPkg2DirStringV2RawBytes(reader, out var enc);
+                result.SecondStringEncoding = enc;
+            }
+            else
+            {
+                WzPreReadHelper.SkipPkg2DirStringV2(reader);
             }
         }
 
