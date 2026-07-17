@@ -194,16 +194,17 @@ namespace WzComparerR2.CharaSim
                     }
                     else if (idx + 2 < H.Length && H.Substring(idx + 1, 2) == "fc") // #fc
                     {
-                        if (idx + 11 < H.Length && H[idx + 11] == '#')
+                        if (idx + 11 < H.Length && H[idx + 11] == '#') // #fc(AA)(RR)(GG)(BB)#
                         {
                             sb.Append(H.Substring(idx, 12));
                             idx += 12;
                         }
-                        else if (idx + 13 < H.Length && H[idx + 13] == '#')
+                        else if (idx + 13 < H.Length && H[idx + 13] == '#') // #fc0x(AA)(RR)(GG)(BB)#
                         {
                             sb.Append(H.Substring(idx, 14));
                             idx += 14;
                         }
+                        else idx++;
                     }
                     else if (idx + 1 < H.Length && H[idx + 1] == 'k') // #k
                     {
