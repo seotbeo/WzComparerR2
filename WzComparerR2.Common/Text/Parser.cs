@@ -106,6 +106,29 @@ namespace WzComparerR2.Text
                             }
                             strPos++;
                         }
+                        else if (strPos + 1 < format.Length && format.Substring(strPos, 2) == "fc") // #fc
+                        {
+                            flushRun();
+                            if (strPos + 3 < format.Length && format.Substring(strPos + 2, 2) == "0x") // 무시
+                            {
+                                strPos += 2;
+                            }
+                            if (strPos + 10 < format.Length && format[strPos + 10] == '#') // 폰트 색상 ARGB
+                            {
+                                colorStack.Push(format.Substring(strPos + 2, 8));
+                                strPos += 2 + 8 + 1;
+                            }
+                            else break; // 이외 무시
+                        }
+                        else if (strPos < format.Length && format[strPos] == 'k') // #k   color 끝
+                        {
+                            flushRun();
+                            if (colorStack.Peek() != "")
+                            {
+                                colorStack.Pop();
+                            }
+                            strPos++;
+                        }
                         else if (strPos < format.Length && format[strPos] == '$'
                             && strPos + 1 < format.Length)//遇到#$(自定义) 更换为自定义颜色表
                         {

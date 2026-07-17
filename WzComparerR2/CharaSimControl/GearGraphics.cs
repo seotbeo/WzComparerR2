@@ -16,6 +16,7 @@ using TextFormatFlags = System.Windows.Forms.TextFormatFlags;
 using WzComparerR2.Text;
 using WzComparerR2.WzLib;
 using WzComparerR2.Common;
+using System.Globalization;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -1306,7 +1307,13 @@ namespace WzComparerR2.CharaSimControl
                     {
                         case "c": color = GearGraphics.OrangeBrushColor; break;
                         case "$g": color = GearGraphics.SkillHighlightColor; break;
-                        default: color = this.defaultColor; break;
+                        default:
+                            if (colorID.Length == 8 && uint.TryParse(colorID, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint val)) // try ARGB
+                            {
+                                color = Color.FromArgb(unchecked((int)val));
+                                break;
+                            }
+                            color = this.defaultColor; break;
                     }
                 }
                 font = GetFont(fontID);
