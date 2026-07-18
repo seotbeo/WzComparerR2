@@ -48,6 +48,11 @@ namespace WzComparerR2.AvatarCommon
                 }
             }
         }
+
+        public void LoadChairEffectNode()
+        {
+            this.EffectNode = (this.ID / 10000 == 301) ? PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID) : this.EffectNode;
+        }
     }
 
     public enum CustomChairType

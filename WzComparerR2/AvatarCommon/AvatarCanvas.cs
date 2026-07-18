@@ -78,7 +78,7 @@ namespace WzComparerR2.AvatarCommon
         public int EarType { get; set; }
         public string CapType { get; set; }
         public string GroupChair { get; set; }
-        public float fAvatarScale { get { return this.Chair?.CustomChairAvatarScale / 100f ?? 1f; } }
+        public float fAvatarScale { get { return (this.Taming?.CustomChairAvatarScale ?? this.Chair?.CustomChairAvatarScale ?? 100f) / 100f; } }
         public Action<AvatarPart>[] SetRing { get; }
         public Func<AvatarPart>[] GetRing { get; }
 
@@ -419,7 +419,7 @@ namespace WzComparerR2.AvatarCommon
                 case GearType.taming:
                 case GearType.taming2:
                 case GearType.taming3:
-                case GearType.tamingChair: this.Taming = part as ChairPart; break;
+                case GearType.tamingChair: part = AddTamingPart(imgNode, part.Icon, part.ID.Value, false); break;
                 case GearType.saddle: this.Saddle = part; break;
                 case GearType.pendant: this.Pendant = part; break;
                 case GearType.belt: this.Belt = part; break;
@@ -476,6 +476,8 @@ namespace WzComparerR2.AvatarCommon
             part.GroupBodyRelMove.Add(brm);
 
             this.Taming = part;
+
+            part.CustomChairAvatarScale = part.Node.FindNodeByPath("info\\scale").GetValueEx<int>(100);
 
             return part;
         }
@@ -1528,6 +1530,11 @@ namespace WzComparerR2.AvatarCommon
                                 {
                                     mapOrigin = new Point((int)(mapOrigin.X * this.fAvatarScale), (int)(mapOrigin.Y * this.fAvatarScale));
                                 }
+                                else if (this.fAvatarScale != 1f) // tamingmob scale 조절
+                                {
+                                    // 왜인지 모르겠는데 mapName 기준으로 붙인 scale == 1f인 body의 origin 기준으로 재설정해야 좌표 맞음
+                                    mapName += "_tamingMobOrigin";
+                                }
 
                                 if (mapName == "muzzle") //特殊处理 忽略
                                 {
@@ -1540,6 +1547,13 @@ namespace WzComparerR2.AvatarCommon
                                 }
                                 else //级联骨骼
                                 {
+                                    AppendBone(root, parentBone, skin, mapName, mapOrigin);
+                                }
+                                if (partNode.IsBodyPart && skin.Name == "body") // tamingmob scale 조절 시 기준점 설정
+                                {
+                                    mapName += "_tamingMobOrigin";
+                                    Point omapOrigin = map.GetValue<Wz_Vector>();
+                                    mapOrigin = new Point(mapOrigin.X - omapOrigin.X, mapOrigin.Y - omapOrigin.Y);
                                     AppendBone(root, parentBone, skin, mapName, mapOrigin);
                                 }
                             }
