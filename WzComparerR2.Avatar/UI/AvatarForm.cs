@@ -874,7 +874,9 @@ namespace WzComparerR2.Avatar.UI
                 }
 
                 int forceEmotion = this.avatar.Chair.Node.FindNodeByPath("info\\sitEmotion").GetValueEx<int>(-1);
-                this.SelectEmotionByIndex(forceEmotion);
+                string forceEmotionName = forceEmotion < AvatarCanvas.EmotionTable.Count ? AvatarCanvas.EmotionTable[forceEmotion] : string.Empty;
+                if (!string.IsNullOrEmpty(forceEmotionName))
+                    this.FixEmotion(forceEmotionName, -1);
             }
         }
 
