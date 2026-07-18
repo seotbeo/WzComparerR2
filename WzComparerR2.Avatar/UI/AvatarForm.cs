@@ -832,6 +832,10 @@ namespace WzComparerR2.Avatar.UI
                     {
                         this.SelectEmotion(forceEmotion);
                     }
+                    else
+                    {
+                        this.SelectEmotion("default");
+                    }
                 }
             }
         }
@@ -847,7 +851,7 @@ namespace WzComparerR2.Avatar.UI
                 Wz_Node sitActionNode = this.avatar.Chair.Node.FindNodeByPath("info\\sitAction");
                 if (sitActionNode != null)
                 {
-                    forceAction = sitActionNode.GetValueEx<string>("sit");
+                    forceAction = sitActionNode.GetValueEx<string>(string.Empty);
                 }
                 else if (this.avatar.Chair.Node.FindNodeByPath("info\\removeBody").GetValueEx<int>(0) != 0)
                 {
@@ -857,26 +861,32 @@ namespace WzComparerR2.Avatar.UI
                 {
                     forceAction = "stand1";
                 }
-                else
+                if (string.IsNullOrEmpty(forceAction) && this.avatar.Taming == null)
                 {
                     forceAction = "sit";
                 }
 
                 int fixFrameIdx = this.avatar.Chair.Node.FindNodeByPath("info\\fixFrameIdx").GetValueEx<int>(-1);
                 if (fixFrameIdx < 0) fixFrameIdx = this.avatar.Chair.Node.FindNodeByPath("info\\fixActionFrame").GetValueEx<int>(-1);
-                if (fixFrameIdx >= 0)
+                if (!string.IsNullOrEmpty(forceAction))
                 {
-                    this.FixBodyAction(forceAction, fixFrameIdx);
-                }
-                else
-                {
-                    this.SelectBodyAction(forceAction);
+                    if (fixFrameIdx >= 0)
+                    {
+                        this.FixBodyAction(forceAction, fixFrameIdx);
+                    }
+                    else
+                    {
+                        this.SelectBodyAction(forceAction);
+                    }
                 }
 
-                int forceEmotion = this.avatar.Chair.Node.FindNodeByPath("info\\sitEmotion").GetValueEx<int>(0);
-                string forceEmotionName = forceEmotion < AvatarCanvas.EmotionTable.Count ? AvatarCanvas.EmotionTable[forceEmotion] : string.Empty;
-                if (!string.IsNullOrEmpty(forceEmotionName))
-                    this.FixEmotion(forceEmotionName, -1);
+                if (this.avatar.Taming == null)
+                {
+                    int forceEmotion = this.avatar.Chair.Node.FindNodeByPath("info\\sitEmotion").GetValueEx<int>(0);
+                    string forceEmotionName = forceEmotion < AvatarCanvas.EmotionTable.Count ? AvatarCanvas.EmotionTable[forceEmotion] : string.Empty;
+                    if (!string.IsNullOrEmpty(forceEmotionName))
+                        this.FixEmotion(forceEmotionName, -1);
+                }
             }
         }
 
