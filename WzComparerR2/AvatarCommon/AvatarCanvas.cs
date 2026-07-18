@@ -2532,8 +2532,17 @@ namespace WzComparerR2.AvatarCommon
             "proneStab", "prone",
             "heal", "fly", "jump", "sit", "ladder", "rope"
         };
+        private static readonly string[] emotionTable = new[]
+        {
+            "default", "hit", "smile", "troubled", "cry",
+            "angry", "bewildered", "stunned", "vomit", "oops",
+            "cheers", "chu", "wink", "pain", "glitter",
+            "blaze", "shine", "love", "despair", "hum",
+            "bowing", "hot", "dam", "qBlue",
+        };
 
         public static readonly ReadOnlyCollection<string> BaseActions = new ReadOnlyCollection<string>(baseActions);
+        public static readonly ReadOnlyCollection<string> EmotionTable = new ReadOnlyCollection<string>(emotionTable);
 
         public static readonly string[] HairColor = new[] { "검은색", "빨간색", "주황색", "노란색", "초록색", "파란색", "보라색", "갈색" };
         public static readonly string[] FaceColor = new[] { "검은색", "파란색", "빨간색", "초록색", "갈색", "에메랄드", "보라색", "자수정" };
