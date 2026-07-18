@@ -308,7 +308,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            AvatarPart part = this.avatar.AddTamingPart(imgNode, forceIcon, forceID, isSkill, brm);
+            ChairPart part = this.avatar.AddTamingPart(imgNode, forceIcon, forceID, isSkill, brm);
             if (part != null)
             {
                 OnNewPartAdded(part);
@@ -338,7 +338,7 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
-            AvatarPart part = this.avatar.AddChairPart(imgNode, forceIcon, forceID, brm, forceAct);
+            ChairPart part = this.avatar.AddChairPart(imgNode, forceIcon, forceID, brm, forceAct);
             if (part != null)
             {
                 if (part.GroupCount > 0)
@@ -843,8 +843,27 @@ namespace WzComparerR2.Avatar.UI
         {
             if (this.avatar.Taming == null && this.avatar.Chair != null)
             {
-                string forceAction = this.avatar.Chair.Node.FindNodeByPath("info\\sitAction").GetValueEx<string>("sit");
+                string forceAction = string.Empty;
+                Wz_Node sitActionNode = this.avatar.Chair.Node.FindNodeByPath("info\\sitAction");
+                if (sitActionNode != null)
+                {
+                    forceAction = sitActionNode.GetValueEx<string>("sit");
+                }
+                else if (this.avatar.Chair.Node.FindNodeByPath("info\\removeBody").GetValueEx<int>(0) != 0)
+                {
+                    forceAction = "hideBody";
+                }
+                else if (this.avatar.Chair.CustomChairType == CustomChairType.ScaleAvatarChair)
+                {
+                    forceAction = "stand1";
+                }
+                else
+                {
+                    forceAction = "sit";
+                }
+
                 int fixFrameIdx = this.avatar.Chair.Node.FindNodeByPath("info\\fixFrameIdx").GetValueEx<int>(-1);
+                if (fixFrameIdx < 0) fixFrameIdx = this.avatar.Chair.Node.FindNodeByPath("info\\fixActionFrame").GetValueEx<int>(-1);
                 if (fixFrameIdx >= 0)
                 {
                     this.FixBodyAction(forceAction, fixFrameIdx);
