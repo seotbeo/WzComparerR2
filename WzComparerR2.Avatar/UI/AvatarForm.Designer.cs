@@ -447,7 +447,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbActionTaming.DisplayMember = "Text";
             this.cmbActionTaming.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbActionTaming.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbActionTaming.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cmbActionTaming.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cmbActionTaming.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbActionTaming.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbActionTaming.FormattingEnabled = true;
             this.cmbActionTaming.ItemHeight = 15;
@@ -457,6 +459,8 @@
             this.cmbActionTaming.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbActionTaming.TabIndex = 2;
             this.cmbActionTaming.SelectedIndexChanged += new System.EventHandler(this.cmbActionTaming_SelectedIndexChanged);
+            this.cmbActionTaming.MouseDown += cmbActionTaming_MouseDown;
+            this.cmbActionTaming.KeyPress += cmbActionTaming_KeyPress;
             // 
             // cmbEmotion
             // 
@@ -464,7 +468,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbEmotion.DisplayMember = "Text";
             this.cmbEmotion.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEmotion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEmotion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cmbEmotion.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cmbEmotion.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbEmotion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEmotion.FormattingEnabled = true;
             this.cmbEmotion.ItemHeight = 15;
@@ -474,6 +480,8 @@
             this.cmbEmotion.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbEmotion.TabIndex = 1;
             this.cmbEmotion.SelectedIndexChanged += new System.EventHandler(this.cmbEmotion_SelectedIndexChanged);
+            this.cmbEmotion.MouseDown += cmbEmotion_MouseDown;
+            this.cmbEmotion.KeyPress += cmbEmotion_KeyPress;
             // 
             // labelX3
             // 
@@ -526,7 +534,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbActionBody.DisplayMember = "Text";
             this.cmbActionBody.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbActionBody.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbActionBody.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cmbActionBody.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cmbActionBody.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbActionBody.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbActionBody.FormattingEnabled = true;
             this.cmbActionBody.ItemHeight = 15;
@@ -536,6 +546,8 @@
             this.cmbActionBody.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cmbActionBody.TabIndex = 0;
             this.cmbActionBody.SelectedIndexChanged += new System.EventHandler(this.cmbActionBody_SelectedIndexChanged);
+            this.cmbActionBody.MouseDown += cmbActionBody_MouseDown;
+            this.cmbActionBody.KeyPress += cmbActionBody_KeyPress;
             // 
             // chkHairShade
             // 

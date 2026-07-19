@@ -1610,12 +1610,44 @@ namespace WzComparerR2.Avatar.UI
             UpdateDisplay();
         }
 
+        private void cmbActionBody_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && !cmbActionBody.DroppedDown)
+            {
+                cmbActionBody.DroppedDown = true;
+            }
+        }
+
+
+        private void cmbActionBody_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && cmbActionBody.DroppedDown)
+            {
+                cmbActionBody.DroppedDown = false;
+            }
+        }
         private void cmbEmotion_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.SuspendUpdateDisplay();
             FillEmotionFrame();
             this.ResumeUpdateDisplay();
             UpdateDisplay();
+        }
+
+        private void cmbEmotion_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && !cmbEmotion.DroppedDown)
+            {
+                cmbEmotion.DroppedDown = true;
+            }
+        }
+
+        private void cmbEmotion_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && cmbEmotion.DroppedDown)
+            {
+                cmbEmotion.DroppedDown = false;
+            }
         }
 
         private void cmbActionTaming_SelectedIndexChanged(object sender, EventArgs e)
@@ -1626,6 +1658,26 @@ namespace WzComparerR2.Avatar.UI
             SetTamingDefault();
             this.ResumeUpdateDisplay();
             UpdateDisplay();
+        }
+
+        private void cmbActionTaming_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && !cmbActionTaming.DroppedDown)
+            {
+                cmbActionTaming.DroppedDown = true;
+            }
+        }
+
+        private void cmbActionTaming_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && cmbActionBody.DroppedDown)
+            {
+                cmbActionBody.DroppedDown = false;
+            }
+            if (cmbActionTaming.DroppedDown)
+            {
+                cmbActionTaming.DroppedDown = false;
+            }
         }
 
         private void cmbActionEffect_SelectedIndexChanged(object sender, EventArgs e)
