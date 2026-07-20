@@ -753,6 +753,7 @@ namespace WzComparerR2.CharaSim
             { 45, GearType.fanTassel },
 
             { 50, GearType.kodachi2 },
+            { 51, GearType.whistle2 },
             { 52, GearType.boxingSky },
 
             { 53, GearType.compass },
