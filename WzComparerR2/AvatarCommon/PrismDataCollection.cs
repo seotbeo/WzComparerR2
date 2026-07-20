@@ -93,9 +93,8 @@ namespace WzComparerR2.AvatarCommon
         public PrismDataCollection Clone()
         {
             var ret = new PrismDataCollection();
-            ret.PrismData_Default = new PrismData(this.PrismData_Default.Type, this.PrismData_Default.Hue, this.PrismData_Default.Saturation, this.PrismData_Default.Brightness);
-            ret.PrismData_WeaponEffect = new PrismData(this.PrismData_WeaponEffect.Type, this.PrismData_WeaponEffect.Hue, this.PrismData_WeaponEffect.Saturation, this.PrismData_WeaponEffect.Brightness);
-
+            ret.PrismData_Default = this.PrismData_Default.Clone();
+            ret.PrismData_WeaponEffect = this.PrismData_WeaponEffect.Clone();
             return ret;
         }
 

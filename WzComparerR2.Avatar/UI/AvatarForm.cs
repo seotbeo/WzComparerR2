@@ -2761,7 +2761,7 @@ namespace WzComparerR2.Avatar.UI
         private void LoadCode(string code, int loadType)
         {
             //解析
-            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-8])\*(\d{1,2}))?((\+(\d+)h(\d+)s(\d+)v(\d+)){0,2})([,\s]|$)");
+            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-8])\*(\d{1,2}))?((\+(\d+)h(\d+)s(\d+)v(\d+)(PB)?){0,2})([,\s]|$)");
             if (matches.Count <= 0)
             {
                 ToastNotification.Show(this, $"아이템 코드에 해당되는 아이템이 없습니다.", null, 3000, eToastGlowColor.Red, eToastPosition.TopCenter);

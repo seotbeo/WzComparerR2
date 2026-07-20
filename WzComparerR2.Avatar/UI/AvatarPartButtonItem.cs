@@ -126,6 +126,7 @@ namespace WzComparerR2.Avatar.UI
                 this.labelSaturation.Text = $"채도({(saturation > 100 ? "+" : "")}{saturation - 100})";
                 this.labelBrightness.Text = $"명도({(brightness > 100 ? "+" : "")}{brightness - 100})";
                 this.rdoPrismType0.Checked = true;
+                this.chkConvertPureBlack.Checked = false;
             }
         }
 
@@ -154,6 +155,7 @@ namespace WzComparerR2.Avatar.UI
             this.labelHue.Text = $"색조({hue})";
             this.labelSaturation.Text = $"채도({(saturation > 100 ? "+" : "")}{saturation - 100})";
             this.labelBrightness.Text = $"명도({(brightness > 100 ? "+" : "")}{brightness - 100})";
+            this.chkConvertPureBlack.Checked = prismData.ConvertPureBlack;
 
             CheckBoxItem[] rdoPrismType = { this.rdoPrismType0, this.rdoPrismType1, this.rdoPrismType2, this.rdoPrismType3, this.rdoPrismType4, this.rdoPrismType5, this.rdoPrismType6 };
             for (int i = 0; i < rdoPrismType.Length; i++)
