@@ -59,6 +59,13 @@ namespace WzComparerR2.AvatarCommon
             }
         }
 
+        public PrismData Clone()
+        {
+            var ret = new PrismData();
+            ret.Set(this.Type, this.Hue, this.Saturation, this.Brightness, this.ConvertPureBlack);
+            return ret;
+        }
+
         public string GetColorType()
         {
             if (!this.Valid) return null;
