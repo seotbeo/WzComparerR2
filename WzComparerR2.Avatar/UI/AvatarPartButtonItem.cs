@@ -17,6 +17,7 @@ namespace WzComparerR2.Avatar.UI
         {
             InitializeComponent();
             this.chkShowEffect.Name += ID.ToString();
+            this.chkConvertPureBlack.Name += ID.ToString();
             this.SubItems.Add(this.chkShowEffect);
             this.PrismData = pdc.Clone();
             this.PrismIndex = 0;
