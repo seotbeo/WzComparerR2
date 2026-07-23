@@ -272,6 +272,7 @@ namespace WzComparerR2.AvatarCommon
         public void ClearCanvas()
         {
             this.canvas.ClearSkinCache();
+            this.canvas.ClearCustomOrigin();
             Array.Clear(this.canvas.Parts, 0, this.canvas.Parts.Length);
             SetEarType(0);
         }

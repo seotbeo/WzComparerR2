@@ -544,7 +544,7 @@ namespace WzComparerR2.Avatar.UI
                 this.avatar.WeaponType,
                 this.avatar.WeaponIndex,
                 this.avatar.GroupChair,
-                this.avatar.ActionName,
+                this.avatar.CustomOriginString,
                 string.Join("_", effectFrames),
                 string.Join("_", this.avatar.EffectVisibles));
 
@@ -597,7 +597,13 @@ namespace WzComparerR2.Avatar.UI
                     }
                 }
             }
-            return string.Join(",", partsID);
+
+            string ret = string.Join(",", partsID);
+            if (!string.IsNullOrEmpty(this.avatar.CustomOriginString))
+            {
+                ret += $",{this.avatar.CustomOriginString}";
+            }
+            return ret;
         }
 
         void AddPart(string imgPath)
@@ -2230,7 +2236,8 @@ namespace WzComparerR2.Avatar.UI
                     $"{res.Shield + GetPrismCode(res.ShieldPrismInfo)}," +
                     $"{res.Weapon + GetPrismCode(res.WeaponPrismInfo)}," +
                     $"{res.CashWeapon + GetPrismCode(res.WeaponPrismInfo)}," +
-                    $"{res.Ring1},{res.Ring2},{res.Ring3},{res.Ring4}";
+                    $"{res.Ring1},{res.Ring2},{res.Ring3},{res.Ring4}," +
+                    GetCustomOriginCode(res);
                 LoadCode(code, 0);
 
                 this.SuspendUpdateDisplay();
@@ -2390,6 +2397,20 @@ namespace WzComparerR2.Avatar.UI
             ret += GetPrismCode(prisms.Prism1, true);
             ret += GetPrismCode(prisms.Prism2);
             return ret;
+        }
+
+        private string GetCustomOriginCode(UnpackedAvatarData data)
+        {
+            List<string> ret = new();
+            for (int i = 0; i < data.CustomOrigin.Length; i++)
+            {
+                CustomOriginInfo cur = data.CustomOrigin[i];
+                if (cur.Valid)
+                {
+                    ret.Add($"co{i}x{cur.Origin.X}y{cur.Origin.Y}");
+                }
+            }
+            return string.Join(",", ret);
         }
 #endif
 
@@ -2760,8 +2781,17 @@ namespace WzComparerR2.Avatar.UI
 
         private void LoadCode(string code, int loadType)
         {
+            this.avatar.ClearCustomOrigin();
             //解析
-            var matches = Regex.Matches(code, @"s?(\d+)(\+([0-8])\*(\d{1,2}))?((\+(\d+)h(\d+)s(\d+)v(\d+)(PB)?){0,2})([,\s]|$)");
+            var matches = Regex.Matches(code,
+                @"(?:"
+                    + @"s?(?<id>\d+)"
+                    + @"(?<mix>\+(?<mixColor>[0-8])\*(?<mixRate>\d{1,2}))?"
+                    + @"(?<prism>(?:\+\d+h\d+s\d+v\d+(?:PB)?){0,2})"
+                    + @"|"
+                    + @"(?<co>co(?<coID>\d+)x(?<coX>-?\d+)y(?<coY>-?\d+))"
+                + @")(?=[,\s]|$)"
+            );
             if (matches.Count <= 0)
             {
                 ToastNotification.Show(this, $"아이템 코드에 해당되는 아이템이 없습니다.", null, 3000, eToastGlowColor.Red, eToastPosition.TopCenter);
@@ -2803,20 +2833,20 @@ namespace WzComparerR2.Avatar.UI
             foreach (Match m in matches)
             {
                 int gearID;
-                if (Int32.TryParse(m.Result("$1"), out gearID))
+                if (m.Groups["id"].Success && Int32.TryParse(m.Groups["id"].Value, out gearID))
                 {
                     Wz_Node imgNode = FindNodeByGearID(characWz, gearID);
                     if (imgNode != null)
                     {
                         var part = this.avatar.AddPart(imgNode);
-                        if (m.Groups.Count >= 4 && Int32.TryParse(m.Result("$3"), out int mixColor) && Int32.TryParse(m.Result("$4"), out int mixOpacity))
+                        if (m.Groups["mixColor"].Success && m.Groups["mixRate"].Success && Int32.TryParse(m.Groups["mixColor"].Value, out int mixColor) && Int32.TryParse(m.Groups["mixRate"].Value, out int mixOpacity))
                         {
                             part.MixColor = mixColor;
                             part.MixOpacity = mixOpacity;
                         }
-                        if (m.Groups.Count >= 10)
+                        if (m.Groups["prism"].Success)
                         {
-                            LoadCode_ApplyPrism(part, m.Groups[5].Value);
+                            LoadCode_ApplyPrism(part, m.Groups["prism"].Value);
                         }
                         OnNewPartAdded(part);
                         continue;
@@ -2837,9 +2867,9 @@ namespace WzComparerR2.Avatar.UI
                                 if (tamingMobNode != null)
                                 {
                                     var part = this.avatar.AddTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(imgNode.Nodes["icon"], PluginBase.PluginManager.FindWz), gearID, true);
-                                    if (m.Groups.Count >= 10)
+                                    if (m.Groups["prism"].Success)
                                     {
-                                        LoadCode_ApplyPrism(part, m.Groups[6].Value);
+                                        LoadCode_ApplyPrism(part, m.Groups["prism"].Value);
                                     }
                                     OnNewPartAdded(part);
                                 }
@@ -2868,9 +2898,9 @@ namespace WzComparerR2.Avatar.UI
 
                                 this.avatar.RemoveChairPart();
                                 var part = this.avatar.AddTamingPart(tamingMobNode, BitmapOrigin.CreateFromNode(tamingMobNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), tamingMobID, false, brm);
-                                if (m.Groups.Count >= 10)
+                                if (m.Groups["prism"].Success)
                                 {
-                                    LoadCode_ApplyPrism(part, m.Groups[6].Value);
+                                    LoadCode_ApplyPrism(part, m.Groups["prism"].Value);
                                 }
                                 OnNewPartAdded(part);
                             }
@@ -2892,9 +2922,9 @@ namespace WzComparerR2.Avatar.UI
 
                             if (removeTamingPart) RemoveTamingPart();
                             var part = this.avatar.AddChairPart(imgNode, BitmapOrigin.CreateFromNode(imgNode.FindNodeByPath("info\\icon"), PluginBase.PluginManager.FindWz), gearID, brm, fb);
-                            if (m.Groups.Count >= 10)
+                            if (m.Groups["priprismsmAll"].Success)
                             {
-                                LoadCode_ApplyPrism(part, m.Groups[6].Value);
+                                LoadCode_ApplyPrism(part, m.Groups["prism"].Value);
                             }
                             OnNewPartAdded(part);
                         }
@@ -2902,9 +2932,9 @@ namespace WzComparerR2.Avatar.UI
                         if (gearID / 10000 == 501) // effect items
                         {
                             var part = this.avatar.AddEffectPart(imgNode);
-                            if (m.Groups.Count >= 10)
+                            if (m.Groups["prism"].Success)
                             {
-                                LoadCode_ApplyPrism(part, m.Groups[6].Value);
+                                LoadCode_ApplyPrism(part, m.Groups["prism"].Value);
                             }
                             OnNewPartAdded(part);
                         }
@@ -2914,6 +2944,15 @@ namespace WzComparerR2.Avatar.UI
                     {
                         failList.Add(gearID);
                     }
+                }
+
+                // customOrigin 세팅
+                if (m.Groups["co"].Success)
+                {
+                    string id = m.Groups["coID"].Value;
+                    int x = int.Parse(m.Groups["coX"].Value);
+                    int y = int.Parse(m.Groups["coY"].Value);
+                    this.avatar.CustomOrigin[id] = new Point(x, y);
                 }
             }
 
