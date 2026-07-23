@@ -236,11 +236,11 @@ namespace WzComparerR2.WzLib.Utilities
                             if (fullpath.Contains("Base.wz"))
                             {
                                 string parentDir = Directory.GetParent(dir)!.FullName;
-                                cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).Where(name => name != "Packs" && name != "Base").ToList();
+                                cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).OrderBy(name => name).Where(name => name != "Packs" && name != "Base").ToList();
                             }
                             else
                             {
-                                cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                                cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).OrderBy(name => name).ToList();
                             }
                             int idx = cand_dir.IndexOf(ret);
                             if (idx != -1)
@@ -315,11 +315,11 @@ namespace WzComparerR2.WzLib.Utilities
                                     if (fullpath.Contains("Base.wz"))
                                     {
                                         string parentDir = Directory.GetParent(dir)!.FullName;
-                                        cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).Where(name => name != "Packs" && name != "Base").ToList();
+                                        cand_dir = Directory.GetDirectories(parentDir).Select(Path.GetFileName).OrderBy(name => name).Where(name => name != "Packs" && name != "Base").ToList();
                                     }
                                     else
                                     {
-                                        cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).ToList();
+                                        cand_dir = Directory.GetDirectories(dir).Select(Path.GetFileName).OrderBy(name => name).ToList();
                                     }
                                     result_dir = cand_dir.FirstOrDefault(s => s.Length == size);
                                     int idx = cand_dir.IndexOf(result_dir);
