@@ -50,7 +50,7 @@ namespace WzComparerR2.AvatarCommon
                     //SetHSVfromRGB_v1(ref rgb, ref hsv);
                     SetHSVfromRGB_v2(ref rgb, ref hsv);
 
-                    bool convert = CheckColorType(type, ref hsv);
+                    bool convert = (convertPureBlack && hsv.Saturation == 0) ? true : CheckColorType(type, ref hsv);
                     bool not16bitcolor = false;
                     if ((!convertPureBlack && rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
                     {
