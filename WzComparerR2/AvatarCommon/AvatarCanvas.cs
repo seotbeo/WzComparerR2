@@ -463,6 +463,15 @@ namespace WzComparerR2.AvatarCommon
                     break;
             }
 
+            if (part == this.EyeAccessory && part.CustomOriginMap.Count > 0)
+            {
+                foreach (var kv in part.CustomOriginMap)
+                {
+                    Point origin = part.Node?.FindNodeByPath($"default\\{kv.Key}\\origin").GetValueEx<Wz_Vector>(null);
+                    this.CustomOrigin[kv.Value] = origin;
+                }
+            }
+
             return part;
         }
 

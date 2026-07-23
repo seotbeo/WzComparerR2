@@ -487,6 +487,22 @@ namespace WzComparerR2.Avatar.UI
                 return;
             }
 
+            if (FindCustomOrigin(out Point origin))
+            {
+                this.txtCustomOriginX.Enabled = true;
+                this.txtCustomOriginY.Enabled = true;
+                this.chkCustomOriginObj0.Enabled = true;
+                this.chkCustomOriginObj1.Enabled = true;
+                SetTxtCustomOrigin(origin);
+            }
+            else
+            {
+                this.txtCustomOriginX.Enabled = false;
+                this.txtCustomOriginY.Enabled = false;
+                this.chkCustomOriginObj0.Enabled = false;
+                this.chkCustomOriginObj1.Enabled = false;
+            }
+
             string newPartsTag = GetAllPartsTag();
             if (this.partsTag != newPartsTag)
             {
@@ -980,6 +996,10 @@ namespace WzComparerR2.Avatar.UI
                     if (index > -1)
                     {
                         this.avatar.Parts[index] = null;
+                        if (!this.avatar.Parts.Any(p => p != null && p.CustomOriginMap.Count > 0))
+                        {
+                            this.avatar.ClearCustomOrigin();
+                        }
                         this.FillAvatarParts();
                         this.UpdateDisplay();
                     }
@@ -2006,6 +2026,127 @@ namespace WzComparerR2.Avatar.UI
             {
                 ToastNotification.Show(this, $"{nextAction} 동작을 찾을 수 없습니다.", null, 2000, eToastGlowColor.Red, eToastPosition.TopCenter);
             }
+        }
+        
+        private void TxtCustomOrigin_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode is Keys.Left or Keys.Right or Keys.Down or Keys.Up)
+            {
+                e.IsInputKey = true;
+            }
+        }
+
+        private void TxtCustomOrigin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender is not DevComponents.Editors.IntegerInput input
+                || !(e.KeyCode is Keys.Left or Keys.Right or Keys.Down or Keys.Up))
+                return;
+
+            int step = input.Increment;
+            int dir = (input.Tag as string) == "X" ? -1 : 1;
+
+            switch (e.KeyCode)
+            {
+                case Keys.Left:
+                case Keys.Down:
+                    dir *= -1;
+                    break;
+
+                case Keys.Right:
+                case Keys.Up:
+                    break;
+
+                default:
+                    return;
+            }
+            input.Value = Math.Min(input.MaxValue, Math.Max(input.MinValue, input.Value + step * dir));
+
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+        }
+
+        private void ChkCustomOriginObj_ValueChanged(object sender, EventArgs e)
+        {
+            if (FindCustomOrigin(out Point origin))
+            {
+                SetTxtCustomOrigin(origin);
+                UpdateDisplay();
+            }
+        }
+
+        private void TxtCustomOriginX_ValueChanged(object sender, EventArgs e)
+        {
+            int x = txtCustomOriginX.Value;
+
+            int id = -1;
+            if (this.chkCustomOriginObj0.Checked)
+            {
+                id = 0;
+            }
+            else if (this.chkCustomOriginObj1.Checked)
+            {
+                id = 1;
+            }
+            if (this.avatar.CustomOrigin.ContainsKey(id.ToString()))
+            {
+                var prev = this.avatar.CustomOrigin[id.ToString()];
+                var next = new Point(x, prev.Y);
+                this.avatar.CustomOrigin[id.ToString()] = next;
+                SetTxtCustomOrigin(next);
+                UpdateDisplay();
+            }
+        }
+
+        private void TxtCustomOriginY_ValueChanged(object sender, EventArgs e)
+        {
+            int y = txtCustomOriginY.Value;
+
+            int id = -1;
+            if (this.chkCustomOriginObj0.Checked)
+            {
+                id = 0;
+            }
+            else if (this.chkCustomOriginObj1.Checked)
+            {
+                id = 1;
+            }
+            if (this.avatar.CustomOrigin.ContainsKey(id.ToString()))
+            {
+                var prev = this.avatar.CustomOrigin[id.ToString()];
+                var next = new Point(prev.X, y);
+                this.avatar.CustomOrigin[id.ToString()] = next;
+                SetTxtCustomOrigin(next);
+                UpdateDisplay();
+            }
+        }
+
+        private bool FindCustomOrigin(out Point origin)
+        {
+            origin = Point.Empty;
+            int id = -1;
+            if (this.chkCustomOriginObj0.Checked)
+            {
+                id = 0;
+            }
+            else if (this.chkCustomOriginObj1.Checked)
+            {
+                id = 1;
+            }
+            if (this.avatar.CustomOrigin.ContainsKey(id.ToString()))
+            {
+                origin = this.avatar.CustomOrigin[id.ToString()];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void SetTxtCustomOrigin(Point origin)
+        {
+            this.txtCustomOriginX.Value = origin.X;
+            this.txtCustomOriginY.Value = origin.Y;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
