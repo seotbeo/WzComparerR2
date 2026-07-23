@@ -500,31 +500,28 @@ namespace WzComparerR2.OpenAPI
             var offset = 0;
             for (int k = 0; k < res.Unpacked.Count; k++)
             {
+                DataInfo current = res.Unpacked[k];
                 int value = 0;
-                for (int i = 0; i < res.Unpacked[k].Bits; i++)
+                for (int i = 0; i < current.Bits; i++)
                 {
                     if ((pack[(offset + i) / 8] & 1 << (offset + i) % 8) != 0)
                     {
                         value |= 1 << i;
                     }
                 }
-                res.Unpacked[k].Value = value;
-                offset += res.Unpacked[k].Bits;
+                current.Value = value;
+                offset += current.Bits;
 
-                if (value == 1 && res.Unpacked[k].Name == "isCashWeapon")
-                {
-                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo("cashWeaponID", 10), new DataInfo("cashWeaponGender", 2) });
-                }
                 foreach (var type in new[] { "Cap", "FaceAcc", "EyeAcc", "EarAcc", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Shield", "Weapon", "Skin" })
                 {
-                    if (res.Version >= 27 && value == 1 && res.Unpacked[k].Name == $"has{type}Prism")
+                    if (res.Version >= 27 && value == 1 && current.Name == $"has{type}Prism")
                     {
                         string[] indexs;
-                        bool addOn = false;
+                        bool multiType = false;
                         if (res.Version >= 33 && type != "Skin")
                         {
                             indexs = new[] { "", "2" };
-                            addOn = true;
+                            multiType = true;
                         }
                         else
                         {
@@ -534,18 +531,30 @@ namespace WzComparerR2.OpenAPI
                         var items = new List<DataInfo>();
                         foreach (var index in indexs)
                         {
-                            if (addOn)
+                            if (res.Version >= 43 && type != "Skin")
                             {
-                                items.Add(new DataInfo($"{type.ToLower()}Prism{index}On", 3));
+                                items.Add(new DataInfo($"{type.ToLower()}Prism{index}ConvertPureBlack", 1));
+                            }
+                            if (multiType)
+                            {
+                                items.Add(new DataInfo($"{type.ToLower()}Prism{index}Type", 3));
                             }
                             items.AddRange(new[] { new DataInfo($"{type.ToLower()}Prism{index}ColorType", 3), new DataInfo($"{type.ToLower()}Prism{index}Brightness", 8), new DataInfo($"{type.ToLower()}Prism{index}Saturation", 8), new DataInfo($"{type.ToLower()}Prism{index}Hue", 9), });
                         }
                         res.Unpacked.InsertRange(k + 1, items);
                     }
                 }
-                if (res.Version >= 39 && value != 0 && res.Unpacked[k].Name == $"subWeaponType")
+                if (value == 1 && current.Name == "isCashWeapon")
+                {
+                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo("cashWeaponID", 10), new DataInfo("cashWeaponGender", 2) });
+                }
+                else if (res.Version >= 39 && value != 0 && current.Name == $"subWeaponType")
                 {
                     res.Unpacked.InsertRange(k + 1, new[] { new DataInfo("shieldID", 10), new DataInfo("shieldGender", 4) });
+                }
+                else if (res.Version >= 43 && value == 1 && current.Name.StartsWith("customOrigin"))
+                {
+                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo($"{current.Name}X", 16), new DataInfo($"{current.Name}Y", 16), });
                 }
             }
             return;

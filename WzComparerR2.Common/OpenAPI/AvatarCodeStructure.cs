@@ -26,6 +26,7 @@ namespace WzComparerR2.OpenAPI
             { 39, GetStructureV39() },
             { 40, GetStructureV40() },
             { 41, GetStructureV41() },
+            { 43, GetStructureV43() },
         };
 
         private static List<DataInfo> GetBasePartV1()
@@ -196,6 +197,20 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("hasWeaponPrism", 1),
                 new DataInfo("hasSkinPrism", 1),
             };
+        }
+
+        private static List<DataInfo> GetCustomOriginPartV1()
+        {
+            const int count = 2;
+            var ret = new List<DataInfo>();
+            for (int i = 0; i < count; i++)
+            {
+                ret.AddRange(new List<DataInfo>()
+                {
+                    new DataInfo($"customOrigin{i}", 1),
+                });
+            }
+            return ret;
         }
 
         private static List<DataInfo> GetRingPartV1()
@@ -655,6 +670,45 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccGender", 2),
             });
             ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetRingPartV1());
+            return ret;
+        }
+
+        private static List<DataInfo> GetStructureV43()
+        {
+            var ret = new List<DataInfo>();
+            ret.AddRange(GetBasePartV4());
+            ret.AddRange(new List<DataInfo>()
+            {
+                new DataInfo("subWeaponType", 3),
+                new DataInfo("uk2_1", 1),
+                new DataInfo("isCashWeapon", 1),
+                new DataInfo("weaponID", 10),
+                new DataInfo("weaponGender", 2),
+                new DataInfo("weaponType", 8),
+                new DataInfo("earType", 4),
+                new DataInfo("mixHairColor", 4),
+                new DataInfo("mixHairRatio", 8),
+                new DataInfo("mixFaceInfo", 10),
+                new DataInfo("unknown1", 4),
+                new DataInfo("jobWingTailType", 8),
+                new DataInfo("jobWingTailTypeDetail", 2),
+                new DataInfo("unknown2", 6),
+                new DataInfo("eventJob", 3),
+                new DataInfo("unknown2_2", 21),
+                new DataInfo("weaponMotionType", 2),
+                new DataInfo("unknown3", 11),
+                new DataInfo("showEffectFlags", 4),
+                new DataInfo("unknown3_2", 3),
+                new DataInfo("emotionFaceAccID", 10),
+                new DataInfo("emotionFaceAccGender", 2),
+            });
+            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(new List<DataInfo>()
+            {
+                new DataInfo("Unknown43", 16),
+            });
+            ret.AddRange(GetCustomOriginPartV1());
             ret.AddRange(GetRingPartV1());
             return ret;
         }

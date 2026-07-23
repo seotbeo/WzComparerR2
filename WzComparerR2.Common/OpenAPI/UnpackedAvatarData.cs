@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace WzComparerR2.OpenAPI
         public bool UnknownVer { get; set; }
         public List<DataInfo> Unpacked { get; set; }
 
-        public int GetValue(string name)
+        private int GetValue(string name)
         {
             foreach (var data in Unpacked)
             {
@@ -49,7 +50,7 @@ namespace WzComparerR2.OpenAPI
             return -1;
         }
 
-        public int GetBits(string name)
+        private int GetBits(string name)
         {
             foreach (var data in Unpacked)
             {
@@ -64,17 +65,17 @@ namespace WzComparerR2.OpenAPI
             return -1;
         }
 
-        public int GetGender()
+        private int GetGender()
         {
             return GetValue("gender") != 0 ? 1 : 0;
         }
 
-        public string GetSkin()
+        private string GetSkin()
         {
             return GetValue("skinID").ToString().PadLeft(2, '0');
         }
 
-        public string GetFace()
+        private string GetFace()
         {
             var id = GetValue("faceID");
             if (id == -1) return "";
@@ -98,7 +99,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetHair()
+        private string GetHair()
         {
             var id = GetValue("hairID");
             if (id == -1) return "";
@@ -110,7 +111,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetCap()
+        private string GetCap()
         {
             var id = GetValue("capID");
             if (id == -1) return "";
@@ -121,7 +122,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetFaceAcc()
+        private string GetFaceAcc()
         {
             var id = GetValue("faceAccID");
             if (id == -1) return "";
@@ -132,7 +133,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetEyeAcc()
+        private string GetEyeAcc()
         {
             var id = GetValue("eyeAccID");
             if (id == -1) return "";
@@ -143,7 +144,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetEarAcc()
+        private string GetEarAcc()
         {
             var id = GetValue("earAccID");
             if (id == -1) return "";
@@ -154,7 +155,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetCoat()
+        private string GetCoat()
         {
             var id = GetValue("coatID");
             if (id == -1) return "";
@@ -165,7 +166,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetPants()
+        private string GetPants()
         {
             var id = GetValue("pantsID");
             if (id == -1) return "";
@@ -176,7 +177,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetShoes()
+        private string GetShoes()
         {
             var id = GetValue("shoesID");
             if (id == -1) return "";
@@ -187,7 +188,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetGloves()
+        private string GetGloves()
         {
             var id = GetValue("glovesID");
             if (id == -1) return "";
@@ -198,7 +199,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetCape()
+        private string GetCape()
         {
             var id = GetValue("capeID");
             if (id == -1) return "";
@@ -209,7 +210,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetShield()
+        private string GetShield()
         {
             var id = GetValue("shieldID");
             if (id == -1) return "";
@@ -232,7 +233,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetCashWeapon()
+        private string GetCashWeapon()
         {
             bool isCW = GetValue("isCashWeapon") != 0;
             if (!isCW) return "";
@@ -249,7 +250,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetWeapon()
+        private string GetWeapon()
         {
             var id = GetValue("weaponID");
             var type = GetValue("weaponType");
@@ -272,7 +273,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetRing(int num)
+        private string GetRing(int num)
         {
             var id = GetValue("ringID" + num);
             if (id == -1) return "";
@@ -286,7 +287,7 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public string GetEmotionFaceAcc()
+        private string GetEmotionFaceAcc()
         {
             var id = GetValue("emotionFaceAccID");
             if (id == -1) return "";
@@ -297,22 +298,22 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public byte GetEarType()
+        private byte GetEarType()
         {
             return (byte)GetValue("earType");
         }
 
-        public byte GetJobWingTailType()
+        private byte GetJobWingTailType()
         {
             return (byte)GetValue("jobWingTailType");
         }
 
-        public byte GetJobWingTailTypeDetail()
+        private byte GetJobWingTailTypeDetail()
         {
             return (byte)GetValue("jobWingTailTypeDetail");
         }
 
-        public string GetJobWingTailTypeString()
+        private string GetJobWingTailTypeString()
         {
             var detail = "";
             switch (this.JobWingTailTypeDetail)
@@ -342,12 +343,12 @@ namespace WzComparerR2.OpenAPI
             }
         }
 
-        public byte GetEventJob()
+        private byte GetEventJob()
         {
             return (byte)GetValue("eventJob");
         }
 
-        public string GetEventJobString()
+        private string GetEventJobString()
         {
             switch (this.EventJob)
             {
@@ -364,12 +365,12 @@ namespace WzComparerR2.OpenAPI
             }
         }
 
-        public byte GetWeaponMotionType()
+        private byte GetWeaponMotionType()
         {
             return (byte)GetValue("weaponMotionType");
         }
 
-        public string GetWeaponMotionTypeString()
+        private string GetWeaponMotionTypeString()
         {
             switch (this.WeaponMotionType)
             {
@@ -384,42 +385,42 @@ namespace WzComparerR2.OpenAPI
             }
         }
 
-        public string GetMixHairRatio()
+        private string GetMixHairRatio()
         {
             return GetValue("mixHairRatio").ToString().PadLeft(2, '0');
         }
 
-        public string GetMixHairColor()
+        private string GetMixHairColor()
         {
             return GetValue("mixHairColor").ToString();
         }
 
-        public string GetMixFaceRatio()
+        private string GetMixFaceRatio()
         {
             return GetValue("mixFaceInfo").ToString().PadLeft(3, '0').Substring(1, 2);
         }
 
-        public string GetMixFaceColor()
+        private string GetMixFaceColor()
         {
             return GetValue("mixFaceInfo").ToString().PadLeft(3, '0').Substring(0, 1);
         }
 
-        public int GetShowEffectFlags()
+        private int GetShowEffectFlags()
         {
             return GetValue("showEffectFlags");
         }
 
-        public PrismInfo GetPrismInfo(string type, string index = "")
+        private PrismInfo GetPrismInfo(string type, string index = "")
         {
             var ret = new PrismInfo();
             if (GetValue($"has{type}Prism") == 1)
             {
-                ret.On = (byte)GetValue($"{type.ToLower()}Prism{index}On");
+                ret.Type = (byte)GetValue($"{type.ToLower()}Prism{index}Type");
                 ret.ColorType = (byte)GetValue($"{type.ToLower()}Prism{index}ColorType");
                 ret.Brightness = GetValue($"{type.ToLower()}Prism{index}Brightness");
                 ret.Saturation = GetValue($"{type.ToLower()}Prism{index}Saturation");
                 ret.Hue = GetValue($"{type.ToLower()}Prism{index}Hue");
-                ret.ConvertPureBlack = false;
+                ret.ConvertPureBlack = GetValue($"{type.ToLower()}Prism{index}ConvertPureBlack") == 1;
                 ret.Valid = true;
             }
             else
@@ -429,12 +430,33 @@ namespace WzComparerR2.OpenAPI
             return ret;
         }
 
-        public PrismInfoCollection GetPrismInfoCollection(string type)
+        private PrismInfoCollection GetPrismInfoCollection(string type)
         {
             var ret = new PrismInfoCollection();
             ret.Prism1 = GetPrismInfo(type);
             ret.Prism2 = GetPrismInfo(type, "2");
             return ret;
+        }
+
+        private Point GetCustomOrigin(int index)
+        {
+            short x = unchecked((short)(GetValue($"customOrigin{index}X") & 0xFFFF));
+            short y = unchecked((short)(GetValue($"customOrigin{index}Y") & 0xFFFF));
+            return new Point(x, y);
+        }
+
+        private void SetCustomOrigins()
+        {
+            const int count = 2;
+            CustomOrigin = new CustomOriginInfo[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                CustomOriginInfo item = new CustomOriginInfo();
+                item.Valid = GetValue($"customOrigin{i}") == 1;
+                if (item.Valid) item.Origin = GetCustomOrigin(i);
+                CustomOrigin[i] = item;
+            }
         }
 
         public void SetProperties()
@@ -489,58 +511,61 @@ namespace WzComparerR2.OpenAPI
             ShieldPrismInfo = GetPrismInfoCollection("Shield");
             WeaponPrismInfo = GetPrismInfoCollection("Weapon");
             SkinPrismInfo = GetPrismInfo("Skin");
+
+            SetCustomOrigins();
         }
 
-        public int Gender { get; set; }
-        public string Skin { get; set; }
-        public string Face { get; set; }
-        public string Hair { get; set; }
-        public string Cap { get; set; }
-        public string FaceAcc { get; set; }
-        public string EyeAcc { get; set; }
-        public string EarAcc { get; set; }
-        public string Coat { get; set; }
-        public string Pants { get; set; }
-        public string Shoes { get; set; }
-        public string Gloves { get; set; }
-        public string Cape { get; set; }
-        public string Shield { get; set; }
-        public string CashWeapon { get; set; }
-        public string Weapon { get; set; }
-        public string Ring1 { get; set; }
-        public string Ring2 { get; set; }
-        public string Ring3 { get; set; }
-        public string Ring4 { get; set; }
-        public string EmotionFaceAcc { get; set; }
-        public byte EarType { get; set; }
-        public byte JobWingTailType { get; set; }
-        public byte JobWingTailTypeDetail { get; set; }
+        public int Gender { get; private set; }
+        public string Skin { get; private set; }
+        public string Face { get; private set; }
+        public string Hair { get; private set; }
+        public string Cap { get; private set; }
+        public string FaceAcc { get; private set; }
+        public string EyeAcc { get; private set; }
+        public string EarAcc { get; private set; }
+        public string Coat { get; private set; }
+        public string Pants { get; private set; }
+        public string Shoes { get; private set; }
+        public string Gloves { get; private set; }
+        public string Cape { get; private set; }
+        public string Shield { get; private set; }
+        public string CashWeapon { get; private set; }
+        public string Weapon { get; private set; }
+        public string Ring1 { get; private set; }
+        public string Ring2 { get; private set; }
+        public string Ring3 { get; private set; }
+        public string Ring4 { get; private set; }
+        public string EmotionFaceAcc { get; private set; }
+        public byte EarType { get; private set; }
+        public byte JobWingTailType { get; private set; }
+        public byte JobWingTailTypeDetail { get; private set; }
         public string JobWingTailTypeString { get { return this.GetJobWingTailTypeString(); } }
-        public byte EventJob { get; set; }
+        public byte EventJob { get; private set; }
         public string EventJobString { get { return this.GetEventJobString(); } }
-        public byte WeaponMotionType { get; set; }
+        public byte WeaponMotionType { get; private set; }
         public string WeaponMotionTypeString { get { return this.GetWeaponMotionTypeString(); } }
-        public string MixHairRatio { get; set; }
-        public string MixHairColor { get; set; }
-        public string MixFaceRatio { get; set; }
-        public string MixFaceColor { get; set; }
-        public int ShowEffectFlags { get; set; }
+        public string MixHairRatio { get; private set; }
+        public string MixHairColor { get; private set; }
+        public string MixFaceRatio { get; private set; }
+        public string MixFaceColor { get; private set; }
+        public int ShowEffectFlags { get; private set; }
         public bool ShowWeaponEffect { get { return (ShowEffectFlags & 1) != 0; } }
         public bool ShowWeaponJumpEffect { get { return (ShowEffectFlags & (1 << 1)) != 0; } }
         public bool ShowWeaponSpecialEffect { get { return (ShowEffectFlags & (1 << 2)) != 0; } }
         public bool ShowCapeEffect { get { return (ShowEffectFlags & (1 << 3)) != 0; } }
-        public PrismInfoCollection CapPrismInfo { get; set; }
-        public PrismInfoCollection FaceAccPrismInfo { get; set; }
-        public PrismInfoCollection EyeAccPrismInfo { get; set; }
-        public PrismInfoCollection EarAccPrismInfo { get; set; }
-        public PrismInfoCollection CoatPrismInfo { get; set; }
-        public PrismInfoCollection PantsPrismInfo { get; set; }
-        public PrismInfoCollection ShoesPrismInfo { get; set; }
-        public PrismInfoCollection GlovesPrismInfo { get; set; }
-        public PrismInfoCollection ShieldPrismInfo { get; set; }
-        public PrismInfoCollection CapePrismInfo { get; set; }
-        public PrismInfoCollection WeaponPrismInfo { get; set; }
-        public PrismInfo SkinPrismInfo { get; set; }
+        public PrismInfoCollection CapPrismInfo { get; private set; }
+        public PrismInfoCollection FaceAccPrismInfo { get; private set; }
+        public PrismInfoCollection EyeAccPrismInfo { get; private set; }
+        public PrismInfoCollection EarAccPrismInfo { get; private set; }
+        public PrismInfoCollection CoatPrismInfo { get; private set; }
+        public PrismInfoCollection PantsPrismInfo { get; private set; }
+        public PrismInfoCollection ShoesPrismInfo { get; private set; }
+        public PrismInfoCollection GlovesPrismInfo { get; private set; }
+        public PrismInfoCollection ShieldPrismInfo { get; private set; }
+        public PrismInfoCollection CapePrismInfo { get; private set; }
+        public PrismInfoCollection WeaponPrismInfo { get; private set; }
+        public PrismInfo SkinPrismInfo { get; private set; }
+        public CustomOriginInfo[] CustomOrigin { get; private set; }
     }
 
     public class PrismInfoCollection
@@ -552,12 +577,21 @@ namespace WzComparerR2.OpenAPI
     public class PrismInfo
     {
         public bool Valid { get; set; }
-        public byte On { get; set; }
+        /// <summary>
+        /// 프리즘 유형
+        /// </summary>
+        public byte Type { get; set; }
+        /// <summary>
+        /// 프리즘 색상 계열
+        /// </summary>
         public byte ColorType { get; set; }
         public string ColorTypeString { get { return this.GetColorType(); } }
         public int Hue { get; set; }
         public int Saturation { get; set; }
         public int Brightness { get; set; }
+        /// <summary>
+        /// 순수한 검은색도 명도 조절에 포함
+        /// </summary>
         public bool ConvertPureBlack { get; set; }
 
         public bool HasValues()
@@ -589,6 +623,12 @@ namespace WzComparerR2.OpenAPI
                     return null;
             }
         }
+    }
+
+    public class CustomOriginInfo
+    {
+        public bool Valid { get; set; }
+        public Point Origin { get; set; }
     }
 }
 #endif
