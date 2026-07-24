@@ -745,7 +745,7 @@
             this.labelXCustomOriginX.Size = new System.Drawing.Size(60, 18);
             this.labelXCustomOriginX.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelXCustomOriginX.TabIndex = 22;
-            this.labelXCustomOriginX.Text = "X";
+            this.labelXCustomOriginX.Text = "좌우";
             // 
             // labelXCustomOriginY
             // 
@@ -755,12 +755,12 @@
             // 
             // 
             this.labelXCustomOriginY.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelXCustomOriginY.Location = new System.Drawing.Point(93, 277);
+            this.labelXCustomOriginY.Location = new System.Drawing.Point(103, 277);
             this.labelXCustomOriginY.Name = "labelXCustomOriginY";
             this.labelXCustomOriginY.Size = new System.Drawing.Size(60, 18);
             this.labelXCustomOriginY.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.labelXCustomOriginY.TabIndex = 23;
-            this.labelXCustomOriginY.Text = "Y";
+            this.labelXCustomOriginY.Text = "상하";
             //
             // txtCustomOriginX
             // 
@@ -768,7 +768,7 @@
             this.txtCustomOriginX.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtCustomOriginX.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtCustomOriginX.IsInputReadOnly = false;
-            this.txtCustomOriginX.Location = new System.Drawing.Point(25, 275);
+            this.txtCustomOriginX.Location = new System.Drawing.Point(35, 275);
             this.txtCustomOriginX.Name = "txtCustomOriginX";
             this.txtCustomOriginX.Size = new System.Drawing.Size(60, 21);
             this.txtCustomOriginX.TabIndex = 22;
@@ -789,7 +789,7 @@
             this.txtCustomOriginY.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.txtCustomOriginY.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtCustomOriginY.IsInputReadOnly = false;
-            this.txtCustomOriginY.Location = new System.Drawing.Point(115, 275);
+            this.txtCustomOriginY.Location = new System.Drawing.Point(135, 275);
             this.txtCustomOriginY.Name = "txtCustomOriginY";
             this.txtCustomOriginY.Size = new System.Drawing.Size(60, 21);
             this.txtCustomOriginY.TabIndex = 23;
@@ -812,7 +812,7 @@
             this.chkCustomOriginObj0.Location = new System.Drawing.Point(3, 255);
             this.chkCustomOriginObj0.Name = "chkCustomOriginObj0";
             this.chkCustomOriginObj0.Size = new System.Drawing.Size(50, 18);
-            this.chkCustomOriginObj0.Text = "0";
+            this.chkCustomOriginObj0.Text = "개체 1";
             this.chkCustomOriginObj1.TabIndex = 21;
             this.chkCustomOriginObj0.Checked = true;
             this.chkCustomOriginObj0.CheckedChanged += ChkCustomOriginObj_ValueChanged;
@@ -823,10 +823,10 @@
             this.chkCustomOriginObj1.AutoSize = true;
             this.chkCustomOriginObj1.BackColor = System.Drawing.Color.Transparent;
             this.chkCustomOriginObj1.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
-            this.chkCustomOriginObj1.Location = new System.Drawing.Point(93, 255);
+            this.chkCustomOriginObj1.Location = new System.Drawing.Point(103, 255);
             this.chkCustomOriginObj1.Name = "chkCustomOriginObj1";
             this.chkCustomOriginObj1.Size = new System.Drawing.Size(50, 18);
-            this.chkCustomOriginObj1.Text = "1";
+            this.chkCustomOriginObj1.Text = "개체 2";
             this.chkCustomOriginObj1.TabIndex = 22;
             this.chkCustomOriginObj1.Enabled = false;
             //
