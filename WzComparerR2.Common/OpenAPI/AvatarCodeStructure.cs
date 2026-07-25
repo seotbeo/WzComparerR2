@@ -165,38 +165,161 @@ namespace WzComparerR2.OpenAPI
             };
         }
 
-        private static List<DataInfo> GetPrismPartV1()
+        private static List<DataInfo> GetWeaponPartV1()
         {
             return new List<DataInfo>()
             {
-                new DataInfo("hasCapPrism", 1),
-                new DataInfo("hasCoatPrism", 1),
-                new DataInfo("hasPantsPrism", 1),
-                new DataInfo("hasShoesPrism", 1),
-                new DataInfo("hasGlovesPrism", 1),
-                new DataInfo("hasCapePrism", 1),
-                new DataInfo("hasWeaponPrism", 1),
-                new DataInfo("hasSkinPrism", 1)
+                new DataInfo("subWeaponType", 2),
+                new DataInfo("shieldID", 10),
+                new DataInfo("shieldGender", 4),
+                new DataInfo("isCashWeapon", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("cashWeaponID", 10),
+                        new DataInfo("cashWeaponGender", 2),
+                    }
+                },
+                new DataInfo("weaponID", 10),
+                new DataInfo("weaponGender", 2),
+                new DataInfo("weaponType", 8),
             };
+        }
+
+        private static List<DataInfo> GetWeaponPartV2()
+        {
+            return new List<DataInfo>()
+            {
+                new DataInfo("subWeaponType", 3)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("shieldID", 10),
+                        new DataInfo("shieldGender", 4),
+                    }
+                },
+                new DataInfo("unknown_wp", 1),
+                new DataInfo("isCashWeapon", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("cashWeaponID", 10),
+                        new DataInfo("cashWeaponGender", 2),
+                    }
+                },
+                new DataInfo("weaponID", 10),
+                new DataInfo("weaponGender", 2),
+                new DataInfo("weaponType", 8),
+            };
+        }
+
+        private static List<DataInfo> GetPrismPartV1()
+        {
+            var ret = new List<DataInfo>();
+            foreach (var type in new[] { "Cap", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Weapon", "Skin" })
+            {
+                ret.Add(new DataInfo($"has{type}Prism", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}PrismColorType", 3),
+                        new DataInfo($"{type.ToLower()}PrismBrightness", 8),
+                        new DataInfo($"{type.ToLower()}PrismSaturation", 8),
+                        new DataInfo($"{type.ToLower()}PrismHue", 9),
+                    }
+                });
+            }
+            return ret;
         }
 
         private static List<DataInfo> GetPrismPartV2()
         {
-            return new List<DataInfo>()
+            var ret = new List<DataInfo>();
+            foreach (var type in new[] { "Cap", "FaceAcc", "EyeAcc", "EarAcc", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Shield", "Weapon", "Skin" })
             {
-                new DataInfo("hasCapPrism", 1),
-                new DataInfo("hasFaceAccPrism", 1),
-                new DataInfo("hasEyeAccPrism", 1),
-                new DataInfo("hasEarAccPrism", 1),
-                new DataInfo("hasCoatPrism", 1),
-                new DataInfo("hasPantsPrism", 1),
-                new DataInfo("hasShoesPrism", 1),
-                new DataInfo("hasGlovesPrism", 1),
-                new DataInfo("hasCapePrism", 1),
-                new DataInfo("hasShieldPrism", 1),
-                new DataInfo("hasWeaponPrism", 1),
-                new DataInfo("hasSkinPrism", 1),
-            };
+                ret.Add(new DataInfo($"has{type}Prism", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}PrismColorType", 3),
+                        new DataInfo($"{type.ToLower()}PrismBrightness", 8),
+                        new DataInfo($"{type.ToLower()}PrismSaturation", 8),
+                        new DataInfo($"{type.ToLower()}PrismHue", 9),
+                    }
+                });
+            }
+            return ret;
+        }
+
+        private static List<DataInfo> GetPrismPartV3()
+        {
+            var ret = new List<DataInfo>();
+            foreach (var type in new[] { "Cap", "FaceAcc", "EyeAcc", "EarAcc", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Shield", "Weapon" })
+            {
+                var data = new DataInfo($"has{type}Prism", 1);
+                foreach (var index in new[] { "", "2" })
+                {
+                    data.SubItems.AddRange(new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}Prism{index}Type", 3),
+                        new DataInfo($"{type.ToLower()}Prism{index}ColorType", 3),
+                        new DataInfo($"{type.ToLower()}Prism{index}Brightness", 8),
+                        new DataInfo($"{type.ToLower()}Prism{index}Saturation", 8),
+                        new DataInfo($"{type.ToLower()}Prism{index}Hue", 9),
+                    });
+                }
+                ret.Add(data);
+            }
+            foreach (var type in new[] { "Skin" })
+            {
+                ret.Add(new DataInfo($"has{type}Prism", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}PrismColorType", 3),
+                        new DataInfo($"{type.ToLower()}PrismBrightness", 8),
+                        new DataInfo($"{type.ToLower()}PrismSaturation", 8),
+                        new DataInfo($"{type.ToLower()}PrismHue", 9),
+                    }
+                });
+            }
+            return ret;
+        }
+
+        private static List<DataInfo> GetPrismPartV4()
+        {
+            var ret = new List<DataInfo>();
+            foreach (var type in new[] { "Cap", "FaceAcc", "EyeAcc", "EarAcc", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Shield", "Weapon" })
+            {
+                var data = new DataInfo($"has{type}Prism", 1);
+                foreach (var index in new[] { "", "2" })
+                {
+                    data.SubItems.AddRange(new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}Prism{index}ConvertPureBlack", 1),
+                        new DataInfo($"{type.ToLower()}Prism{index}Type", 3),
+                        new DataInfo($"{type.ToLower()}Prism{index}ColorType", 3),
+                        new DataInfo($"{type.ToLower()}Prism{index}Brightness", 8),
+                        new DataInfo($"{type.ToLower()}Prism{index}Saturation", 8),
+                        new DataInfo($"{type.ToLower()}Prism{index}Hue", 9),
+                    });
+                }
+                ret.Add(data);
+            }
+            foreach (var type in new[] { "Skin" })
+            {
+                ret.Add(new DataInfo($"has{type}Prism", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo($"{type.ToLower()}PrismColorType", 3),
+                        new DataInfo($"{type.ToLower()}PrismBrightness", 8),
+                        new DataInfo($"{type.ToLower()}PrismSaturation", 8),
+                        new DataInfo($"{type.ToLower()}PrismHue", 9),
+                    }
+                });
+            }
+            return ret;
         }
 
         private static List<DataInfo> GetCustomOriginPartV1()
@@ -205,9 +328,13 @@ namespace WzComparerR2.OpenAPI
             var ret = new List<DataInfo>();
             for (int i = 0; i < count; i++)
             {
-                ret.AddRange(new List<DataInfo>()
+                ret.Add(new DataInfo($"customOrigin{i}", 1)
                 {
-                    new DataInfo($"customOrigin{i}", 1),
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo($"customOrigin{i}X", 16),
+                        new DataInfo($"customOrigin{i}Y", 16),
+                    }
                 });
             }
             return ret;
@@ -232,15 +359,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV1());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -260,15 +381,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV1());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -289,15 +404,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV1());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -319,15 +428,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -349,15 +452,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -380,15 +477,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -411,15 +502,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -443,15 +528,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -466,7 +545,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("unknown3", 11),
                 new DataInfo("showEffectFlags", 4),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -475,15 +554,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -500,7 +573,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -509,15 +582,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -534,7 +601,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -543,15 +610,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV2());
+            ret.AddRange(GetWeaponPartV1());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 2),
-                new DataInfo("shieldID", 10),
-                new DataInfo("shieldGender", 4),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -568,7 +629,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -577,14 +638,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV3());
+            ret.AddRange(GetWeaponPartV2());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 3),
-                new DataInfo("uk2_1", 1),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -601,7 +657,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -610,14 +666,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV3());
+            ret.AddRange(GetWeaponPartV2());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 3),
-                new DataInfo("uk2_1", 1),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -635,7 +686,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -644,14 +695,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV4());
+            ret.AddRange(GetWeaponPartV2());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 3),
-                new DataInfo("uk2_1", 1),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -669,7 +715,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV3());
             ret.AddRange(GetRingPartV1());
             return ret;
         }
@@ -678,14 +724,9 @@ namespace WzComparerR2.OpenAPI
         {
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV4());
+            ret.AddRange(GetWeaponPartV2());
             ret.AddRange(new List<DataInfo>()
             {
-                new DataInfo("subWeaponType", 3),
-                new DataInfo("uk2_1", 1),
-                new DataInfo("isCashWeapon", 1),
-                new DataInfo("weaponID", 10),
-                new DataInfo("weaponGender", 2),
-                new DataInfo("weaponType", 8),
                 new DataInfo("earType", 4),
                 new DataInfo("mixHairColor", 4),
                 new DataInfo("mixHairRatio", 8),
@@ -703,7 +744,7 @@ namespace WzComparerR2.OpenAPI
                 new DataInfo("emotionFaceAccID", 10),
                 new DataInfo("emotionFaceAccGender", 2),
             });
-            ret.AddRange(GetPrismPartV2());
+            ret.AddRange(GetPrismPartV4());
             ret.AddRange(new List<DataInfo>()
             {
                 new DataInfo("Unknown43", 16),
@@ -725,12 +766,17 @@ namespace WzComparerR2.OpenAPI
         public string Name { get; set; }
         public int Bits { get; set; }
         public int Value { get; set; }
+        public int ExpandOffset { get; set; } = 1;
+        public List<DataInfo> SubItems { get; set; } = new();
+        public bool CanExpand { get { return this.Value != 0 && this.SubItems.Count > 0; } }
 
         public DataInfo Clone()
         {
             return new DataInfo(Name, Bits)
             {
-                Value = Value
+                Value = Value,
+                ExpandOffset = ExpandOffset,
+                SubItems = SubItems.Select(item => item.Clone()).ToList()
             };
         }
     }
