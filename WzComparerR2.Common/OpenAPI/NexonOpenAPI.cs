@@ -512,49 +512,9 @@ namespace WzComparerR2.OpenAPI
                 current.Value = value;
                 offset += current.Bits;
 
-                foreach (var type in new[] { "Cap", "FaceAcc", "EyeAcc", "EarAcc", "Coat", "Pants", "Shoes", "Gloves", "Cape", "Shield", "Weapon", "Skin" })
+                if (current.CanExpand)
                 {
-                    if (res.Version >= 27 && value == 1 && current.Name == $"has{type}Prism")
-                    {
-                        string[] indexs;
-                        bool multiType = false;
-                        if (res.Version >= 33 && type != "Skin")
-                        {
-                            indexs = new[] { "", "2" };
-                            multiType = true;
-                        }
-                        else
-                        {
-                            indexs = new[] { "" };
-                        }
-
-                        var items = new List<DataInfo>();
-                        foreach (var index in indexs)
-                        {
-                            if (res.Version >= 43 && type != "Skin")
-                            {
-                                items.Add(new DataInfo($"{type.ToLower()}Prism{index}ConvertPureBlack", 1));
-                            }
-                            if (multiType)
-                            {
-                                items.Add(new DataInfo($"{type.ToLower()}Prism{index}Type", 3));
-                            }
-                            items.AddRange(new[] { new DataInfo($"{type.ToLower()}Prism{index}ColorType", 3), new DataInfo($"{type.ToLower()}Prism{index}Brightness", 8), new DataInfo($"{type.ToLower()}Prism{index}Saturation", 8), new DataInfo($"{type.ToLower()}Prism{index}Hue", 9), });
-                        }
-                        res.Unpacked.InsertRange(k + 1, items);
-                    }
-                }
-                if (value == 1 && current.Name == "isCashWeapon")
-                {
-                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo("cashWeaponID", 10), new DataInfo("cashWeaponGender", 2) });
-                }
-                else if (res.Version >= 39 && value != 0 && current.Name == $"subWeaponType")
-                {
-                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo("shieldID", 10), new DataInfo("shieldGender", 4) });
-                }
-                else if (res.Version >= 43 && value == 1 && current.Name.StartsWith("customOrigin"))
-                {
-                    res.Unpacked.InsertRange(k + 1, new[] { new DataInfo($"{current.Name}X", 16), new DataInfo($"{current.Name}Y", 16), });
+                    res.Unpacked.InsertRange(k + current.ExpandOffset, current.SubItems);
                 }
             }
             return;
