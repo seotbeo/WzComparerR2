@@ -198,7 +198,14 @@ namespace WzComparerR2.OpenAPI
                         new DataInfo("shieldGender", 4),
                     }
                 },
-                new DataInfo("unknown_wp", 1),
+                new DataInfo("isZeroSubweapon", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("zeroSubWeaponID", 10),
+                        new DataInfo("zeroSubWeaponGender", 4),
+                    }
+                },
                 new DataInfo("isCashWeapon", 1)
                 {
                     SubItems = new List<DataInfo>()
