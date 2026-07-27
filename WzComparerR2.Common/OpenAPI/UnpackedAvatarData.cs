@@ -212,6 +212,15 @@ namespace WzComparerR2.OpenAPI
 
         private string GetShield()
         {
+            var zeroid = GetValue("zeroSubWeaponID");
+            if (zeroid > 0)
+            {
+                var zeroret = "172";
+                zeroret += GetValue("zeroSubWeaponGender");
+                zeroret += zeroid.ToString().PadLeft(3, '0');
+                return zeroret;
+            }
+
             var id = GetValue("shieldID");
             if (id == -1) return "";
 
