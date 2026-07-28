@@ -1453,12 +1453,20 @@ namespace WzComparerR2.Comparer
 
             if (!match.Success)
             {
-                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\\d+.img\\(\d+)$"); // 추가/삭제 확인
+                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install)\\\d+.img\\(\d+)$"); // 추가/삭제 확인
+                if (!match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Pet)\\(\d+).img$");
+                }
             }
 
             if (change && !match.Success)
             {
-                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install|Pet)\\_Canvas\\\d+.img\\(\d+)\\info\\(icon)$"); // 아이콘 변경 체크
+                match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Cash|Consume|Etc|Install)\\_Canvas\\\d+.img\\(\d+)\\info\\(icon)$"); // 아이콘 변경 체크
+                if (!match.Success)
+                {
+                    match = Regex.Match(node.FullPathToFile, @"^Item\\(?:Pet)\\_Canvas\\(\d+).img\\info\\(icon)$");
+                }
             }
 
             if (match.Success)
