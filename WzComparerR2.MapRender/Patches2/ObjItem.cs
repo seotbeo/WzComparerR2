@@ -19,6 +19,7 @@ namespace WzComparerR2.MapRender.Patches2
         public int Z { get; set; }
         public int MoveType { get; set; }
         public bool Flip { get; set; }
+        public bool Hide { get; set; }
         public bool Light { get; set; }
         public bool Obstacle { get; set; }
         public int Damage { get; set; }
@@ -52,6 +53,7 @@ namespace WzComparerR2.MapRender.Patches2
                 MoveType = 0,
 
                 Flip = node.Nodes["f"].GetValueEx(false),
+                Hide = node.Nodes["hide"].GetValueEx(false),
                 Light = node.Nodes["light"].GetValueEx<int>(0) != 0,
                 SpineAni = node.Nodes["spineAni"].GetValueEx<string>(null),
 
