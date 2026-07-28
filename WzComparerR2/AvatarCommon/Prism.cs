@@ -35,6 +35,24 @@ namespace WzComparerR2.AvatarCommon
             var srcData = src.LockBits(new Rectangle(0, 0, src.Width, src.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             var dstData = dst.LockBits(new Rectangle(0, 0, dst.Width, dst.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
+            // 16/32비트 색상 검사
+            bool not16bitcolor = false;
+            for (int y = 0; y < srcData.Height; y++)
+            {
+                byte* srcRow = (byte*)srcData.Scan0 + y * srcData.Stride;
+                for (int x = 0; x < srcData.Width; x++)
+                {
+                    var b = srcRow[x * 4];
+                    var g = srcRow[x * 4 + 1];
+                    var r = srcRow[x * 4 + 2];
+                    if (r % 17 != 0 || g % 17 != 0 || b % 17 != 0)
+                    {
+                        not16bitcolor = true;
+                        break;
+                    }
+                }
+            }
+
             for (int y = 0; y < srcData.Height; y++)
             {
                 byte* srcRow = (byte*)srcData.Scan0 + y * srcData.Stride;
@@ -51,18 +69,12 @@ namespace WzComparerR2.AvatarCommon
                     SetHSVfromRGB_v2(ref rgb, ref hsv);
 
                     bool convert = (convertPureBlack && hsv.Saturation == 0) ? true : CheckColorType(type, ref hsv);
-                    bool not16bitcolor = false;
                     if ((!convertPureBlack && rgb.R == 0 && rgb.G == 0 && rgb.B == 0) || (rgb.R == 255 && rgb.G == 255 && rgb.B == 255) || a == 0)
                     {
                         convert = false;
                     }
                     if (convert)
                     {
-                        if (rgb.R % 17 != 0 || rgb.G % 17 != 0 || rgb.B % 17 != 0)
-                        {
-                            not16bitcolor = true;
-                        }
-
                         { // v2
                             // hue
                             hsv.Hue = (hsv.Hue + hue) % 360;
