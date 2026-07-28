@@ -759,6 +759,11 @@ namespace WzComparerR2.MapRender
 
         private void PreloadResource(ResourceLoader resLoader, ObjItem obj)
         {
+            if (obj.Hide)
+            {
+                obj.View = new ObjItem.ItemView(obj);
+                return;
+            }
             string path = $@"Map\Obj\{obj.OS}.img\{obj.L0}\{obj.L1}\{obj.L2}";
             var aniItem = resLoader.LoadAnimationData(path);
             obj.View = new ObjItem.ItemView(obj)
