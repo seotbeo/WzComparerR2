@@ -1438,7 +1438,10 @@ namespace WzComparerR2.Avatar.UI
             if (actionItem != null)
             {
                 var frames = avatar.GetActionFrames(actionItem.Text);
-                FillComboItems(cmbBodyFrame, frames);
+
+                string[] repeatMidActionList = ["stand1", "stand2", "alert"];
+                bool repeatMidAction = repeatMidActionList.Contains(frames.FirstOrDefault().Action);
+                FillComboItems(cmbBodyFrame, frames, repeatMidAction);
             }
             else
             {
@@ -1528,7 +1531,7 @@ namespace WzComparerR2.Avatar.UI
             FillComboItems(comboBox, _items);
         }
 
-        private void FillComboItems(ComboBoxEx comboBox, IEnumerable<ActionFrame> frames)
+        private void FillComboItems(ComboBoxEx comboBox, IEnumerable<ActionFrame> frames, bool repeatMidAction = false)
         {
             List<ComboItem> items = new List<ComboItem>();
             int i = 0;
@@ -1539,6 +1542,12 @@ namespace WzComparerR2.Avatar.UI
                 item.Tag = f;
                 items.Add(item);
             }
+
+            if (repeatMidAction && items.Count == 3)
+            {
+                items.Add(items[1]);
+            }
+
             FillComboItems(comboBox, items);
         }
 
