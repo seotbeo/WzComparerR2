@@ -21,14 +21,21 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         private static readonly IWzPreReader[] readers = new IWzPreReader[]
         {
-            new Pkg1PreReader(),
-            new Pkg2PreReader(WzFileFormat.Pkg2Kmst1196, false),
-            new Pkg2PreReader(WzFileFormat.Pkg2Kmst1198, true),
+            new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1204, 200, true, true),
+            new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1202, 150, false, false),
             new Pkg2PreReader(WzFileFormat.Pkg2Kmst1201, true, true),
-            new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1202),
+            new Pkg2PreReader(WzFileFormat.Pkg2Kmst1198, true),
+            new Pkg2PreReader(WzFileFormat.Pkg2Kmst1196, false),
+            new Pkg1PreReader(),
+        };
+
+        private static readonly IWzPreReader[] readers_UNK = new IWzPreReader[]
+        {
+            new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1204, 200, true, true),
         };
 
         public static IReadOnlyList<IWzPreReader> All => readers;
+        public static IReadOnlyList<IWzPreReader> All_UNK => readers_UNK;
     }
 
     #region PKG1
@@ -115,9 +122,9 @@ namespace WzComparerR2.WzLib.Compatibility
 
     internal sealed class Pkg2PreReader : IWzPreReader
     {
-        public Pkg2PreReader(WzFileFormat format, bool isPkg2DirString = false, bool supportRandomHeader = false)
+        public Pkg2PreReader(WzFileFormat format, bool isPkg2DirString = false, bool requireRandomHeader = false)
         {
-            this.rule = new Pkg2PreReadRule(format, isPkg2DirString, supportRandomHeader);
+            this.rule = new Pkg2PreReadRule(format, isPkg2DirString, requireRandomHeader);
         }
 
         private readonly IPkg2PreReadRule rule;
@@ -130,9 +137,9 @@ namespace WzComparerR2.WzLib.Compatibility
 
     internal sealed class Pkg2PreReader64 : IWzPreReader
     {
-        public Pkg2PreReader64(WzFileFormat format)
+        public Pkg2PreReader64(WzFileFormat format, int headerSize, bool allNamesUseV2, bool encryptEntryData)
         {
-            this.rule = new Pkg2PreReadRule64();
+            this.rule = new Pkg2PreReadRule64(format, headerSize, allNamesUseV2, encryptEntryData);
         }
 
         private readonly IPkg2PreReadRule rule;
@@ -203,6 +210,7 @@ namespace WzComparerR2.WzLib.Compatibility
                         try
                         {
                             rule.ReadEntryName(reader, result, context, entries.Count);
+                            uint sizePosition = (uint)reader.BaseStream.Position;
                             int size = reader.ReadCompressedInt32();
                             if (rule.ValidateImageLength && (size < 0 || (nodeType == 0x03 && size != 0)))
                             {
@@ -210,7 +218,14 @@ namespace WzComparerR2.WzLib.Compatibility
                                 break;
                             }
                             reader.ReadCompressedInt32();
-                            entries.Add(new Pkg2PreReadEntry { NodeType = nodeType, DataLength = size, EndPosition = reader.BaseStream.Position });
+                            entries.Add(new Pkg2PreReadEntry
+                            {
+                                NodeType = nodeType,
+                                DataLength = size,
+                                DataLengthPosition = sizePosition,
+                                IsDataLengthEncrypted = rule.IsEntryDataEncrypted,
+                                EndPosition = reader.BaseStream.Position,
+                            });
                         }
                         catch when (rule.AllowEntryBoundaryProbe)
                         {
@@ -235,69 +250,151 @@ namespace WzComparerR2.WzLib.Compatibility
                 }
             }
 
-            do
+            int dirCount = 0;
+            for (int i = 0; i < entries.Count; i++)
             {
-                rule.ValidateOffsetSection(reader, header, entries.Count);
-
-                result.Pkg2DirEntryCounts.Add(new Pkg2DirEntryCount
-                {
-                    EncryptedEntryCount = header.EncryptedEntryCount,
-                    ActualEntryCount = entries.Count,
-                    ActualImgCount = entries.Count(e => e.NodeType == 0x04),
-                });
-
-                for (int i = 0; i < entries.Count; i++)
-                {
-                    uint offsetPos = (uint)reader.BaseStream.Position;
-                    uint hashedOffset = reader.ReadUInt32();
-                    result.Nodes.Add(new WzPreReadNodeInfo
-                    {
-                        NodeType = entries[i].NodeType,
-                        DataLength = entries[i].DataLength,
-                        HashedOffsetPosition = offsetPos,
-                        HashedOffset = hashedOffset,
-                    });
-                }
-
-                for (int i = 0; i < entries.Count; i++)
-                {
-                    if (entries[i].NodeType == 0x03)
-                        ReadTree(reader, result, rule, context, fileLen, false);
-                }
-
-                if (isTopLevel && rule.ValidateImageLength)
-                {
-                    // Validate the total image length against the file length.
-                    long dirEndPos = reader.BaseStream.Position;
-                    long imageTotalLength = 0;
-                    foreach (var node in result.Nodes)
-                    {
-                        if (node.NodeType == 0x04)
-                        {
-                            imageTotalLength += node.DataLength;
-                        }
-                    }
-                    if (dirEndPos + imageTotalLength > fileLen)
-                    {
-                        // rollback 1 entry and try again.
-                        if (entries.Count > 1)
-                        {
-                            entries.RemoveAt(entries.Count - 1);
-                            reader.BaseStream.Position = entries[entries.Count - 1].EndPosition;
-                            result.Pkg2DirEntryCounts.Clear();
-                            result.Nodes.Clear();
-                            continue;
-                        }
-                        else
-                        {
-                            throw new InvalidDataException("PKG2 image length exceeds file length.");
-                        }
-                    }
-                }
-
-                break;
+                if (entries[i].NodeType == 0x03)
+                    dirCount++;
             }
-            while (true);
+
+            if (rule.AllowEntryBoundaryProbe && isTopLevel && !header.IsFixedEntryCount)
+            {
+                var candidates = BuildTopLevelImageCandidates(reader, result, header, entries, entriesStartPosition, fileLen, rule.EntryBoundaryCandidateBacktrackCount);
+                if (candidates.Count == 0)
+                    throw new InvalidDataException("PKG2 top-level image boundary probe failed.");
+
+                result.Candidates ??= new List<WzPreReadCandidate>();
+                result.Candidates.AddRange(candidates);
+                ApplyCandidate(result, candidates[0]);
+                reader.BaseStream.Position = candidates[0].DirEndPosition;
+                return;
+            }
+
+            if (rule.ValidateImageLength && isTopLevel && dirCount == 0)
+            {
+                bool matched = false;
+                for (int count = entries.Count; count >= 0; count--)
+                {
+                    long offsetStart = count == 0 ? entriesStartPosition : entries[count - 1].EndPosition;
+                    long dirEndPosition = offsetStart + count * 4L;
+                    if (dirEndPosition > fileLen)
+                        continue;
+
+                    long imageDataLengthSum = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (entries[i].NodeType == 0x04)
+                            imageDataLengthSum += entries[i].DataLength;
+                    }
+
+                    if (imageDataLengthSum == fileLen - dirEndPosition)
+                    {
+                        if (count < entries.Count)
+                            entries.RemoveRange(count, entries.Count - count);
+                        reader.BaseStream.Position = offsetStart;
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (!matched)
+                    throw new InvalidDataException("PKG2 top-level image length validation failed.");
+            }
+
+            rule.ValidateOffsetSection(reader, header, entries.Count);
+
+            result.Pkg2DirEntryCounts.Add(new Pkg2DirEntryCount
+            {
+                EncryptedEntryCount = header.EncryptedEntryCount,
+                ActualEntryCount = entries.Count,
+                ActualImgCount = entries.Count(e => e.NodeType == 0x04),
+            });
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                uint offsetPos = (uint)reader.BaseStream.Position;
+                uint hashedOffset = reader.ReadUInt32();
+                result.Nodes.Add(new WzPreReadNodeInfo
+                {
+                    NodeType = entries[i].NodeType,
+                    DataLength = entries[i].DataLength,
+                    DataLengthPosition = entries[i].DataLengthPosition,
+                    IsDataLengthEncrypted = entries[i].IsDataLengthEncrypted,
+                    HashedOffsetPosition = offsetPos,
+                    HashedOffset = hashedOffset,
+                });
+            }
+
+            for (int i = 0; i < dirCount; i++)
+                ReadTree(reader, result, rule, context, fileLen, false);
+        }
+
+        private static List<WzPreReadCandidate> BuildTopLevelImageCandidates(WzBinaryReader reader, WzPreReadResult result, Pkg2DirHeader header, List<Pkg2PreReadEntry> entries, long entriesStartPosition, long fileLen, int backtrackCount)
+        {
+            var candidates = new List<WzPreReadCandidate>();
+            long savedPosition = reader.BaseStream.Position;
+            int minCount = Math.Max(0, entries.Count - Math.Max(0, backtrackCount));
+
+            for (int count = entries.Count; count >= minCount; count--)
+            {
+                long offsetStart = count == 0 ? entriesStartPosition : entries[count - 1].EndPosition;
+                long dirEndPosition = offsetStart + count * 4L;
+                if (dirEndPosition > fileLen)
+                    continue;
+
+                int imgCount = 0;
+                var nodes = new List<WzPreReadNodeInfo>(count);
+                try
+                {
+                    reader.BaseStream.Position = offsetStart;
+                    for (int i = 0; i < count; i++)
+                    {
+                        uint offsetPos = (uint)reader.BaseStream.Position;
+                        uint hashedOffset = reader.ReadUInt32();
+                        nodes.Add(new WzPreReadNodeInfo
+                        {
+                            NodeType = entries[i].NodeType,
+                            DataLength = entries[i].DataLength,
+                            DataLengthPosition = entries[i].DataLengthPosition,
+                            IsDataLengthEncrypted = entries[i].IsDataLengthEncrypted,
+                            HashedOffsetPosition = offsetPos,
+                            HashedOffset = hashedOffset,
+                        });
+                        if (entries[i].NodeType == 0x04) imgCount++;
+                    }
+                }
+                catch (EndOfStreamException)
+                {
+                    continue;
+                }
+
+                candidates.Add(new WzPreReadCandidate
+                {
+                    Nodes = nodes,
+                    DirEndPosition = dirEndPosition,
+                    AllowLooseDirectoryOffsets = true,
+                    Pkg2DirEntryCounts = new List<Pkg2DirEntryCount>
+                    {
+                        new Pkg2DirEntryCount
+                        {
+                            EncryptedEntryCount = header.EncryptedEntryCount,
+                            ActualEntryCount = count,
+                            ActualImgCount = imgCount,
+                        },
+                    },
+                });
+            }
+
+            reader.BaseStream.Position = savedPosition;
+            return candidates;
+        }
+
+        private static void ApplyCandidate(WzPreReadResult result, WzPreReadCandidate candidate)
+        {
+            result.Nodes.Clear();
+            result.Nodes.AddRange(candidate.Nodes);
+            result.DirEndPosition = candidate.DirEndPosition;
+            result.Pkg2DirEntryCounts = candidate.Pkg2DirEntryCounts;
         }
 
         private static void ReadOneEntry(WzBinaryReader reader, WzPreReadResult result, IPkg2PreReadRule rule, Pkg2PreReadContext context, int entryIndex, List<Pkg2PreReadEntry> entries)
@@ -309,9 +406,17 @@ namespace WzComparerR2.WzLib.Compatibility
             }
 
             rule.ReadEntryName(reader, result, context, entryIndex);
+            uint sizePosition = (uint)reader.BaseStream.Position;
             int size = reader.ReadCompressedInt32();
             reader.ReadCompressedInt32();
-            entries.Add(new Pkg2PreReadEntry { NodeType = nodeType, DataLength = size, EndPosition = reader.BaseStream.Position });
+            entries.Add(new Pkg2PreReadEntry
+            {
+                NodeType = nodeType,
+                DataLength = size,
+                DataLengthPosition = sizePosition,
+                IsDataLengthEncrypted = rule.IsEntryDataEncrypted,
+                EndPosition = reader.BaseStream.Position,
+            });
         }
     }
 
@@ -319,7 +424,9 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         WzFileFormat Format { get; }
         bool AllowEntryBoundaryProbe { get; }
+        int EntryBoundaryCandidateBacktrackCount { get; }
         bool ValidateImageLength { get; }
+        bool IsEntryDataEncrypted { get; }
         bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context);
         Pkg2DirHeader ReadDirectoryHeader(WzBinaryReader reader, Pkg2PreReadContext context);
         bool IsDirectoryTerminator(byte nodeType, Pkg2DirHeader header);
@@ -329,19 +436,21 @@ namespace WzComparerR2.WzLib.Compatibility
 
     internal sealed class Pkg2PreReadRule : IPkg2PreReadRule
     {
-        public Pkg2PreReadRule(WzFileFormat format, bool isPkg2DirString, bool supportRandomHeader)
+        public Pkg2PreReadRule(WzFileFormat format, bool isPkg2DirString, bool requireRandomHeader)
         {
             this.Format = format;
             this.isPkg2DirString = isPkg2DirString;
-            this.supportRandomHeader = supportRandomHeader;
+            this.requireRandomHeader = requireRandomHeader;
         }
 
         private readonly bool isPkg2DirString;
-        private readonly bool supportRandomHeader;
+        private readonly bool requireRandomHeader;
 
         public WzFileFormat Format { get; }
         public bool AllowEntryBoundaryProbe => false;
+        public int EntryBoundaryCandidateBacktrackCount => 2;
         public bool ValidateImageLength => false;
+        public bool IsEntryDataEncrypted => false;
 
         public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
         {
@@ -352,7 +461,8 @@ namespace WzComparerR2.WzLib.Compatibility
             if (wzFile.Header.HasCapabilities(Wz_Capabilities.Pkg2RandomHeader64))
                 return false;
 
-            if (wzFile.Header.HasCapabilities(Wz_Capabilities.Pkg2RandomHeader) && !this.supportRandomHeader)
+            bool hasRandomHeader = wzFile.Header.HasCapabilities(Wz_Capabilities.Pkg2RandomHeader);
+            if (hasRandomHeader != this.requireRandomHeader)
                 return false;
 
             context.IsPkg2DirString = this.isPkg2DirString;
@@ -404,9 +514,23 @@ namespace WzComparerR2.WzLib.Compatibility
 
     internal sealed class Pkg2PreReadRule64 : IPkg2PreReadRule
     {
-        public WzFileFormat Format => WzFileFormat.Pkg2Kmst1202;
+        public Pkg2PreReadRule64(WzFileFormat format, int headerSize, bool allNamesUseV2, bool encryptEntryData)
+        {
+            this.Format = format;
+            this.headerSize = headerSize;
+            this.allNamesUseV2 = allNamesUseV2;
+            this.encryptEntryData = encryptEntryData;
+        }
+
+        private readonly int headerSize;
+        private readonly bool allNamesUseV2;
+        private readonly bool encryptEntryData;
+
+        public WzFileFormat Format { get; }
         public bool AllowEntryBoundaryProbe => true;
-        public bool ValidateImageLength => true;
+        public int EntryBoundaryCandidateBacktrackCount => 2;
+        public bool ValidateImageLength => !this.encryptEntryData;
+        public bool IsEntryDataEncrypted => this.encryptEntryData;
 
         public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
         {
@@ -414,6 +538,8 @@ namespace WzComparerR2.WzLib.Compatibility
             if (!wzFile.Header.IsPkg2)
                 return false;
             if (wzFile.Header is not Wz_Header.WzPkg2Header64 header64)
+                return false;
+            if (header64.HeaderSize != this.headerSize)
                 return false;
 
             context.IsPkg2DirString = true;
@@ -423,9 +549,10 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public Pkg2DirHeader ReadDirectoryHeader(WzBinaryReader reader, Pkg2PreReadContext context)
         {
+            long encryptedEntryCount = reader.ReadCompressedInt64();
             return new Pkg2DirHeader
             {
-                EncryptedEntryCount = reader.ReadCompressedInt64(),
+                EncryptedEntryCount = encryptedEntryCount,
                 IsFixedEntryCount = false,
                 FixedEntryCount = 0,
             };
@@ -442,6 +569,10 @@ namespace WzComparerR2.WzLib.Compatibility
             {
                 result.FirstStringRawBytes = WzPreReadHelper.ReadPkg2DirStringV2RawBytes(reader, out var enc);
                 result.FirstStringEncoding = enc;
+            }
+            else if (this.allNamesUseV2)
+            {
+                WzPreReadHelper.SkipPkg2DirStringV2(reader);
             }
             else if (result.SecondStringRawBytes == null && entryIndex == 1)
             {
@@ -481,6 +612,8 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         public int NodeType;
         public int DataLength;
+        public uint DataLengthPosition;
+        public bool IsDataLengthEncrypted;
         public long EndPosition;
     }
 
@@ -594,6 +727,7 @@ namespace WzComparerR2.WzLib.Compatibility
         Pkg2Kmst1198,
         Pkg2Kmst1201,
         Pkg2Kmst1202,
+        Pkg2Kmst1204,
     }
 
     public enum WzStringEncoding
@@ -623,8 +757,21 @@ namespace WzComparerR2.WzLib.Compatibility
         public byte[] SecondStringRawBytes { get; set; }
 
         /// <summary>
+        /// Alternative directory boundary candidates produced by preread when the entry/offset split is ambiguous.
+        /// </summary>
+        public List<WzPreReadCandidate> Candidates { get; set; }
+
+        /// <summary>
         /// Per-directory-level encrypted and actual entry counts for PKG2 files.
         /// </summary>
+        public List<Pkg2DirEntryCount> Pkg2DirEntryCounts { get; set; }
+    }
+
+    public sealed class WzPreReadCandidate
+    {
+        public List<WzPreReadNodeInfo> Nodes { get; set; }
+        public long DirEndPosition { get; set; }
+        public bool AllowLooseDirectoryOffsets { get; set; }
         public List<Pkg2DirEntryCount> Pkg2DirEntryCounts { get; set; }
     }
 
@@ -632,6 +779,8 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         public int NodeType;
         public int DataLength;
+        public uint DataLengthPosition;
+        public bool IsDataLengthEncrypted;
         public uint HashedOffsetPosition;
         public uint HashedOffset;
     }

@@ -542,35 +542,62 @@ namespace WzComparerR2.WzLib.Compatibility
                 return false;
 
             var iterator = profile.CreateVersionIterator(header);
-            var nodes = preReadResult.Nodes;
-            bool hasOffsetSamples = nodes.Count > 0;
-            bool hasEntryCountSamples = HasPkg2EntryCountSamples(preReadResult);
-            if (!hasOffsetSamples && !hasEntryCountSamples)
+            bool hasAnySamples = false;
+            foreach (var candidate in EnumerateCandidates(preReadResult))
+            {
+                if (candidate.Nodes.Count > 0 || HasPkg2EntryCountSamples(candidate))
+                {
+                    hasAnySamples = true;
+                    break;
+                }
+            }
+            if (!hasAnySamples)
                 return false;
 
-            var imageSizes = new SizeRange[nodes.Count];
             long fileLen = wzFile.FileStream.Length;
 
             while (iterator.TryGetNextVersion())
             {
                 var calc = profile.CreateOffsetCalc(header, iterator.HashVersion);
-                if (!ValidateEntryCountsIfPkg2(preReadResult, calc))
-                    continue;
-
-                if (!hasOffsetSamples || ValidateOffsets(nodes, imageSizes, fileLen, preReadResult.DirStartPosition, preReadResult.DirEndPosition, calc))
+                var lengthCalc = profile.CreateLengthCalc(header, iterator.HashVersion);
+                foreach (var candidate in EnumerateCandidates(preReadResult))
                 {
-                    header.WzVersion = iterator.WzVersion;
-                    wzFile.ReadContext = profile.CreateReadContext(header, iterator.HashVersion, calc);
-                    return true;
+                    bool hasOffsetSamples = candidate.Nodes.Count > 0;
+                    if (!ValidateEntryCountsIfPkg2(candidate, calc))
+                        continue;
+
+                    var imageSizes = new SizeRange[candidate.Nodes.Count];
+                    if (!hasOffsetSamples || ValidateOffsets(candidate.Nodes, imageSizes, fileLen, preReadResult.DirStartPosition, candidate.DirEndPosition, calc, lengthCalc, candidate.AllowLooseDirectoryOffsets))
+                    {
+                        header.WzVersion = iterator.WzVersion;
+                        wzFile.ReadContext = profile.CreateReadContext(header, iterator.HashVersion, calc, lengthCalc);
+                        return true;
+                    }
                 }
             }
 
             return false;
         }
 
-        private static bool HasPkg2EntryCountSamples(WzPreReadResult preReadResult)
+        private static IEnumerable<WzPreReadCandidate> EnumerateCandidates(WzPreReadResult preReadResult)
         {
-            return preReadResult.Pkg2DirEntryCounts != null && preReadResult.Pkg2DirEntryCounts.Count > 0;
+            yield return new WzPreReadCandidate
+            {
+                Nodes = preReadResult.Nodes,
+                DirEndPosition = preReadResult.DirEndPosition,
+                Pkg2DirEntryCounts = preReadResult.Pkg2DirEntryCounts,
+            };
+
+            if (preReadResult.Candidates == null)
+                yield break;
+
+            foreach (var candidate in preReadResult.Candidates)
+                yield return candidate;
+        }
+
+        private static bool HasPkg2EntryCountSamples(WzPreReadCandidate candidate)
+        {
+            return candidate.Pkg2DirEntryCounts != null && candidate.Pkg2DirEntryCounts.Count > 0;
         }
 
         public static bool TryDetectCached<THeader, THash>(Wz_File wzFile, WzPreReadResult preReadResult,
@@ -582,45 +609,61 @@ namespace WzComparerR2.WzLib.Compatibility
             if (!profile.TryResolveCache(header, cacheEntry, out int wzVersion, out THash hashVersion))
                 return false;
 
-            var nodes = preReadResult.Nodes;
-            if (nodes.Count == 0)
-            {
-                var emptyCalc = profile.CreateOffsetCalc(header, hashVersion);
-                header.WzVersion = wzVersion;
-                wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, emptyCalc);
-                return true;
-            }
-
-            var imageSizes = new SizeRange[nodes.Count];
             long fileLen = wzFile.FileStream.Length;
             var calc = profile.CreateOffsetCalc(header, hashVersion);
+            var lengthCalc = profile.CreateLengthCalc(header, hashVersion);
 
-            if (ValidateEntryCountsIfPkg2(preReadResult, calc)
-                && ValidateOffsets(nodes, imageSizes, fileLen, preReadResult.DirStartPosition, preReadResult.DirEndPosition, calc))
+            foreach (var candidate in EnumerateCandidates(preReadResult))
             {
-                header.WzVersion = wzVersion;
-                wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, calc);
-                return true;
+                if (candidate.Nodes.Count == 0)
+                {
+                    header.WzVersion = wzVersion;
+                    wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, calc, lengthCalc);
+                    return true;
+                }
+
+                var imageSizes = new SizeRange[candidate.Nodes.Count];
+                if (ValidateEntryCountsIfPkg2(candidate, calc)
+                    && ValidateOffsets(candidate.Nodes, imageSizes, fileLen, preReadResult.DirStartPosition, candidate.DirEndPosition, calc, lengthCalc, candidate.AllowLooseDirectoryOffsets))
+                {
+                    header.WzVersion = wzVersion;
+                    wzFile.ReadContext = profile.CreateReadContext(header, hashVersion, calc, lengthCalc);
+                    return true;
+                }
             }
 
             return false;
         }
 
-        private static bool ValidateEntryCountsIfPkg2(WzPreReadResult preReadResult, IWzImageOffsetCalc calc)
+        private static bool ValidateEntryCountsIfPkg2(WzPreReadCandidate candidate, IWzImageOffsetCalc calc)
         {
-            if (preReadResult.Pkg2DirEntryCounts == null || calc is not IPkg2ImageOffsetCalc pkg2Calc)
+            if (candidate.Pkg2DirEntryCounts == null || calc is not IPkg2ImageOffsetCalc pkg2Calc)
                 return true;
 
-            foreach (var ec in preReadResult.Pkg2DirEntryCounts)
+            foreach (var ec in candidate.Pkg2DirEntryCounts)
             {
-                if (Pkg2ImageOffsetCalcHelper.DecryptEntryCount(pkg2Calc, ec.EncryptedEntryCount) != ec.ActualEntryCount)
+                int actualEntryCount;
+                try
+                {
+                    actualEntryCount = Pkg2ImageOffsetCalcHelper.DecryptEntryCount(pkg2Calc, ec.EncryptedEntryCount);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    return false;
+                }
+                catch (OverflowException)
+                {
+                    return false;
+                }
+
+                if (actualEntryCount != ec.ActualEntryCount)
                     return false;
             }
             return true;
         }
 
         private static bool ValidateOffsets(List<WzPreReadNodeInfo> nodes, SizeRange[] imageSizes,
-            long fileLen, long dirStartPosition, long dirEndPosition, IWzImageOffsetCalc calc)
+            long fileLen, long dirStartPosition, long dirEndPosition, IWzImageOffsetCalc calc, IPkg2ImageLengthCalc lengthCalc, bool allowLooseDirectoryOffsets)
         {
             int imgCount = 0;
 
@@ -630,14 +673,23 @@ namespace WzComparerR2.WzLib.Compatibility
 
                 if (node.NodeType == 0x04 || node.NodeType == 0x02)
                 {
-                    if (offs < dirEndPosition || offs + node.DataLength > fileLen)
+                    if (!TryGetDataLength(node, lengthCalc, out int dataLength))
                         return false;
-                    imageSizes[imgCount++] = new SizeRange { Start = offs, End = offs + node.DataLength };
+                    if (offs < dirEndPosition || dataLength < 0 || offs + dataLength > fileLen)
+                        return false;
+                    imageSizes[imgCount++] = new SizeRange { Start = offs, End = offs + dataLength };
                 }
                 else if (node.NodeType == 0x03)
                 {
-                    if (offs < dirStartPosition || offs + 1 > dirEndPosition)
+                    if (allowLooseDirectoryOffsets)
+                    {
+                        if (offs < dirEndPosition || offs >= fileLen)
+                            return false;
+                    }
+                    else if (offs < dirStartPosition || offs + 1 > dirEndPosition)
+                    {
                         return false;
+                    }
                     imageSizes[imgCount++] = new SizeRange { Start = offs, End = offs + 1 };
                 }
             }
@@ -652,6 +704,19 @@ namespace WzComparerR2.WzLib.Compatibility
                 }
             }
 
+            return true;
+        }
+
+        private static bool TryGetDataLength(WzPreReadNodeInfo node, IPkg2ImageLengthCalc lengthCalc, out int dataLength)
+        {
+            dataLength = node.DataLength;
+            if (!node.IsDataLengthEncrypted)
+                return true;
+
+            if (lengthCalc == null)
+                return false;
+
+            dataLength = lengthCalc.CalcLength(node.DataLengthPosition, node.DataLength);
             return true;
         }
 

@@ -77,7 +77,6 @@ namespace WzComparerR2.WzLib
             {
                 this.Capabilities |= Wz_Capabilities.Pkg2RandomHeader64;
             }
-
         }
 
         public string Signature { get; private set; }

@@ -298,7 +298,7 @@
             this.chkImgCheckDisabled.Size = new System.Drawing.Size(132, 18);
             this.chkImgCheckDisabled.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.chkImgCheckDisabled.TabIndex = 6;
-            this.chkImgCheckDisabled.Text = "Img 확인 비활성화";
+            this.chkImgCheckDisabled.Text = "Img 체크섬 확인 비활성화";
             // 
             // labelXOpenAPIKey
             // 

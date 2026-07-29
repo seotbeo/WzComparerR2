@@ -39,7 +39,8 @@ namespace WzComparerR2.WzLib
         public uint HashedOffset { get; set; }
         public uint HashedOffsetPosition { get; set; }
         public long Offset { get; set; }
-        
+        public bool IgnoreChecksum { get; set; }
+
         public Wz_Node Node { get; private set; }
 
         public Wz_Node OwnerNode { get; set; }
@@ -86,7 +87,7 @@ namespace WzComparerR2.WzLib
                 bool disabledChec = this.WzFile?.WzStructure?.ImgCheckDisabled ?? false;
                 if (!disabledChec && !this.chec)
                 {
-                    if (this.Checksum != this.CalcCheckSum(this.stream))
+                    if (!this.IgnoreChecksum && this.Checksum != this.CalcCheckSum(this.stream))
                     {
                         e = new ArgumentException("checksum error");
                         return false;

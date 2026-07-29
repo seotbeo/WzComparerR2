@@ -95,60 +95,45 @@ namespace WzComparerR2.WzLib
                 this.wz_files.Add(file);
                 file.TextEncoding = this.TextEncoding;
 
-                // 1. pre-read
+                // 1. pre-read and detect version/read rule
                 WzPreReadResult preReadResult = null;
-                foreach (var preReader in WzPreReaders.All)
-                {
-                    if (preReader.TryPreRead(file, out var result))
-                    {
-                        preReadResult = result;
-                        break;
-                    }
-                }
-
                 IWzFormatProfile matchedProfile = null;
-
-                // 2. detect version and assign readRule to wz_file
-                if (preReadResult != null && !file.BypassToBF)
+                if (!file.UnknownPkg2)
                 {
-                    // Try cached profiles first
-                    foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
+                    foreach (var preReader in WzPreReaders.All)
                     {
-                        foreach (var cached in this.ProfileCache.GetCandidates(profile.Name))
+                        if (preReader.TryPreRead(file, out var result))
                         {
-                            if (profile.TryDetectCached(file, preReadResult, cached))
+                            matchedProfile = this.TryDetectWzProfile(file, result);
+                            if (matchedProfile != null)
                             {
-                                matchedProfile = profile;
-                                this.ProfileCache.MarkHit(cached);
+                                preReadResult = result;
                                 break;
                             }
                         }
-                        if (matchedProfile != null)
+                    }
+                }
+                if (matchedProfile == null)
+                {
+                    file.UnknownPkg2 = true;
+                    foreach (var preReader in WzPreReaders.All_UNK)
+                    {
+                        if (preReader.TryPreRead(file, out var result))
+                        {
+                            preReadResult = result;
                             break;
-                    }
-
-                    // Full detection: iterate candidate profiles
-                    if (matchedProfile == null)
-                    {
-                        foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
-                        {
-                            if (profile.TryDetect(file, preReadResult))
-                            {
-                                matchedProfile = profile;
-                                break;
-                            }
                         }
-                    }
-
-                    // Cache on success
-                    if (matchedProfile != null)
-                    {
-                        this.ProfileCache.Upsert(matchedProfile.CreateCacheEntry(file));
                     }
                 }
 
-                // 3. detect string encryption, assign to crypto
-                if (preReadResult != null && matchedProfile != null && !file.BypassToBF)
+                // Cache on success
+                if (matchedProfile != null)
+                {
+                    this.ProfileCache.Upsert(matchedProfile.CreateCacheEntry(file));
+                }
+
+                // 2. detect string encryption, assign to crypto
+                if (preReadResult != null && matchedProfile != null)
                 {
                     if (!this.encryption.IsDirEncDetected(file))
                     {
@@ -165,7 +150,7 @@ namespace WzComparerR2.WzLib
                     if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header64 pkg2Header)
                     {
                         var profile = WzFormatProfiles.GetPkg2UnknownProfile64();
-                        file.ReadContext = profile.CreateReadContext(file.Header as Wz_Header.WzPkg2Header64, 0, null);
+                        file.ReadContext = profile.CreateReadContext(file.Header as Wz_Header.WzPkg2Header64, 0, null, null);
                         profile.AssignDirStringReader(file, this.encryption);
                         if (preReadResult.Pkg2DirEntryCounts.Count > 0)
                         {
@@ -179,7 +164,7 @@ namespace WzComparerR2.WzLib
                     }
                 }
 
-                // 4. full dir tree read
+                // 3. full dir tree read
                 node.Value = file;
                 file.Node = node;
                 file.FileStream.Position = file.Header.DirStartPosition;
@@ -196,6 +181,33 @@ namespace WzComparerR2.WzLib
                 }
                 throw;
             }
+        }
+
+        private IWzFormatProfile TryDetectWzProfile(Wz_File file, WzPreReadResult preReadResult)
+        {
+            // Try cached profiles first.
+            foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
+            {
+                foreach (var cached in this.ProfileCache.GetCandidates(profile.Name))
+                {
+                    if (profile.TryDetectCached(file, preReadResult, cached))
+                    {
+                        this.ProfileCache.MarkHit(cached);
+                        return profile;
+                    }
+                }
+            }
+
+            // Full detection: iterate candidate profiles.
+            foreach (var profile in WzFormatProfiles.GetCandidates(preReadResult.Format))
+            {
+                if (profile.TryDetect(file, preReadResult))
+                {
+                    return profile;
+                }
+            }
+
+            return null;
         }
 
         public void LoadImg(string fileName)
@@ -264,6 +276,13 @@ namespace WzComparerR2.WzLib
                     return false;
                 }
                 foreach (var preReader in WzPreReaders.All)
+                {
+                    if (preReader.TryPreRead(file, out var result))
+                    {
+                        return !result.Nodes.Any(n => n.NodeType == 0x02 || n.NodeType == 0x04);
+                    }
+                }
+                foreach (var preReader in WzPreReaders.All_UNK)
                 {
                     if (preReader.TryPreRead(file, out var result))
                     {

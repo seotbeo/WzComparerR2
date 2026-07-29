@@ -27,6 +27,14 @@ namespace WzComparerR2.WzLib.Compatibility
         int DecryptEntryCount(TEncryptedEntryCount encryptedEntryCount);
     }
 
+    /// <summary>
+    /// Optional PKG2 capability for formats that encrypt image length/checksum fields.
+    /// </summary>
+    public interface IPkg2ImageLengthCalc
+    {
+        int CalcLength(uint filePos, int encryptedValue);
+    }
+
     internal static class Pkg2ImageOffsetCalcHelper
     {
         public static int DecryptEntryCount(IPkg2ImageOffsetCalc calc, long encryptedEntryCount)
@@ -200,7 +208,7 @@ namespace WzComparerR2.WzLib.Compatibility
     /// <summary>
     /// 64-bit PKG2 offset calculation for KMST 1202.
     /// </summary>
-    public sealed class Pkg2OffsetCalc64V1 : IPkg2ImageOffsetCalc<long>
+    public sealed class Pkg2OffsetCalc64V1 : IPkg2ImageOffsetCalc<long>, IPkg2ImageLengthCalc
     {
         public Pkg2OffsetCalc64V1(uint headerLen, ulong hash1, ulong hashVersion)
         {
@@ -220,16 +228,26 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public uint CalcOffset(uint filePos, uint hashedOffset)
         {
-            uint offset = filePos - this.headerLen;
-            offset = ~offset;
-            offset *= this.preHash + (this.mixedHash ^ 0xA7E3C093);
-            offset -= 0x581C3F6D;
-            offset ^= (uint)this.hash1 * 0x01010101;
-            offset ^= this.mixedHash * 0x9E3779B9;
-            offset = ROL(offset, 19);
+            uint offset = this.CalcSharedKey(filePos);
             offset ^= ~hashedOffset;
             offset += this.headerLen;
             return offset;
+        }
+
+        public int CalcLength(uint filePos, int encryptedValue)
+        {
+            return encryptedValue ^ unchecked((int)this.CalcSharedKey(filePos));
+        }
+
+        private uint CalcSharedKey(uint filePos)
+        {
+            uint key = filePos - this.headerLen;
+            key = ~key;
+            key *= (this.preHash + (this.mixedHash ^ 0xA7E3C093));
+            key -= 0x581C3F6D;
+            key ^= (uint)this.hash1 * 0x01010101;
+            key ^= this.mixedHash * 0x9E3779B9;
+            return ROL(key, 19);
         }
 
         public int DecryptEntryCount(long encryptedEntryCount)

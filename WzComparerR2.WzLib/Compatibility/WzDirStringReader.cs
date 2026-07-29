@@ -11,6 +11,15 @@ namespace WzComparerR2.WzLib.Compatibility
         string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath);
     }
 
+    public enum Pkg2EntryNameVersion
+    {
+        KMST1196,
+        KMST1198,
+        KMST1199,
+        KMST1202,
+        KMST1204,
+    }
+
     /// <summary>
     /// PKG2 legacy (KMST 1196-1197): all entries use ReadString with the same key.
     /// </summary>
@@ -60,27 +69,38 @@ namespace WzComparerR2.WzLib.Compatibility
     }
 
     /// <summary>
-    /// 64-bit PKG2: first entry uses ReadPkg2DirStringV2 (16bit length) with pkg2 key, rest use ReadString with pkg1 key.
+    /// 64-bit PKG2: entries can use ReadPkg2DirStringV2 (16bit length) with pkg2 key, depending on the format version.
     /// </summary>
     internal sealed class Pkg2MixedKeyDirStringReader64 : IPkg2DirStringReader
     {
-        public Pkg2MixedKeyDirStringReader64(IWzDecrypter firstNameKey, IWzDecrypter pkg1Keys)
+        public Pkg2MixedKeyDirStringReader64(IWzDecrypter firstNameKey, IWzDecrypter pkg1Keys, bool allNamesUseV2 = false)
         {
             this.firstNameKey = firstNameKey;
             this.pkg1Keys = pkg1Keys;
+            this.allNamesUseV2 = allNamesUseV2;
         }
 
         private readonly IWzDecrypter firstNameKey;
         private readonly IWzDecrypter pkg1Keys;
+        private readonly bool allNamesUseV2;
 
         public string ReadName(WzBinaryReader reader, bool isFirstEntry)
         {
-            return isFirstEntry ? reader.ReadPkg2DirStringV2(firstNameKey) : reader.ReadString(pkg1Keys);
+            if (this.allNamesUseV2 || isFirstEntry)
+            {
+                 // The reader's base stream must start from dirStartOffset.
+                if (this.firstNameKey is IWzStatefulDecrypter statefulDecrypter)
+                    statefulDecrypter.ApplyState((ulong)reader.BaseStream.Position);
+
+                return reader.ReadPkg2DirStringV2(firstNameKey);
+            }
+
+            return reader.ReadString(pkg1Keys);
         }
 
         public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
         {
-            return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath, true) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
+            return (this.allNamesUseV2 || isFirstEntry) ? reader.ForceReadPkg2DirString(nodeType, fullpath, true) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
         }
     }
 }

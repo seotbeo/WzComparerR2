@@ -341,6 +341,15 @@ namespace WzComparerR2.WzLib
             private ulong baseKey;
             private byte[] keys;
 
+            protected void SetBaseKey(ulong baseKey)
+            {
+                if (this.baseKey == baseKey && this.keys != null)
+                    return;
+
+                this.baseKey = baseKey;
+                this.keys = null;
+            }
+
             public byte this[int index]
             {
                 get
@@ -436,6 +445,29 @@ namespace WzComparerR2.WzLib
             private static ulong ConvertKey(ulong hash1, ulong hashVersion)
             {
                 return hash1 ^ hashVersion ^ 0x66B57FEE317FD3DF;
+            }
+        }
+
+        // KMST1204, position-dependent 64-bit key.
+        public class Pkg2DirStringKeyV4 : Pkg2DirStringKey, IWzStatefulDecrypter
+        {
+            public Pkg2DirStringKeyV4(ulong hash1, ulong hashVersion) : base(0)
+            {
+                this.hash1 = hash1;
+                this.hashVersion = hashVersion;
+                this.ApplyState(0);
+            }
+
+            private readonly ulong hash1;
+            private readonly ulong hashVersion;
+
+            public void ApplyState(ulong filePosition)
+            {
+                ulong baseKey = this.hash1
+                    ^ this.hashVersion
+                    ^ 0x21810F65FEC32BDC
+                    ^ (0x9E3779B97F4A7C15 * filePosition);
+                this.SetBaseKey(baseKey);
             }
         }
     }

@@ -6,15 +6,17 @@ namespace WzComparerR2.WzLib.Compatibility
 {
     public abstract class WzFileReadContext
     {
-        protected WzFileReadContext(uint compatibilityHashVersion, IWzImageOffsetCalc offsetCalc, IPkg2DirTreeReadRule pkg2DirTreeRule)
+        protected WzFileReadContext(uint compatibilityHashVersion, IWzImageOffsetCalc offsetCalc, IPkg2ImageLengthCalc lengthCalc, IPkg2DirTreeReadRule pkg2DirTreeRule)
         {
             this.CompatibilityHashVersion = compatibilityHashVersion;
             this.OffsetCalc = offsetCalc;
+            this.LengthCalc = lengthCalc;
             this.Pkg2DirTreeRule = pkg2DirTreeRule;
         }
 
         public uint CompatibilityHashVersion { get; }
         public IWzImageOffsetCalc OffsetCalc { get; }
+        public IPkg2ImageLengthCalc LengthCalc { get; }
         public IPkg2DirTreeReadRule Pkg2DirTreeRule { get; }
         public IPkg2DirStringReader DirStringReader { get; set; }
     }
@@ -22,7 +24,12 @@ namespace WzComparerR2.WzLib.Compatibility
     public sealed class WzFileReadContext<THash> : WzFileReadContext
     {
         public WzFileReadContext(THash hashVersion, uint compatibilityHashVersion, IWzImageOffsetCalc offsetCalc, IPkg2DirTreeReadRule pkg2DirTreeRule)
-            : base(compatibilityHashVersion, offsetCalc, pkg2DirTreeRule)
+            : this(hashVersion, compatibilityHashVersion, offsetCalc, null, pkg2DirTreeRule)
+        {
+        }
+
+        public WzFileReadContext(THash hashVersion, uint compatibilityHashVersion, IWzImageOffsetCalc offsetCalc, IPkg2ImageLengthCalc lengthCalc, IPkg2DirTreeReadRule pkg2DirTreeRule)
+            : base(compatibilityHashVersion, offsetCalc, lengthCalc, pkg2DirTreeRule)
         {
             this.HashVersion = hashVersion;
         }

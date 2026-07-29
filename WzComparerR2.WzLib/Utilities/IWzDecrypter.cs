@@ -10,4 +10,9 @@ namespace WzComparerR2.WzLib.Utilities
         void Decrypt(ReadOnlySpan<byte> inputBuffer, Span<byte> outputBuffer);
         void Decrypt(ReadOnlySpan<byte> inputBuffer, Span<byte> outputBuffer, int keyOffset);
     }
+
+    public interface IWzStatefulDecrypter : IWzDecrypter
+    {
+        void ApplyState(ulong filePosition);
+    }
 }

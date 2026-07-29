@@ -41,7 +41,7 @@ namespace WzComparerR2.WzLib
         private Wz_Type type;
         private List<Wz_File> mergedWzFiles;
         private Wz_File ownerWzFile;
-        public bool BypassToBF { get; private set; }
+        public bool UnknownPkg2 { get; set; }
 
         internal WzFileReadContext ReadContext { get; set; }
 
@@ -131,8 +131,14 @@ namespace WzComparerR2.WzLib
             string signature = new string(br.ReadChars(4));
             if (signature != Wz_Header.PKG1 && signature != Wz_Header.PKG2)
             {
+                // KMST1204: 200-byte random header carrying 64-bit hashes
+                if (this.TryReadPkg2KMST1204Header(fileName, out var header64))
+                {
+                    this.Header = header64;
+                    return true;
+                }
                 // KMST1202: 150-byte random header carrying 64-bit hashes
-                if (this.TryReadPkg2KMST1202Header(fileName, out var header64))
+                if (this.TryReadPkg2KMST1202Header(fileName, out header64))
                 {
                     this.Header = header64;
                     return true;
@@ -207,7 +213,7 @@ namespace WzComparerR2.WzLib
             return true;
 
         __failed:
-            br.BaseStream.Position = 150;
+            br.BaseStream.Position = 200;
             while (true)
             {
                 try
@@ -215,10 +221,10 @@ namespace WzComparerR2.WzLib
                     if (br.ReadByte() == 0x80)
                     {
                         var dataStartPos = (int)this.fileStream.Position - 1;
-                        if (dataStartPos >= 180) break;
+                        if (dataStartPos >= 230) break;
                         this.header = new Wz_Header.WzPkg2Header64(Wz_Header.PKG2, null, fileName, dataStartPos, 0, filesize, dataStartPos, 0, 0);
                         this.Header.Capabilities |= Wz_Capabilities.Pkg2RandomHeader;
-                        this.BypassToBF = true;
+                        this.UnknownPkg2 = true;
                         return true;
                     }
                 }
@@ -269,7 +275,20 @@ namespace WzComparerR2.WzLib
             ReadOnlySpan<int> hash1Offsets = stackalloc int[] { 0x48, 0x24, 0x0F, 0x31, 0x46, 0x47, 0x63, 0x67 };
             ReadOnlySpan<int> hash2Offsets = stackalloc int[] { 0x8E, 0x8C, 0x93, 0x0E, 0x64, 0x7B, 0x2E, 0x4D };
             ReadOnlySpan<int> dataSizeOffsets = stackalloc int[] { 0x12, 0x09, 0x02, 0x95 };
+            return this.TryReadPkg2RandomHeader64(fileName, headerLen, hash1Offsets, hash2Offsets, dataSizeOffsets, out header);
+        }
 
+        private bool TryReadPkg2KMST1204Header(string fileName, out Wz_Header.WzPkg2Header64 header)
+        {
+            const int headerLen = 200;
+            ReadOnlySpan<int> hash1Offsets = stackalloc int[] { 0x1E, 0x1A, 0x10, 0x01, 0x0F, 0x48, 0xC5, 0x99 };
+            ReadOnlySpan<int> hash2Offsets = stackalloc int[] { 0x64, 0x6C, 0x25, 0x16, 0x0A, 0x03, 0xA2, 0xAA };
+            ReadOnlySpan<int> dataSizeOffsets = stackalloc int[] { 0x14, 0xB0, 0xB6, 0xB7 };
+            return this.TryReadPkg2RandomHeader64(fileName, headerLen, hash1Offsets, hash2Offsets, dataSizeOffsets, out header);
+        }
+
+        private bool TryReadPkg2RandomHeader64(string fileName, int headerLen, ReadOnlySpan<int> hash1Offsets, ReadOnlySpan<int> hash2Offsets, ReadOnlySpan<int> dataSizeOffsets, out Wz_Header.WzPkg2Header64 header)
+        {
             header = null;
             long fileSize = this.fileStream.Length;
             if (fileSize < headerLen)
@@ -415,7 +434,7 @@ namespace WzComparerR2.WzLib
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                 }
@@ -507,18 +526,19 @@ namespace WzComparerR2.WzLib
                     throw new Exception($"Unknown type {nodeType} in WzDirTree.");
                 }
 
+                uint sizePosition = (uint)this.fileStream.Position;
                 int size = reader.ReadCompressedInt32();
+                uint checksumPosition = (uint)this.fileStream.Position;
                 int cs32 = reader.ReadCompressedInt32();
+                if (context.LengthCalc != null)
+                {
+                    size = context.LengthCalc.CalcLength(sizePosition, size);
+                    cs32 = context.LengthCalc.CalcLength(checksumPosition, cs32);
+                }
                 if (force && nodeType == 0x04 && hitcount < this.CandidateImageInfos.Count)
                 {
-                    if (size == this.CandidateImageInfos[hitcount].Item2)
-                    {
-                        forcedOffset = this.CandidateImageInfos[hitcount].Item1;
-                    }
-                    else
-                    {
-                        forcedOffset = this.CandidateImageInfos.FirstOrDefault(t => size == t.Item2)?.Item1 ?? 0;
-                    }
+                    forcedOffset = this.CandidateImageInfos[hitcount].Item1;
+                    size = (int)this.CandidateImageInfos[hitcount].Item2;
                     hitcount++;
                 }
                 entries.Add(new Pkg2DirEntry
@@ -547,6 +567,11 @@ namespace WzComparerR2.WzLib
                                 img.Offset = context.OffsetCalc.CalcOffset(pos, hashOffset);
                             if (entry.ForcedOffset >= 0)
                                 img.Offset = entry.ForcedOffset;
+                            if (force)
+                            {
+                                img.Checksum = 0;
+                                img.IgnoreChecksum = true;
+                            }
                             Wz_Node childNode = parent.Nodes.Add(entry.Name);
                             childNode.Value = img;
                             img.OwnerNode = childNode;
