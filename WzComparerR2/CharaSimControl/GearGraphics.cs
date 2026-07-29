@@ -623,7 +623,7 @@ namespace WzComparerR2.CharaSimControl
             }
             else if (!string.IsNullOrEmpty(nickWithQRex))
             {
-                string qrexDefault = sr["qrexDefault"] ?? string.Empty;
+                string qrexDefault = sr["qrexDefault"] ?? sr["nickWithQRexDefault"] ?? string.Empty;
                 res = Regex.Replace(nickWithQRex, "#qrex.*?#", qrexDefault);
             }
             else if (!string.IsNullOrEmpty(nickWithWSR))
