@@ -410,7 +410,7 @@ namespace WzComparerR2.CharaSimControl
 
         private string GetNpcQuote(int npcID)
         {
-            NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{npcID}", this.SourceWzFile), PluginManager.FindWz, this.StringLinker);
+            NpcQuote quote = NpcQuote.CreateFromNode(npcID, this.StringLinker);
             if (quote == null)
                 return null;
             else

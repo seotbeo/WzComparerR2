@@ -13,7 +13,6 @@ namespace WzComparerR2.CharaSim
     {
         public NpcQuote()
         {
-            this.NpcID = -1;
             this.NQuote = new Dictionary<int, string>();
             this.FQuote = new Dictionary<int, string>();
             this.WQuote = new Dictionary<int, string>();
@@ -21,73 +20,70 @@ namespace WzComparerR2.CharaSim
             this.SpecialQuote = new Dictionary<int, string>();
         }
 
-        public int NpcID { get; set; }
         public Dictionary<int, string> NQuote { get; set; }
         public Dictionary<int, string> FQuote { get; set; }
         public Dictionary<int, string> WQuote { get; set; }
         public Dictionary<int, string> DQuote { get; set; }
         public Dictionary<int, string> SpecialQuote { get; set; }
 
-        public static NpcQuote CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, StringLinker stringLinker)
+        public static NpcQuote CreateFromNode(int npcID, StringLinker stringLinker)
         {
-            int npcID;
-            if (node == null || !(Int32.TryParse(node.Text, out npcID)))
+            if (stringLinker == null || !stringLinker.StringNpc.TryGetValue(npcID, out StringResult sr))
             {
                 return null;
             }
-
             NpcQuote npcQuote = new NpcQuote();
-            npcQuote.NpcID = npcID;
 
-            int nQuoteIndex = 0;
-            int fQuoteIndex = 0;
-            int wQuoteIndex = 0;
-            int dQuoteIndex = 0;
-
-            if (node != null)
+            int nQuoteIndex = -1;
+            foreach (string type in new[] { "n", "f", "w", "d" })
             {
-                foreach (var quoteNode in node.Nodes)
+                for (int i = 0; i < 100; i++)
                 {
-                    if (Regex.IsMatch(quoteNode.Text, @"^n\d+$"))
+                    string quoteValue = sr[$"{type}{i}"];
+                    if (quoteValue != null)
                     {
-                        npcQuote.NQuote[nQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
-                        nQuoteIndex++;
-                    }
-                    else if (Regex.IsMatch(quoteNode.Text, @"^f\d+$"))
-                    {
-                        npcQuote.FQuote[fQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
-                        fQuoteIndex++;
-                    }
-                    else if (Regex.IsMatch(quoteNode.Text, @"^w\d+$"))
-                    {
-                        npcQuote.WQuote[wQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
-                        wQuoteIndex++;
-                    }
-                    else if (Regex.IsMatch(quoteNode.Text, @"^d\d+$"))
-                    {
-                        npcQuote.DQuote[dQuoteIndex] = stringParse(Convert.ToString(quoteNode.Value), stringLinker);
-                        dQuoteIndex++;
-                    }
-                    else if (quoteNode.Text == "dialogue" || quoteNode.Text == "dialog")
-                    {
-                        foreach (var dialogueNode in quoteNode.Nodes)
+                        string quoteText = stringParse(quoteValue, stringLinker);
+                        switch (type)
                         {
-                            if (Int32.TryParse(dialogueNode.Text, out int dialogueId))
-                                npcQuote.SpecialQuote[dialogueId] = stringParse(Convert.ToString(dialogueNode.Value), stringLinker);
+                            case "n":
+                                npcQuote.NQuote[i] = quoteText;
+                                nQuoteIndex = i;
+                                break;
+                            case "f":
+                                npcQuote.FQuote[i] = quoteText;
+                                break;
+                            case "w":
+                                npcQuote.WQuote[i] = quoteText;
+                                break;
+                            case "d":
+                                npcQuote.DQuote[i] = quoteText;
+                                break;
                         }
                     }
-                    else if (quoteNode.Text == "bubble")
+                }
+            }
+
+            Wz_Node dialogueNode = stringLinker.FindNodeFromSource($"Npc.img\\{npcID}\\dialogue", Wz_Type.String) ??
+                stringLinker.FindNodeFromSource($"Npc.img\\{npcID}\\dialog", Wz_Type.String);
+            if (dialogueNode != null)
+            {
+                foreach (Wz_Node innerNode in dialogueNode.Nodes)
+                {
+                    if (Int32.TryParse(innerNode.Text, out int dialogueId))
+                        npcQuote.SpecialQuote[dialogueId] = stringParse(Convert.ToString(innerNode.Value), stringLinker);
+                }
+            }
+
+            Wz_Node bubbleNode = stringLinker.FindNodeFromSource($"Npc.img\\{npcID}\\bubble", Wz_Type.String);
+            if (bubbleNode != null)
+            {
+                foreach (Wz_Node questID in bubbleNode.Nodes)
+                {
+                    foreach (Wz_Node questState in questID.Nodes)
                     {
-                        foreach (var bubbleNode in quoteNode.Nodes)
+                        foreach (Wz_Node innerNode in questState.Nodes)
                         {
-                            foreach (var subNode in bubbleNode.Nodes)
-                            {
-                                foreach (var subNode2 in subNode.Nodes)
-                                {
-                                    npcQuote.NQuote[nQuoteIndex] = stringParse(Convert.ToString(subNode2.Value), stringLinker);
-                                    nQuoteIndex++;
-                                }
-                            }
+                            npcQuote.NQuote[++nQuoteIndex] = stringParse(Convert.ToString(innerNode.Value), stringLinker);
                         }
                     }
                 }

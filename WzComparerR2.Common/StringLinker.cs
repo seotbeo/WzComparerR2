@@ -54,6 +54,21 @@ namespace WzComparerR2.Common
 
         public bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, bool update = false)
         {
+            if (update)
+            {
+                this.SourceStringUpdateNode = stringNode;
+                this.SourceItemUpdateNode = itemNode;
+                this.SourceEtcUpdateNode = etcNode;
+                this.SourceQuestUpdateNode = questNode;
+            }
+            else
+            {
+                this.SourceStringNode = stringNode;
+                this.SourceItemNode = itemNode;
+                this.SourceEtcNode = etcNode;
+                this.SourceQuestNode = questNode;
+            }
+
             int id;
             foreach (Wz_Node node in stringNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
             {
@@ -640,6 +655,11 @@ namespace WzComparerR2.Common
             stringWorldArchiveMobByPath.Clear();
             stringWorldArchiveNpcByPath.Clear();
             stringMonsterBook.Clear();
+
+            SourceStringUpdateNode = null;
+            SourceItemUpdateNode = null;
+            SourceEtcUpdateNode = null;
+            SourceQuestUpdateNode = null;
         }
 
         public bool HasValues
@@ -753,6 +773,32 @@ namespace WzComparerR2.Common
         public Dictionary<int, StringResult> StringMonsterBook
         {
             get { return stringMonsterBook; }
+        }
+
+        public Wz_Node SourceStringNode { get; private set; }
+        public Wz_Node SourceItemNode { get; private set; }
+        public Wz_Node SourceEtcNode { get; private set; }
+        public Wz_Node SourceQuestNode { get; private set; }
+        public Wz_Node SourceStringUpdateNode { get; private set; }
+        public Wz_Node SourceItemUpdateNode { get; private set; }
+        public Wz_Node SourceEtcUpdateNode { get; private set; }
+        public Wz_Node SourceQuestUpdateNode { get; private set; }
+
+        public Wz_Node FindNodeFromSource(string path, Wz_Type type)
+        {
+            switch (type)
+            {
+                case Wz_Type.String:
+                    return SourceStringUpdateNode?.FindNodeByPath(path, true) ?? SourceStringNode?.FindNodeByPath(path, true);
+                case Wz_Type.Item:
+                    return SourceItemUpdateNode?.FindNodeByPath(path, true) ?? SourceItemNode?.FindNodeByPath(path, true);
+                case Wz_Type.Etc:
+                    return SourceEtcUpdateNode?.FindNodeByPath(path, true) ?? SourceEtcNode?.FindNodeByPath(path, true);
+                case Wz_Type.Quest:
+                    return SourceQuestUpdateNode?.FindNodeByPath(path, true) ?? SourceQuestNode?.FindNodeByPath(path, true);
+                default:
+                    return null;
+            }
         }
     }
 }

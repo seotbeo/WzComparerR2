@@ -1592,7 +1592,7 @@ namespace WzComparerR2
             this.comboBoxItemPrefLan.Items.Add(new DevComponents.Editors.ComboItem() { Text = "기본" });
             if (this.openedWz.Count == 0) return;
 
-            Wz_Node language = PluginManager.FindWz(Wz_Type.Language);
+            Wz_Node language = PluginManager.FindWz(Wz_Type.Language) ?? PluginManager.FindWz(Wz_Type.Etc)?.FindNodeByPath("Language");
             if (language != null)
             {
                 this.comboBoxItemPrefLan.Items.AddRange(language.Nodes.Select(n =>
@@ -3882,7 +3882,7 @@ namespace WzComparerR2
                             }
                             if (CharaSimConfig.Default.Npc.ShowNpcQuotes)
                             {
-                                NpcQuote quote = NpcQuote.CreateFromNode(PluginManager.FindWz($@"String\Npc.img\{npc.ID}"), PluginManager.FindWz, stringLinker);
+                                NpcQuote quote = NpcQuote.CreateFromNode(npc.ID, stringLinker);
                                 if (quote != null)
                                 {
                                     foreach (var kvp in quote.NQuote)
