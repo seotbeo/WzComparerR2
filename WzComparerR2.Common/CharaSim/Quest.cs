@@ -17,6 +17,7 @@ namespace WzComparerR2.CharaSim
             this.State = 0;
             this.Desc = new string[3];
             this.Reward = new QuestReward();
+            this.Act1Reward = new QuestReward();
             this.Category = new List<int>();
             this.Check1Items = new Dictionary<string, Check1Item>();
             this.Check1Infoex = new Dictionary<string, bool>();
@@ -39,6 +40,7 @@ namespace WzComparerR2.CharaSim
         public Npc Check0Npc { get; set; }
         public int Check1NpcID { get; set; }
         public QuestReward Reward { get; set; }
+        public QuestReward Act1Reward { get; set; }
         public int MedalCategory { get; set; }
         public List<int> Category { get; set; }
         public Dictionary<string, Check1Item> Check1Items { get; set; }
@@ -197,6 +199,10 @@ namespace WzComparerR2.CharaSim
                     }
                 }
             }
+
+            Wz_Node act1Node = fromInfoNode == null ? node.FindNodeByPath("Act\\1").ResolveUol()
+                : findNode.Invoke(string.Format("Quest/Act.img/{0}/1", quest.ID), wzf);
+            quest.Act1Reward = QuestReward.CreateFromAct1Node(act1Node);
 
             if (recommendNode != null)
             {

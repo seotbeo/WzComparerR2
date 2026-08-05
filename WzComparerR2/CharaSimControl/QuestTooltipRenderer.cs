@@ -131,22 +131,6 @@ namespace WzComparerR2.CharaSimControl
             var left = 29;
             var state = this.Quest.State;
 
-            var questColorTable = new Dictionary<string, Color>()
-            {
-                { "$w", Color.White },
-                { "c", ((SolidBrush)GearGraphics.QuestBrushDefault).Color },
-                { "$d", ((SolidBrush)GearGraphics.QuestBrushDefault).Color },
-                { "$p", ((SolidBrush)GearGraphics.QuestBrushNpc).Color },
-                { "$o", ((SolidBrush)GearGraphics.QuestBrushMob).Color },
-                { "$m", ((SolidBrush)GearGraphics.QuestBrushMap).Color },
-                { "$t", ((SolidBrush)GearGraphics.QuestBrushItem).Color },
-                { "$e", ((SolidBrush)GearGraphics.QuestBrushEnd).Color },
-            };
-            var questFontTable = new Dictionary<string, Font>()
-            {
-                { "^b", GearGraphics.EquipMDMoris9FontBold },
-            };
-
             // 전경
             using Bitmap fg = new Bitmap(width, DefaultPicHeight);
             using Graphics g = Graphics.FromImage(fg);
@@ -275,6 +259,11 @@ namespace WzComparerR2.CharaSimControl
                     ClearImageTable();
                     */
                 }
+            }
+            else if (state == 2 && this.Quest.Act1Reward.HasValues)
+            {
+                DrawAct1RewardItems(g, this.Quest.Act1Reward, ref picH);
+                picH += 16;
             }
             var bottomPoint = picH;
             picH += 49;
@@ -470,6 +459,179 @@ namespace WzComparerR2.CharaSimControl
             }
         }
 
+
+        private void DrawAct1RewardItems(Graphics g, QuestReward r, ref int h)
+        {
+            g.DrawImage(Resource.UIWindow2_img_QuestIcon_4_0, 29, h);
+            h += 20;
+
+            if (r.Items.Count > 0)
+            {
+                int totalProb = r.TotalProb;
+                foreach (var item in r.Items)
+                {
+                    StringResult sr;
+                    if (item.ID >= 2000000)
+                    {
+                        if (!this.StringLinker.StringItem.TryGetValue(item.ID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "(null)";
+                        }
+                    }
+                    else
+                    {
+                        if (!this.StringLinker.StringEqp.TryGetValue(item.ID, out sr))
+                        {
+                            sr = new StringResult();
+                            sr.Name = "(null)";
+                        }
+                    }
+
+                    int x = 29;
+                    int y = h;
+                    int rectW = 32;
+                    int rectH = 32;
+                    var node = FindItemNode(item.ID);
+                    var bmp = GetIcon(item.ID, itemNode: node, raw: true);
+                    string text = "";
+                    if (bmp.Bitmap != null)
+                    {
+                        text = $"#@{AddToImageTable(bmp.Bitmap)}/{Math.Max(bmp.Bitmap.Width, 32)}/{Math.Max(bmp.Bitmap.Height, 32)}@";
+                        rectW = Math.Max(bmp.Bitmap.Width, rectW);
+                        rectH = Math.Max(bmp.Bitmap.Height, rectH);
+                        if (!CompareMode)
+                        {
+                            var rect = new Rectangle(x, y + this.Margin_top, rectW, rectH);
+                            if (this.ShowAllStates)
+                                rect.Offset(322 * this.Quest.State, 0);
+                            this.RewardRectnItems.Add(new Tuple<Rectangle, object>(rect, GetItemBase(item.ID, node)));
+                        }
+                    }
+                    text += $" {sr.Name} {item.Count.ToString()}개";
+                    if (item.Prob != null)
+                    {
+                        double probability = (double)Math.Abs(item.Prob.Value) / totalProb * 100;
+                        text += $" ({probability.ToString($"F2")}%)";
+                        //text += $" ({item.Prob.Value} / {totalProb})";
+                    }
+                    if (item.Job >= 0)
+                    {
+                        List<string> jobTexts = new();
+                        switch (item.Job)
+                        {
+                            default:
+                                for (int i = 0; i <= 5; i++)
+                                {
+                                    if ((item.Job & (1 << i)) != 0)
+                                    {
+                                        switch (i)
+                                        {
+                                            case 0:
+                                                jobTexts.Add("초보자");
+                                                break;
+                                            case 1:
+                                                jobTexts.Add("전사");
+                                                break;
+                                            case 2:
+                                                jobTexts.Add("마법사");
+                                                break;
+                                            case 3:
+                                                jobTexts.Add("궁수");
+                                                break;
+                                            case 4:
+                                                jobTexts.Add("도적");
+                                                break;
+                                            case 5:
+                                                jobTexts.Add("해적");
+                                                break;
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                        if (jobTexts.Count > 0)
+                        {
+                            text += $" ({string.Join(", ", jobTexts)})";
+                        }
+                    }
+                    if (item.Gender >= 0 && item.Gender < 2)
+                    {
+                        text += $" ({(item.Gender == 0 ? "남" : "여")})";
+                    }
+                    GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, x, 293, ref y, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                    ClearImageTable();
+                    h = Math.Max(h + rectH + 1, y);
+                }
+                h += 4;
+            }
+            h += 6;
+            if (r.Exp > 0)
+            {
+                var rewardIcon = Resource.UIWindow2_img_QuestIcon_8_0;
+                string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ {r.Exp} exp";
+                GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                ClearImageTable();
+            }
+            if (r.Meso > 0)
+            {
+                var rewardIcon = Resource.UIWindow2_img_QuestIcon_7_0;
+                string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ {r.Meso} 메소";
+                GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                ClearImageTable();
+            }
+            if (r.Pop > 0)
+            {
+                var rewardIcon = Resource.UIWindow2_img_QuestIcon_6_0;
+                string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ {r.Pop}";
+                GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                ClearImageTable();
+            }
+            if (r.PetTameness > 0)
+            {
+                var rewardIcon = Resource.UIWindow2_img_QuestIcon_9_0;
+                string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ {r.PetTameness}";
+                GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                ClearImageTable();
+            }
+            if (r.AttrExps.Count > 0)
+            {
+                List<string> attrs = new();
+                foreach (var kv in r.AttrExps)
+                {
+                    switch (kv.Key)
+                    {
+                        case "charismaEXP":
+                            attrs.Add($" 카리스마 {kv.Value}");
+                            break;
+                        case "insightEXP":
+                            attrs.Add($" 통찰력 {kv.Value}");
+                            break;
+                        case "willEXP":
+                            attrs.Add($" 의지 {kv.Value}");
+                            break;
+                        case "craftEXP":
+                            attrs.Add($" 손재주 {kv.Value}");
+                            break;
+                        case "senseEXP":
+                            attrs.Add($" 감성 {kv.Value}");
+                            break;
+                        case "charmEXP":
+                            attrs.Add($" 매력 {kv.Value}");
+                            break;
+                    }
+                }
+                if (attrs.Count > 0)
+                {
+                    var rewardIcon = Resource.UIWindow2_img_QuestIcon_11_0;
+                    string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ ";
+                    text += string.Join(",", attrs);
+                    GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                    ClearImageTable();
+                }
+            }
+        }
+
         public string ReplaceQuestString(string text, bool outputPlainTexts = false)
         {
             if (string.IsNullOrEmpty(text))
@@ -573,8 +735,7 @@ namespace WzComparerR2.CharaSimControl
                         if (!outputPlainTexts)
                         {
                             var bmp = GetIconBitmap(id);
-                            var ret = $"#@{this.ImageTable.Count}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
-                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
+                            var ret = $"#@{AddToImageTable(bmp)}/{Math.Max(32, bmp?.Width ?? 0)}/{Math.Max(32, bmp?.Height ?? 0)}@";
                             return ret;
                         }
                         else
@@ -587,8 +748,7 @@ namespace WzComparerR2.CharaSimControl
                         var bmpIllu = GetIconByPath($@"Etc\illustration.img\{id}\0");
                         if (bmpIllu != null && !outputPlainTexts)
                         {
-                            var retIllu = $"#@{this.ImageTable.Count}/{bmpIllu?.Width ?? 0}/{bmpIllu?.Height ?? 0}@";
-                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpIllu);
+                            var retIllu = $"#@{AddToImageTable(bmpIllu)}/{bmpIllu?.Width ?? 0}/{bmpIllu?.Height ?? 0}@";
                             return retIllu;
                         }
                         else return id.ToString();
@@ -673,8 +833,7 @@ namespace WzComparerR2.CharaSimControl
                         {
                             var path = $"UIWindow2_img_Quest_quest_info_summary_icon_{info}";
                             var bmpW = (Bitmap)Resource.ResourceManager.GetObject(path);
-                            var retW = $"#@{this.ImageTable.Count}/{bmpW?.Width ?? 0}/{bmpW?.Height ?? 0}@";
-                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmpW);
+                            var retW = $"#@{AddToImageTable(bmpW)}/{bmpW?.Width ?? 0}/{bmpW?.Height ?? 0}@";
                             return retW;
                         }
                         else return info;
@@ -683,8 +842,7 @@ namespace WzComparerR2.CharaSimControl
                         if (!outputPlainTexts)
                         {
                             var bmp = GetIconByPath(info);
-                            var ret = $"#@{this.ImageTable.Count}/{bmp?.Width ?? 0}/{bmp?.Height ?? 0}@";
-                            this.ImageTable.Add(this.ImageTable.Count.ToString(), bmp);
+                            var ret = $"#@{AddToImageTable(bmp)}/{bmp?.Width ?? 0}/{bmp?.Height ?? 0}@";
                             return ret;
                         }
                         else return info;
@@ -924,6 +1082,13 @@ namespace WzComparerR2.CharaSimControl
             return fit;
         }
 
+        private string AddToImageTable(Bitmap bmp)
+        {
+            string id = this.ImageTable.Count.ToString();
+            this.ImageTable.Add(id, bmp);
+            return id;
+        }
+
         private void ClearImageTable()
         {
             foreach (var kv in this.ImageTable)
@@ -936,5 +1101,23 @@ namespace WzComparerR2.CharaSimControl
             }
             this.ImageTable.Clear();
         }
+
+
+        private static readonly Dictionary<string, Color> questColorTable = new Dictionary<string, Color>()
+            {
+                { "$w", Color.White },
+                { "c", ((SolidBrush)GearGraphics.QuestBrushDefault).Color },
+                { "$d", ((SolidBrush)GearGraphics.QuestBrushDefault).Color },
+                { "$p", ((SolidBrush)GearGraphics.QuestBrushNpc).Color },
+                { "$o", ((SolidBrush)GearGraphics.QuestBrushMob).Color },
+                { "$m", ((SolidBrush)GearGraphics.QuestBrushMap).Color },
+                { "$t", ((SolidBrush)GearGraphics.QuestBrushItem).Color },
+                { "$e", ((SolidBrush)GearGraphics.QuestBrushEnd).Color },
+            };
+
+        private static readonly Dictionary<string, Font> questFontTable = new Dictionary<string, Font>()
+            {
+                { "^b", GearGraphics.EquipMDMoris9FontBold },
+            };
     }
 }
