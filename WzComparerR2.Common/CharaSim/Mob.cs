@@ -34,8 +34,10 @@ namespace WzComparerR2.CharaSim
         public int? FlySpeed { get; set; }
         public int PADamage { get; set; }
         public int MADamage { get; set; }
-        public int PDRate { get; set; }
-        public int MDRate { get; set; }
+        public int PDDamage { get; set; } = -1;
+        public int MDDamage { get; set; } = -1;
+        public int PDRate { get; set; } = -1;
+        public int MDRate { get; set; } = -1;
         public int Acc { get; set; }
         public int Eva { get; set; }
         public int Pushed { get; set; }
@@ -105,6 +107,8 @@ namespace WzComparerR2.CharaSim
 
                         case "PADamage": mobInfo.PADamage = propNode.GetValueEx<int>(0); break;
                         case "MADamage": mobInfo.MADamage = propNode.GetValueEx<int>(0); break;
+                        case "PDDamage": mobInfo.PDDamage = propNode.GetValueEx<int>(0); break;
+                        case "MDDamage": mobInfo.MDDamage = propNode.GetValueEx<int>(0); break;
                         case "PDRate": mobInfo.PDRate = propNode.GetValueEx<int>(0); break;
                         case "MDRate": mobInfo.MDRate = propNode.GetValueEx<int>(0); break;
                         case "acc": mobInfo.Acc = propNode.GetValueEx<int>(0); break;

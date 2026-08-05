@@ -37,6 +37,20 @@ namespace WzComparerR2.CharaSim
         public ElemResistance H { get; private set; }
         public ElemResistance D { get; private set; }
         public ElemResistance P { get; private set; }
+
+        public IEnumerable<KeyValuePair<string, ElemResistance>> ElemResistances
+        {
+            get
+            {
+                yield return new KeyValuePair<string, ElemResistance>("얼음", I);
+                yield return new KeyValuePair<string, ElemResistance>("번개", L);
+                yield return new KeyValuePair<string, ElemResistance>("불", F);
+                yield return new KeyValuePair<string, ElemResistance>("독", S);
+                yield return new KeyValuePair<string, ElemResistance>("성", H);
+                yield return new KeyValuePair<string, ElemResistance>("암흑", D);
+                yield return new KeyValuePair<string, ElemResistance>("물리", P);
+            }
+        }
     }
 
     public enum ElemResistance : byte

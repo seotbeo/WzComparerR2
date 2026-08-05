@@ -39,10 +39,10 @@ namespace WzComparerR2.CharaSimControl
 
         public override Bitmap Render()
         {
-            return Render(false);
+            return Render(false, null);
         }
 
-        public Bitmap Render(bool doHighlight)
+        public Bitmap Render(bool doHighlight, MobElemAttr comparisonTargetElemAttr)
         {
             if (MobInfo == null)
             {
@@ -139,46 +139,53 @@ namespace WzComparerR2.CharaSimControl
                 picY += 16;
             }
 
-            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("level"))
-                propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY));
-            else
-                propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont, Brushes.White, 0, picY));
+            propBlocks.Add(PrepareText(g, "레벨: " + MobInfo.Level, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("level")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY));
 
             string hpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxHP) ? this.AddCommaSeparators(MobInfo.FinalMaxHP) : MobInfo.MaxHP.ToString("N0");
-            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("maxHP"))
-                propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
-            else
-                propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "HP: " + hpNum, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("maxHP")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
             string mpNum = !string.IsNullOrEmpty(MobInfo.FinalMaxMP) ? this.AddCommaSeparators(MobInfo.FinalMaxMP) : MobInfo.MaxMP.ToString("N0");
-            propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "MP: " + mpNum, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("maxMP")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, "물리공격력: " + MobInfo.PADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "물리공격력: " + MobInfo.PADamage, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PADamage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, "마법공격력: " + MobInfo.MADamage, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "마법공격력: " + MobInfo.MADamage, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("MADamage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDRate"))
-                propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
-            else
-                propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.PDDamage >= 0)
+                propBlocks.Add(PrepareText(g, "물리방어력: " + MobInfo.PDDamage, GearGraphics.ItemDetailFont,
+                    (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDDamage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("MDRate"))
-                propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
-            else
-                propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.MDDamage >= 0)
+                propBlocks.Add(PrepareText(g, "마법방어력: " + MobInfo.MDDamage, GearGraphics.ItemDetailFont,
+                    (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("MDDamage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, "명중치: " + MobInfo.Acc, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.PDRate >= 0)
+                propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDRage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, "회피치: " + MobInfo.Eva, GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            if (MobInfo.MDRate >= 0)
+                propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("MDRate")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, "넉백: " + MobInfo.Pushed.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "명중치: " + MobInfo.Acc, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("acc")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("exp"))
-                propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, 0, picY += 16));
-            else
-                propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "회피치: " + MobInfo.Eva, GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("eva")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
-            propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
+            propBlocks.Add(PrepareText(g, "넉백: " + MobInfo.Pushed.ToString("N0"), GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("pushed")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
+
+            propBlocks.Add(PrepareText(g, "경험치: " + MobInfo.Exp.ToString("N0"), GearGraphics.ItemDetailFont,
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("exp")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
+
+            if (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("elemAttr")) SetElemAttrPropBlocks(g, propBlocks, comparisonTargetElemAttr, picY += 16);
+            else propBlocks.Add(PrepareText(g, GetElemAttrString(MobInfo.ElemAttr), GearGraphics.ItemDetailFont, Brushes.White, 0, picY += 16));
             picY += 28;
 
             if (MobInfo.Revive.Count > 0)
@@ -403,6 +410,27 @@ namespace WzComparerR2.CharaSimControl
                 return null;
             }
             return sr.Desc;
+        }
+
+        private void SetElemAttrPropBlocks(Graphics g, List<TextBlock> propBlocks, MobElemAttr comparisonTarget, int picY)
+        {
+            const int PreCalculatedItemWidth = 12;
+            int picX = 0;
+            foreach (var pair in this.MobInfo.ElemAttr.ElemResistances.Zip(comparisonTarget.ElemResistances, 
+                (left, right) => new { Left = left, Right = right }))
+            {
+                if (pair.Left.Value == pair.Right.Value)
+                {
+                    propBlocks.Add(PrepareText(g, pair.Left.Key.Substring(0, 1), GearGraphics.ItemDetailFont, Brushes.White, picX, picY));
+                    propBlocks.Add(PrepareText(g, GetElemAttrResistString(pair.Left.Value), GearGraphics.ItemDetailFont, Brushes.White, picX, picY + 16));
+                }
+                else
+                {
+                    propBlocks.Add(PrepareText(g, pair.Left.Key.Substring(0, 1), GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, picX, picY));
+                    propBlocks.Add(PrepareText(g, GetElemAttrResistString(pair.Left.Value), GearGraphics.ItemDetailFont, GearGraphics.Equip22BrushRare, picX, picY + 16));
+                }
+                picX += PreCalculatedItemWidth;
+            }
         }
 
         private string GetElemAttrString(MobElemAttr elemAttr)
