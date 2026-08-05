@@ -13,6 +13,7 @@ namespace WzComparerR2.CharaSim
         {
             this.AttrExps = new List<KeyValuePair<string, int>>();
             this.Items = new List<ItemIDnCount>();
+            this.Sps = new List<SPnJob>();
         }
 
         public int Exp { get; private set; }
@@ -21,6 +22,7 @@ namespace WzComparerR2.CharaSim
         public int PetTameness { get; private set; }
         public List<KeyValuePair<string, int>> AttrExps { get; private set; }
         public List<ItemIDnCount> Items { get; private set; }
+        public List<SPnJob> Sps { get; private set; }
 
         public int Count
         {
@@ -105,6 +107,30 @@ namespace WzComparerR2.CharaSim
                     });
             }
 
+            Wz_Node spNode = act1Node.FindNodeByPath("sp").ResolveUol();
+            foreach (var item in spNode?.Nodes ?? Enumerable.Empty<Wz_Node>())
+            {
+                var sp_value = item.FindNodeByPath("sp_value").GetValueEx<int>(0);
+                var jobNode = item.FindNodeByPath("job").ResolveUol();
+                List<int> jobs = new();
+                foreach (var job in jobNode?.Nodes ?? Enumerable.Empty<Wz_Node>())
+                {
+                    var job_id = job.GetValueEx<int>(0);
+                    if (job_id > 0)
+                    {
+                        jobs.Add(job_id);
+                    }
+                }
+                if (sp_value > 0)
+                {
+                    questReward.Sps.Add(new SPnJob()
+                    {
+                        SP = sp_value,
+                        Jobs = jobs,
+                    });
+                }
+            }
+
             return questReward;
         }
 
@@ -115,6 +141,12 @@ namespace WzComparerR2.CharaSim
             public int? Prob;
             public int Job;
             public int Gender;
+        }
+
+        public struct SPnJob
+        {
+            public int SP;
+            public List<int> Jobs;
         }
     }
 }

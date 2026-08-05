@@ -566,6 +566,21 @@ namespace WzComparerR2.CharaSimControl
                 h += 4;
             }
             h += 6;
+            if (r.Sps.Count > 0)
+            {
+                List<string> jobs = new();
+                var rewardIcon = Resource.UIWindow2_img_QuestIcon_10_0;
+                foreach (var sp in r.Sps)
+                {
+                    string text = $"#@{AddToImageTable(rewardIcon)}/{rewardIcon?.Width ?? 0}/{rewardIcon?.Height ?? 0}@ {sp.SP} sp";
+                    text += $" ({string.Join(", ", sp.Jobs.Select(jobID =>
+                    {
+                        return ItemStringHelper.GetJobName(jobID);
+                    }))})";
+                    GearGraphics.DrawString(g, text, GearGraphics.EquipMDMoris9Font, questColorTable, questFontTable, this.ImageTable, 29, 293, ref h, 20, alignment: Text.TextAlignment.Left, defaultColor: ((SolidBrush)GearGraphics.QuestBrushDefault).Color, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
+                    ClearImageTable();
+                }
+            }
             if (r.Exp > 0)
             {
                 var rewardIcon = Resource.UIWindow2_img_QuestIcon_8_0;
