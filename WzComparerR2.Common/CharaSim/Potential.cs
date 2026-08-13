@@ -10,11 +10,13 @@ namespace WzComparerR2.CharaSim
         public Potential()
         {
             props = new Dictionary<GearPropType, int>();
+            propsF = new Dictionary<GearPropType, float>();
         }
         public int code;
         public int optionType;
         public int reqLevel;
         public Dictionary<GearPropType, int> props;
+        public Dictionary<GearPropType, float> propsF;
         public int weight;
         public string stringSummary;
 
@@ -37,14 +39,23 @@ namespace WzComparerR2.CharaSim
             if (string.IsNullOrEmpty(this.stringSummary))
                 return null;
             List<string> types = new List<string>(this.props.Keys.Count);
+            List<string> typesF = new List<string>(this.propsF.Keys.Count);
             foreach (GearPropType k in this.props.Keys)
                 types.Add(k.ToString());
+            foreach (GearPropType k in this.propsF.Keys)
+                typesF.Add(k.ToString());
             types.Sort((a, b) => b.Length.CompareTo(a.Length));
+            typesF.Sort((a, b) => b.Length.CompareTo(a.Length));
             string str = this.stringSummary;
             foreach (string s in types)
             {
                 GearPropType t = (GearPropType)Enum.Parse(typeof(GearPropType), s);
                 str = str.Replace("#" + s, this.props[t].ToString());
+            }
+            foreach (string s in typesF)
+            {
+                GearPropType t = (GearPropType)Enum.Parse(typeof(GearPropType), s);
+                str = str.Replace("#" + s, this.propsF[t].ToString());
             }
             return str;
         }
@@ -128,8 +139,21 @@ namespace WzComparerR2.CharaSim
                             try
                             {
                                 GearPropType propType = (GearPropType)Enum.Parse(typeof(GearPropType), propNode.Text);
-                                int value = (propType == GearPropType.face ? 0 : Convert.ToInt32(propNode.Value));
-                                potential.props.Add(propType, value);
+                                if (propType == GearPropType.face)
+                                {
+                                    potential.props.Add(propType, 0);
+                                }
+                                else
+                                {
+                                    if (Int32.TryParse(propNode.Value.ToString(), out var intValue))
+                                    {
+                                        potential.props.Add(propType, intValue);
+                                    }
+                                    else if (float.TryParse(propNode.Value.ToString(), out var floatValue))
+                                    {
+                                        potential.propsF.Add(propType, floatValue);
+                                    }
+                                }
                             }
                             catch
                             {
