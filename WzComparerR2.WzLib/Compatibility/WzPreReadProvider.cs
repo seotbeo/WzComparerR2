@@ -31,7 +31,7 @@ namespace WzComparerR2.WzLib.Compatibility
 
         private static readonly IWzPreReader[] readers_UNK = new IWzPreReader[]
         {
-            new Pkg2PreReader64(WzFileFormat.Pkg2Kmst1204, 200, true, true),
+            new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1204, 163, true, true),
         };
 
         public static IReadOnlyList<IWzPreReader> All => readers;
@@ -150,6 +150,22 @@ namespace WzComparerR2.WzLib.Compatibility
         }
     }
 
+
+    internal sealed class Pkg2PreReader64_UNK : IWzPreReader
+    {
+        public Pkg2PreReader64_UNK(WzFileFormat format, int headerSize, bool allNamesUseV2, bool encryptEntryData)
+        {
+            this.rule = new Pkg2PreReadRule64_UNK(format, headerSize, allNamesUseV2, encryptEntryData);
+        }
+
+        private readonly IPkg2PreReadRule rule;
+
+        public bool TryPreRead(Wz_File wzFile, out WzPreReadResult result)
+        {
+            return Pkg2PreReadTreeWalker.TryPreRead(wzFile, rule, out result);
+        }
+    }
+
     internal static class Pkg2PreReadTreeWalker
     {
         public static bool TryPreRead(Wz_File wzFile, IPkg2PreReadRule rule, out WzPreReadResult result)
@@ -209,7 +225,8 @@ namespace WzComparerR2.WzLib.Compatibility
                     {
                         try
                         {
-                            rule.ReadEntryName(reader, result, context, entries.Count);
+                            if (!rule.ReversedNamePosition)
+                                rule.ReadEntryName(reader, result, context, entries.Count);
                             uint sizePosition = (uint)reader.BaseStream.Position;
                             int size = reader.ReadCompressedInt32();
                             if (rule.ValidateImageLength && (size < 0 || (nodeType == 0x03 && size != 0)))
@@ -218,6 +235,8 @@ namespace WzComparerR2.WzLib.Compatibility
                                 break;
                             }
                             reader.ReadCompressedInt32();
+                            if (rule.ReversedNamePosition)
+                                rule.ReadEntryName(reader, result, context, entries.Count);
                             entries.Add(new Pkg2PreReadEntry
                             {
                                 NodeType = nodeType,
@@ -427,6 +446,7 @@ namespace WzComparerR2.WzLib.Compatibility
         int EntryBoundaryCandidateBacktrackCount { get; }
         bool ValidateImageLength { get; }
         bool IsEntryDataEncrypted { get; }
+        bool ReversedNamePosition { get; }
         bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context);
         Pkg2DirHeader ReadDirectoryHeader(WzBinaryReader reader, Pkg2PreReadContext context);
         bool IsDirectoryTerminator(byte nodeType, Pkg2DirHeader header);
@@ -451,6 +471,7 @@ namespace WzComparerR2.WzLib.Compatibility
         public int EntryBoundaryCandidateBacktrackCount => 2;
         public bool ValidateImageLength => false;
         public bool IsEntryDataEncrypted => false;
+        public bool ReversedNamePosition => false;
 
         public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
         {
@@ -531,6 +552,91 @@ namespace WzComparerR2.WzLib.Compatibility
         public int EntryBoundaryCandidateBacktrackCount => 2;
         public bool ValidateImageLength => !this.encryptEntryData;
         public bool IsEntryDataEncrypted => this.encryptEntryData;
+        public bool ReversedNamePosition => false;
+
+        public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
+        {
+            context = new Pkg2PreReadContext();
+            if (!wzFile.Header.IsPkg2)
+                return false;
+            if (wzFile.Header is not Wz_Header.WzPkg2Header64 header64)
+                return false;
+            if (header64.HeaderSize != this.headerSize)
+                return false;
+
+            context.IsPkg2DirString = true;
+            context.Header64 = header64;
+            return true;
+        }
+
+        public Pkg2DirHeader ReadDirectoryHeader(WzBinaryReader reader, Pkg2PreReadContext context)
+        {
+            long encryptedEntryCount = reader.ReadCompressedInt64();
+            return new Pkg2DirHeader
+            {
+                EncryptedEntryCount = encryptedEntryCount,
+                IsFixedEntryCount = false,
+                FixedEntryCount = 0,
+            };
+        }
+
+        public bool IsDirectoryTerminator(byte nodeType, Pkg2DirHeader header)
+        {
+            return false;
+        }
+
+        public void ReadEntryName(WzBinaryReader reader, WzPreReadResult result, Pkg2PreReadContext context, int entryIndex)
+        {
+            if (result.FirstStringRawBytes == null && entryIndex == 0)
+            {
+                result.FirstStringRawBytes = WzPreReadHelper.ReadPkg2DirStringV2RawBytes(reader, out var enc);
+                result.FirstStringEncoding = enc;
+            }
+            else if (this.allNamesUseV2)
+            {
+                WzPreReadHelper.SkipPkg2DirStringV2(reader);
+            }
+            else if (result.SecondStringRawBytes == null && entryIndex == 1)
+            {
+                result.SecondStringRawBytes = WzPreReadHelper.ReadStringRawBytes(reader, false, out var enc);
+                result.SecondStringEncoding = enc;
+            }
+            else if (entryIndex == 0)
+            {
+                WzPreReadHelper.SkipPkg2DirStringV2(reader);
+            }
+            else
+            {
+                WzPreReadHelper.SkipString(reader);
+            }
+        }
+
+        public void ValidateOffsetSection(WzBinaryReader reader, Pkg2DirHeader header, int actualEntryCount)
+        {
+            // KMST1202 has no encrypted offset-count prefix.
+        }
+    }
+
+    internal sealed class Pkg2PreReadRule64_UNK : IPkg2PreReadRule
+    {
+        public Pkg2PreReadRule64_UNK(WzFileFormat format, int headerSize, bool allNamesUseV2, bool encryptEntryData)
+        {
+            this.Format = format;
+            this.headerSize = headerSize;
+            this.allNamesUseV2 = allNamesUseV2;
+            this.encryptEntryData = encryptEntryData;
+        }
+
+        private readonly int headerSize;
+        private readonly bool allNamesUseV2;
+        private readonly bool encryptEntryData;
+
+        public WzFileFormat Format { get; }
+        public bool AllowEntryBoundaryProbe => true;
+        public int EntryBoundaryCandidateBacktrackCount => 2;
+        public bool ValidateImageLength => !this.encryptEntryData;
+        public bool IsEntryDataEncrypted => this.encryptEntryData;
+        public bool ReversedNamePosition => true;
 
         public bool CanHandle(Wz_File wzFile, out Pkg2PreReadContext context)
         {

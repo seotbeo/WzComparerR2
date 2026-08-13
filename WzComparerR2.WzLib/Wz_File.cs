@@ -213,7 +213,7 @@ namespace WzComparerR2.WzLib
             return true;
 
         __failed:
-            br.BaseStream.Position = 200;
+            br.BaseStream.Position = 163;
             while (true)
             {
                 try
@@ -516,14 +516,17 @@ namespace WzComparerR2.WzLib
             for (int i = 0; i < entryCount; i++)
             {
                 byte nodeType = reader.ReadByte();
-                string name;
-                if (nodeType == 0x03 || nodeType == 0x04)
+                string name = string.Empty;
+                if (!force)
                 {
-                    name = force ? context.DirStringReader.ForceReadName(reader, entries.Count == 0, nodeType, fileName) : context.DirStringReader.ReadName(reader, entries.Count == 0);
-                }
-                else
-                {
-                    throw new Exception($"Unknown type {nodeType} in WzDirTree.");
+                    if (nodeType == 0x03 || nodeType == 0x04)
+                    {
+                        name = force ? context.DirStringReader.ForceReadName(reader, entries.Count == 0, nodeType, fileName) : context.DirStringReader.ReadName(reader, entries.Count == 0);
+                    }
+                    else
+                    {
+                        throw new Exception($"Unknown type {nodeType} in WzDirTree.");
+                    }
                 }
 
                 uint sizePosition = (uint)this.fileStream.Position;
@@ -540,6 +543,17 @@ namespace WzComparerR2.WzLib
                     forcedOffset = this.CandidateImageInfos[hitcount].Item1;
                     size = (int)this.CandidateImageInfos[hitcount].Item2;
                     hitcount++;
+                }
+                if (force)
+                {
+                    if (nodeType == 0x03 || nodeType == 0x04)
+                    {
+                        name = force ? context.DirStringReader.ForceReadName(reader, entries.Count == 0, nodeType, fileName) : context.DirStringReader.ReadName(reader, entries.Count == 0);
+                    }
+                    else
+                    {
+                        throw new Exception($"Unknown type {nodeType} in WzDirTree.");
+                    }
                 }
                 entries.Add(new Pkg2DirEntry
                 {
