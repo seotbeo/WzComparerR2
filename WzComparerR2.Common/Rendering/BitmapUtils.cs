@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
@@ -90,6 +91,30 @@ namespace WzComparerR2.Rendering
             }
 
             return result;
+        }
+
+        public static BitmapOrigin ResizeBitmap(BitmapOrigin bitmapOrigin, float scale)
+        {
+            if (bitmapOrigin.Bitmap == null || scale <= 0 || scale == 1f) return bitmapOrigin;
+
+            int newWidth = Math.Max(1, (int)Math.Round(bitmapOrigin.Bitmap.Width * scale));
+            int newHeight = Math.Max(1, (int)Math.Round(bitmapOrigin.Bitmap.Height * scale));
+
+            Bitmap newBitmap = new Bitmap(newWidth, newHeight, PixelFormat.Format32bppArgb);
+
+            using (Graphics g = Graphics.FromImage(newBitmap))
+            {
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.PixelOffsetMode = PixelOffsetMode.Half;
+                g.SmoothingMode = SmoothingMode.None;
+
+                g.DrawImage(bitmapOrigin.Bitmap, new Rectangle(0, 0, newWidth, newHeight), new Rectangle(0, 0, bitmapOrigin.Bitmap.Width, bitmapOrigin.Bitmap.Height), GraphicsUnit.Pixel);
+            }
+            Point newOrigin = new Point((int)Math.Round(bitmapOrigin.Origin.X * scale), (int)Math.Round(bitmapOrigin.Origin.Y * scale));
+
+            return new BitmapOrigin(newBitmap, newOrigin);
         }
     }
 }
