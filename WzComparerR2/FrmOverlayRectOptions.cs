@@ -83,8 +83,9 @@ namespace WzComparerR2
 
             var ret = new OverlayOptions()
             {
-                AniStart = s,
-                AniEnd = s <= e ? e : s,
+                AniOffset = s,
+                AniStartTime = s,
+                AniEndTime = s <= e ? e : s,
 
                 SpeedX = this.txtSpeedX.ValueObject as int? ?? 0,
                 SpeedY = this.txtSpeedY.ValueObject as int? ?? 0,
@@ -97,18 +98,18 @@ namespace WzComparerR2
 
                 ShapeType = shapeType,
                 RectRadius = this.txtRadius.ValueObject as int? ?? 0,
-                RectAlpha = a,
 
-                RectGradation = this.chkAlphaGradation.Checked,
-                RectAlphaDst = this.txtAlphaDst.ValueObject as int? ?? a,
-                RectAlphaStart = a_s,
-                RectAlphaEnd = a_e,
+                Alpha = a,
+                AlphaGradation = this.chkAlphaGradation.Checked,
+                AlphaDst = this.txtAlphaDst.ValueObject as int? ?? a,
+                AlphaStart = a_s,
+                AlphaEnd = a_e,
 
                 Vertices = this.Vertices,
             };
 
             config.OverlayRectColor = this.colorPickerButton1.SelectedColor;
-            config.OverlayRectAlpha = ret.RectAlpha;
+            config.OverlayRectAlpha = ret.Alpha;
 
             return ret;
         }

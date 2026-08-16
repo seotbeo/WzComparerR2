@@ -15,8 +15,10 @@ namespace WzComparerR2.Controls
         }
 
         public int AniOffset { get; set; }
-        public int AniStart {  get; set; }
-        public int AniEnd { get; set; }
+        public int AniStartIndex {  get; set; }
+        public int AniEndIndex { get; set; }
+        public int AniStartTime { get; set; }
+        public int AniEndTime { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
 
@@ -38,12 +40,12 @@ namespace WzComparerR2.Controls
 
         public OverlayShapeType ShapeType { get; set; }
         public int RectRadius { get; set; }
-        public int RectAlpha { get; set; }
 
-        public bool RectGradation { get; set; }
-        public int RectAlphaDst { get; set; }
-        public int RectAlphaStart { get; set; }
-        public int RectAlphaEnd { get; set; }
+        public int Alpha { get; set; }
+        public bool AlphaGradation { get; set; }
+        public int AlphaDst { get; set; }
+        public int AlphaStart { get; set; }
+        public int AlphaEnd { get; set; }
 
         public List<Point> Vertices { get; set; }
     }

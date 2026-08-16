@@ -9,6 +9,7 @@ BEGIN_CONSTANTS
   float clipAlpha;
   float2 scaler;
   float2 offset;
+  float2 alpha;
 
   MATRIX_CONSTANTS
 
@@ -51,10 +52,13 @@ float4 PS_Alphablend(VSOutput input) : SV_Target0
 {
 	float2 dstCoord = input.texCoord * scaler + offset;
 	float4 colorSrc = SAMPLE_TEXTURE(Texture, input.texCoord) * input.color;
-	float4 colorDst = SAMPLE_TEXTURE(TextureDst, dstCoord) * input.color;
+	float4 colorDst = SAMPLE_TEXTURE(TextureDst, dstCoord);
+    colorSrc.a *= alpha;
 	float alpha = colorSrc.a + colorDst.a * (1 - colorSrc.a);
 
-	float4 color_result = (colorDst.a <= 0) || (dstCoord.x < 0 || dstCoord.x > 1 || dstCoord.y < 0 || dstCoord.y > 1) ? colorSrc : float4((colorSrc.rgb * colorSrc.a + colorDst.rgb * colorDst.a * (1 - colorSrc.a)) / alpha, alpha);
+	float4 color_result = (colorDst.a <= 0) || (dstCoord.x < 0 || dstCoord.x > 1 || dstCoord.y < 0 || dstCoord.y > 1) ? colorSrc :
+		alpha <= 0 ? float4(0, 0, 0, 0) :
+		float4((colorSrc.rgb * colorSrc.a + colorDst.rgb * colorDst.a * (1 - colorSrc.a)) / alpha, alpha);
 	return color_result;
 }
 

@@ -259,17 +259,18 @@ namespace WzComparerR2
             FrameAnimator aniItem = (FrameAnimator)animator;
 
             var frmOverlayAniOptions = new FrmOverlayAniOptions(aniItem.Data.Frames, multiFrameInfo, isPngFrameAni);
-            OverlayOptions options = new OverlayOptions();
+            OverlayOptions options = null;
             int frameEnd = 0;
 
             // 정보 받아오기
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
                 options = frmOverlayAniOptions.GetValues();
-                options.AniStart = options.AniStart == -1 ? 0 : options.AniStart;
-                frameEnd = options.AniEnd == -1 ? aniItem.Data.Frames.Count - 1 : options.AniEnd;
+                if (options == null) return;
+                options.AniStartIndex = options.AniStartIndex == -1 ? 0 : options.AniStartIndex;
+                frameEnd = options.AniEndIndex == -1 ? aniItem.Data.Frames.Count - 1 : options.AniEndIndex;
 
-                if (options.AniStart > frameEnd)
+                if (options.AniStartIndex > frameEnd)
                 {
                     DisposeAnimationItem(aniItem);
                     return;
@@ -304,10 +305,10 @@ namespace WzComparerR2
 
             if ((options.SpeedX != 0 && options.GoX != 0) || (options.SpeedY != 0 && options.GoY != 0))
             {
-                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStart, ref frameEnd);
+                FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStartIndex, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, options.AniOffset, options.PosX, options.PosY, options.AniStart, frameEnd));
+                    this.GraphicsDevice, options.AniOffset, options.PosX, options.PosY, options.AniStartIndex, frameEnd, GetAlphaTimeline(options)));
             
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
@@ -347,12 +348,13 @@ namespace WzComparerR2
             var baseDelayAll = this.MaxLength;
 
             var frmOverlayAniOptions = new FrmOverlayRectOptions(0, baseDelayAll, config, autoData != null);
-            OverlayOptions options = new OverlayOptions();
+            OverlayOptions options = null;
             var frameEnd = 0;
 
             if (frmOverlayAniOptions.ShowDialog() == DialogResult.OK)
             {
                 options = frmOverlayAniOptions.GetValues(config);
+                if (options == null) return;
 
                 FrameAnimationData aniItemData = null;
                 if (!options.RectAutoArea)
@@ -409,7 +411,7 @@ namespace WzComparerR2
                 FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, false, 0, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, options.AniStart, 0, 0, 0, frameEnd));
+                    this.GraphicsDevice, options.AniStartTime, 0, 0, 0, frameEnd, null));
 
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
@@ -427,22 +429,26 @@ namespace WzComparerR2
             var ret = new List<FrameAnimationData.TimelineData>();
             var lt = options.RectLT;
             var rb = options.RectRB;
-            var totalLength = options.AniEnd - options.AniStart;
-            const int minInterval = 60;
-            if (options.RectGradation && options.RectAlphaStart <= options.RectAlphaEnd)
+            var totalLength = options.AniEndTime - options.AniStartTime;
+            if (totalLength <= 0)
             {
-                if (options.AniStart < options.RectAlphaStart)
+                return ret;
+            }
+            const int minInterval = 60;
+            if (options.AlphaGradation && options.AlphaStart <= options.AlphaEnd)
+            {
+                if (options.AniStartTime < options.AlphaStart)
                 {
                     ret.Add(new FrameAnimationData.TimelineData()
                     {
                         LT = lt,
                         RB = rb,
-                        Alpha = options.RectAlpha,
-                        Delay = options.RectAlphaStart - options.AniStart
+                        Alpha = options.Alpha,
+                        Delay = options.AlphaStart - options.AniStartTime
                     });
                 }
 
-                var gradationLength = options.RectAlphaEnd - options.RectAlphaStart;
+                var gradationLength = options.AlphaEnd - options.AlphaStart;
                 if (gradationLength > 0)
                 {
                     var count = gradationLength / minInterval;
@@ -452,7 +458,7 @@ namespace WzComparerR2
                         {
                             LT = lt,
                             RB = rb,
-                            Alpha = (options.RectAlpha + options.RectAlphaDst) / 2,
+                            Alpha = (options.Alpha + options.AlphaDst) / 2,
                             Delay = gradationLength
                         });
                     }
@@ -462,7 +468,7 @@ namespace WzComparerR2
                         for (var i = 0; i < count; i++, length += minInterval)
                         {
                             var left = gradationLength - length;
-                            var alpha = (options.RectAlpha * left + options.RectAlphaDst * length) / (float)gradationLength;
+                            var alpha = (options.Alpha * left + options.AlphaDst * length) / (float)gradationLength;
                             ret.Add(new FrameAnimationData.TimelineData()
                             {
                                 LT = lt,
@@ -474,14 +480,14 @@ namespace WzComparerR2
                     }
                 }
 
-                if (options.AniEnd > options.RectAlphaEnd)
+                if (options.AniEndTime > options.AlphaEnd)
                 {
                     ret.Add(new FrameAnimationData.TimelineData()
                     {
                         LT = lt,
                         RB = rb,
-                        Alpha = options.RectAlphaDst,
-                        Delay = options.AniEnd - options.RectAlphaEnd
+                        Alpha = options.AlphaDst,
+                        Delay = options.AniEndTime - options.AlphaEnd
                     });
                 }
             }
@@ -491,7 +497,7 @@ namespace WzComparerR2
                 {
                     LT = lt,
                     RB = rb,
-                    Alpha = options.RectAlpha,
+                    Alpha = options.Alpha,
                     Delay = totalLength
                 });
             }
@@ -508,8 +514,8 @@ namespace WzComparerR2
         private List<FrameAnimationData.TimelineData> GetAutoAreaTimeline(OverlayOptions options, FrameAnimationData data)
         {
             var ret = new List<FrameAnimationData.TimelineData>();
-            var startTime = options.AniStart;
-            var endTime = options.AniEnd;
+            var startTime = options.AniStartTime;
+            var endTime = options.AniEndTime;
             var move = options.RectLT;
             var time = 0;
             foreach (var frame in data.Frames)
@@ -533,7 +539,7 @@ namespace WzComparerR2
                         {
                             LT = frame.LT + move,
                             RB = frame.RB + move,
-                            Alpha = options.RectAlpha,
+                            Alpha = options.Alpha,
                             Delay = delay,
                         });
                     }
@@ -544,7 +550,7 @@ namespace WzComparerR2
                     {
                         LT = frame.LT + move,
                         RB = frame.RB + move,
-                        Alpha = options.RectAlpha,
+                        Alpha = options.Alpha,
                         Delay = delay,
                     });
                 }
@@ -555,7 +561,7 @@ namespace WzComparerR2
                     {
                         LT = frame.LT + move,
                         RB = frame.RB + move,
-                        Alpha = options.RectAlpha,
+                        Alpha = options.Alpha,
                         Delay = delay,
                     });
                 }
