@@ -99,6 +99,8 @@ namespace WzComparerR2
                 ShapeType = shapeType,
                 RectRadius = this.txtRadius.ValueObject as int? ?? 0,
 
+                Color = Color.White,
+
                 Alpha = a,
                 AlphaGradation = this.chkAlphaGradation.Checked,
                 AlphaDst = this.txtAlphaDst.ValueObject as int? ?? a,
