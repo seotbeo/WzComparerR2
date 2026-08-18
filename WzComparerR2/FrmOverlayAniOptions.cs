@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using DevComponents.Editors;
 using WzComparerR2.Animation;
 using WzComparerR2.Controls;
+using WzComparerR2.Rendering;
 
 namespace WzComparerR2
 {
@@ -55,6 +56,8 @@ namespace WzComparerR2
             this.txtAlphaStart.Value = 0;
             this.txtAlphaEnd.Value = this.MaxDelay;
             this.txtAlphaEnd.MaxValue = this.MaxDelay;
+
+            this.colorPickerButton1.SelectedColor = Color.White;
 
             this.txtPngDelay.ValueChanged += TxtPngDelay_ValueChanged;
             this.txtFrameStart.ValueChanged += TxtFrameStart_ValueChanged;
@@ -157,6 +160,8 @@ namespace WzComparerR2
                 SpeedY = this.txtSpeedY.ValueObject as int? ?? 0,
                 GoX = this.txtGoX.ValueObject as int? ?? 0,
                 GoY = this.txtGoY.ValueObject as int? ?? 0,
+
+                Color = this.colorPickerButton1.SelectedColor.ToXnaColor(),
 
                 Alpha = a,
                 AlphaGradation = this.chkAlphaGradation.Checked,
