@@ -41,6 +41,8 @@ namespace WzComparerR2.Controls
         public OverlayShapeType ShapeType { get; set; }
         public int RectRadius { get; set; }
 
+        public Color Color { get; set; }
+
         public int Alpha { get; set; }
         public bool AlphaGradation { get; set; }
         public int AlphaDst { get; set; }

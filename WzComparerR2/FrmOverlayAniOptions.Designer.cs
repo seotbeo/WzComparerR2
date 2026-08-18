@@ -31,6 +31,7 @@
             DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo2 = new DevComponents.DotNetBar.SuperTooltipInfo();
             DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo3 = new DevComponents.DotNetBar.SuperTooltipInfo();
             DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo4 = new DevComponents.DotNetBar.SuperTooltipInfo();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOverlayAniOptions));
             DevComponents.DotNetBar.SuperTooltipInfo superTooltipInfo1 = new DevComponents.DotNetBar.SuperTooltipInfo();
             this.buttonOK = new DevComponents.DotNetBar.ButtonX();
             this.buttonCancel = new DevComponents.DotNetBar.ButtonX();
@@ -71,6 +72,7 @@
             this.chkFlipX = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkFlipY = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.chkAlphaGradation = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.colorPickerButton1 = new DevComponents.DotNetBar.ColorPickerButton();
             this.superTooltip1 = new DevComponents.DotNetBar.SuperTooltip();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
@@ -144,7 +146,7 @@
             this.tableLayoutPanel1.Controls.Add(this.labelX11, 1, 10);
             this.tableLayoutPanel1.Controls.Add(this.labelX12, 1, 11);
             this.tableLayoutPanel1.Controls.Add(this.labelX13, 1, 12);
-            this.tableLayoutPanel1.Controls.Add(this.labelXAlpha, 2, 14);
+            this.tableLayoutPanel1.Controls.Add(this.labelXAlpha, 1, 14);
             this.tableLayoutPanel1.Controls.Add(this.labelXAlphaG, 1, 16);
             this.tableLayoutPanel1.Controls.Add(this.labelXAlphaDst, 2, 15);
             this.tableLayoutPanel1.Controls.Add(this.txtDelayOffset, 2, 2);
@@ -166,6 +168,7 @@
             this.tableLayoutPanel1.Controls.Add(this.chkFlipX, 2, 10);
             this.tableLayoutPanel1.Controls.Add(this.chkFlipY, 2, 11);
             this.tableLayoutPanel1.Controls.Add(this.chkAlphaGradation, 1, 15);
+            this.tableLayoutPanel1.Controls.Add(this.colorPickerButton1, 2, 14);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 8);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -429,13 +432,12 @@
             // 
             // 
             this.labelXAlpha.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.tableLayoutPanel1.SetColumnSpan(this.labelXAlpha, 2);
-            this.labelXAlpha.Location = new System.Drawing.Point(207, 293);
+            this.labelXAlpha.Location = new System.Drawing.Point(67, 293);
             this.labelXAlpha.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.labelXAlpha.Name = "labelXAlpha";
-            this.labelXAlpha.Size = new System.Drawing.Size(94, 19);
+            this.labelXAlpha.Size = new System.Drawing.Size(132, 19);
             this.labelXAlpha.TabIndex = 12;
-            this.labelXAlpha.Text = "투명도";
+            this.labelXAlpha.Text = "색상/투명도";
             // 
             // labelXAlphaG
             // 
@@ -855,6 +857,19 @@
             this.chkAlphaGradation.TabIndex = 14;
             this.chkAlphaGradation.Text = "투명도 그라데이션";
             // 
+            // colorPickerButton1
+            // 
+            this.colorPickerButton1.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.colorPickerButton1.AutoExpandOnClick = true;
+            this.colorPickerButton1.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.colorPickerButton1.Image = ((System.Drawing.Image)(resources.GetObject("colorPickerButton1.Image")));
+            this.colorPickerButton1.Location = new System.Drawing.Point(206, 293);
+            this.colorPickerButton1.Name = "colorPickerButton1";
+            this.colorPickerButton1.SelectedColorImageRectangle = new System.Drawing.Rectangle(2, 2, 12, 12);
+            this.colorPickerButton1.Size = new System.Drawing.Size(37, 17);
+            this.colorPickerButton1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.colorPickerButton1.TabIndex = 12;
+            // 
             // superTooltip1
             // 
             this.superTooltip1.DefaultTooltipSettings = superTooltipInfo1;
@@ -958,6 +973,7 @@
         private DevComponents.DotNetBar.Controls.CheckBoxX chkFlipX;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkFlipY;
         private DevComponents.DotNetBar.Controls.CheckBoxX chkAlphaGradation;
+        private DevComponents.DotNetBar.ColorPickerButton colorPickerButton1;
         private DevComponents.DotNetBar.SuperTooltip superTooltip1;
     }
 }

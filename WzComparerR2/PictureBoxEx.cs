@@ -308,7 +308,7 @@ namespace WzComparerR2
                 FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, options.FullMove, options.AniStartIndex, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, options.AniOffset, options.PosX, options.PosY, options.AniStartIndex, frameEnd, GetAlphaTimeline(options)));
+                    this.GraphicsDevice, options.AniOffset, options.PosX, options.PosY, options.AniStartIndex, frameEnd, options, GetAlphaTimeline(options)));
             
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
@@ -411,7 +411,7 @@ namespace WzComparerR2
                 FrameAnimationData.ApplyMovement(this.GraphicsDevice, aniItem.Data, options.SpeedX, options.SpeedY, options.GoX, options.GoY, false, 0, ref frameEnd);
             }
             var newAniItem = new FrameAnimator(FrameAnimationData.MergeAnimationData(baseAniItem.Data, aniItem.Data,
-                    this.GraphicsDevice, options.AniStartTime, 0, 0, 0, frameEnd, null));
+                    this.GraphicsDevice, options.AniStartTime, 0, 0, 0, frameEnd, options, null));
 
             if (removeTopItem) RemoveTopItem();
             AddItem(newAniItem);
