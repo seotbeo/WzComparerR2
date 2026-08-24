@@ -382,9 +382,9 @@ namespace WzComparerR2
                             aniItemData = FrameAnimationData.CreateCircleData(this.GraphicsDevice, options.RectRadius, config.OverlayRectColor.Value, alphaTimeline);
                             break;
                         case OverlayShapeType.Polygon:
-                            if (options.Vertices.Count <= 2)
+                            if (options.Vertices.Count <= 1)
                             {
-                                MessageBoxEx.Show("정점이 최소 3개 필요합니다.", "범위 설정 오류");
+                                MessageBoxEx.Show("정점이 최소 2개 필요합니다.", "범위 설정 오류");
                                 return;
                             }
                             aniItemData = FrameAnimationData.CreatePolygonData(this.GraphicsDevice, options.Vertices, config.OverlayRectColor.Value, alphaTimeline);
@@ -434,7 +434,7 @@ namespace WzComparerR2
             {
                 return ret;
             }
-            const int minInterval = 60;
+            const int minInterval = 30;
             if (options.AlphaGradation && options.AlphaStart <= options.AlphaEnd)
             {
                 if (options.AniStartTime < options.AlphaStart)

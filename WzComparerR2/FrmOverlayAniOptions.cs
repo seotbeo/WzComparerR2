@@ -26,6 +26,7 @@ namespace WzComparerR2
             {
                 this.Text += " (멀티 프레임 : " + multiFrameInfo + ")";
             }
+            this.isPngFrameAni = isPngFrameAni;
             if (isPngFrameAni)
             {
                 this.txtPngDelay.Enabled = true;
@@ -68,6 +69,7 @@ namespace WzComparerR2
         private List<Frame> Frames { get; set; }
         private List<int> CumulativeFrameDelay { get; set; }
         private int MaxDelay { get; set; }
+        private bool isPngFrameAni { get; set; }
 
         private int GetDelay(int start)
         {
@@ -138,18 +140,19 @@ namespace WzComparerR2
             var a_e = this.txtAlphaEnd.ValueObject as int? ?? (s <= e ? e : s);
             if (a_s < s) a_s = s;
             if (a_e > e) a_e = e;
+            var pngDelay = this.txtPngDelay.ValueObject as int? ?? 0;
 
             var ret = new OverlayOptions()
             {
                 AniOffset = this.txtDelayOffset.ValueObject as int? ?? 0,
                 AniStartIndex = this.txtFrameStart.ValueObject as int? ?? -1,
                 AniEndIndex = this.txtFrameEnd.ValueObject as int? ?? -1,
-                AniStartTime = GetDelay(0, si - 1),
-                AniEndTime = GetDelay(0, ei - 1),
+                AniStartTime = isPngFrameAni ? 0 : GetDelay(0, si - 1),
+                AniEndTime = isPngFrameAni ? pngDelay : GetDelay(0, ei - 1),
                 PosX = this.txtMoveX.ValueObject as int? ?? 0,
                 PosY = this.txtMoveY.ValueObject as int? ?? 0,
 
-                PngDelay = this.txtPngDelay.ValueObject as int? ?? 0,
+                PngDelay = pngDelay,
 
                 FullMove = this.chkFullMove.Checked,
                 FlipX = this.chkFlipX.Checked,
