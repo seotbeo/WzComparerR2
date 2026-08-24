@@ -30,6 +30,7 @@ namespace WzComparerR2.CharaSim
         incMDF,
         incPAD_incMAD,
         incPAD,
+        incWAT,
         incMAD,
         incAD,
         incPDD_incMDD,
@@ -53,6 +54,8 @@ namespace WzComparerR2.CharaSim
         incCHUC,
         incPQEXPr,
         incEXPr,
+        incCRT,
+        incCRD,
 
         //潜能属性
         incPADr = 100,

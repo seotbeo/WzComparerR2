@@ -78,6 +78,7 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incMMPr: return "최대 MP : " + sign + value + "%";
                 case GearPropType.incMDF: return "MaxDF : " + sign + value;
                 case GearPropType.incPAD: return "공격력 : " + sign + value;
+                case GearPropType.incWAT: return "공격력 : " + sign + value;
                 case GearPropType.incPADr: return "공격력 : " + sign + value + "%";
                 case GearPropType.incMAD: return "마력 : " + sign + value;
                 case GearPropType.incMADr: return "마력 : " + sign + value + "%";
@@ -94,8 +95,10 @@ namespace WzComparerR2.CharaSim
                 case GearPropType.incCraft: return "손재주 : " + sign + value;
                 case GearPropType.damR:
                 case GearPropType.incDAMr: return "데미지 : " + sign + value + "%";
-                case GearPropType.incCr: return "크리티컬 확률 : " + sign + value + "%";
-                case GearPropType.incCDr: return "크리티컬 데미지 : " + sign + value + "%";
+                case GearPropType.incCr:
+                case GearPropType.incCRT: return "크리티컬 확률 : " + sign + value + "%";
+                case GearPropType.incCDr:
+                case GearPropType.incCRD: return "크리티컬 데미지 : " + sign + value + "%";
                 case GearPropType.knockback: return "직접 타격시 " + value + "%의 확률로 넉백";
                 case GearPropType.incPVPDamage: return "대난투 시 추가 공격력 " + sign + " " + value;
                 case GearPropType.incPQEXPr: return "파티퀘스트 경험치 " + value + "% 증가";
@@ -251,6 +254,10 @@ namespace WzComparerR2.CharaSim
                     res[0] = "공격력";
                     res[1] = sign + value;
                     return res;
+                case GearPropType.incWAT:
+                    res[0] = "공격력";
+                    res[1] = sign + value;
+                    return res;
                 case GearPropType.incPADr:
                     res[0] = "공격력";
                     res[1] = sign + value + "%";
@@ -289,10 +296,12 @@ namespace WzComparerR2.CharaSim
                     res[1] = sign + value + "%";
                     return res;
                 case GearPropType.incCr:
+                case GearPropType.incCRT:
                     res[0] = "크리티컬 확률";
                     res[1] = sign + value + "%";
                     return res;
                 case GearPropType.incCDr:
+                case GearPropType.incCRD:
                     res[0] = "크리티컬 데미지";
                     res[1] = sign + value + "%";
                     return res;
