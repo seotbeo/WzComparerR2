@@ -27,6 +27,7 @@ namespace WzComparerR2
 
         private string playingSoundName;
         private byte[] data;
+        private GCHandle dataHandle;
 
         private HashSet<int> loadedPlugin;
 
@@ -125,7 +126,11 @@ namespace WzComparerR2
 
             try
             {
-                IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(data,0);
+                // BASS 會直接從這塊記憶體讀取直到 stream 被釋放，所以必須釋放前一直固定住。
+                // 小於 85000 bytes 的短音效會落在 gen0/gen1，GC 壓縮時會被搬走，
+                // 若只取位址不固定，播到一半就會變成雜訊或無聲。
+                this.dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+                IntPtr pData = this.dataHandle.AddrOfPinnedObject();
                 hStream = Bass.CreateStream(pData, 0, data.Length, BassFlags.Default);
             }
             catch
@@ -143,6 +148,7 @@ namespace WzComparerR2
             }
             else
             {
+                this.FreeDataHandle();
                 var lastErr = Bass.LastError;
             }
         }
@@ -153,7 +159,17 @@ namespace WzComparerR2
             {
                 Bass.ChannelStop(hStream);
                 Bass.StreamFree(hStream);
+                hStream = 0;
                 this.data = null;
+            }
+            this.FreeDataHandle();
+        }
+
+        private void FreeDataHandle()
+        {
+            if (this.dataHandle.IsAllocated)
+            {
+                this.dataHandle.Free();
             }
         }
 
