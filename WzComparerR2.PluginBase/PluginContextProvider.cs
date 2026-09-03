@@ -19,11 +19,15 @@ namespace WzComparerR2.PluginBase
         Wz_Node SelectedNode3 { get; }
         StringLinker DefaultStringLinker { get; }
         AlphaForm DefaultTooltipWindow { get; }
+        eStyle MainStyle { get; }
+
+        bool SelectNode(Wz_Node node);
 
         event EventHandler<WzNodeEventArgs> SelectedNode1Changed;
         event EventHandler<WzNodeEventArgs> SelectedNode2Changed;
         event EventHandler<WzNodeEventArgs> SelectedNode3Changed;
         event EventHandler<WzStructureEventArgs> WzOpened;
         event EventHandler<WzStructureEventArgs> WzClosing;
+        event EventHandler MainStyleChanged;
     }
 }
