@@ -147,7 +147,7 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.DisabledBackColor = System.Drawing.Color.Empty;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Font = new System.Drawing.Font("맑은 고딕", 8F);
+            this.panel1.Font = new System.Drawing.Font("굴림", 8F);
             this.panel1.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -166,7 +166,7 @@
 
             this.SearchBox.Border.Class = "TextBoxBorder";
             this.SearchBox.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.SearchBox.Font = new System.Drawing.Font("맑은 고딕", 9F);
+            this.SearchBox.Font = new System.Drawing.Font("굴림", 9F);
             this.SearchBox.Location = new System.Drawing.Point(308, 4);
             this.SearchBox.Name = "SearchBox";
             this.SearchBox.Size = new System.Drawing.Size(160, 27);
@@ -190,19 +190,19 @@
             "13",
             "14",
             "15"});
-            this.comboBox2.Location = new System.Drawing.Point(819, 5);
+            this.comboBox2.Location = new System.Drawing.Point(820, 5);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(50, 25);
             this.comboBox2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.comboBox2.TabIndex = 10;
-            this.comboBox2.Text = "11";
+            this.comboBox2.Text = "9";
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // comboBox4
             // 
             this.comboBox4.DropDownHeight = 500;
             this.comboBox4.DropDownWidth = 40;
-            this.comboBox4.Font = new System.Drawing.Font("맑은 고딕", 7F);
+            this.comboBox4.Font = new System.Drawing.Font("굴림", 7F);
             this.comboBox4.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -222,7 +222,7 @@
             "장갑",
             "반지",
             "망토",
-            "악세서리",
+            "장신구",
             "방패",
             "길들인 몬스터",
             "헤어",
@@ -238,17 +238,17 @@
             "펫",
             "설치",
             "안드로이드",
-            "메카닉",
+            "메카닉 장비",
             "펫장비",
-            "비트",
+            "비츠",
             "몬스터 배틀",
             "토템",
-            "변신",
+            "모프",
             "패밀리어",
             "데미지 스킨",
             "기타",
             "리액터",
-            "음악"});
+            "BGM"});
             this.comboBox4.Location = new System.Drawing.Point(43, 4);
             this.comboBox4.MaxDropDownItems = 15;
             this.comboBox4.Name = "comboBox4";
@@ -262,7 +262,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.label6.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
+            this.label6.Font = new System.Drawing.Font("굴림", 10.2F);
             this.label6.Location = new System.Drawing.Point(3, 7);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(44, 22);
@@ -311,8 +311,8 @@
             // 
             this.label3.AutoSize = true;
             this.label3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.label3.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
-            this.label3.Location = new System.Drawing.Point(729, 7);
+            this.label3.Font = new System.Drawing.Font("굴림", 10.2F);
+            this.label3.Location = new System.Drawing.Point(754, 7);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 22);
             this.label3.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -323,7 +323,7 @@
             // 
             this.SaveButton.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.SaveButton.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.SaveButton.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
+            this.SaveButton.Font = new System.Drawing.Font("굴림", 10.2F);
             this.SaveButton.Location = new System.Drawing.Point(636, 5);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(85, 27);
@@ -336,10 +336,10 @@
             // 
             this.LoadButton.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.LoadButton.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.LoadButton.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
+            this.LoadButton.Font = new System.Drawing.Font("굴림", 10.2F);
             this.LoadButton.Location = new System.Drawing.Point(179, 4);
             this.LoadButton.Name = "LoadButton";
-            this.LoadButton.Size = new System.Drawing.Size(77, 27);
+            this.LoadButton.Size = new System.Drawing.Size(85, 27);
             this.LoadButton.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.LoadButton.TabIndex = 6;
             this.LoadButton.Text = "WZ 불러오기";
@@ -347,7 +347,7 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.Font = new System.Drawing.Font("맑은 고딕", 9F);
+            this.comboBox1.Font = new System.Drawing.Font("굴림", 9F);
             this.comboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -368,8 +368,8 @@
             // 
             this.label2.AutoSize = true;
             this.label2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.label2.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
-            this.label2.Location = new System.Drawing.Point(258, 6);
+            this.label2.Font = new System.Drawing.Font("굴림", 10.2F);
+            this.label2.Location = new System.Drawing.Point(268, 6);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(44, 22);
             this.label2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -380,8 +380,8 @@
             // 
             this.label4.AutoSize = true;
             this.label4.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.label4.Font = new System.Drawing.Font("맑은 고딕", 10.2F);
-            this.label4.Location = new System.Drawing.Point(875, 8);
+            this.label4.Font = new System.Drawing.Font("굴림", 10.2F);
+            this.label4.Location = new System.Drawing.Point(910, 8);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 22);
             this.label4.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -447,10 +447,10 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 35);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.ReorderTabsEnabled = false;
-            this.tabControl1.SelectedTabFont = new System.Drawing.Font("맑은 고딕", 11F, System.Drawing.FontStyle.Bold);
+            this.tabControl1.SelectedTabFont = new System.Drawing.Font("굴림", 11F, System.Drawing.FontStyle.Bold);
             this.tabControl1.SelectedTabIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(637, 506);
-            this.tabControl1.TabFont = new System.Drawing.Font("맑은 고딕", 11F);
+            this.tabControl1.TabFont = new System.Drawing.Font("굴림", 11F);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.TabLayoutType = DevComponents.DotNetBar.eSuperTabLayoutType.SingleLine;
             this.tabControl1.TabStyle = DevComponents.DotNetBar.eSuperTabStyle.Office2007;
@@ -729,7 +729,7 @@
             this.tabItemAccessory.GlobalItem = false;
             this.tabItemAccessory.ImageIndex = 11;
             this.tabItemAccessory.Name = "tabItemAccessory";
-            this.tabItemAccessory.Text = "악세서리";
+            this.tabItemAccessory.Text = "장신구";
             // 
             // Shield
             // 
@@ -1017,7 +1017,7 @@
             this.tabItemMechanic.GlobalItem = false;
             this.tabItemMechanic.ImageIndex = 23;
             this.tabItemMechanic.Name = "tabItemMechanic";
-            this.tabItemMechanic.Text = "메카닉";
+            this.tabItemMechanic.Text = "메카닉 장비";
             // 
             // PetEquip
             // 
@@ -1053,7 +1053,7 @@
             this.tabItemBits.GlobalItem = false;
             this.tabItemBits.ImageIndex = 25;
             this.tabItemBits.Name = "tabItemBits";
-            this.tabItemBits.Text = "비트";
+            this.tabItemBits.Text = "비츠";
             // 
             // MonsterBattle
             // 
@@ -1107,7 +1107,7 @@
             this.tabItemMorph.GlobalItem = false;
             this.tabItemMorph.ImageIndex = 28;
             this.tabItemMorph.Name = "tabItemMorph";
-            this.tabItemMorph.Text = "변신";
+            this.tabItemMorph.Text = "모프";
             // 
             // Familiar
             // 
@@ -1197,7 +1197,7 @@
             this.tabItemMusic.GlobalItem = false;
             this.tabItemMusic.ImageIndex = 33;
             this.tabItemMusic.Name = "tabItemMusic";
-            this.tabItemMusic.Text = "음악";
+            this.tabItemMusic.Text = "BGM";
             // 
             // imageList1
             // 
@@ -1250,7 +1250,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DB2Form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "메이플 DB2";
+            this.Text = "Maple DB2";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.Form1_Resize);

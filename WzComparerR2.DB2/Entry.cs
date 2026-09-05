@@ -31,7 +31,7 @@ namespace WzComparerR2.DB2
 
             // 三個按鈕共用同一個 RibbonBar（標題為 DB2），而非各自佔一欄。
             this.barDB2 = AddButtons("DB2",
-                ("메이플 DB2", (EventHandler)btnDB2_Click),
+                ("Maple DB2", (EventHandler)btnDB2_Click),
                 ("아이콘 뷰어", btnIcons_Click),
                 ("이미지 뷰어", btnPicViewer_Click));
 

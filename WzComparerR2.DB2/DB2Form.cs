@@ -18,6 +18,10 @@ namespace WzComparerR2.DB2
         public DB2Form()
         {
             InitializeComponent();
+#if NET6_0_OR_GREATER
+            // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
+            this.Font = new Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+#endif
             Instance = this;
             Db2Theme.Apply(this);
         }
@@ -206,7 +210,7 @@ namespace WzComparerR2.DB2
         string GetTypes(string ID)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("종류: ");
+            sb.Append("분류: ");
             if (int.TryParse(ID, out int gearID))
             {
                 GearType type = Gear.GetGearType(gearID);
@@ -214,9 +218,9 @@ namespace WzComparerR2.DB2
             }
             else
             {
-                sb.Append("알 수 없음");
+                sb.Append("??");
             }
-            sb.Append(",");
+            sb.Append(", ");
             return sb.ToString();
         }
 
@@ -282,7 +286,7 @@ namespace WzComparerR2.DB2
                     if (E.ValueToInt() == 0)
                         return "";
                     else if (E.ValueToInt() == 1)
-                        return "포인트 아이템";
+                        return "캐시 아이템";
                     else break;
                 case "addition":
                     if (E.HasNode("mobcategory"))
@@ -323,10 +327,12 @@ namespace WzComparerR2.DB2
             return Result;
 
         }
+
         string GetJobID(string ID)
         {
             return (int.Parse(ID) / 10000).ToString();
         }
+
         string LeftStr(string s, int count)
         {
             if (count > s.Length)
@@ -339,7 +345,7 @@ namespace WzComparerR2.DB2
             var ToName = new Dictionary<string, string>();
             var ToNameBool = new Dictionary<string, string>();
             ToName.Add("price", "판매 가격: ");
-            ToName.Add("reqLevel", "REQ LEV: ");
+            ToName.Add("reqLevel", "요구 레벨: ");
             ToName.Add("reqJob", "착용 직업: ");
             // ToName.Add("reqSpecJob", "");
             ToName.Add("reqSTR", "REQ STR: ");
@@ -348,38 +354,38 @@ namespace WzComparerR2.DB2
             ToName.Add("reqLUK", "REQ LUK: ");
             ToName.Add("reqPOP", "요구 인기도: ");
             ToName.Add("attackSpeed", "공격 속도: ");
-            ToName.Add("incSTR", "STR+");
-            ToName.Add("incDEX", "DEX+");
-            ToName.Add("incINT", "INT+");
-            ToName.Add("incLUK", "LUK+");
-            ToName.Add("incMHP", "최대 HP+");
-            ToName.Add("incMMP", "최대 MP+");
-            ToName.Add("incPAD", "공격력+");
-            ToName.Add("incMAD", "마력+");
-            ToName.Add("incPDD", "방어력+");
-            ToName.Add("incMDD", "마법방어력+");
-            ToName.Add("incACC", "명중치+");
-            ToName.Add("incEVA", "회피치+");
-            ToName.Add("incSpeed", "이동속도+");
-            ToName.Add("incJump", "점프력+");
-            ToName.Add("incCraft", "손재주+");
-            ToName.Add("craftEXP", "손재주 경험치+");
+            ToName.Add("incSTR", "STR +");
+            ToName.Add("incDEX", "DEX +");
+            ToName.Add("incINT", "INT +");
+            ToName.Add("incLUK", "LUK +");
+            ToName.Add("incMHP", "최대 HP +");
+            ToName.Add("incMMP", "최대 MP +");
+            ToName.Add("incPAD", "공격력 +");
+            ToName.Add("incMAD", "마력 +");
+            ToName.Add("incPDD", "방어력 +");
+            ToName.Add("incMDD", "마법방어력 +");
+            ToName.Add("incACC", "명중치 +");
+            ToName.Add("incEVA", "회피치 +");
+            ToName.Add("incSpeed", "이동속도 +");
+            ToName.Add("incJump", "점프력 +");
+            ToName.Add("incCraft", "손재주 +");
+            ToName.Add("craftEXP", "손재주 +");
 
-            ToName.Add("incPVPDamage", "대난투 추가 공격력+");
-            ToName.Add("bdR", "보스 몬스터 공격 시 데미지+");
-            ToName.Add("imdR", "몬스터 방어율 무시+");
-            ToName.Add("willEXP", "의지 경험치+");
-            ToName.Add("charmEXP", "매력 경험치+");
-            ToName.Add("charismaEXP", "인기 경험치+");
-            ToName.Add("knockback", "직접 타격 시 넉백 확률:");
-            ToName.Add("reduceReq", "착용 레벨 감소:");
+            ToName.Add("incPVPDamage", "대난투 추가 공격력 +");
+            ToName.Add("bdR", "보스 몬스터 공격 시 데미지 +");
+            ToName.Add("imdR", "몬스터 방어율 무시 +");
+            ToName.Add("willEXP", "의지 +");
+            ToName.Add("charmEXP", "매력 +");
+            ToName.Add("charismaEXP", "카리스마 +");
+            ToName.Add("knockback", "직접 타격 시 넉백 확률: ");
+            ToName.Add("reduceReq", "착용 레벨 감소: ");
 
-            ToName.Add("incRMAI", "얼음 속성 마법+");
-            ToName.Add("incRMAL", "번개 속성 마법+");
-            ToName.Add("incRMAF", "불 속성 마법+");
-            ToName.Add("incRMAS", "독 속성 마법+");
+            ToName.Add("incRMAI", "얼음 속성 마법 +");
+            ToName.Add("incRMAL", "번개 속성 마법 +");
+            ToName.Add("incRMAF", "불 속성 마법 +");
+            ToName.Add("incRMAS", "독 속성 마법 +");
             ToName.Add("durability", "내구도: ");
-            ToName.Add("tuc", "강화 가능 횟수: ");
+            ToName.Add("tuc", "업그레이드 가능 횟수: ");
 
             ToName.Add("level", "");
             ToName.Add("head", "");
@@ -398,7 +404,9 @@ namespace WzComparerR2.DB2
             ToNameBool.Add("accountSharable", "월드 내 나의 캐릭터 간 이동만 가능");
             ToNameBool.Add("exItem", "세트 아이템");
             ToNameBool.Add("randVariation", "randVariation");
-            ToNameBool.Add("jokerToSetItem", "jokerToSetItem");
+            ToNameBool.Add("jokerToSetItem", "럭키 아이템");
+            ToNameBool.Add("noPrism", "염색하기 불가");
+            ToNameBool.Add("collabo", "콜라보 아이템");
 
             ToName.Add("tradeAvailable", "");
             ToName.Add("cash", "");
@@ -409,6 +417,7 @@ namespace WzComparerR2.DB2
             ToName.Add("critical", "크리티컬");
             ToName.Add("mobdie", "처치 효과");
             ToName.Add("statinc", "추가 능력치");
+
             var Dir = TabPage(tabIndex).Name;
             if (GetNode("Character/" + Dir) == null)
             {
@@ -481,7 +490,7 @@ namespace WzComparerR2.DB2
                             }
                             else if (ToNameBool.ContainsKey(Iter2.Text))
                             {
-                                ColList1.Add(ToNameBool[Iter2.Text] + ",");
+                                ColList1.Add(ToNameBool[Iter2.Text] + ", ");
                             }
                             else
                             {
@@ -489,9 +498,9 @@ namespace WzComparerR2.DB2
                                 if (Iter2.Value is string)
                                     Data = Iter2.Value.ToString();
                                 if (Data == "1")
-                                    D = "=" + Data + ",";
+                                    D = "=" + Data + ", ";
                                 else
-                                    D = ",";
+                                    D = ", ";
 
                                 if ((Iter2.Text != "afterImage") && (Iter2.Text != "islot") && (Iter2.Text != "vslot")
                                   && (Iter2.Text != "walk") && (Iter2.Text != "stand") && (Iter2.Text != "sfx") && (Iter2.Text
@@ -668,7 +677,7 @@ namespace WzComparerR2.DB2
                 case "S":
                     return "독";
                 case "D":
-                    return "어둠";
+                    return "암흑";
                 case "P":
                     return "물리";
                 case "H":
@@ -682,14 +691,15 @@ namespace WzComparerR2.DB2
             switch (S[1].ToString())
             {
                 case "1":
-                    return "면역";
+                    return "무시";
                 case "2":
-                    return "저항";
+                    return "반감";
                 case "3":
-                    return "약함";
+                    return "약점";
             }
             return null;
         }
+
         string Copy(string s, int index, int count)
         {
             if (index < 1)
@@ -703,6 +713,7 @@ namespace WzComparerR2.DB2
                 count = s.Length - index + 1;
             return s.Substring(index - 1, count);
         }
+
         string ElemName(string S)
         {
             string A, D;
@@ -727,6 +738,7 @@ namespace WzComparerR2.DB2
             return s.Substring(s.Length - count, count);
 
         }
+
         void LoadMob(int Part)
         {
 
@@ -741,28 +753,28 @@ namespace WzComparerR2.DB2
             Category.Add("7", "불사형");
             Category.Add("8", "무형");
 
-            ToName.Add("level", "레벨:");
-            ToName.Add("exp", "경험치:");
-            ToName.Add("maxMP", "MP:");
-            ToName.Add("maxHP", "HP:");
-            ToName.Add("speed", "이동속도:");
-            ToName.Add("acc", "명중률:");
-            ToName.Add("pushed", "넉백:");
-            ToName.Add("category", "분류:");
-            ToName.Add("eva", "회피율:");
-            ToName.Add("link", "링크:");
-            ToName.Add("elemAttr", "속성:");
-            ToName.Add("MADamage", "마법 공격력:");
-            ToName.Add("MDDamage", "마법 방어력:");
-            ToName.Add("PADamage", "물리 공격력:");
-            ToName.Add("PDDamage", "물리 방어력:");
-            ToName.Add("PDRate", "물리 방어율:");
-            ToName.Add("MDRate", "마법 방어율:");
-            ToName.Add("boss", "보스");
-            ToName.Add("firstAttack", "선공");
-            ToName.Add("charismaEXP", "인기:");
-            ToName.Add("hpRecovery", "HP 회복:");
-            ToName.Add("mpRecovery", "MP 회복:");
+            ToName.Add("level", "레벨: ");
+            ToName.Add("exp", "경험치: ");
+            ToName.Add("maxMP", "MP: ");
+            ToName.Add("maxHP", "HP: ");
+            ToName.Add("speed", "이동속도: ");
+            ToName.Add("acc", "명중치: ");
+            ToName.Add("pushed", "넉백: ");
+            ToName.Add("category", "분류: ");
+            ToName.Add("eva", "회피치: ");
+            ToName.Add("link", "링크: ");
+            ToName.Add("elemAttr", "속성: ");
+            ToName.Add("MADamage", "마법 공격력: ");
+            ToName.Add("MDDamage", "마법 방어력: ");
+            ToName.Add("PADamage", "물리 공격력: ");
+            ToName.Add("PDDamage", "물리 방어력: ");
+            ToName.Add("PDRate", "물리 방어율: ");
+            ToName.Add("MDRate", "마법 방어율: ");
+            ToName.Add("boss", "보스 ");
+            ToName.Add("firstAttack", "선제공격");
+            ToName.Add("charismaEXP", "카리스마 경험치: ");
+            ToName.Add("hpRecovery", "HP 회복: ");
+            ToName.Add("mpRecovery", "MP 회복: ");
             if (Db2Host.HasMob001)
             {
                 var Links = new List<(string, int)>();
@@ -946,6 +958,7 @@ namespace WzComparerR2.DB2
 
 
         }
+
         // 原版使用 MapleStoryDB2 附帶的原生 Eval2.dll 計算公式；
         // 這裡改用 WzComparerR2 內建的 Calculator，可跨 x64 / ARM64 並免除原生相依。
         double GetFValue(string FormStr, int Level)
@@ -961,6 +974,7 @@ namespace WzComparerR2.DB2
                 return 0;
             }
         }
+
         Wz_Node Common;
         int MaxLev;
         string CommonMatch(System.Text.RegularExpressions.Match Match1)
@@ -1156,7 +1170,6 @@ namespace WzComparerR2.DB2
 
         void LoadFamiliar()
         {
-
             if (GetNode("Character/Familiar") == null)
             {
                 MessageBoxEx.Show(this, "패밀리어를 찾을 수 없습니다");
@@ -1928,7 +1941,7 @@ namespace WzComparerR2.DB2
             return int.TryParse(text, out int value) && value > 0 ? value : fallback;
         }
 
-        private const int DefaultCellFontSize = 11;
+        private const int DefaultCellFontSize = 9;
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1936,7 +1949,7 @@ namespace WzComparerR2.DB2
             {
                 return;
             }
-            var font = new System.Drawing.Font("맑은 고딕", ParseOr(comboBox2.Text, DefaultCellFontSize));
+            var font = new System.Drawing.Font("굴림", ParseOr(comboBox2.Text, DefaultCellFontSize));
             Grid.DefaultCellStyle.Font = font;
             SearchGrid.DefaultCellStyle.Font = font;
         }
@@ -2096,7 +2109,7 @@ namespace WzComparerR2.DB2
             {
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            grid.DefaultCellStyle.Font = new System.Drawing.Font("맑은 고딕", ParseOr(comboBox2.Text, DefaultCellFontSize));
+            grid.DefaultCellStyle.Font = new System.Drawing.Font("굴림", ParseOr(comboBox2.Text, DefaultCellFontSize));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -2241,44 +2254,30 @@ namespace WzComparerR2.DB2
 
             Graphics graphics = this.CreateGraphics();
             float dpiX = graphics.DpiX;
-            double Size10 = ((double)96 / (double)dpiX) * 10;
-            double Size11 = ((double)96 / (double)dpiX) * 11;
-            double Size12 = ((double)96 / (double)dpiX) * 12;
-            double Size13 = ((double)96 / (double)dpiX) * 13;
+            double Size10 = ((double)96 / (double)dpiX) * 9;
+            double Size11 = ((double)96 / (double)dpiX) * 9;
+            double Size12 = ((double)96 / (double)dpiX) * 10;
+            double Size13 = ((double)96 / (double)dpiX) * 11;
 
-            comboBox1.Font = new Font("맑은 고딕", (float)Size10);
-            comboBox2.Font = new Font("맑은 고딕", (float)Size10);
-            comboBox3.Font = new Font("맑은 고딕", (float)Size10);
-            comboBox4.Font = new Font("맑은 고딕", (float)Size12);
+            comboBox1.Font = new Font("굴림", (float)Size10);
+            comboBox2.Font = new Font("굴림", (float)Size10);
+            comboBox3.Font = new Font("굴림", (float)Size10);
+            comboBox4.Font = new Font("굴림", (float)Size10);
 
-            label2.Font = new Font("맑은 고딕", (float)Size12);
-            label3.Font = new Font("맑은 고딕", (float)Size12);
-            label4.Font = new Font("맑은 고딕", (float)Size12);
-            label6.Font = new Font("맑은 고딕", (float)Size12);
+            label2.Font = new Font("굴림", (float)Size12);
+            label3.Font = new Font("굴림", (float)Size12);
+            label4.Font = new Font("굴림", (float)Size12);
+            label6.Font = new Font("굴림", (float)Size12);
 
             gridsReady = true;
             ApplyTheme();
 
-            SearchBox.Font = new Font("맑은 고딕", (float)Size11);
-            LoadButton.Font = new Font("맑은 고딕", (float)Size12);
-            SaveButton.Font = new Font("맑은 고딕", (float)Size12);
-            tabControl1.TabFont = new Font("맑은 고딕", (float)Size13);
-            tabControl1.SelectedTabFont = new Font("맑은 고딕", (float)Size13, FontStyle.Bold);
+            SearchBox.Font = new Font("굴림", (float)Size11);
+            LoadButton.Font = new Font("굴림", (float)Size11);
+            SaveButton.Font = new Font("굴림", (float)Size11);
+            tabControl1.TabFont = new Font("굴림", (float)Size13);
+            tabControl1.SelectedTabFont = new Font("굴림", (float)Size13, FontStyle.Bold);
 
         }
-
-
-
-
     }
-
-
-
-
 }
-
-
-
-
-
-

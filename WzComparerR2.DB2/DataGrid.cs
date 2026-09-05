@@ -16,7 +16,7 @@ namespace WzComparerR2.DB2
             DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             ColumnHeadersHeight = 28;
             this.MultiSelect = false;
-            DefaultCellStyle.Font = new System.Drawing.Font("맑은 고딕", 11);
+            DefaultCellStyle.Font = new System.Drawing.Font("굴림", 9);
             var ID = new DataGridViewTextBoxColumn();
             ID.DataPropertyName = "ID";
             ID.HeaderText = "ID";
@@ -36,7 +36,7 @@ namespace WzComparerR2.DB2
 
             var MorphIcon = new DataGridViewImageColumn();
             MorphIcon.DataPropertyName = "MorphIcon";
-            MorphIcon.HeaderText = "변신";
+            MorphIcon.HeaderText = "모프";
             MorphIcon.Name = "propBitmap";
             MorphIcon.ReadOnly = true;
             MorphIcon.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -109,7 +109,7 @@ namespace WzComparerR2.DB2
 
             var MorphID = new DataGridViewTextBoxColumn();
             MorphID.DataPropertyName = "MorphID";
-            MorphID.HeaderText = "변신 ID";
+            MorphID.HeaderText = "모프 ID";
             MorphID.Name = "propID";
             MorphID.ReadOnly = true;
             MorphID.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
