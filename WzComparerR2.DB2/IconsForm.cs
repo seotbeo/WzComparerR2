@@ -463,14 +463,14 @@ namespace WzComparerR2.DB2
                 ImageGrids[i].CellClick += (s, e2) =>
                 {
                     var Path = ShowImageGrid.Rows[e2.RowIndex].Cells[e2.ColumnIndex].ToolTipText;
-                    if (listBox1.SelectedIndex == 16)
+                    /*if (listBox1.SelectedIndex == 16)
                     {
                         var imgNode = GetNode("Map/Map/Map" + LeftStr(Path, 1)).FindNodeByPath(Path + ".img");
                         ShowMap(imgNode);
                         if (imgNode != null)
                             Db2Host.SelectNode(imgNode);
                     }
-                    else
+                    else*/
                     {
                         Db2Host.Tooltip.Visible = true;
                         Db2Host.Tooltip.BringToFront();
@@ -482,10 +482,12 @@ namespace WzComparerR2.DB2
                             Db2Host.Tooltip.Visible = false;
                     }
                 };
+                /*
                 ImageGrids[i].Scroll += (s, e1) =>
                 {
                     Db2Host.Tooltip.Visible = false;
                 };
+                */
             }
             ShowImageGrid = ImageGrids[0];
             Db2Theme.Apply(this.listBox1);
@@ -599,6 +601,8 @@ namespace WzComparerR2.DB2
                     return "Character/Hair/" + ID + ".img";
                 case 15:
                     return "Character/Face/" + ID + ".img";
+                case 16:
+                    return "Map/Map/Map" + ID[0] + "/" + ID + ".img";
                 case 17:
                     return "Mob/" + ID + ".img";
                 case 18:

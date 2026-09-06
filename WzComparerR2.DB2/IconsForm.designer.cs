@@ -38,7 +38,7 @@ namespace WzComparerR2.DB2
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 12;
             this.listBox1.Items.AddRange(new object[] {
-            "포인트",
+            "캐시",
             "소비",
             "무기",
             "모자",
@@ -49,7 +49,7 @@ namespace WzComparerR2.DB2
             "장갑",
             "반지",
             "망토",
-            "악세서리",
+            "장신구",
             "방패",
             "길들인 몬스터",
             "헤어",
@@ -61,12 +61,12 @@ namespace WzComparerR2.DB2
             "펫",
             "설치",
             "안드로이드",
-            "메카닉",
+            "메카닉 장비",
             "펫장비",
-            "비트",
+            "비츠",
             "몬스터 배틀",
             "토템",
-            "변신",
+            "모프",
             "패밀리어",
             "데미지 스킨",
             "기타",

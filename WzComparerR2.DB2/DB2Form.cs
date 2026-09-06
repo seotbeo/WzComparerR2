@@ -1705,7 +1705,7 @@ namespace WzComparerR2.DB2
         }
         string GetIDPath(string ID)
         {
-
+            if (string.IsNullOrEmpty(ID)) return string.Empty;
 
             switch (tabIndex)
             {
@@ -1752,6 +1752,10 @@ namespace WzComparerR2.DB2
 
                 case 16:
                     return "Character/Face/" + ID + ".img";
+                case 17:
+                case 18:
+                case 19:
+                    return "Map/Map/Map" + ID[0] + "/" + ID + ".img";
                 case 20:
                 case 21:
                 case 22:
@@ -2003,14 +2007,14 @@ namespace WzComparerR2.DB2
             {
                 SelectID = DataGrid.Rows[e.RowIndex].Cells[0].Value.ToString();
 
-                if (tabIndex == 17 || tabIndex == 18 || tabIndex == 19)
+                /*if (tabIndex == 17 || tabIndex == 18 || tabIndex == 19)
                 {
                     var imgNode = GetNode("Map/Map/Map" + LeftStr(SelectID, 1)).FindNodeByPath(SelectID + ".img");
                     ShowMap(imgNode);
                     if (imgNode != null)
                         Db2Host.SelectNode(imgNode);
                 }
-                else if (tabIndex == 38)
+                else */if (tabIndex == 38)
                 {
                     // SelectID 是 img 內的相對路徑，例如 PL_MONAD.img/effectSound/Caravan_Bad。
                     var soundNode = GetNode("Sound/" + SelectID);
@@ -2044,6 +2048,8 @@ namespace WzComparerR2.DB2
 
         void GridScroll()
         {
+            return;
+
             var tooltip = Db2Host.Tooltip;
             if (tooltip != null)
                 tooltip.Visible = false;
