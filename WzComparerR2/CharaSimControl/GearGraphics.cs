@@ -303,6 +303,7 @@ namespace WzComparerR2.CharaSimControl
 
         public static readonly Brush BarrierArcBrush = new SolidBrush(Color.FromArgb(218, 161, 255));
         public static readonly Brush BarrierAutBrush = new SolidBrush(Color.FromArgb(218, 161, 255));
+        public static readonly Brush MapBgmBrush = new SolidBrush(Color.FromArgb(100, 237, 46));
 
         public static readonly Brush LocationBrush = new SolidBrush(Color.FromArgb(209, 255, 50));
 

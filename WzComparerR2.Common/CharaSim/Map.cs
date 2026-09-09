@@ -28,6 +28,7 @@ namespace WzComparerR2.CharaSim
         public int MiniMapCenterX { get; set; }
         public int MiniMapCenterY { get; set; }
         public string MapMark { get; set; }
+        public string Bgm { get; set; }
         public Wz_Node MiniMapNode { get; set; }
         public List<int> Mobs { get; set; }
         public List<int> Npcs { get; set; }
@@ -61,6 +62,7 @@ namespace WzComparerR2.CharaSim
                         case "barrier": map.Barrier = propNode.GetValueEx<int>(0); break;
                         case "barrierArc": map.BarrierArc = propNode.GetValueEx<int>(0); break;
                         case "barrierAut": map.BarrierAut = propNode.GetValueEx<int>(0); break;
+                        case "bgm": map.Bgm = propNode.GetValueEx<string>(null); break;
                     }
                 }
 

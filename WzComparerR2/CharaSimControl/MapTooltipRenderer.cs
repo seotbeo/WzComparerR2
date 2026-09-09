@@ -8,6 +8,7 @@ using WzComparerR2.Common;
 using WzComparerR2.WzLib;
 using static WzComparerR2.CharaSimControl.RenderHelper;
 using CharaSimResource;
+using System.Linq;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -49,6 +50,7 @@ namespace WzComparerR2.CharaSimControl
             List<TextBlock> npcBlocks = new List<TextBlock>();
             TextBlock barrierBlock = null;
             TextBlock descBlock = null;
+            TextBlock bgmBlock = null;
             int[] barrierResourceWidth = [17, 18, 18];
             int barrierType = 0;
             int picY = 0;
@@ -89,6 +91,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 var block = PrepareText(g, mapDesc, GearGraphics.ItemDetailFont, Brushes.White, 0, 0);
                 descBlock = block;
+            }
+
+            if (!string.IsNullOrEmpty(Map.Bgm))
+            {
+                bgmBlock = PrepareText(g, Map.Bgm, GearGraphics.ItemDetailFont, GearGraphics.MapBgmBrush, 0, 0);
             }
 
             if (Map.Mobs.Count > 0)
@@ -137,11 +144,12 @@ namespace WzComparerR2.CharaSimControl
             Rectangle titleRect = Measure(titleBlocks);
             Rectangle miniMapRect = new Rectangle(0, 0, miniMap?.Width ?? 0, miniMap?.Height ?? 0);
             Rectangle descRect = descBlock?.Rectangle ?? new Rectangle();
+            Rectangle bgmRect = bgmBlock?.Rectangle ?? new Rectangle();
             Rectangle mobRect = Measure(mobBlocks);
             Rectangle npcRect = Measure(npcBlocks);
 
             int width = 0;
-            width = Math.Max(miniMapRect.Width, Math.Max(markRect.Width + 5 + titleRect.Width, Math.Max(mobRect.Width + 21, npcRect.Width + 21)));
+            width = (new[] { miniMapRect.Width, markRect.Width + 5 + titleRect.Width, bgmRect.Width + 21, mobRect.Width + 21, npcRect.Width + 21}).Max();
             if (!descRect.IsEmpty)
                 width = Math.Max(width, 300);
             if (!markRect.IsEmpty)
@@ -165,17 +173,20 @@ namespace WzComparerR2.CharaSimControl
                 miniMapRect.Height += 6;
             if (!descRect.IsEmpty)
                 descRect.Height += 6;
+            if (!bgmRect.IsEmpty)
+                bgmRect.Height = 14 + 6;
             if (!mobRect.IsEmpty)
-                mobRect.Height += 6;
+                mobRect.Height = mobBlocks.Count * 18 - 4 + 6;
             if (!npcRect.IsEmpty)
-                npcRect.Height += 6;
+                npcRect.Height = npcBlocks.Count * 18 - 4 + 6;
 
             miniMapRect.Y = barrierRect.Height + titleHeight;
             descRect.Y = miniMapRect.Y + miniMapRect.Height;
-            mobRect.Y = descRect.Y + descRect.Height;
+            bgmRect.Y = descRect.Y + descRect.Height;
+            mobRect.Y = bgmRect.Y + bgmRect.Height;
             npcRect.Y = mobRect.Y + mobRect.Height;
 
-            int height = barrierRect.Height + titleHeight + miniMapRect.Height + descRect.Height + mobRect.Height + npcRect.Height;
+            int height = barrierRect.Height + titleHeight + miniMapRect.Height + descRect.Height + bgmRect.Height + mobRect.Height + npcRect.Height;
 
             Bitmap bmp2 = new Bitmap(width + 20, height + 20);
             Graphics g2 = Graphics.FromImage(bmp2);
@@ -184,6 +195,7 @@ namespace WzComparerR2.CharaSimControl
             titleRect.Offset(10, 10);
             miniMapRect.Offset(10, 10);
             descRect.Offset(10, 10);
+            bgmRect.Offset(31, 12);
             mobRect.Offset(31, 12);
             npcRect.Offset(31, 12);
 
@@ -239,10 +251,17 @@ namespace WzComparerR2.CharaSimControl
                     g2 = g3;
                 }
 
+                bgmRect.Offset(0, offsetY);
                 mobRect.Offset(0, offsetY);
                 npcRect.Offset(0, offsetY);
             }
             
+            if (bgmBlock != null)
+            {
+                g2.DrawImage(Resource.UIWindow_img_ToolTip_WorldMap_Custom0, bgmRect.X - 21, bgmRect.Y - 2);
+                DrawText(g2, bgmBlock, bgmRect.Location);
+            }
+
             if (mobBlocks.Count > 0)
             {
                 g2.DrawImage(Resource.UIWindow_img_ToolTip_WorldMap_Mob, mobRect.X - 21, mobRect.Y - 2);
