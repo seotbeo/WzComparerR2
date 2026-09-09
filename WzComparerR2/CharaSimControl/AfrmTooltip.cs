@@ -37,6 +37,7 @@ namespace WzComparerR2.CharaSimControl
             this.MorphRender = new MorphTooltipRenderer();
             this.NpcRender = new NpcTooltipRenderer();
             this.QuestRender = new QuestTooltipRenderer();
+            this.ReactorRender = new ReactorTooltipRenderer();
             this.HelpRender = new HelpTooltipRender();
             this.SetItemRender = new SetItemTooltipRender();
             this.SetItemRender22 = new SetItemTooltipRender22();
@@ -75,6 +76,7 @@ namespace WzComparerR2.CharaSimControl
         public MorphTooltipRenderer MorphRender { get; private set; }
         public NpcTooltipRenderer NpcRender { get; private set; }
         public QuestTooltipRenderer QuestRender { get; private set; }
+        public ReactorTooltipRenderer ReactorRender { get; private set; }
         public HelpTooltipRender HelpRender { get; private set; }
         public SetItemTooltipRender SetItemRender { get; private set; }
         public SetItemTooltipRender22 SetItemRender22 { get; private set; }
@@ -114,6 +116,7 @@ namespace WzComparerR2.CharaSimControl
                 this.RecipeRender.ShowObjectID = value;
                 this.AchievementRender.ShowObjectID = value;
                 this.MorphRender.ShowObjectID = value;
+                this.ReactorRender.ShowObjectID = value;
             }
         }
 
@@ -315,6 +318,11 @@ namespace WzComparerR2.CharaSimControl
             {
                 renderer = QuestRender;
                 QuestRender.Quest = this.item as Quest;
+            }
+            else if (item is Reactor)
+            {
+                renderer = ReactorRender;
+                ReactorRender.Reactor = this.item as Reactor;
             }
             else if (item is TooltipHelp)
             {

@@ -8,7 +8,7 @@ using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
 {
-    public class Morph
+    public class Morph : IDisposable
     {
         public Morph()
         {

@@ -3755,6 +3755,13 @@ namespace WzComparerR2
                     obj = quest;
                     break;
 
+                case Wz_Type.Reactor:
+                    if ((image = selectedNode.GetValue<Wz_Image>()) == null || !image.TryExtract())
+                        return;
+                    var reactor = Reactor.CreateFromNode(image.Node, PluginManager.FindWz);
+                    obj = reactor;
+                    break;
+
                 case Wz_Type.Etc:
                     CharaSimLoader.LoadSetItemsIfEmpty();
                     Wz_Node setItemNode = selectedNode;
@@ -3787,26 +3794,9 @@ namespace WzComparerR2
                 StringBuilder npcQuoteSb = new StringBuilder();
 
                 // dispose bitmaps no longer in use
-                if (tooltipQuickView.TargetItem != null)
+                if (tooltipQuickView.TargetItem is IDisposable disposable)
                 {
-                    switch (tooltipQuickView.TargetItem)
-                    {
-                        case Mob item:
-                            item.Dispose();
-                            break;
-                        case Morph item:
-                            item.Dispose();
-                            break;
-                        case Npc item:
-                            item.Dispose();
-                            break;
-                        case Quest item:
-                            item.Dispose();
-                            break;
-                        case Familiar item:
-                            item.Dispose();
-                            break;
-                    }
+                    disposable.Dispose();
                 }
                 switch (obj)
                 {
