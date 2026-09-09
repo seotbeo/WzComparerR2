@@ -1614,19 +1614,21 @@ namespace WzComparerR2
 
         private void UpdateStringLinker(Wz_Node baseNode, Wz_Node updateNode, bool doStopWatch = true)
         {
-            Wz_File stringWzFile = baseNode?.FindNodeByPath("String")?.GetNodeWzFile() ?? findStringWz();
-            Wz_File itemWzFile = baseNode?.FindNodeByPath("Item")?.GetNodeWzFile() ?? findItemWz();
-            Wz_File etcWzFile = baseNode?.FindNodeByPath("Etc")?.GetNodeWzFile() ?? findEtcWz();
-            Wz_File questWzFile = baseNode?.FindNodeByPath("Quest")?.GetNodeWzFile() ?? findQuestWz();
+            Wz_File stringWzFile = baseNode?.FindNodeByPath("String")?.GetNodeWzFile() ?? findWzByType(Wz_Type.String);
+            Wz_File itemWzFile = baseNode?.FindNodeByPath("Item")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Item);
+            Wz_File etcWzFile = baseNode?.FindNodeByPath("Etc")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Etc);
+            Wz_File questWzFile = baseNode?.FindNodeByPath("Quest")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Quest);
+            Wz_File reactorWzFile = baseNode?.FindNodeByPath("Reactor")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Reactor);
 
             Wz_Node stringNode = updateNode?.FindNodeByPath("String");
             Wz_Node itemNode = updateNode?.FindNodeByPath("Item");
             Wz_Node etcNode = updateNode?.FindNodeByPath("Etc");
             Wz_Node questNode = updateNode?.FindNodeByPath("Quest");
+            Wz_Node reactorNode = updateNode?.FindNodeByPath("Reactor");
 
             if (doStopWatch) QueryPerformance.Start();
             this.stringLinker.Clear();
-            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile) && stringLinker.Update(stringNode, itemNode, etcNode, questNode);
+            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile, reactorWzFile) && stringLinker.Update(stringNode, itemNode, etcNode, questNode, reactorNode);
             if (doStopWatch) QueryPerformance.End();
             if (r)
             {
@@ -2382,11 +2384,9 @@ namespace WzComparerR2
                     addPath();
                     break;
 
-                case "AchievementData":
-                    wzPath.Add("Etc");
-                    wzPath.Add("Achievement");
-                    wzPath.Add("AchievementData");
-                    wzPath.Add($"{id}.img");
+                case "Reactor":
+                    wzPath.Add("Reactor");
+                    wzPath.Add($"{id.PadLeft(7, '0')}.img");
                     addPath();
                     break;
 
@@ -2913,6 +2913,7 @@ namespace WzComparerR2
                     dicts.Add(stringLinker.StringSkill);
                     dicts.Add(stringLinker.StringSetItem);
                     dicts.Add(stringLinker.StringAchievement);
+                    dicts.Add(stringLinker.StringReactor);
                     break;
                 case 1:
                     dicts.Add(stringLinker.StringEqp);
@@ -2940,6 +2941,9 @@ namespace WzComparerR2
                     break;
                 case 9:
                     dicts.Add(stringLinker.StringAchievement);
+                    break;
+                case 10:
+                    dicts.Add(stringLinker.StringReactor);
                     break;
             }
 
@@ -2970,7 +2974,7 @@ namespace WzComparerR2
             {
                 foreach (Wz_File file in wz.wz_files)
                 {
-                    if (file.Type == Wz_Type.String && this.stringLinker.Load(file, null, null, null))
+                    if (file.Type == Wz_Type.String && this.stringLinker.Load(file, null, null, null, null))
                     {
                         return true;
                     }
@@ -2979,58 +2983,13 @@ namespace WzComparerR2
             return false;
         }
 
-        private Wz_File findStringWz()
+        private Wz_File findWzByType(Wz_Type type)
         {
             foreach (Wz_Structure wz in openedWz)
             {
                 foreach (Wz_File file in wz.wz_files)
                 {
-                    if (file.Type == Wz_Type.String && file.Node.Nodes.Count > 0)
-                    {
-                        return file;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private Wz_File findItemWz()
-        {
-            foreach (Wz_Structure wz in openedWz)
-            {
-                foreach (Wz_File file in wz.wz_files)
-                {
-                    if (file.Type == Wz_Type.Item && file.Node.Nodes.Count > 0)
-                    {
-                        return file;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private Wz_File findEtcWz()
-        {
-            foreach (Wz_Structure wz in openedWz)
-            {
-                foreach (Wz_File file in wz.wz_files)
-                {
-                    if (file.Type == Wz_Type.Etc && file.Node.Nodes.Count > 0)
-                    {
-                        return file;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private Wz_File findQuestWz()
-        {
-            foreach (Wz_Structure wz in openedWz)
-            {
-                foreach (Wz_File file in wz.wz_files)
-                {
-                    if (file.Type == Wz_Type.Quest && file.Node.Nodes.Count > 0)
+                    if (file.Type == type && file.Node.Nodes.Count > 0)
                     {
                         return file;
                     }

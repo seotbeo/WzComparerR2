@@ -20,6 +20,7 @@ namespace WzComparerR2.Common
             stringSkill2 = new Dictionary<string, StringResult>();
             stringSetItem = new Dictionary<int, StringResult>();
             stringQuest = new Dictionary<int, StringResult>();
+            stringReactor = new Dictionary<int, StringResult>();
             stringAchievement = new Dictionary<int, StringResult>();
             stringWorldArchiveMob = new Dictionary<int, StringResult>();
             stringWorldArchiveNpc = new Dictionary<int, StringResult>();
@@ -28,20 +29,20 @@ namespace WzComparerR2.Common
             stringMonsterBook = new Dictionary<int, StringResult>();
         }
 
-        public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode)
+        public bool Update(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, Wz_Node reactorNode)
         {
-            if (stringNode == null && itemNode == null && etcNode == null && questNode == null)
+            if (stringNode == null && itemNode == null && etcNode == null && questNode == null && reactorNode == null)
                 return true;
 
-            return Load(stringNode, itemNode, etcNode, questNode, update: true);
+            return Load(stringNode, itemNode, etcNode, questNode, reactorNode, update: true);
         }
 
         public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz)
         {
-            return Load(stringWz, itemWz, etcWz, null);
+            return Load(stringWz, itemWz, etcWz, null, null);
         }
 
-        public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz)
+        public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz, Wz_File reactorWz)
         {
             //if (stringWz == null || stringWz.Node == null ||
                 //itemWz == null || itemWz.Node == null ||
@@ -49,10 +50,10 @@ namespace WzComparerR2.Common
                 //return false;
             this.Clear();
 
-            return Load(stringWz?.Node, itemWz?.Node, etcWz?.Node, questWz?.Node);
+            return Load(stringWz?.Node, itemWz?.Node, etcWz?.Node, questWz?.Node, reactorWz?.Node);
         }
 
-        public bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, bool update = false)
+        private bool Load(Wz_Node stringNode, Wz_Node itemNode, Wz_Node etcNode, Wz_Node questNode, Wz_Node reactorNode, bool update = false)
         {
             if (update)
             {
@@ -60,6 +61,7 @@ namespace WzComparerR2.Common
                 this.SourceItemUpdateNode = itemNode;
                 this.SourceEtcUpdateNode = etcNode;
                 this.SourceQuestUpdateNode = questNode;
+                this.SourceReactorUpdateNode = reactorNode;
             }
             else
             {
@@ -67,6 +69,7 @@ namespace WzComparerR2.Common
                 this.SourceItemNode = itemNode;
                 this.SourceEtcNode = etcNode;
                 this.SourceQuestNode = questNode;
+                this.SourceReactorNode = reactorNode;
             }
 
             int id;
@@ -634,6 +637,34 @@ namespace WzComparerR2.Common
                 }
             }
 
+            foreach (Wz_Node node in reactorNode?.Nodes ?? new Wz_Node.WzNodeCollection(null))
+            {
+                Wz_Image image = node.Value as Wz_Image;
+                if (image == null || !image.TryExtract())
+                    continue;
+                Wz_Node tree = image.Node;
+                Wz_Node infoNode = tree.FindNodeByPath("info");
+                if (Int32.TryParse(tree.Text.Replace(".img", ""), out id) && infoNode.ResolveUol() is Wz_Node linkNode && linkNode != null)
+                {
+                    StringResult strResult = null;
+                    if (update)
+                    {
+                        try { strResult = stringReactor[id]; }
+                        catch { }
+                    }
+                    if (strResult == null) strResult = new StringResult();
+
+                    strResult.Name = GetDefaultString(linkNode, "viewName") ??
+                        GetDefaultString(linkNode, "name") ??
+                        GetDefaultString(linkNode, "info") ??
+                        strResult.Name ?? string.Empty;
+                    strResult.FullPath = "Reactor\\" + tree.FullPath;
+
+                    //AddAllValue(strResult, linkNode);
+                    stringReactor[id] = strResult;
+                }
+            }
+
             return this.HasValues;
         }
 
@@ -649,6 +680,7 @@ namespace WzComparerR2.Common
             stringSkill2.Clear();
             stringSetItem.Clear();
             stringQuest.Clear();
+            stringReactor.Clear();
             stringAchievement.Clear();
             stringWorldArchiveMob.Clear();
             stringWorldArchiveNpc.Clear();
@@ -660,6 +692,7 @@ namespace WzComparerR2.Common
             SourceItemUpdateNode = null;
             SourceEtcUpdateNode = null;
             SourceQuestUpdateNode = null;
+            SourceReactorUpdateNode = null;
         }
 
         public bool HasValues
@@ -667,7 +700,8 @@ namespace WzComparerR2.Common
             get
             {
                 return (stringEqp.Count + stringItem.Count + stringMap.Count +
-                    stringMob.Count + stringNpc.Count + stringSkill.Count + stringSetItem.Count + stringQuest.Count + stringAchievement.Count > 0);
+                    stringMob.Count + stringNpc.Count + stringSkill.Count +
+                    stringSetItem.Count + stringQuest.Count + stringReactor.Count + stringAchievement.Count > 0);
             }
         }
 
@@ -681,6 +715,7 @@ namespace WzComparerR2.Common
         private Dictionary<string, StringResult> stringSkill2;
         private Dictionary<int, StringResult> stringSetItem;
         private Dictionary<int, StringResult> stringQuest;
+        private Dictionary<int, StringResult> stringReactor;
         private Dictionary<int, StringResult> stringAchievement;
         private Dictionary<int, StringResult> stringWorldArchiveMob;
         private Dictionary<int, StringResult> stringWorldArchiveNpc;
@@ -755,6 +790,11 @@ namespace WzComparerR2.Common
             get { return stringQuest; }
         }
 
+        public Dictionary<int, StringResult> StringReactor
+        {
+            get { return stringReactor; }
+        }
+
         public Dictionary<int, StringResult> StringAchievement
         {
             get { return stringAchievement; }
@@ -779,10 +819,12 @@ namespace WzComparerR2.Common
         public Wz_Node SourceItemNode { get; private set; }
         public Wz_Node SourceEtcNode { get; private set; }
         public Wz_Node SourceQuestNode { get; private set; }
+        public Wz_Node SourceReactorNode { get; private set; }
         public Wz_Node SourceStringUpdateNode { get; private set; }
         public Wz_Node SourceItemUpdateNode { get; private set; }
         public Wz_Node SourceEtcUpdateNode { get; private set; }
         public Wz_Node SourceQuestUpdateNode { get; private set; }
+        public Wz_Node SourceReactorUpdateNode { get; private set; }
 
         public Wz_Node FindNodeFromSource(string path, Wz_Type type)
         {
@@ -796,6 +838,8 @@ namespace WzComparerR2.Common
                     return SourceEtcUpdateNode?.FindNodeByPath(path, true) ?? SourceEtcNode?.FindNodeByPath(path, true);
                 case Wz_Type.Quest:
                     return SourceQuestUpdateNode?.FindNodeByPath(path, true) ?? SourceQuestNode?.FindNodeByPath(path, true);
+                case Wz_Type.Reactor:
+                    return SourceReactorUpdateNode?.FindNodeByPath(path, true) ?? SourceReactorNode?.FindNodeByPath(path, true);
                 default:
                     return null;
             }

@@ -111,6 +111,7 @@
             this.comboItemSearchSetItem = new DevComponents.Editors.ComboItem();
             this.comboItemSearchQuest = new DevComponents.Editors.ComboItem();
             this.comboItemSearchAchievement = new DevComponents.Editors.ComboItem();
+            this.comboItemSearchReactor = new DevComponents.Editors.ComboItem();
             this.itemContainer12 = new DevComponents.DotNetBar.ItemContainer();
             this.checkBoxItemRegex2 = new DevComponents.DotNetBar.CheckBoxItem();
             this.buttonItemSearchString = new DevComponents.DotNetBar.ButtonItem();
@@ -1221,7 +1222,7 @@
             // comboBoxItem2
             // 
             this.comboBoxItem2.ComboWidth = 85;
-            this.comboBoxItem2.DropDownHeight = 160;
+            this.comboBoxItem2.DropDownHeight = 176;
             this.comboBoxItem2.ItemHeight = 16;
             this.comboBoxItem2.Items.AddRange(new object[] {
             this.comboItem3,
@@ -1233,7 +1234,8 @@
             this.comboItemSearchQuest,
             this.comboItem9,
             this.comboItemSearchSetItem,
-            this.comboItemSearchAchievement});
+            this.comboItemSearchAchievement,
+            this.comboItemSearchReactor});
             this.comboBoxItem2.Name = "comboBoxItem2";
             this.comboBoxItem2.SelectedIndex = 0;
             // 
@@ -1276,6 +1278,10 @@
             // comboItemSearchAchievement
             // 
             this.comboItemSearchAchievement.Text = "업적";
+            // 
+            // comboItemSearchReactor
+            // 
+            this.comboItemSearchReactor.Text = "리액터";
             // 
             // itemContainer12
             // 
@@ -3845,6 +3851,7 @@
         private DevComponents.Editors.ComboItem comboItemSearchSetItem;
         private DevComponents.Editors.ComboItem comboItemSearchQuest;
         private DevComponents.Editors.ComboItem comboItemSearchAchievement;
+        private DevComponents.Editors.ComboItem comboItemSearchReactor;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmi2CopyFullPath;
         private DevComponents.DotNetBar.ColorPickerDropDown colorPickerPicBoxBgColor;

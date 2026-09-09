@@ -142,7 +142,8 @@ namespace WzComparerR2.Comparer
                         this.StringLinkerNewOld[i].Load(WzNewOld[i]?.FindNodeByPath("String").GetNodeWzFile(),
                             WzNewOld[i]?.FindNodeByPath("Item").GetNodeWzFile(),
                             WzNewOld[i]?.FindNodeByPath("Etc").GetNodeWzFile(),
-                            WzNewOld[i]?.FindNodeByPath("Quest").GetNodeWzFile());
+                            WzNewOld[i]?.FindNodeByPath("Quest").GetNodeWzFile(),
+                            WzNewOld[i]?.FindNodeByPath("Reactor").GetNodeWzFile());
                     }
 
                     this.OutputWorldArchives = CharaSimConfig.Default.Misc.EnableWorldArchive;

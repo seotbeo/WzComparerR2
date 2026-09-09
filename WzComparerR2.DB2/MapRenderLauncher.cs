@@ -84,7 +84,8 @@ namespace WzComparerR2.DB2
             sl.Load(PluginManager.FindWz(Wz_Type.String).GetValueEx<Wz_File>(null),
                 PluginManager.FindWz(Wz_Type.Item).GetValueEx<Wz_File>(null),
                 PluginManager.FindWz(Wz_Type.Etc).GetValueEx<Wz_File>(null),
-                PluginManager.FindWz(Wz_Type.Quest).GetValueEx<Wz_File>(null));
+                PluginManager.FindWz(Wz_Type.Quest).GetValueEx<Wz_File>(null),
+                PluginManager.FindWz(Wz_Type.Reactor).GetValueEx<Wz_File>(null));
 
             var thread = new Thread(() =>
             {

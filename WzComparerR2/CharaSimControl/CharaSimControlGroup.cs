@@ -269,7 +269,8 @@ namespace WzComparerR2.CharaSimControl
                 this.stringLinker.Load(PluginBase.PluginManager.FindWz(Wz_Type.String).GetValueEx<Wz_File>(null),
                     PluginBase.PluginManager.FindWz(Wz_Type.Item).GetValueEx<Wz_File>(null),
                     PluginBase.PluginManager.FindWz(Wz_Type.Etc).GetValueEx<Wz_File>(null),
-                    PluginBase.PluginManager.FindWz(Wz_Type.Quest).GetValueEx<Wz_File>(null));
+                    PluginBase.PluginManager.FindWz(Wz_Type.Quest).GetValueEx<Wz_File>(null),
+                    PluginBase.PluginManager.FindWz(Wz_Type.Reactor).GetValueEx<Wz_File>(null));
             }
             if (e.Obj == null)
             {
