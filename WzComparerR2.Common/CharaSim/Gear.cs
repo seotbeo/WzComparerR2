@@ -1415,7 +1415,7 @@ namespace WzComparerR2.CharaSim
             }
             */
 
-            if (gear.Props.TryGetValue(GearPropType.illusionGrade, out value) && value > 0)
+            if (gear.Props.TryGetValue(GearPropType.illusionGrade, out value) && value >= 0)
             {
                 Wz_Node previewNode = node.FindNodeByPath("stand1")?.FindNodeByPath("0").ResolveUol();
 
