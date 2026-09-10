@@ -201,9 +201,9 @@ namespace WzComparerR2.WzLib.Compatibility
             return null;
         }
 
-        public static Pkg2UnknownProfile64 GetPkg2UnknownProfile64()
+        public static Pkg2UnknownProfile64 GetPkg2UnknownProfile64(Pkg2EntryNamePosition entryNamePosition)
         {
-            return new Pkg2UnknownProfile64(1205, WzFileFormat.Pkg2Kmst1205, Pkg2OffsetVersion.KMST1205, Pkg2EntryNameVersion.KMST1205, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalc64V2(), Pkg2EntryNamePosition.AfterData);
+            return new Pkg2UnknownProfile64(1205, WzFileFormat.Pkg2Kmst1205, Pkg2OffsetVersion.KMST1205, Pkg2EntryNameVersion.KMST1205, Wz_CryptoKeyType.KMST1199, new Pkg2HashVersionCalc64V2(), entryNamePosition);
         }
     }
 
@@ -617,9 +617,12 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public override WzFileReadContext CreateReadContext(Wz_Header.WzPkg2Header64 header, ulong hashVersion, IWzImageOffsetCalc offsetCalc, IPkg2ImageLengthCalc imageLengthCalc)
         {
-            IPkg2DirTreeReadRule rule = this.EntryNamePosition == Pkg2EntryNamePosition.AfterData
-                ? Pkg2DirTreeReadRule64.AfterDataInstance
-                : Pkg2DirTreeReadRule64.Instance;
+            IPkg2DirTreeReadRule rule = this.EntryNamePosition switch
+            {
+                Pkg2EntryNamePosition.AfterData => Pkg2DirTreeReadRule64.AfterDataInstance,
+                Pkg2EntryNamePosition.BetweenData => Pkg2DirTreeReadRule64.BetweenDataInstance,
+                _ => Pkg2DirTreeReadRule64.Instance,
+            };
             return new WzFileReadContext<ulong>(hashVersion, unchecked((uint)hashVersion), offsetCalc, imageLengthCalc, rule);
         }
 

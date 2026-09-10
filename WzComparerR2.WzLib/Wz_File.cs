@@ -219,7 +219,7 @@ namespace WzComparerR2.WzLib
             return true;
 
         __failed:
-            br.BaseStream.Position = 163;
+            br.BaseStream.Position = 353;
             while (true)
             {
                 try
@@ -227,7 +227,7 @@ namespace WzComparerR2.WzLib
                     if (br.ReadByte() == 0x80)
                     {
                         var dataStartPos = (int)this.fileStream.Position - 1;
-                        if (dataStartPos >= 230) break;
+                        if (dataStartPos >= 354) break;
                         this.header = new Wz_Header.WzPkg2Header64(Wz_Header.PKG2, null, fileName, dataStartPos, 0, filesize, dataStartPos, 0, 0);
                         this.Header.Capabilities |= Wz_Capabilities.Pkg2RandomHeader;
                         this.UnknownPkg2 = true;
@@ -544,6 +544,8 @@ namespace WzComparerR2.WzLib
 
                 uint sizePosition = (uint)this.fileStream.Position;
                 int size = reader.ReadCompressedInt32();
+                if (rule.EntryNamePosition == Pkg2EntryNamePosition.BetweenData)
+                    name = force ? context.DirStringReader.ForceReadName(reader, entries.Count == 0, nodeType, fileName) : context.DirStringReader.ReadName(reader, entries.Count == 0);
                 uint checksumPosition = (uint)this.fileStream.Position;
                 int cs32 = reader.ReadCompressedInt32();
                 if (context.LengthCalc != null)

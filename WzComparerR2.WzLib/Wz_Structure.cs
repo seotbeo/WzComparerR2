@@ -98,6 +98,8 @@ namespace WzComparerR2.WzLib
                 // 1. pre-read and detect version/read rule
                 WzPreReadResult preReadResult = null;
                 IWzFormatProfile matchedProfile = null;
+                Pkg2EntryNamePosition entryNamePosition = Pkg2EntryNamePosition.AfterData;
+                bool use8ByteKey = false;
                 if (!file.UnknownPkg2)
                 {
                     foreach (var preReader in WzPreReaders.All)
@@ -121,6 +123,8 @@ namespace WzComparerR2.WzLib
                         if (preReader.TryPreRead(file, out var result))
                         {
                             preReadResult = result;
+                            entryNamePosition = result.EntryNamePosition;
+                            use8ByteKey = result.use8ByteKey;
                             break;
                         }
                     }
@@ -149,9 +153,10 @@ namespace WzComparerR2.WzLib
                 {
                     if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header64 pkg2Header)
                     {
-                        var profile = WzFormatProfiles.GetPkg2UnknownProfile64();
+                        var profile = WzFormatProfiles.GetPkg2UnknownProfile64(entryNamePosition);
                         file.ReadContext = profile.CreateReadContext(file.Header as Wz_Header.WzPkg2Header64, 0, null, null);
                         profile.AssignDirStringReader(file, this.encryption);
+                        file.ReadContext.DirStringReader.Use8ByteKey = use8ByteKey;
                         if (preReadResult.Pkg2DirEntryCounts.Count > 0)
                         {
                             file.ForcedCounts = new Queue<int>(preReadResult.Pkg2DirEntryCounts.Select(ec => ec.ActualEntryCount)); 

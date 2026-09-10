@@ -33,6 +33,11 @@ namespace WzComparerR2.WzLib.Compatibility
         private static readonly IWzPreReader[] readers_UNK = new IWzPreReader[]
         {
              new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 163, true, true, Pkg2EntryNamePosition.AfterData),
+             new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 163, true, true, Pkg2EntryNamePosition.BetweenData),
+             new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 163, true, true, Pkg2EntryNamePosition.BeforeData),
+             new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 353, true, true, Pkg2EntryNamePosition.AfterData),
+             new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 353, true, true, Pkg2EntryNamePosition.BetweenData),
+             new Pkg2PreReader64_UNK(WzFileFormat.Pkg2Kmst1205, 353, true, true, Pkg2EntryNamePosition.BeforeData),
         };
 
         public static IReadOnlyList<IWzPreReader> All => readers;
@@ -162,7 +167,10 @@ namespace WzComparerR2.WzLib.Compatibility
 
         public bool TryPreRead(Wz_File wzFile, out WzPreReadResult result)
         {
-            return Pkg2PreReadTreeWalker.TryPreRead(wzFile, rule, out result);
+            bool succeeded = Pkg2PreReadTreeWalker.TryPreRead(wzFile, rule, out result);
+            result?.EntryNamePosition = rule.EntryNamePosition;
+            result?.use8ByteKey = wzFile.Header.HeaderSize == 353;
+            return succeeded;
         }
     }
 
@@ -234,6 +242,8 @@ namespace WzComparerR2.WzLib.Compatibility
                                 reader.BaseStream.Position = entryStartPosition;
                                 break;
                             }
+                            if (rule.EntryNamePosition == Pkg2EntryNamePosition.BetweenData)
+                                rule.ReadEntryName(reader, result, context, entries.Count);
                             reader.ReadCompressedInt32();
                             if (rule.EntryNamePosition == Pkg2EntryNamePosition.AfterData)
                                 rule.ReadEntryName(reader, result, context, entries.Count);
@@ -428,6 +438,8 @@ namespace WzComparerR2.WzLib.Compatibility
                 rule.ReadEntryName(reader, result, context, entryIndex);
             uint sizePosition = (uint)reader.BaseStream.Position;
             int size = reader.ReadCompressedInt32();
+            if (rule.EntryNamePosition == Pkg2EntryNamePosition.BetweenData)
+                rule.ReadEntryName(reader, result, context, entries.Count);
             reader.ReadCompressedInt32();
             if (rule.EntryNamePosition == Pkg2EntryNamePosition.AfterData)
                 rule.ReadEntryName(reader, result, context, entryIndex);
@@ -782,6 +794,8 @@ namespace WzComparerR2.WzLib.Compatibility
         public byte[] FirstStringRawBytes { get; set; }
         public WzStringEncoding SecondStringEncoding { get; set; }
         public byte[] SecondStringRawBytes { get; set; }
+        public Pkg2EntryNamePosition EntryNamePosition { get; set; }
+        public bool use8ByteKey { get; set; }
 
         /// <summary>
         /// Alternative directory boundary candidates produced by preread when the entry/offset split is ambiguous.

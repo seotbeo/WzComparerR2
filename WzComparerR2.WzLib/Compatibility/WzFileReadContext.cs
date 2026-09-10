@@ -48,6 +48,7 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         BeforeData,
         AfterData,
+        BetweenData,
     }
 
     internal sealed class Pkg2DirTreeReadRule : IPkg2DirTreeReadRule
@@ -88,6 +89,7 @@ namespace WzComparerR2.WzLib.Compatibility
     {
         public static readonly Pkg2DirTreeReadRule64 Instance = new Pkg2DirTreeReadRule64();
         public static readonly Pkg2DirTreeReadRule64 AfterDataInstance = new Pkg2DirTreeReadRule64(Pkg2EntryNamePosition.AfterData);
+        public static readonly Pkg2DirTreeReadRule64 BetweenDataInstance = new Pkg2DirTreeReadRule64(Pkg2EntryNamePosition.BetweenData);
 
         private Pkg2DirTreeReadRule64(Pkg2EntryNamePosition entryNamePosition = Pkg2EntryNamePosition.BeforeData)
         {

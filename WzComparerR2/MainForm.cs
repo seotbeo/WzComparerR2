@@ -1315,6 +1315,7 @@ namespace WzComparerR2
 
             Wz_Structure wz = new Wz_Structure();
             QueryPerformance.Start();
+            ImgNameContainer.Load();
             DirNameContainer.Dirs.Clear();
             labelItemStatus.Text = $"로드 중: {wzFilePath}";
             advTree1.BeginUpdate();

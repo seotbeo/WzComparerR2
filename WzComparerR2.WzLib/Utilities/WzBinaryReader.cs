@@ -256,7 +256,7 @@ namespace WzComparerR2.WzLib.Utilities
             return ret;
         }
 
-        public string ForceReadPkg2DirString(byte nodeType, string fullpath = null, bool read2bytes = false)
+        public string ForceReadPkg2DirString(byte nodeType, string fullpath = null, bool read2bytes = false, bool use8ByteKey = false)
         {
             long currentPos = this.BaseStream.Position;
 
@@ -273,6 +273,26 @@ namespace WzComparerR2.WzLib.Utilities
                     byte keyByte = 157;
                     if (nodeType == 0x04)
                     {
+                        if (use8ByteKey)
+                        {
+                            char[] code = { '.', 'i', 'm', 'g' };
+                            for (int j = 0; j < code.Length; j++)
+                            {
+                                int suffixIndex = size - code.Length + j;
+                                int hintIndex = suffixIndex - 8;
+                                if (hintIndex >= 0)
+                                {
+                                    keyByte = (byte)(buffer[suffixIndex * 2] ^ code[j]);
+                                    result[hintIndex] = (char)(buffer[hintIndex * 2] ^ keyByte);
+                                }
+                            }
+
+                            if (ImgNameContainer.TryTake(fullpath, size, result, out string name))
+                            {
+                                return name;
+                            }
+                            else return "??.img";
+                        }
                         if (size > 4)
                         {
                             char[] code = { '.', 'i', 'm', 'g' };
