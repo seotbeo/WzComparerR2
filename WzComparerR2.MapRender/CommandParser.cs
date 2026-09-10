@@ -122,6 +122,12 @@ namespace WzComparerR2.MapRender
                 new ArgSpec() { Name = "Pos", Type = ArgType.Option, OptionArgCount = 2, Aliases = new[] { "-p", "--pos" } },
                 new ArgSpec() { Name = "Range", Type = ArgType.Option, OptionArgCount = 4, Aliases = new[] { "-r", "--range" } },
             };
+
+        public static readonly IReadOnlyList<ArgSpec> AniSpecs = new List<ArgSpec>
+            {
+                new ArgSpec() { Name = "Flip", Type = ArgType.Flag, OptionArgCount = 0, Aliases = new[] { "-f", "--flip" } },
+                new ArgSpec() { Name = "Pos", Type = ArgType.Option, OptionArgCount = 2, Aliases = new[] { "-p", "--pos" } },
+            };
         #endregion
     }
 }

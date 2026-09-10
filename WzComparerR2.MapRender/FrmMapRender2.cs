@@ -141,7 +141,7 @@ namespace WzComparerR2.MapRender
         bool ForceCaptureWithResolution;
         bool showFootholdBoundary;
         bool enableMobMovement;
-        bool removeSkill;
+        bool objRemoveMode;
         Task captureTask;
         Resolution resolution;
         float opacity;
@@ -1366,6 +1366,45 @@ namespace WzComparerR2.MapRender
                     }
                     break;
 
+                case "/ani":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextSystem("맵이 로드되지 않았습니다.");
+                        break;
+                    }
+                    {
+                        CommandParser cp = new CommandParser(CommandParser.AniSpecs, arguments);
+                        string sp = cp.GetPositional(0);
+                        List<string> pos = cp.GetOption("Pos");
+                        bool flip = cp.HasFlag("Flip");
+                        if (!string.IsNullOrEmpty(sp))
+                        {
+                            int x, y;
+                            if (pos.Count != 2 || !int.TryParse(pos[0], out x) || !int.TryParse(pos[1], out y))
+                            {
+                                var p = this.renderEnv.Camera.CameraToWorld(renderEnv.Input.MousePosition);
+                                x = p.X;
+                                y = p.Y;
+                            }
+
+                            if (this.mapData.SummonDraggableAniItem(sp, x, y, flip: flip))
+                            {
+                                this.ui.ChatBox.AppendTextSystem($@"오브젝트가 추가되었습니다. 경로: {sp}");
+                            }
+                            else
+                            {
+                                this.ui.ChatBox.AppendTextSystem($@"""오브젝트를 찾지 못했습니다. 경로: {sp}");
+                            }
+                        }
+                        else
+                        {
+                            this.ui.ChatBox.AppendTextHelp(@"/ani (aniPath) : 마우스 위치에 애니메이션 추가, aniPath 애니메이션 경로");
+                            this.ui.ChatBox.AppendTextHelp(@"[-p/--pos] (x) (y) : 소환될 x, y 위치 지정");
+                            this.ui.ChatBox.AppendTextHelp(@"[-f/--flip] : 좌우 반전으로 소환");
+                        }
+                    }
+                    break;
+
                 default:
                     this.ui.ChatBox.AppendTextSystem($"알 수 없는 명령어: {arguments[0]}");
                     break;
@@ -1625,8 +1664,8 @@ namespace WzComparerR2.MapRender
         {
             if (this.mapData?.Scene?.Fly.Skill.Slots.Count > 0)
             {
-                this.removeSkill = !this.removeSkill;
-                if (this.removeSkill)
+                this.objRemoveMode = !this.objRemoveMode;
+                if (this.objRemoveMode)
                 {
                     //this.ui.ChatBox.AppendTextHelp(@"소환된 스킬 클릭 시 삭제할 수 있습니다.");
                 }

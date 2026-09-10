@@ -163,6 +163,11 @@ namespace WzComparerR2.MapRender
                         (skill.View.Animator as WzComparerR2.Controls.AnimationItem)?.Update(elapsed);
                         skill.View.Time += (int)elapsed.TotalMilliseconds;
                     }
+                    else if (item is DraggableAniItem ani)
+                    {
+                        (ani.View.Animator as WzComparerR2.Controls.AnimationItem)?.Update(elapsed);
+                        ani.View.Time += (int)elapsed.TotalMilliseconds;
+                    }
                 }
             }
             else
@@ -535,9 +540,9 @@ namespace WzComparerR2.MapRender
 
                     if (UIOptionsInstance != null) LoadCaptureRectOptionData(UIOptionsInstance.DataContext as UIOptionsDataModel);
                 }
-                else if (item is SkillItem)
+                else if (item is SkillItem || item is DraggableAniItem)
                 {
-                    if (this.removeSkill) return;
+                    if (this.objRemoveMode) return;
 
                     if (item.ClickedPos == DraggableItemClickedPos.Center)
                     {
@@ -566,9 +571,9 @@ namespace WzComparerR2.MapRender
         private void OnDraggableItemClick(DraggableItem item, PointF mousePos, bool ctrlOn)
         {
             item.ClickedPos = DraggableItemClickedPos.None;
-            if (item is SkillItem skill && this.removeSkill)
+            if (item is DraggableItem drag && this.objRemoveMode)
             {
-                this.mapData?.UnsummonSkill(skill);
+                this.mapData?.UnsummonDraggableItem(drag);
             }
             if (item.SnapOnFoothold)
             {
@@ -579,7 +584,7 @@ namespace WzComparerR2.MapRender
 
         private void OnDraggableItemMouseEnter(DraggableItem item)
         {
-            if (item is SkillItem)
+            if (item is SkillItem || item is DraggableAniItem)
             {
                 item.MouseHovering = true;
             }
@@ -587,7 +592,7 @@ namespace WzComparerR2.MapRender
 
         private void OnDraggableItemMouseLeave(DraggableItem item)
         {
-            if (item is SkillItem)
+            if (item is SkillItem || item is DraggableAniItem)
             {
                 item.MouseHovering = false;
             }
@@ -1228,7 +1233,7 @@ namespace WzComparerR2.MapRender
                     }
                     else if (item is DraggableItem drag)
                     {
-                        if (drag.ShowRect)
+                        if (drag.ShowRect || (drag.ShowRectOnFootholdViewMode && patchVisibility.FootHoldVisible))
                         {
                             var meshDragRect = this.batcher.MeshPop();
                             var dragRect = drag.Rect;
@@ -1241,21 +1246,22 @@ namespace WzComparerR2.MapRender
                             }
                             meshDragRect.Z0 = mesh.Z0;
                             meshDragRect.Z1 = mesh.Z1 - 1;
-                            meshDragRect.RenderObject = new RectMesh(dragRect, drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
+                            meshDragRect.RenderObject = new RectMesh(dragRect, drag.GetRectAreaColor(this.objRemoveMode ? 2 : 1), 2);
                             kvList.Add(new KeyValuePair<SceneItem, MeshItem>(drag, meshDragRect));
 
                             if (this.patchVisibility.FootHoldVisible)
                             {
                                 var meshLines = this.batcher.MeshPop();
                                 var lines = new List<Point>();
-                                lines.Add(new Point(dragRect.Left, drag.RenderY));
                                 lines.Add(new Point(dragRect.Right, drag.RenderY));
-                                lines.Add(new Point(drag.X, dragRect.Top));
-                                lines.Add(new Point(drag.X, dragRect.Bottom));
+                                lines.Add(new Point(Math.Min(dragRect.Left, drag.X - 10), drag.RenderY));
+                                lines.Add(new Point(Math.Max(dragRect.Right, drag.X + 10), drag.RenderY));
+                                lines.Add(new Point(drag.X, Math.Min(dragRect.Top, drag.RenderY - 10)));
+                                lines.Add(new Point(drag.X, Math.Max(dragRect.Bottom, drag.RenderY + 10)));
                                 meshLines.FlipX = mesh.FlipX;
                                 meshLines.Z0 = mesh.Z0;
                                 meshLines.Z1 = mesh.Z1 + 1;
-                                meshLines.RenderObject = new LineListMesh(lines.ToArray(), drag.GetRectAreaColor(this.removeSkill ? 2 : 1), 2);
+                                meshLines.RenderObject = new LineListMesh(lines.ToArray(), drag.GetRectAreaColor(this.objRemoveMode ? 2 : 1), 2);
                                 kvList.Add(new KeyValuePair<SceneItem, MeshItem>(drag, meshLines));
                             }
                         }
@@ -1347,11 +1353,10 @@ namespace WzComparerR2.MapRender
                     break;
 
                 case SkillItem skill:
-                    if (true)
-                    {
-                        return GetMeshSkill(skill);
-                    }
-                    break;
+                    return GetMeshSkill(skill);
+
+                case DraggableAniItem ani:
+                    return GetMeshAni(ani);
             }
             return null;
         }
@@ -1623,6 +1628,35 @@ namespace WzComparerR2.MapRender
             mesh.Position = new Vector2(skill.X, skill.RenderY);
             mesh.FlipX = skill.FlipX;
             mesh.Z0 = skill.Index;
+            mesh.Z1 = 0;
+            return mesh;
+        }
+
+        private MeshItem GetMeshAni(DraggableAniItem ani)
+        {
+            var renderObj = GetRenderObject(ani.View.Animator);
+            if (renderObj == null)
+            {
+                return null;
+            }
+            if (ani.Rect.IsEmpty)
+            {
+                switch (ani.View.Animator)
+                {
+                    case FrameAnimator frameAni:
+                        ani.Rect = frameAni.Data.GetBound();
+                        break;
+                    case AnimationItem aniItem:
+                        // For spine animation, we don't know how to calculate the correct cx and cy
+                        ani.Rect = aniItem.Measure();
+                        break;
+                }
+            }
+            var mesh = batcher.MeshPop();
+            mesh.RenderObject = renderObj;
+            mesh.Position = new Vector2(ani.X, ani.RenderY);
+            mesh.FlipX = ani.FlipX;
+            mesh.Z0 = ani.Index;
             mesh.Z1 = 0;
             return mesh;
         }

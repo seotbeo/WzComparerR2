@@ -14,6 +14,7 @@ namespace WzComparerR2.MapRender.Patches2
 
         public bool MouseHovering { get; set; }
         public bool ShowRect { get; set; } = true;
+        public bool ShowRectOnFootholdViewMode { get; set; } = true;
         public bool CanResize { get; set; } = false;
         public bool SnapOnFoothold { get; set; } = true;
         public bool FlipX { get; set; } = false;
