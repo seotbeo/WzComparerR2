@@ -1253,7 +1253,6 @@ namespace WzComparerR2.MapRender
                             {
                                 var meshLines = this.batcher.MeshPop();
                                 var lines = new List<Point>();
-                                lines.Add(new Point(dragRect.Right, drag.RenderY));
                                 lines.Add(new Point(Math.Min(dragRect.Left, drag.X - 10), drag.RenderY));
                                 lines.Add(new Point(Math.Max(dragRect.Right, drag.X + 10), drag.RenderY));
                                 lines.Add(new Point(drag.X, Math.Min(dragRect.Top, drag.RenderY - 10)));
