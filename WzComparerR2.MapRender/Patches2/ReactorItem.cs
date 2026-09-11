@@ -5,6 +5,7 @@ using System.Text;
 using WzComparerR2.WzLib;
 using WzComparerR2.Animation;
 using System.Text.RegularExpressions;
+using WzComparerR2.PluginBase;
 
 namespace WzComparerR2.MapRender.Patches2
 {
@@ -15,6 +16,7 @@ namespace WzComparerR2.MapRender.Patches2
         public int Y { get; set; }
         public bool Flip { get; set; }
         public string ReactorName { get; set; }
+        public string ReactorInfo { get; set; }
         public int ReactorTime { get; set; }
 
         public ItemView View { get; set; }
@@ -30,6 +32,20 @@ namespace WzComparerR2.MapRender.Patches2
                 ReactorName = node.Nodes["name"].GetValueEx<string>(null),
                 ReactorTime = node.Nodes["reactorTime"].GetValueEx<int>(0),
             };
+
+            string path = $@"Reactor\{item.ID:D7}.img";
+            var reactor_node = PluginManager.FindWz(path);
+            if (reactor_node != null)
+            {
+                Wz_Node infoNode = reactor_node.FindNodeByPath("info");
+                if (infoNode != null)
+                {
+                    item.ReactorInfo = infoNode.Nodes["viewName"].GetValueEx<string>(null) ??
+                        infoNode.Nodes["name"].GetValueEx<string>(null) ??
+                        infoNode.Nodes["info"].GetValueEx<string>(null);
+                }
+            }
+
             return item;
         }
 

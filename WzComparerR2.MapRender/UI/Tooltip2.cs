@@ -365,6 +365,7 @@ namespace WzComparerR2.MapRender.UI
             var sb = new StringBuilder();
             sb.Append("ID: ").Append(item.ID).AppendLine();
             sb.Append("이름: ").AppendLine(item.ReactorName);
+            sb.Append("정보: ").AppendLine(item.ReactorInfo);
             sb.Append("시간: ").Append(item.ReactorTime).AppendLine();
 
             sb.Append("상태: ").Append(item.View.Stage);
