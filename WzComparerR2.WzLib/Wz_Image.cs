@@ -41,6 +41,7 @@ namespace WzComparerR2.WzLib
         public uint HashedOffsetPosition { get; set; }
         public long Offset { get; set; }
         public bool IgnoreChecksum { get; set; }
+        public bool IsExtracted { get { return this.extr; } }
 
         public Wz_Node Node { get; private set; }
 

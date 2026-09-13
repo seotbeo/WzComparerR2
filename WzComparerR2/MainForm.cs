@@ -38,6 +38,7 @@ namespace WzComparerR2
         public MainForm()
         {
             InitializeComponent();
+            this.InitializeWzQueryControl();
 #if NET6_0_OR_GREATER
             // https://learn.microsoft.com/en-us/dotnet/core/compatibility/fx-core#controldefaultfont-changed-to-segoe-ui-9pt
             this.Font = new Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
@@ -52,6 +53,28 @@ namespace WzComparerR2
             initFields();
             loadUIState();
             GearGraphics.LoadFonts();
+        }
+
+        private void InitializeWzQueryControl()
+        {
+            var queryControl = new WzQueryControl(this.NavigateToWzQueryResult);
+            queryControl.Location = new Point(0, 35);
+            queryControl.Size = new Size(this.superTabControlPanel3.ClientSize.Width, Math.Max(0, this.superTabControlPanel3.ClientSize.Height - 35));
+            queryControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.superTabControlPanel3.Controls.Add(queryControl);
+        }
+
+        private void NavigateToWzQueryResult(string fullPath)
+        {
+            Wz_Node wzNode = PluginManager.FindWz(fullPath.Replace("Base.wz", "Base"));
+            if (wzNode == null)
+            {
+                MessageBoxEx.Show(this, "노드를 찾을 수 없습니다.");
+                return;
+            }
+
+            //this.superTabControl1.SelectedTab = this.superTabItem1;
+            this.RedirectToNode(wzNode);
         }
 
         List<Wz_Structure> openedWz;
@@ -2242,6 +2265,8 @@ namespace WzComparerR2
                 return false;
             }
 
+            bool insideImage = false;
+
             for (int i = 1; i < path.Length; i++)
             {
                 Node find = null;
@@ -2264,6 +2289,7 @@ namespace WzComparerR2
                     if (advTree2.Nodes.Count > 0)
                     {
                         treeNode = advTree2.Nodes[0];
+                        insideImage = true;
                     }
                     else
                     {
@@ -2276,7 +2302,14 @@ namespace WzComparerR2
                 }
             }
 
-            advTree2.SelectedNode = treeNode;
+            if (insideImage)
+            {
+                advTree2.SelectedNode = treeNode;
+            }
+            else
+            {
+                advTree1.SelectedNode = treeNode;
+            }
             return true;
         }
 
