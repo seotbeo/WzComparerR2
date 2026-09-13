@@ -470,6 +470,18 @@ namespace WzComparerR2.MapRender
             rect.X += (int)mesh.Position.X;
             rect.Y += (int)mesh.Position.Y;
 
+            // 클릭 가능 영역 보정
+            if (rect.Width <= 10)
+            {
+                rect.X -= rect.Width / 2;
+                rect.Width = 10;
+            }
+            if (rect.Height <= 10)
+            {
+                rect.Y -= rect.Height / 2;
+                rect.Height = 10;
+            }
+
             if (mesh.TileRegion != null)
             {
                 var tileRegion = mesh.TileRegion.Value;
