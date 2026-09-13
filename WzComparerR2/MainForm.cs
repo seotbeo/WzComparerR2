@@ -1155,6 +1155,11 @@ namespace WzComparerR2
                 // save still picture as png
                 this.OnSavePngFile(frameData.Frames[0]);
             }
+            else if (aniItem.Count == 1 && 
+                aniItem[0] is ISpineAnimator && aniItem[0].Length <= 0)
+            {
+                this.OnSaveAnimationPngFile(aniItem[0], options);
+            }
             else
             {
                 // save as gif/apng
@@ -1239,6 +1244,42 @@ namespace WzComparerR2
 
         }
 
+        private void OnSaveAnimationPngFile(AnimationItem aniItem, bool options)
+        {
+            var config = ImageHandlerConfig.Default;
+            string aniName = this.cmbItemAniNames.SelectedItem as string;
+            string pngFileName = pictureBoxEx1.PictureName
+                + (string.IsNullOrEmpty(aniName) ? "" : ("." + aniName))
+                + ".png";
+
+            if (config.AutoSaveEnabled)
+            {
+                pngFileName = Path.Combine(config.AutoSavePictureFolder,
+                    string.Join("_", pngFileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.None)));
+            }
+            else
+            {
+                var dlg = new SaveFileDialog();
+                dlg.Filter = "PNG (*.png)|*.png|모든 파일 (*.*)|*.*";
+                dlg.FileName = pngFileName;
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                pngFileName = dlg.FileName;
+            }
+
+            var clonedAniItem = (AnimationItem)aniItem.Clone();
+            if (this.pictureBoxEx1.SaveAsPng(clonedAniItem, pngFileName, config, options))
+            {
+                labelItemStatus.Text = "그림 저장 완료: " + pngFileName;
+            }
+            else
+            {
+                labelItemStatus.Text = "그림 저장 실패";
+            }
+        }
+        
         private void OnSaveGifFile(IEnumerable<AnimationItem> aniItem, IEnumerable<Tuple<int, int>> aniItemTime, bool options)
         {
             var config = ImageHandlerConfig.Default;

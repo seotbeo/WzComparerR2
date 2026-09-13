@@ -492,18 +492,15 @@ namespace WzComparerR2.WzLib
                     break;
 
                 case 0x02:
-                case 0x0B:
                     parent.Value = reader.ReadInt16();
                     break;
 
                 case 0x03:
-                case 0x13:
-                    // case 0x14:
                     parent.Value = reader.ReadCompressedInt32();
                     break;
 
-                case 0x14:
-                    parent.Value = reader.ReadCompressedInt64();
+                case 0x0B:
+                    parent.Value = reader.ReadInt16() != 0;
                     break;
 
                 case 0x04:
@@ -526,6 +523,14 @@ namespace WzComparerR2.WzLib
                     {
                         throw new Exception($"Object is not fully loaded at offset {this.Offset}+{reader.BaseStream.Position}.");
                     }
+                    break;
+
+                case 0x13:
+                    parent.Value = reader.ReadCompressedUInt32();
+                    break;
+
+                case 0x14:
+                    parent.Value = reader.ReadCompressedInt64();
                     break;
 
                 default:
