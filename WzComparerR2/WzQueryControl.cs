@@ -565,7 +565,7 @@ namespace WzComparerR2
             string kind = rule.Kind == QueryRuleKind.Target ? "타겟" : "제외";
             string cond = string.IsNullOrEmpty(rule.TextPattern) ?
                 ": 모두" :
-                $": {GetComparisonText(rule.TextComparison)} {rule.TextPattern}";
+                $": {GetComparisonText(rule.TextComparison)} \"{rule.TextPattern}\"";
             string searchRange = rule.SearchDescendants ? " (모든 하위)" : string.Empty;
             return kind + cond + searchRange;
         }
@@ -582,7 +582,7 @@ namespace WzComparerR2
         {
             string cond = string.IsNullOrEmpty(value.Path) ?
                 "모두" :
-                $"{(value.Path.Length == 0 ? "현재 노드" : value.Path)} {this.cmbValueComparison.Text} {value.Pattern}";
+                $"{(value.Path.Length == 0 ? "현재 노드" : value.Path)} {(string.IsNullOrEmpty(value.Pattern) ? "==" : this.cmbValueComparison.Text)} \"{value.Pattern}\"";
             return "Value: " + cond;
         }
 
