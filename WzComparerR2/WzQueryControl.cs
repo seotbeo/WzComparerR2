@@ -580,7 +580,7 @@ namespace WzComparerR2
 
         private string GetValueRuleText(ValueRule value)
         {
-            string cond = string.IsNullOrEmpty(value.Pattern) ?
+            string cond = string.IsNullOrEmpty(value.Path) ?
                 "모두" :
                 $"{(value.Path.Length == 0 ? "현재 노드" : value.Path)} {this.cmbValueComparison.Text} {value.Pattern}";
             return "Value: " + cond;
@@ -1050,15 +1050,15 @@ namespace WzComparerR2
 
         public bool IsMatch(Wz_Node node)
         {
-            if (string.IsNullOrEmpty(this.Pattern))
-            {
-                return true;
-            }
-
             Wz_Node valueNode = Resolve(node, this.Path);
             if (valueNode == null)
             {
                 return false;
+            }
+            if (string.IsNullOrEmpty(this.Pattern))
+            {
+                string text = valueNode.GetValueEx<string>(string.Empty);
+                return text.Length == 0;
             }
 
             switch (this.ValueType)
@@ -1087,6 +1087,7 @@ namespace WzComparerR2
                 {
                     return $"{valueNode.Text}: {value}";
                 }
+                else return valueNode.Text;
             }
             return string.Empty;
         }
