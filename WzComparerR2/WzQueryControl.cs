@@ -1,52 +1,68 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using WzComparerR2.PluginBase;
 using WzComparerR2.WzLib;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WzComparerR2
 {
     internal sealed class WzQueryControl : UserControl
     {
-        private const int PageSize = 3000;
-        private const int MaxResultCount = 300000;
-        private readonly ComboBox cmbRoot;
-        private readonly Action<string> navigateToPath;
         private readonly SplitContainer querySplit;
+        private readonly FlowLayoutPanel header;
+        private readonly FlowLayoutPanel footer;
+        private readonly TableLayoutPanel resultPanel;
         private readonly TreeView queryTree;
         private readonly Panel editor;
         private readonly DataGridView resultGrid;
-        private readonly Label lblStatus;
         private readonly ProgressBar progressBar;
-        private readonly Button btnPreviousPage;
-        private readonly Button btnNextPage;
+        private readonly Label lblStatus;
         private readonly Label lblPage;
-        private readonly Button btnRun;
-        private readonly Button btnCancel;
-        private readonly Button btnReset;
-        private readonly ComboBox cmbTextComparison;
-        private readonly TextBox txtTextPattern;
-        private readonly ComboBox cmbTargetOutput;
-        private readonly TextBox txtValuePath;
-        private readonly ComboBox cmbValueType;
-        private readonly ComboBox cmbValueComparison;
-        private readonly TextBox txtValuePattern;
-        private readonly ComboBox cmbValueOutput;
         private readonly Label lblEditorType;
         private readonly Label lblValuePath;
-        private CancellationTokenSource cancellation;
+        private readonly Button btnAddTarget;
+        private readonly Button btnAddExclude;
+        private readonly Button btnAddValue;
+        private readonly Button btnRemove;
+        private readonly Button btnReset;
+        private readonly Button btnRun;
+        private readonly Button btnCancel;
+        private readonly Button btnPreviousPage;
+        private readonly Button btnNextPage;
+        private readonly Button btnExportTxt;
+        private readonly Button btnExportJson;
+        private readonly Button btnExportXml;
+        private readonly ComboBox cmbRoot;
+        private readonly ComboBox cmbTextComparison;
+        private readonly ComboBox cmbTargetOutput;
+        private readonly ComboBox cmbValueType;
+        private readonly ComboBox cmbValueComparison;
+        private readonly ComboBox cmbValueOutput;
+        private readonly TextBox txtTextPattern;
+        private readonly TextBox txtValuePath;
+        private readonly TextBox txtValuePattern;
         private Form resizeForm;
+
+        private CancellationTokenSource cancellation;
+
+        private readonly Action<string> navigateToPath;
+
         private List<QueryResult> allResults;
         private int currentPage;
+        private const int PageSize = 3000;
+        private const int MaxResultCount = 300000;
+
         private bool updatingEditor;
         private bool updatingLayout;
 
@@ -54,26 +70,26 @@ namespace WzComparerR2
         {
             this.navigateToPath = navigateToPath;
 
-            var header = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 34, Padding = new Padding(4), WrapContents = false };
+            this.header = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 34, Padding = new Padding(4), WrapContents = false };
             this.cmbRoot = CreateCombo(100, Enum.GetValues(typeof(Wz_Type)).Cast<Wz_Type>().Where(type => type != Wz_Type.Unknown).Select(type => type.ToString()).ToArray());
-            var btnAddTarget = new Button { Text = "타겟 노드 추가", Width = 110, Height = 24 };
-            var btnAddExclude = new Button { Text = "제외 노드 추가", Width = 110, Height = 24 };
-            var btnAddValue = new Button { Text = "Value 조건 추가", Width = 115, Height = 24 };
-            var btnRemove = new Button { Text = "삭제", Width = 50, Height = 24 };
+            this.btnAddTarget = new Button { Text = "타겟 노드 추가", Width = 110, Height = 24 };
+            this.btnAddExclude = new Button { Text = "제외 노드 추가", Width = 110, Height = 24 };
+            this.btnAddValue = new Button { Text = "Value 조건 추가", Width = 115, Height = 24 };
+            this.btnRemove = new Button { Text = "삭제", Width = 50, Height = 24 };
             this.btnReset = new Button { Text = "초기화", Width = 60, Height = 24 };
             this.btnRun = new Button { Text = "실행", Width = 50, Height = 24 };
             this.btnCancel = new Button { Text = "취소", Width = 50, Height = 24, Enabled = false };
-            header.Controls.AddRange(new Control[]
+            this.header.Controls.AddRange(new Control[]
             {
                 new Label
                 {
                     Text = "Top", AutoSize = true, Padding = new Padding(0, 7, 0, 0)
                 },
                 this.cmbRoot,
-                btnAddTarget,
-                btnAddExclude,
-                btnAddValue,
-                btnRemove,
+                this.btnAddTarget,
+                this.btnAddExclude,
+                this.btnAddValue,
+                this.btnRemove,
                 this.btnReset,
                 this.btnRun,
                 this.btnCancel
@@ -121,16 +137,20 @@ namespace WzComparerR2
                 this.progressBar
             });
 
-            var resultPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, Margin = Padding.Empty, Padding = Padding.Empty };
-            resultPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            resultPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            resultPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            this.resultPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, Margin = Padding.Empty, Padding = Padding.Empty };
+            this.resultPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.resultPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this.resultPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
 
-            var pagingPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, Margin = Padding.Empty, Padding = new Padding(4), WrapContents = false };
+            this.footer = new FlowLayoutPanel { Dock = DockStyle.Fill, Margin = Padding.Empty, Padding = new Padding(4), WrapContents = false };
             this.btnPreviousPage = new Button { Text = "이전", Width = 60, Height = 24, Enabled = false };
             this.btnNextPage = new Button { Text = "다음", Width = 60, Height = 24, Enabled = false };
             this.lblPage = new Label { AutoSize = true, Padding = new Padding(8, 9, 8, 0), Text = "0 / 0" };
-            pagingPanel.Controls.AddRange(new Control[] { this.btnPreviousPage, this.lblPage, this.btnNextPage });
+            this.btnExportTxt = new Button { Text = "txt", Width = 60, Height = 24 };
+            this.btnExportTxt.Margin = new Padding(20, this.btnExportTxt.Margin.Top, this.btnExportTxt.Margin.Right, this.btnExportTxt.Margin.Bottom);
+            this.btnExportJson = new Button { Text = "json", Width = 60, Height = 24 };
+            this.btnExportXml = new Button { Text = "xml", Width = 60, Height = 24 };
+            this.footer.Controls.AddRange(new Control[] { this.btnPreviousPage, this.lblPage, this.btnNextPage, this.btnExportTxt, this.btnExportJson, this.btnExportXml });
 
             this.resultGrid = new DataGridView
             {
@@ -142,12 +162,12 @@ namespace WzComparerR2
             };
             this.resultGrid.Columns.Add("Path", "경로");
             this.resultGrid.Columns.Add("Result", "결과");
-            resultPanel.Controls.Add(this.resultGrid, 0, 0);
-            resultPanel.Controls.Add(pagingPanel, 0, 1);
+            this.resultPanel.Controls.Add(this.resultGrid, 0, 0);
+            this.resultPanel.Controls.Add(this.footer, 0, 1);
 
-            this.Controls.Add(resultPanel);
+            this.Controls.Add(this.resultPanel);
             this.Controls.Add(this.querySplit);
-            this.Controls.Add(header);
+            this.Controls.Add(this.header);
 
             this.queryTree.BeforeCollapse += (sender, e) => e.Cancel = true;
             this.queryTree.AfterSelect += (sender, e) => this.LoadEditor();
@@ -168,13 +188,16 @@ namespace WzComparerR2
                 this.UpdateTreeWidth();
                 this.AttachResizeEvents();
             };
-            btnAddTarget.Click += (sender, e) => this.AddRule(QueryRuleKind.Target);
-            btnAddExclude.Click += (sender, e) => this.AddRule(QueryRuleKind.Exclude);
-            btnAddValue.Click += (sender, e) => this.AddValueRule();
-            btnRemove.Click += (sender, e) => this.RemoveSelected();
+            this.btnAddTarget.Click += (sender, e) => this.AddRule(QueryRuleKind.Target);
+            this.btnAddExclude.Click += (sender, e) => this.AddRule(QueryRuleKind.Exclude);
+            this.btnAddValue.Click += (sender, e) => this.AddValueRule();
+            this.btnRemove.Click += (sender, e) => this.RemoveSelected();
             this.btnRun.Click += async (sender, e) => await this.RunQueryAsync();
             this.btnCancel.Click += (sender, e) => this.cancellation?.Cancel();
             this.btnReset.Click += (sender, e) => this.ResetTree();
+            this.btnExportTxt.Click += (sender, e) => this.Export("txt");
+            this.btnExportJson.Click += (sender, e) => this.Export("json");
+            this.btnExportXml.Click += (sender, e) => this.Export("xml");
             this.cmbValueType.SelectedIndexChanged += (sender, e) =>
             {
                 if (!this.updatingEditor)
@@ -278,6 +301,102 @@ namespace WzComparerR2
             if (!string.IsNullOrEmpty(fullPath))
             {
                 this.navigateToPath?.Invoke(fullPath);
+            }
+        }
+
+        private void Export(string extension)
+        {
+            if (this.allResults.Count == 0)
+            {
+                MessageBox.Show("내보낼 검색 결과가 없습니다.", "Wz 검색", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.AddExtension = true;
+                dialog.DefaultExt = extension;
+                dialog.FileName = $"WzQueryResults.{extension}";
+                dialog.Filter = $"{extension.ToUpperInvariant()} 파일 (*.{extension})|*.{extension}|모든 파일 (*.*)|*.*";
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (extension == "txt")
+                    {
+                        this.ExportTxt(dialog.FileName);
+                    }
+                    else if (extension == "json")
+                    {
+                        this.ExportJson(dialog.FileName);
+                    }
+                    else if (extension == "xml")
+                    {
+                        this.ExportXml(dialog.FileName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"내보내기에 실패했습니다.\r\n{ex.Message}", "Wz 검색", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ExportTxt(string fileName)
+        {
+            using (var writer = new StreamWriter(fileName, false, new UTF8Encoding(true)))
+            {
+                foreach (QueryResult result in this.allResults)
+                {
+                    writer.Write(result.Path);
+                    writer.Write("\t\t\t");
+                    writer.WriteLine(result.Value);
+                }
+            }
+        }
+
+        private void ExportJson(string fileName)
+        {
+            using (var streamWriter = new StreamWriter(fileName, false, new UTF8Encoding(true)))
+            using (var jsonWriter = new JsonTextWriter(streamWriter) { Formatting = Newtonsoft.Json.Formatting.Indented })
+            {
+                jsonWriter.WriteStartArray();
+                foreach (QueryResult result in this.allResults)
+                {
+                    jsonWriter.WriteStartObject();
+                    jsonWriter.WritePropertyName("Path");
+                    jsonWriter.WriteValue(result.Path);
+                    jsonWriter.WritePropertyName("Result");
+                    jsonWriter.WriteValue(result.Value);
+                    jsonWriter.WriteEndObject();
+                }
+                jsonWriter.WriteEndArray();
+            }
+        }
+
+        private void ExportXml(string fileName)
+        {
+            var settings = new XmlWriterSettings
+            {
+                Encoding = new UTF8Encoding(true),
+                Indent = true
+            };
+            using (XmlWriter writer = XmlWriter.Create(fileName, settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Results");
+                foreach (QueryResult result in this.allResults)
+                {
+                    writer.WriteStartElement("Item");
+                    writer.WriteElementString("Path", result.Path);
+                    writer.WriteElementString("Result", result.Value);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
             }
         }
 
