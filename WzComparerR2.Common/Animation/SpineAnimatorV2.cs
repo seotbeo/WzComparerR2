@@ -186,9 +186,13 @@ namespace WzComparerR2.Animation
         {
             ModelBound bound = ModelBound.Empty;
 
-            if (slot.Attachment is BoundingBoxAttachment)
+            Attachment attachment = slot.Attachment;
+            if (attachment == null && !string.IsNullOrEmpty(slot.Data.AttachmentName))
             {
-                BoundingBoxAttachment bb = (BoundingBoxAttachment)slot.Attachment;
+                attachment = slot.Skeleton.GetAttachment(slot.Data.Name, slot.Data.AttachmentName);
+            }
+            if (attachment is BoundingBoxAttachment bb)
+            {
                 int vertexCount = bb.Vertices.Length;
                 float[] vertices = new float[vertexCount];
                 bb.ComputeWorldVertices(slot.Bone, vertices);
