@@ -833,6 +833,16 @@ namespace WzComparerR2
                         {
                             outputs.Add(child.Text ?? string.Empty);
                         }
+                        if (target.AreValuesMatch(child))
+                        {
+                            var curOutputs = new List<string>(outputs);
+                            curOutputs.AddRange(target.Values.Where(value => value.Output && value.IsMatch(child)).Select(value => value.GetOutput(child)));
+                            results.Add(new QueryResult(path, curOutputs.Count > 0 ? string.Join(", ", curOutputs) : string.Empty));
+                            if (results.Count >= MaxResultCount)
+                            {
+                                return true;
+                            }
+                        }
                         if (ExecuteDescendants(child, path, outputs, target, target.Children, results, token))
                         {
                             return true;
