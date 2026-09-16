@@ -560,17 +560,22 @@ namespace WzComparerR2.CharaSimControl
             int count = 0;
             foreach (int h in box)
             {
-                var addH = h * Line_Height;;
-                if (picH + addH > Max_Height)
+                var addH = h * Line_Height;
+                var nextH = picH + addH;
+                if (nextH > Max_Height)
                 {
                     extraWidth += Interval;
                     extraHeight = Math.Max(extraHeight, picH + Margin);
-                    picH = Margin;
+                    picH = addH + Margin;
                     rows.Add(count);
-                    count = 0;
+                    count = 1;
                 }
-                picH += addH;
-                count++;
+                else
+                {
+                    extraHeight = Math.Max(extraHeight, nextH + Margin);
+                    picH = nextH;
+                    count++;
+                }
             }
             rows.Add(count);
 
