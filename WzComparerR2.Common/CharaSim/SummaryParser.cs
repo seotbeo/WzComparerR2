@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.Common;
+using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSim
 {
@@ -15,10 +16,11 @@ namespace WzComparerR2.CharaSim
             GlobalVariableMapping["comboConAran"] = "aranComboCon";
         }
 
-        public static string GetSkillSummary(string H, int Level, Dictionary<string, string> CommonProps, SummaryParams param, SkillSummaryOptions options = default, int comparisonLevel = 0)
+        public static string GetSkillSummary(string H, int Level, Dictionary<string, string> CommonProps, SummaryParams param, SkillSummaryOptions options = default, int comparisonLevel = 0, GlobalFindNodeFunction findNode = null, Wz_File sourceWzFile = null)
         {
             if (H == null) return null;
 
+            var refProps = new Dictionary<int, Dictionary<string, string>>();
             int idx = 0;
             StringBuilder sb = new StringBuilder();
             bool beginC = false;
@@ -28,13 +30,39 @@ namespace WzComparerR2.CharaSim
             {
                 if (H[idx] == '#')
                 {
-                    int end = idx, len = 0;
+                    int propStart = idx + 1;
+                    Dictionary<string, string> props = CommonProps;
+                    if (propStart < H.Length && H[propStart] == '[')
+                    {
+                        Match reference = Regex.Match(H.Substring(propStart), @"^\[(\d+)\]([_A-Za-z][_A-Za-z0-9]*)");
+                        if (reference.Success)
+                        {
+                            string idText = reference.Groups[1].Value;
+                            props = null;
+                            if (int.TryParse(idText, out int skillId) && findNode != null)
+                            {
+                                if (!refProps.TryGetValue(skillId, out props))
+                                {
+                                    props = GetRefSkillProps(skillId, Level, findNode, sourceWzFile);
+                                    refProps[skillId] = props;
+                                }
+                            }
+                            propStart += reference.Groups[2].Index;
+                            if (props == null || !GetValueIgnoreCase(props, reference.Groups[2].Value, out _))
+                            {
+                                sb.Append(H, idx, reference.Length + 1);
+                                idx += reference.Length + 1;
+                                continue;
+                            }
+                        }
+                    }
+                    int end = propStart - 1, len = 0;
                     while ((++end) < H.Length)
                     {
                         if (H[end] == '_' ||
                             ('a' <= H[end] && H[end] <= 'z') ||
                             ('A' <= H[end] && H[end] <= 'Z') ||
-                            (end - idx > 1 && '0' <= H[end] && H[end] <= '9')) //^[_A-Za-z][_A-Za-z0-9]*$
+                            (end - propStart > 0 && '0' <= H[end] && H[end] <= '9')) //^[_A-Za-z][_A-Za-z0-9]*$
                         {
                             len++;
                         }
@@ -46,12 +74,12 @@ namespace WzComparerR2.CharaSim
                     //优先匹配common
                     string prop = null;
                     string propKey = null;
-                    if (CommonProps != null)
+                    if (props != null)
                     {
                         for (int i = len; i > 0; i--)
                         {
-                            propKey = H.Substring(idx + 1, i);
-                            if (GetValueIgnoreCase(CommonProps, propKey, out prop))
+                            propKey = H.Substring(propStart, i);
+                            if (GetValueIgnoreCase(props, propKey, out prop))
                             {
                                 len = i;
                                 break;
@@ -85,7 +113,7 @@ namespace WzComparerR2.CharaSim
 
                             if (highlightVal)
                             {
-                                bool addPercent = idx + len + 1 < H.Length && H[idx + len + 1] == '%';
+                                bool addPercent = propStart + len < H.Length && H[propStart + len] == '%';
                                 if (addPercent)
                                 {
                                     sb.Append("%");
@@ -108,7 +136,7 @@ namespace WzComparerR2.CharaSim
                                 if (addPercent)
                                 {
                                     sb.Append("%");
-                                    idx++;
+                                    len++;
                                 }
 
                                 sb.Append(param.GEnd);
@@ -126,7 +154,7 @@ namespace WzComparerR2.CharaSim
                             }
                         }
 
-                        idx += len + 1;
+                        idx = propStart + len;
                         continue;
                     }
                     else //试图匹配全局变量
@@ -287,6 +315,33 @@ namespace WzComparerR2.CharaSim
             return Regex.Replace(sb.ToString().Replace("\t", ""), @"(\\r|\\n)+$", "");
         }
 
+        private static Dictionary<string, string> GetRefSkillProps(int skillID, int level, GlobalFindNodeFunction findNode, Wz_File sourceWzFile)
+        {
+            Wz_Node skillNode = findNode?.Invoke($@"Skill\{(skillID / 10000000 == 8 ? skillID / 1000 : skillID / 10000)}.img\skill\{skillID}", sourceWzFile);
+            if (skillNode == null)
+            {
+                return null;
+            }
+
+            var props = new Dictionary<string, string>();
+            Wz_Node[] propNodes = { skillNode.Nodes["common"], skillNode.Nodes["level"]?.Nodes[level.ToString()] };
+            foreach (Wz_Node propNode in propNodes)
+            {
+                if (propNode == null)
+                {
+                    continue;
+                }
+                foreach (Wz_Node child in propNode.Nodes)
+                {
+                    if (child.Value != null && !(child.Value is Wz_Vector))
+                    {
+                        props[child.Text] = child.Value.ToString();
+                    }
+                }
+            }
+            return props;
+        }
+
         private static bool GetValueIgnoreCase(Dictionary<string, string> dict, string key, out string value)
         {
             //bool find = false;
@@ -335,16 +390,16 @@ namespace WzComparerR2.CharaSim
             return sb.ToString();
         }
 
-        public static string GetSkillSummary(Skill skill, StringResultSkill sr, SummaryParams param)
+        public static string GetSkillSummary(Skill skill, StringResultSkill sr, SummaryParams param, GlobalFindNodeFunction findNode = null, Wz_File sourceWzFile = null)
         {
             if (skill == null)
                 return null;
-            return GetSkillSummary(skill, skill.Level, sr, param);
+            return GetSkillSummary(skill, skill.Level, sr, param, findNode: findNode, sourceWzFile: sourceWzFile);
         }
 
         public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default,
             bool doHighlight = false, Dictionary<string, string> overrideSkillCommon = null, Dictionary<int, HashSet<string>> DiffSkillTags = null,
-            bool convertExtraProps = true)
+            bool convertExtraProps = true, GlobalFindNodeFunction findNode = null, Wz_File sourceWzFile = null)
         {
             if (skill == null || sr == null)
                 return null;
@@ -383,7 +438,7 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                return GetSkillSummary(h, level, levelCommon, param, options, comparisonLevel: skill.ComparisonLevel);
+                return GetSkillSummary(h, level, levelCommon, param, options, comparisonLevel: skill.ComparisonLevel, findNode: findNode, sourceWzFile: sourceWzFile);
             }
             else
             {
@@ -420,7 +475,7 @@ namespace WzComparerR2.CharaSim
                     }
                 }
 
-                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, param, options, comparisonLevel: skill.ComparisonLevel);
+                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, param, options, comparisonLevel: skill.ComparisonLevel, findNode: findNode, sourceWzFile: sourceWzFile);
             }
         }
 

@@ -172,7 +172,7 @@ namespace WzComparerR2
                         string levelDesc;
                         try
                         {
-                            levelDesc = SummaryParser.GetSkillSummary(skill, sr, SummaryParams.Default);
+                            levelDesc = SummaryParser.GetSkillSummary(skill, sr, SummaryParams.Default, findNode: PluginManager.FindWz);
                         }
                         catch(Exception ex)
                         {

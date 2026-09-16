@@ -224,7 +224,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (sr.Desc != null)
             {
-                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, skillCommon, SummaryParams.Default);
+                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, skillCommon, SummaryParams.Default, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
                 //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
@@ -318,7 +318,7 @@ namespace WzComparerR2.CharaSimControl
                 string nowLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.Level != Skill.ComparisonLevel ?
                     $"[현재레벨 #$g{Skill.Level}{SummaryParams.Default.BracketIcon}{Skill.ComparisonLevel}#]" :
                     $"[현재레벨 {Skill.Level}]";
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, DiffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, DiffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
                 GearGraphics.DrawString(g, nowLevel, GearGraphics.ItemDetailFont, null, null, SkillTooltipRender2.ImageTable, region.LevelDescLeft, region.TextRight, ref picH, 16, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.ReqLevel > 0 &&
                     (this.LevelViewMode == SkillLevelViewMode.CurrentAndNext && Skill.Level == 1 || this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.ComparisonLevel == 1))
@@ -337,7 +337,7 @@ namespace WzComparerR2.CharaSimControl
             {
                 int targetLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected ? Skill.ComparisonLevel : Skill.Level + 1;
                 skillSummaryOptions.LevelViewMode = SkillLevelViewMode.CurrentAndNext;
-                string hStr = SummaryParser.GetSkillSummary(Skill, targetLevel, sr, SummaryParams.Default, skillSummaryOptions, overrideSkillCommon: skillCommon, convertExtraProps: !this.ShowSkillValuesByJob);
+                string hStr = SummaryParser.GetSkillSummary(Skill, targetLevel, sr, SummaryParams.Default, skillSummaryOptions, overrideSkillCommon: skillCommon, convertExtraProps: !this.ShowSkillValuesByJob, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
                 skillSummaryOptions.LevelViewMode = this.LevelViewMode;
 
                 GearGraphics.DrawString(g, "[다음레벨 " + targetLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
