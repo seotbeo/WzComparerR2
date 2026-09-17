@@ -344,7 +344,7 @@ namespace WzComparerR2.OpenAPI
             }
         }
 
-        public async Task<UnpackedAvatarData> Debug(string cname = "창섭")
+        public async Task<UnpackedAvatarData> Debug(string cname)
         {
             var data = "";
             if (cname.Length <= 10)

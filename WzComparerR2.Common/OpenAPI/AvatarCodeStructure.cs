@@ -27,6 +27,7 @@ namespace WzComparerR2.OpenAPI
             { 40, GetStructureV40() },
             { 41, GetStructureV41() },
             { 43, GetStructureV43() },
+            { 44, GetStructureV44() },
         };
 
         private static List<DataInfo> GetBasePartV1()
@@ -212,6 +213,40 @@ namespace WzComparerR2.OpenAPI
                     {
                         new DataInfo("cashWeaponID", 10),
                         new DataInfo("cashWeaponGender", 2),
+                    }
+                },
+                new DataInfo("weaponID", 10),
+                new DataInfo("weaponGender", 2),
+                new DataInfo("weaponType", 8),
+            };
+        }
+
+        private static List<DataInfo> GetWeaponPartV3()
+        {
+            return new List<DataInfo>()
+            {
+                new DataInfo("subWeaponType", 3)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("shieldID", 10),
+                        new DataInfo("shieldGender", 4),
+                    }
+                },
+                new DataInfo("isZeroSubweapon", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("zeroSubWeaponID", 10),
+                        new DataInfo("zeroSubWeaponGender", 4),
+                    }
+                },
+                new DataInfo("isCashWeapon", 1)
+                {
+                    SubItems = new List<DataInfo>()
+                    {
+                        new DataInfo("cashWeaponID", 10),
+                        new DataInfo("cashWeaponGender", 4),
                     }
                 },
                 new DataInfo("weaponID", 10),
@@ -732,6 +767,40 @@ namespace WzComparerR2.OpenAPI
             var ret = new List<DataInfo>();
             ret.AddRange(GetBasePartV4());
             ret.AddRange(GetWeaponPartV2());
+            ret.AddRange(new List<DataInfo>()
+            {
+                new DataInfo("earType", 4),
+                new DataInfo("mixHairColor", 4),
+                new DataInfo("mixHairRatio", 8),
+                new DataInfo("mixFaceInfo", 10),
+                new DataInfo("unknown1", 4),
+                new DataInfo("jobWingTailType", 8),
+                new DataInfo("jobWingTailTypeDetail", 2),
+                new DataInfo("unknown2", 6),
+                new DataInfo("eventJob", 3),
+                new DataInfo("unknown2_2", 21),
+                new DataInfo("weaponMotionType", 2),
+                new DataInfo("unknown3", 11),
+                new DataInfo("showEffectFlags", 4),
+                new DataInfo("unknown3_2", 3),
+                new DataInfo("emotionFaceAccID", 10),
+                new DataInfo("emotionFaceAccGender", 2),
+            });
+            ret.AddRange(GetPrismPartV4());
+            ret.AddRange(new List<DataInfo>()
+            {
+                new DataInfo("Unknown43", 16),
+            });
+            ret.AddRange(GetCustomOriginPartV1());
+            ret.AddRange(GetRingPartV1());
+            return ret;
+        }
+
+        private static List<DataInfo> GetStructureV44()
+        {
+            var ret = new List<DataInfo>();
+            ret.AddRange(GetBasePartV4());
+            ret.AddRange(GetWeaponPartV3());
             ret.AddRange(new List<DataInfo>()
             {
                 new DataInfo("earType", 4),
