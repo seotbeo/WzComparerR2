@@ -53,6 +53,10 @@ namespace WzComparerR2.WzLib.Utilities
         public override void Flush() => throw new NotSupportedException();
         public override int Read(byte[] buffer, int offset, int count)
         {
+#if NET6_0_OR_GREATER
+            ValidateBufferArguments(buffer, offset, count);
+            return this.Read(buffer.AsSpan(offset, count));
+#else
             int totalRead = 0;
 
             if (this.canSeek)
@@ -90,7 +94,46 @@ namespace WzComparerR2.WzLib.Utilities
             }
 
             return totalRead;
+#endif
         }
+
+#if NET6_0_OR_GREATER
+        public override int Read(Span<byte> buffer)
+        {
+            if (buffer.IsEmpty)
+                return 0;
+
+            if (!this.canSeek)
+            {
+                int readBytes = this.current.Read(buffer);
+                if (readBytes == 0 && this.current == this.first)
+                {
+                    this.current = this.second;
+                    readBytes = this.current.Read(buffer);
+                }
+                return readBytes;
+            }
+
+            int totalRead = 0;
+            if (this.position < this.first.Length)
+            {
+                this.first.Position = this.position;
+                int count = (int)Math.Min(buffer.Length, this.first.Length - this.position);
+                int readBytes = this.first.Read(buffer.Slice(0, count));
+                this.position += readBytes;
+                totalRead += readBytes;
+                buffer = buffer.Slice(readBytes);
+            }
+            if (!buffer.IsEmpty && this.position >= this.first.Length)
+            {
+                this.second.Position = this.position - this.first.Length;
+                int readBytes = this.second.Read(buffer);
+                this.position += readBytes;
+                totalRead += readBytes;
+            }
+            return totalRead;
+        }
+#endif
 
         public override long Seek(long offset, SeekOrigin origin)
         {

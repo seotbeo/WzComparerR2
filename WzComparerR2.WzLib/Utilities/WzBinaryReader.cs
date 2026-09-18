@@ -102,22 +102,7 @@ namespace WzComparerR2.WzLib.Utilities
             {
                 size = (size == -128) ? this.ReadInt32() : -size;
 
-                // for net6+ we can use Stream.Read(Span<byte>) instead, the array buffer is not needed.
-                var buffer = ArrayPool<byte>.Shared.Rent(size);
-                try
-                {
-                    this.BaseStream.ReadExactly(buffer, 0, size);
-                    decrypter.Decrypt(buffer.AsSpan(0, size));
-
-                    using var charBuffer = MemoryPool<char>.Shared.Rent(size);
-                    Span<char> chars = charBuffer.Memory.Span.Slice(0, size);
-                    MathHelper.DecodeWzStringAscii(buffer.AsSpan(0, size), chars);
-                    return this.stringPool != null ? this.stringPool.GetOrAdd(currentPos, chars) : chars.ToString();
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(buffer);
-                }
+                return this.ReadAsciiString(size, currentPos, decrypter);
             }
             else if (size > 0) // read UTF-16LE string
             {
@@ -125,21 +110,7 @@ namespace WzComparerR2.WzLib.Utilities
                 {
                     size = this.bReader.ReadInt32();
                 }
-                int byteSize = size * 2;
-                var buffer = ArrayPool<byte>.Shared.Rent(byteSize);
-                try
-                {
-                    this.BaseStream.ReadExactly(buffer, 0, byteSize);
-                    decrypter.Decrypt(buffer.AsSpan(0, byteSize));
-
-                    Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer.AsSpan(0, byteSize));
-                    MathHelper.ApplyWzStringCharMask(chars, chars);
-                    return this.stringPool != null ? this.stringPool.GetOrAdd(currentPos, chars) : chars.ToString();
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(buffer);
-                }
+                return this.ReadUtf16String(size, currentPos, decrypter, true);
             }
             else
             {
@@ -156,19 +127,7 @@ namespace WzComparerR2.WzLib.Utilities
             if (size < 0)
             {
                 size = -size;
-                int byteSize = size * 2;
-                var buffer = ArrayPool<byte>.Shared.Rent(byteSize);
-                try
-                {
-                    this.BaseStream.ReadExactly(buffer, 0, byteSize);
-                    decrypter.Decrypt(buffer.AsSpan(0, byteSize));
-                    Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer.AsSpan(0, byteSize));
-                    return this.stringPool != null ? this.stringPool.GetOrAdd(currentPos, chars) : chars.ToString();
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(buffer);
-                }
+                return this.ReadUtf16String(size, currentPos, decrypter, false);
             }
             else if (size > 0)
             {
@@ -189,19 +148,7 @@ namespace WzComparerR2.WzLib.Utilities
             if (size < 0)
             {
                 size = -size;
-                int byteSize = size * 2;
-                var buffer = ArrayPool<byte>.Shared.Rent(byteSize);
-                try
-                {
-                    this.BaseStream.ReadExactly(buffer, 0, byteSize);
-                    decrypter.Decrypt(buffer.AsSpan(0, byteSize));
-                    Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer.AsSpan(0, byteSize));
-                    return this.stringPool != null ? this.stringPool.GetOrAdd(currentPos, chars) : chars.ToString();
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(buffer);
-                }
+                return this.ReadUtf16String(size, currentPos, decrypter, false);
             }
             else if (size > 0)
             {
@@ -210,6 +157,79 @@ namespace WzComparerR2.WzLib.Utilities
             else
             {
                 return string.Empty;
+            }
+        }
+
+        private const int StackBufferSize = 256;
+
+        private string ReadAsciiString(int size, long offset, IWzDecrypter decrypter)
+        {
+            if (size < 0)
+                throw new InvalidDataException("Negative string length.");
+
+            byte[] rentedBytes = null;
+            char[] rentedChars = null;
+            Span<byte> buffer =
+#if NET6_0_OR_GREATER
+                size <= StackBufferSize ? stackalloc byte[size] :
+#endif
+                (rentedBytes = ArrayPool<byte>.Shared.Rent(size)).AsSpan(0, size);
+            try
+            {
+#if NET6_0_OR_GREATER
+                this.BaseStream.ReadExactly(buffer);
+#else
+                this.BaseStream.ReadExactly(rentedBytes, 0, size);
+#endif
+                decrypter.Decrypt(buffer);
+
+                Span<char> chars =
+#if NET6_0_OR_GREATER
+                    size <= StackBufferSize / sizeof(char) ? stackalloc char[size] :
+#endif
+                    (rentedChars = ArrayPool<char>.Shared.Rent(size)).AsSpan(0, size);
+                MathHelper.DecodeWzStringAscii(buffer, chars);
+                return this.stringPool != null ? this.stringPool.GetOrAdd(offset, chars) : chars.ToString();
+            }
+            finally
+            {
+                if (rentedChars != null)
+                    ArrayPool<char>.Shared.Return(rentedChars);
+                if (rentedBytes != null)
+                    ArrayPool<byte>.Shared.Return(rentedBytes);
+            }
+        }
+
+        private string ReadUtf16String(int size, long offset, IWzDecrypter decrypter, bool applyMask)
+        {
+            if (size < 0)
+                throw new InvalidDataException("Negative string length.");
+
+            int byteSize = checked(size * sizeof(char));
+            byte[] rentedBytes = null;
+            Span<byte> buffer =
+#if NET6_0_OR_GREATER
+                byteSize <= StackBufferSize ? stackalloc byte[byteSize] :
+#endif
+                (rentedBytes = ArrayPool<byte>.Shared.Rent(byteSize)).AsSpan(0, byteSize);
+            try
+            {
+#if NET6_0_OR_GREATER
+                this.BaseStream.ReadExactly(buffer);
+#else
+                this.BaseStream.ReadExactly(rentedBytes, 0, byteSize);
+#endif
+                decrypter.Decrypt(buffer);
+
+                Span<char> chars = MemoryMarshal.Cast<byte, char>(buffer);
+                if (applyMask)
+                    MathHelper.ApplyWzStringCharMask(chars, chars);
+                return this.stringPool != null ? this.stringPool.GetOrAdd(offset, chars) : chars.ToString();
+            }
+            finally
+            {
+                if (rentedBytes != null)
+                    ArrayPool<byte>.Shared.Return(rentedBytes);
             }
         }
 
