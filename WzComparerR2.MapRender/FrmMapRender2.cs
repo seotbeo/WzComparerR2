@@ -1125,11 +1125,13 @@ namespace WzComparerR2.MapRender
                     }
 
                     var back = this.mapData?.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
-                        .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList() ?? new();
+                        .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList().AsReadOnly()
+                        ?? new List<BackItem>().AsReadOnly();
                     var obj = this.mapData?.Scene.Layers.Nodes.OfType<LayerNode>()
-                        .Select(layerNode => layerNode.Obj.Slots.OfType<ObjItem>()
+                        .Select(layerNode => (IReadOnlyList<ObjItem>)layerNode.Obj.Slots.OfType<ObjItem>()
                             .Where(item => item.View.Animator is ISpineAnimator)
-                            .ToList()).ToList() ?? new();
+                            .ToList().AsReadOnly()).ToList().AsReadOnly()
+                            ?? new List<IReadOnlyList<ObjItem>>().AsReadOnly();
                     uiSpineSelector.LoadTabContents(back, obj);
 
                     uiSpineSelector.Show();

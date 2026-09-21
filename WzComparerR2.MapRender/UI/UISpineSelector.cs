@@ -20,8 +20,8 @@ namespace WzComparerR2.MapRender.UI
 
         }
 
-        private List<BackItem> Back { get; set; }
-        private List<List<ObjItem>> Obj { get; set; }
+        private IReadOnlyList<BackItem> Back { get; set; }
+        private IReadOnlyList<IReadOnlyList<ObjItem>> Obj { get; set; }
         private List<ComboBox> BackCmbs { get; set; }
         private List<List<ComboBox>> ObjCmbs { get; set; }
         private List<Button> buttons { get; set; }
@@ -102,7 +102,7 @@ namespace WzComparerR2.MapRender.UI
             base.InitializeComponents();
         }
 
-        public void LoadTabContents(List<BackItem> back, List<List<ObjItem>> obj)
+        public void LoadTabContents(IReadOnlyList<BackItem> back, IReadOnlyList<IReadOnlyList<ObjItem>> obj)
         {
             this.Back = back;
             this.Obj = obj;
@@ -194,8 +194,10 @@ namespace WzComparerR2.MapRender.UI
                     grid.Children.Add(lbl);
                     
                     ComboBox cmb = new ComboBox();
-                    cmb.ItemsSource = (item.View.Animator as ISpineAnimator).Animations;
-                    cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex;
+                    var src = new List<string>() { "" };
+                    src.AddRange((item.View.Animator as ISpineAnimator).Animations);
+                    cmb.ItemsSource = src;
+                    cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex + 1;
                     cmb.MinWidth = 100;
                     cmb.Height = 24;
                     Grid.SetRow(cmb, row++);
@@ -220,8 +222,10 @@ namespace WzComparerR2.MapRender.UI
                     grid.Children.Add(lbl);
 
                     ComboBox cmb = new ComboBox();
-                    cmb.ItemsSource = (item.View.Animator as ISpineAnimator).Animations;
-                    cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex;
+                    var src = new List<string>() { "" };
+                    src.AddRange((item.View.Animator as ISpineAnimator).Animations);
+                    cmb.ItemsSource = src;
+                    cmb.SelectedIndex = (item.View.Animator as ISpineAnimator).SelectedAnimationIndex + 1;
                     cmb.MinWidth = 100;
                     cmb.Height = 24;
                     Grid.SetRow(cmb, row++);
@@ -243,7 +247,7 @@ namespace WzComparerR2.MapRender.UI
             {
                 var animator = Back[i].View.Animator as ISpineAnimator;
                 var cmb = BackCmbs[i];
-                animator.SelectedAnimationIndex = cmb.SelectedIndex;
+                animator.SelectedAnimationIndex = cmb.SelectedIndex - 1;
             }
             for (int layer = 0; layer <= 7; layer++)
             {
@@ -251,7 +255,7 @@ namespace WzComparerR2.MapRender.UI
                 {
                     var animator = Obj[layer][i].View.Animator as ISpineAnimator;
                     var cmb = ObjCmbs[layer][i];
-                    animator.SelectedAnimationIndex = cmb.SelectedIndex;
+                    animator.SelectedAnimationIndex = cmb.SelectedIndex - 1;
                 }
             }
         }
