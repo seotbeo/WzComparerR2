@@ -126,6 +126,7 @@ namespace WzComparerR2.CharaSim
         {
             get { return this.AttackInfo.SelectMany(kv => kv.Value).Select(info => info.Key).Distinct().ToList(); }
         }
+        public bool BlockInBossFieldset { get; set; }
 
         public int MaxLevel
         {
@@ -318,6 +319,9 @@ namespace WzComparerR2.CharaSim
                         break;
                     case "vehicleID":
                         skill.VehicleID = childNode.GetValue<int>();
+                        break;
+                    case "blockInBossFieldset":
+                        skill.BlockInBossFieldset = childNode.GetValue<int>() != 0;
                         break;
                 }
             }

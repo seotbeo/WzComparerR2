@@ -280,6 +280,15 @@ namespace WzComparerR2.CharaSimControl
                 }
                 GearGraphics.DrawString(g, colortag + "펫 버프 자동스킬 등록 가능#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
+            if (Skill.BlockInBossFieldset)
+            {
+                string colortag = "#c";
+                if (doHighlight && DiffSkillTags[Skill.SkillID].Contains("blockInBossFieldset"))
+                {
+                    colortag = "#$g";
+                }
+                GearGraphics.DrawString(g, colortag + "사냥 맵이 아닌 일부 맵 사용 불가#", GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, Skill.Icon.Bitmap == null ? region.LevelDescLeft : region.SkillDescLeft, region.TextRight, ref picH, 16);
+            }
             /*if (Skill.ReqLevel > 0)
             {
                 GearGraphics.DrawString(g, "#c[要求等级：" + Skill.ReqLevel.ToString() + "]#", GearGraphics.ItemDetailFont2, region.SkillDescLeft, region.TextRight, ref picH, 16);

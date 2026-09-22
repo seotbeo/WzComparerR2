@@ -1399,7 +1399,7 @@ namespace WzComparerR2.Comparer
 
             if (!match.Success)
             {
-                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|isSequenceOn|BGM).*"); // 변경점 중 스킬 툴팁 출력할 것들
+                match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\(common|masterLevel|combatOrders|action|isPetAutoBuff|isSequenceOn|BGM|blockInBossFieldset).*"); // 변경점 중 스킬 툴팁 출력할 것들
                 if (!match.Success)
                 {
                     match = Regex.Match(node.FullPathToFile, @"^Skill\d*\\\d+.img\\skill\\(\d+)\\level\\\d+\\.*");
