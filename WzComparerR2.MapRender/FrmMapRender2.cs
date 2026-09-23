@@ -23,6 +23,7 @@ using KeyCode = EmptyKeys.UserInterface.Input.KeyCode;
 using ModifierKeys = EmptyKeys.UserInterface.Input.ModifierKeys;
 using ServiceManager = EmptyKeys.UserInterface.Mvvm.ServiceManager;
 using WzComparerR2.MapRender.Effects;
+using WzComparerR2.Animation;
 #endregion
 
 namespace WzComparerR2.MapRender
@@ -504,6 +505,13 @@ namespace WzComparerR2.MapRender
             LoadOptionData(data);
         }
 
+        private void SpineSelector_Visible(object sender, RoutedEventArgs e)
+        {
+            UISpineSelector wnd = sender as UISpineSelector;
+            wnd.Left = (int)Math.Max(0, (this.ui.Width - wnd.Width) / 2);
+            wnd.Top = (int)Math.Max(0, (this.ui.Height - wnd.Height) / 2);
+        }
+
         private void WorldMap_MapSpotClick(object sender, UIWorldMap.MapSpotEventArgs e)
         {
             int mapID = e.MapID;
@@ -562,6 +570,7 @@ namespace WzComparerR2.MapRender
                     this.ui.ChatBox.AppendTextHelp(@"/history [maxCount] 查看历史地图。");
                     this.ui.ChatBox.AppendTextHelp(@"/minimap 设置迷你地图状态。");
                     this.ui.ChatBox.AppendTextHelp(@"/scene 设置地图场景显示状态。");
+                    this.ui.ChatBox.AppendTextHelp(@"/spine Open Spine Selector");
                     this.ui.ChatBox.AppendTextHelp(@"/quest 任务设置");
                     this.ui.ChatBox.AppendTextHelp(@"/questex 设置任务Key的值");
                     this.ui.ChatBox.AppendTextHelp(@"/multibgm 多重BGM设置");
@@ -895,6 +904,36 @@ namespace WzComparerR2.MapRender
                             this.ui.ChatBox.AppendTextHelp(@"/questex set (questID) (key) (questState) 设置任务Key的状态");
                             break;
                     }
+                    break;
+
+                case "/spine":
+                    if (this.mapData == null)
+                    {
+                        this.ui.ChatBox.AppendTextSystem("No map is loaded.");
+                        break;
+                    }
+                    var uiSpineSelector = this.ui.Windows.OfType<UISpineSelector>().FirstOrDefault();
+                    if (uiSpineSelector == null)
+                    {
+                        uiSpineSelector = new UISpineSelector();
+                        uiSpineSelector.Visible += SpineSelector_Visible;
+                        uiSpineSelector.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                        this.ui.Windows.Add(uiSpineSelector);
+                        uiSpineSelector.Parent = this.ui;
+                        uiSpineSelector.Hide();
+                    }
+
+                    var back = this.mapData?.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
+                        .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList().AsReadOnly()
+                        ?? new List<BackItem>().AsReadOnly();
+                    var obj = this.mapData?.Scene.Layers.Nodes.OfType<LayerNode>()
+                        .Select(layerNode => (IReadOnlyList<ObjItem>)layerNode.Obj.Slots.OfType<ObjItem>()
+                            .Where(item => item.View.Animator is ISpineAnimator)
+                            .ToList().AsReadOnly()).ToList().AsReadOnly()
+                            ?? new List<IReadOnlyList<ObjItem>>().AsReadOnly();
+                    uiSpineSelector.LoadTabContents(back, obj);
+
+                    uiSpineSelector.Show();
                     break;
 
                 default:
