@@ -1616,6 +1616,7 @@ namespace WzComparerR2.Comparer
                         if (!OutputMobTooltipIDs.Contains(id))
                         {
                             OutputMobTooltipIDs.Add(id);
+                            DiffMobTags[id] = new HashSet<string>();
                         }
                     }
                 }
