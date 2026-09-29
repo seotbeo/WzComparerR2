@@ -18,6 +18,7 @@ namespace WzComparerR2.MapRender
         Vector2 center;
         int displayMode;
         bool useWorldRect;
+        int zoomLevel = 0;
 
         public GraphicsDeviceManager Graphics
         {
@@ -64,6 +65,15 @@ namespace WzComparerR2.MapRender
             }
         }
 
+        public Rectangle ScaledClipRect
+        {
+            get
+            {
+                var rect = this.ClipRect;
+                return new Rectangle((int)(rect.X / Scale), (int)(rect.Y / Scale), (int)(rect.Width / Scale), (int)(rect.Height / Scale));
+            }
+        }
+
         /// <summary>
         /// 获取摄像机左上角对应的世界坐标。
         /// </summary>
@@ -96,6 +106,17 @@ namespace WzComparerR2.MapRender
         {
             get { return useWorldRect; }
             set { useWorldRect = value; }
+        }
+
+        public float Scale
+        {
+            get { return (float)Math.Pow(1.1, zoomLevel); }
+        }
+
+        public int ZoomLevel
+        {
+            get { return zoomLevel; }
+            set { zoomLevel = value; }
         }
 
         public bool AdjustRectEnabled { get; set; }
@@ -134,26 +155,26 @@ namespace WzComparerR2.MapRender
             if (!this.AdjustRectEnabled)
                 return;
 
-            if (this.Width > worldRect.Width)
+            if (this.Width > worldRect.Width * Scale)
             {
-                this.center.X = worldRect.Center.X;
+                this.center.X = worldRect.Center.X * Scale;
             }
             else
             {
                 this.center.X = MathHelper.Clamp(this.center.X,
-                    worldRect.Left + this.Width / 2,
-                    worldRect.Right - this.Width / 2);
+                    worldRect.Left * Scale + this.Width / 2,
+                    worldRect.Right * Scale - this.Width / 2);
             }
 
-            if (this.Height > worldRect.Height)
+            if (this.Height > worldRect.Height * Scale)
             {
-                this.center.Y = worldRect.Center.Y;
+                this.center.Y = worldRect.Center.Y * Scale;
             }
             else
             {
                 this.center.Y = MathHelper.Clamp(this.center.Y,
-                    worldRect.Top + this.Height / 2,
-                    worldRect.Bottom - this.Height / 2);
+                    worldRect.Top * Scale + this.Height / 2,
+                    worldRect.Bottom * Scale - this.Height / 2);
             }
         }
 
@@ -203,6 +224,14 @@ namespace WzComparerR2.MapRender
         {
             cameraPoint.X += this.ClipRect.X;
             cameraPoint.Y += this.ClipRect.Y;
+            cameraPoint = DivideByScale(cameraPoint);
+            return cameraPoint;
+        }
+
+        public Point DivideByScale(Point cameraPoint)
+        {
+            cameraPoint.X = (int)(cameraPoint.X / this.Scale);
+            cameraPoint.Y = (int)(cameraPoint.Y / this.Scale);
             return cameraPoint;
         }
     }
