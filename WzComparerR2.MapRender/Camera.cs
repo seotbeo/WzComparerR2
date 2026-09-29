@@ -19,6 +19,7 @@ namespace WzComparerR2.MapRender
         int displayMode;
         bool useWorldRect;
         int zoomLevel = 0;
+        float scale = 1.0f;
 
         public GraphicsDeviceManager Graphics
         {
@@ -110,13 +111,17 @@ namespace WzComparerR2.MapRender
 
         public float Scale
         {
-            get { return (float)Math.Pow(1.1, zoomLevel); }
+            get { return scale; }
         }
 
         public int ZoomLevel
         {
             get { return zoomLevel; }
-            set { zoomLevel = value; }
+            set
+            {
+                zoomLevel = value;
+                scale = (float)Math.Pow(1.1, zoomLevel);
+            }
         }
 
         public bool AdjustRectEnabled { get; set; }

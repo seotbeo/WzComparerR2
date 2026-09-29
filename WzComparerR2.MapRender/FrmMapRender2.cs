@@ -451,8 +451,7 @@ namespace WzComparerR2.MapRender
 
                     var beforeMousePos = this.renderEnv.Camera.CameraToWorld(this.renderEnv.Input.MousePosition).ToVector2();
 
-                    this.renderEnv.Camera.ZoomLevel += (int)Math.Round(e.Delta / 120f);
-                    this.renderEnv.Camera.ZoomLevel = MathHelper.Clamp(this.renderEnv.Camera.ZoomLevel, -20, 20);
+                    this.renderEnv.Camera.ZoomLevel = MathHelper.Clamp(this.renderEnv.Camera.ZoomLevel + (int)Math.Round(e.Delta / 120f), -20, 20);
 
                     var afterMousePos = this.renderEnv.Camera.CameraToWorld(this.renderEnv.Input.MousePosition).ToVector2();
                     this.renderEnv.Camera.Center += (beforeMousePos - afterMousePos) * this.renderEnv.Camera.Scale;
