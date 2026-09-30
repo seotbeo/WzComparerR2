@@ -367,11 +367,12 @@ namespace WzComparerR2.CharaSimControl
             int iconY = picH;
             int iconX = 14;
             g.DrawImage(Resource.UIToolTip_img_Item_ItemIcon_base, iconX, picH);
-            if (item.Icon.Bitmap != null)
+            var icon = item.Icon.Bitmap != null ? item.Icon : item.IconRaw;
+            if (icon.Bitmap != null)
             {
-                g.DrawImage(GearGraphics.EnlargeBitmap(item.Icon.Bitmap),
-                iconX + 6 + (1 - item.Icon.Origin.X) * 2,
-                picH + 6 + (33 - item.Icon.Origin.Y) * 2);
+                g.DrawImage(GearGraphics.EnlargeBitmap(icon.Bitmap),
+                iconX + 6 + (1 - icon.Origin.X) * 2,
+                picH + 6 + (33 - icon.Origin.Y) * 2);
             }
             if (item.Cash)
             {
