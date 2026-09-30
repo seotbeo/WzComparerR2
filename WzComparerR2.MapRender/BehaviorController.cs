@@ -115,8 +115,8 @@ namespace WzComparerR2.MapRender
         private readonly int x;
         private readonly int y;
         private readonly int cy;
-        private readonly int rx0;
-        private readonly int rx1;
+        private readonly int? rx0;
+        private readonly int? rx1;
         private readonly Rectangle availableArea;
 
         private Vector2 basePos;
@@ -237,6 +237,17 @@ namespace WzComparerR2.MapRender
                 SetHorizontalState(HorizontalState.MoveL);
                 SetVerticalState(VerticalState.Fly);
                 if (this.Summoned)
+                {
+                    if (this.rx0 == null)
+                    {
+                        this.minMovePosX = this.availableArea.Left;
+                    }
+                    if (this.rx1 == null)
+                    {
+                        this.maxMovePosX = this.availableArea.Right;
+                    }
+                }
+                else // fly 몹은 맵 전체 이동 가능
                 {
                     this.minMovePosX = this.availableArea.Left;
                     this.maxMovePosX = this.availableArea.Right;
@@ -1231,9 +1242,9 @@ namespace WzComparerR2.MapRender
                     var forbidXMax = pos.X + 15;
 
                     var segments = new List<Tuple<float, float>>();
-                    if (selected.X1 < forbidXMin)
+                    if (selected.X1 < forbidXMin && selected.X1 >= this.minMovePosX)
                         segments.Add(new Tuple<float, float>(selected.X1, Math.Min(selected.X2, forbidXMin)));
-                    if (selected.X2 > forbidXMax)
+                    if (selected.X2 > forbidXMax && selected.X2 <= this.maxMovePosX)
                         segments.Add(new Tuple<float, float>(Math.Max(selected.X1, forbidXMax), selected.X2));
 
                     if (segments.Count == 0)
@@ -1386,17 +1397,27 @@ namespace WzComparerR2.MapRender
         /// </summary>
         private void InitMoveXLimit()
         {
-            // 소환된 몹은 rx0 rx1 정보 없음 -> 현재 발판 그룹 기준으로 이동 제한 설정
+            // 소환된 몹은 기본적으로 rx0 rx1 정보 없음 -> 현재 발판 그룹 기준으로 이동 제한 설정
             if (this.Summoned)
             {
-                this.minMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroupID)?.GroupArea.Left ?? this.availableArea.Left;
-                this.maxMovePosX = FHManager.GetGroupByIndex(this.curFootholdGroupID)?.GroupArea.Right ?? this.availableArea.Right;
+                this.minMovePosX = Math.Max(this.rx0 ?? FHManager.GetGroupByIndex(this.curFootholdGroupID)?.GroupArea.Left ?? this.availableArea.Left, this.availableArea.Left);
+                this.maxMovePosX = Math.Min(this.rx1 ?? FHManager.GetGroupByIndex(this.curFootholdGroupID)?.GroupArea.Right ?? this.availableArea.Right, this.availableArea.Right);
+
+                // 첫 소환 위치까지 이동 제한 확장
+                if (this.basePos.X < this.minMovePosX)
+                {
+                    this.minMovePosX = (int)this.basePos.X;
+                }
+                else if (this.basePos.X > this.maxMovePosX)
+                {
+                    this.maxMovePosX = (int)this.basePos.X;
+                }
                 return;
             }
 
             // rx0, rx1 기반 이동 제한
-            this.minMovePosX = this.rx0;
-            this.maxMovePosX = this.rx1;
+            this.minMovePosX = Math.Max(this.rx0 ?? this.availableArea.Left, this.availableArea.Left);
+            this.maxMovePosX = Math.Min(this.rx1 ?? this.availableArea.Right, this.availableArea.Right);
 
             // 첫 소환 위치까지 이동 제한 확장
             if (this.basePos.X < this.minMovePosX)

@@ -20,8 +20,8 @@ namespace WzComparerR2.MapRender.Patches2
         public bool Hide { get; set; }
         public int Fh { get; set; }
         public int Cy { get; set; }
-        public int Rx0 { get; set; }
-        public int Rx1 { get; set; }
+        public int? Rx0 { get; set; }
+        public int? Rx1 { get; set; }
         public List<QuestInfo> Quest { get; private set; } = new List<QuestInfo>();
         public List<Tuple<long, long>> Date { get; set; }
 
@@ -45,8 +45,8 @@ namespace WzComparerR2.MapRender.Patches2
                 Hide = node.Nodes["hide"].GetValueEx(false),
                 Fh = node.Nodes["fh"].GetValueEx(0),
                 Cy = node.Nodes["cy"].GetValueEx(0),
-                Rx0 = node.Nodes["rx0"].GetValueEx(0),
-                Rx1 = node.Nodes["rx1"].GetValueEx(0)
+                Rx0 = node.Nodes["rx0"].GetValueEx<int?>(null),
+                Rx1 = node.Nodes["rx1"].GetValueEx<int?>(null)
             };
 
             item.Date = new List<Tuple<long, long>>();
@@ -84,7 +84,7 @@ namespace WzComparerR2.MapRender.Patches2
             return item;
         }
 
-        public static LifeItem Create(int id, LifeItem.LifeType type, int x, int y, int index, bool flip)
+        public static LifeItem Create(int id, LifeItem.LifeType type, int x, int y, int? rx0, int? rx1, int index, bool flip)
         {
             var item = new LifeItem()
             {
@@ -97,8 +97,8 @@ namespace WzComparerR2.MapRender.Patches2
                 Hide = false,
                 Fh = 0,
                 Cy = y,
-                Rx0 = 0,
-                Rx1 = 0
+                Rx0 = rx0,
+                Rx1 = rx1
             };
             item.Index = index;
             item.Date = new List<Tuple<long, long>>();

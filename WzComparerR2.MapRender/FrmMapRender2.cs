@@ -1150,6 +1150,7 @@ namespace WzComparerR2.MapRender
                         string sy = cp.GetPositional(2);
                         bool flip = cp.HasFlag("Flip");
                         bool regen = cp.HasFlag("Regen");
+                        List<string> xRange = cp.GetOption("xRange");
 
                         if (string.Equals(si, "preset", StringComparison.OrdinalIgnoreCase))
                         {
@@ -1201,6 +1202,12 @@ namespace WzComparerR2.MapRender
                                 x = p.X;
                                 y = p.Y;
                             }
+                            int? rx0 = null, rx1 = null;
+                            if (xRange.Count == 2 && int.TryParse(xRange[0], out int trx0) && int.TryParse(xRange[1], out int trx1) && trx0 < trx1)
+                            {
+                                rx0 = trx0;
+                                rx1 = trx1;
+                            }
                             StringResult sr;
                             string mobName = string.Empty;
                             if (this.StringLinker != null)
@@ -1208,7 +1215,7 @@ namespace WzComparerR2.MapRender
                                 this.StringLinker.StringMob.TryGetValue(mobID, out sr);
                                 mobName = sr?.Name ?? "(null)";
                             }
-                            if (this.mapData.SummonMob(mobID, x, y, z0: 0, z1: 0, fh: -1, flip: flip, playRegenMotion: regen))
+                            if (this.mapData.SummonMob(mobID, x, y, rx0: rx0, rx1: rx1, z0: 0, z1: 0, fh: -1, flip: flip, playRegenMotion: regen))
                             {
                                 this.ui.ChatBox.AppendTextSystem($@"몬스터가 소환되었습니다. {mobName}({mobID})");
                             }
@@ -1224,6 +1231,7 @@ namespace WzComparerR2.MapRender
                             this.ui.ChatBox.AppendTextHelp(@"/summon preset : 몬스터 소환 프리셋 사용");
                             this.ui.ChatBox.AppendTextHelp(@"[-f/--flip] : 좌우 반전으로 소환");
                             this.ui.ChatBox.AppendTextHelp(@"[-r/--regen] : 소환 시 리젠 모션 재생");
+                            this.ui.ChatBox.AppendTextHelp(@"[-x/--xrange] : 이동 가능 범위 지정");
                         }
                     }
                     break;

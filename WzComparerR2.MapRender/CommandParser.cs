@@ -114,6 +114,7 @@ namespace WzComparerR2.MapRender
             {
                 new ArgSpec() { Name = "Flip", Type = ArgType.Flag, OptionArgCount = 0, Aliases = new[] { "-f", "--flip" } },
                 new ArgSpec() { Name = "Regen", Type = ArgType.Flag, OptionArgCount = 0, Aliases = new[] { "-r", "--regen" } },
+                new ArgSpec() { Name = "xRange", Type = ArgType.Option, OptionArgCount = 2, Aliases = new[] { "-x", "--xrange" } },
             };
 
         public static readonly IReadOnlyList<ArgSpec> SkillSpecs = new List<ArgSpec>
