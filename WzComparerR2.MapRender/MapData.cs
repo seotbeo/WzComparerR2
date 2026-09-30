@@ -696,8 +696,8 @@ namespace WzComparerR2.MapRender
             back.View = new BackItem.ItemView()
             {
                 Animator = animator,
-                FlowX = aniNode?.Nodes["flowX"]?.GetValueEx(0),
-                FlowY = aniNode?.Nodes["flowY"]?.GetValueEx(0),
+                FlowX = back.FlowX,
+                FlowY = back.FlowY,
                 Bounds = bounds,
             };
         }

@@ -824,24 +824,20 @@ namespace WzComparerR2.MapRender
 
             Vector2 tileOff = new Vector2(cx, cy);
             Vector2 position = new Vector2(back.X, back.Y);
-            bool hasSpineFlow = back.View.FlowX.HasValue || back.View.FlowY.HasValue;
+            bool hasBackFlow = back.View.FlowX.HasValue || back.View.FlowY.HasValue;
 
             //计算水平卷动
-            if (hasSpineFlow)
+            if (hasBackFlow)
             {
                 int flowX = back.View.FlowX.GetValueOrDefault();
                 int flowY = back.View.FlowY.GetValueOrDefault();
-                int flowRate = flowX != 0 ? flowX : flowY;
-                if (flowRate != 0)
+                if (flowX != 0)
                 {
-                    if (flowX != 0)
-                    {
-                        position.X += GetBackScrollOffset(back, flowRate, back.Wx, cx);
-                    }
-                    if (flowY != 0)
-                    {
-                        position.Y += GetBackScrollOffset(back, flowRate, back.Wy, cy);
-                    }
+                    position.X += GetBackScrollOffset(back, flowX, back.Wx, cx);
+                }
+                if (flowY != 0)
+                {
+                    position.Y += GetBackScrollOffset(back, flowY, back.Wy, cy);
                 }
             }
             else
