@@ -1159,6 +1159,11 @@ namespace WzComparerR2.CharaSimControl
                 {
                     tags.Add("#$r펫 스킬 주문서, 펫작명하기 사용 불가#");
                 }
+
+                if (item.Props.TryGetValue(ItemPropType.noPetEquipCoupon, out value) && value > 0)
+                {
+                    tags.Add("#$r펫장비 교환권 사용 불가#");
+                }
             }
 
             // pointCost

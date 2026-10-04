@@ -59,6 +59,7 @@ namespace WzComparerR2.CharaSim
         pointCost,
         tamingMob,
         cashTradeBlock,
+        noPetEquipCoupon,
         //MSN专属属性
         mintable,
     }
