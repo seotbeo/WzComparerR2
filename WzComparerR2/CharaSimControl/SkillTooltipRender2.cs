@@ -6,6 +6,8 @@ using System.Linq;
 using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
+using WzComparerR2.PluginBase;
+using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -86,16 +88,8 @@ namespace WzComparerR2.CharaSimControl
                 { "c", GearGraphics.SkillSummaryOrangeTextColor },
             };
 
-            //初始化 skillCommon
-            Dictionary<string, string> skillCommon = Skill.GetCommon(Skill.Level);
-            if (Skill.PerJobAttackInfo.Count > 0)
-            {
-                var perJobInfo = Skill.PerJobAttackInfo.ElementAt(Skill.PerJobIndex).Value;
-                foreach (var i in perJobInfo.Keys)
-                {
-                    skillCommon[i] = perJobInfo[i];
-                }
-            }
+            using var referencedSkills = new ReferencedSkillCache();
+            var currentLevelResolver = new TooltipSkillPropertyResolver(Skill, Skill.Level, referencedSkills);
 
             picH = 0;
             splitterH = new List<int>();
@@ -135,8 +129,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (sr.Desc != null)
             {
-                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, skillCommon, SummaryParams.Default);
-                //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
+                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, currentLevelResolver, SummaryParams.Default);
                 GearGraphics.DrawString(g, hdesc, GearGraphics.ItemDetailFont2, v6SkillSummaryFontColorTable, region.SkillDescLeft, region.TextRight, ref picH, 16);
             }
             if (Skill.ReqLevel > 0)
@@ -164,7 +157,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (Skill.Level > 0)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, skillCommon);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, currentLevelResolver, SummaryParams.Default, skillSummaryOptions);
                 GearGraphics.DrawString(g, "[现在等级 " + Skill.Level + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (hStr != null)
                 {
@@ -174,7 +167,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (Skill.Level < Skill.MaxLevel)
             {
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level + 1, sr, SummaryParams.Default, skillSummaryOptions);
+                int nextLevel = Skill.Level + 1;
+                var resolver = new TooltipSkillPropertyResolver(Skill, nextLevel, referencedSkills);
+                string hStr = SummaryParser.GetSkillSummary(Skill, nextLevel, sr, resolver, SummaryParams.Default, skillSummaryOptions);
                 GearGraphics.DrawString(g, "[下次等级 " + (Skill.Level + 1) + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 if (hStr != null)
                 {
@@ -217,9 +212,11 @@ namespace WzComparerR2.CharaSimControl
             if (ShowDelay)
             {
                 List<string> actions = new List<string>(Skill.Action);
-                if (skillCommon.TryGetValue("action", out string levelAction) && !string.IsNullOrEmpty(levelAction) && !actions.Contains(levelAction))
+                if (currentLevelResolver.TryResolve("action", null, null, out ResolvedSkillProperty resolvedAction)
+                    && !string.IsNullOrEmpty(resolvedAction.Expression)
+                    && !actions.Contains(resolvedAction.Expression))
                 {
-                    actions.Add(levelAction);
+                    actions.Add(resolvedAction.Expression);
                 }
 
                 foreach (string action in actions)
@@ -276,6 +273,65 @@ namespace WzComparerR2.CharaSimControl
             {
                 brush.TranslateTransform(x1, y);
                 g.FillRectangle(brush, new Rectangle(x1, y, x2 - x1, picCenter.Height));
+            }
+        }
+
+        private sealed class TooltipSkillPropertyResolver : SkillPropertyResolver
+        {
+            public TooltipSkillPropertyResolver(Skill skill, int level, ReferencedSkillCache referencedSkills)
+                : base(skill, level, true)
+            {
+                this.referencedSkills = referencedSkills;
+            }
+
+            private readonly ReferencedSkillCache referencedSkills;
+
+            protected override Skill FindSkill(int skillId)
+            {
+                return this.referencedSkills.FindSkill(skillId);
+            }
+        }
+
+        private sealed class ReferencedSkillCache : IDisposable
+        {
+            private readonly Dictionary<int, Skill> skills = new Dictionary<int, Skill>();
+
+            public Skill FindSkill(int skillId)
+            {
+                if (this.skills.TryGetValue(skillId, out Skill skill))
+                {
+                    return skill;
+                }
+
+                Wz_Node skillNode = PluginManager.FindWz($@"Skill\{skillId / 10000:D3}.img\skill\{skillId:D7}");
+                if (skillNode != null)
+                {
+                    skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
+                }
+                else
+                {
+                    skill = null;
+                }
+                this.skills[skillId] = skill;
+                return skill;
+            }
+
+            public void Dispose()
+            {
+                var icons = new HashSet<Bitmap>();
+                foreach (Skill skill in this.skills.Values)
+                {
+                    if (skill == null)
+                        continue;
+                    icons.Add(skill.Icon.Bitmap);
+                    icons.Add(skill.IconMouseOver.Bitmap);
+                    icons.Add(skill.IconDisabled.Bitmap);
+                }
+                foreach (Bitmap icon in icons)
+                {
+                    icon?.Dispose();
+                }
+                this.skills.Clear();
             }
         }
 

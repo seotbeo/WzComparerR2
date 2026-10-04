@@ -172,7 +172,8 @@ namespace WzComparerR2
                         string levelDesc;
                         try
                         {
-                            levelDesc = SummaryParser.GetSkillSummary(skill, sr, SummaryParams.Default);
+                            var resolver = new SkillPropertyResolver(skill, skill.Level);
+                            levelDesc = SummaryParser.GetSkillSummary(skill, skill.Level, sr, resolver, SummaryParams.Default);
                         }
                         catch(Exception ex)
                         {

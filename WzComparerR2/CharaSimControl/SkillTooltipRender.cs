@@ -88,21 +88,8 @@ namespace WzComparerR2.CharaSimControl
 
             if (skill.Level > 0)
             {
-                string hStr = null;
-                if (skill.PreBBSkill)
-                {
-                    if (sr.SkillH.Count >= skill.Level)
-                    {
-                        hStr = sr.SkillH[skill.Level - 1];
-                    }
-                }
-                else
-                {
-                    if (sr.SkillH.Count > 0)
-                    {
-                        hStr = SummaryParser.GetSkillSummary(skill,skill.Level, sr, SummaryParams.Default);
-                    }
-                }
+                var resolver = new SkillPropertyResolver(skill, skill.Level);
+                string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, resolver, SummaryParams.Default);
 
                 picH += 4;
                 GearGraphics.DrawString(g, "[现在等级 " + skill.Level + "]", GearGraphics.ItemDetailFont, 8, 272, ref picH, 16);
@@ -111,21 +98,9 @@ namespace WzComparerR2.CharaSimControl
 
             if (skill.Level < skill.MaxLevel)
             {
-                string hStr = null;
-                if (skill.PreBBSkill)
-                {
-                    if (sr.SkillH.Count >= skill.Level + 1)
-                    {
-                        hStr = sr.SkillH[skill.Level];
-                    }
-                }
-                else
-                {
-                    if (sr.SkillH.Count > 0)
-                    {
-                        hStr = SummaryParser.GetSkillSummary(skill, skill.Level+1, sr, SummaryParams.Default); 
-                    }
-                }
+                int nextLevel = this.skill.Level + 1;
+                var resolver = new SkillPropertyResolver(skill, nextLevel);
+                string hStr = SummaryParser.GetSkillSummary(skill, nextLevel, sr, resolver, SummaryParams.Default);
 
                 picH += 4;
                 GearGraphics.DrawString(g, "[下次等级 " + (skill.Level + 1) + "]", GearGraphics.ItemDetailFont, 8, 272, ref picH, 16);

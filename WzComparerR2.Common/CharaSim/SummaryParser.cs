@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.Common;
@@ -15,9 +14,14 @@ namespace WzComparerR2.CharaSim
             GlobalVariableMapping["comboConAran"] = "aranComboCon";
         }
 
-        public static string GetSkillSummary(string H, int Level, Dictionary<string, string> CommonProps, SummaryParams param, SkillSummaryOptions options = default)
+        public static Dictionary<string, string> GlobalVariableMapping { get; private set; }
+
+        public static string GetSkillSummary(string H, int Level, ISkillPropertyResolver resolver, SummaryParams param, SkillSummaryOptions options = default)
         {
-            if (H == null) return null;
+            if (H == null)
+            {
+                return null;
+            }
 
             int idx = 0;
             StringBuilder sb = new StringBuilder();
@@ -26,109 +30,41 @@ namespace WzComparerR2.CharaSim
             {
                 if (H[idx] == '#')
                 {
-                    int end = idx, len = 0;
-                    while ((++end) < H.Length)
+                    if (TryReadSkillReference(H, idx, out int referenceEnd, out int skillId, out string referenceProperty))
                     {
-                        if (H[end] == '_' ||
-                            ('a' <= H[end] && H[end] <= 'z') ||
-                            ('A' <= H[end] && H[end] <= 'Z') ||
-                            (end - idx > 1 && '0' <= H[end] && H[end] <= '9')) //^[_A-Za-z][_A-Za-z0-9]*$
+                        if (TryResolveProperty(resolver, referenceProperty, skillId, null,
+                            out string matchedProperty, out ResolvedSkillProperty resolvedReference))
                         {
-                            len++;
+                            AppendPropertyValue(sb, resolvedReference.Expression, matchedProperty,
+                                resolvedReference.EvaluationLevel ?? Level, options, true);
+                            referenceEnd -= referenceProperty.Length - matchedProperty.Length;
                         }
                         else
                         {
-                            break;
-                        }
-                    }
-                    //优先匹配common
-                    string prop = null;
-                    string propKey = null;
-                    if (CommonProps != null)
-                    {
-                        for (int i = len; i > 0; i--)
-                        {
-                            propKey = H.Substring(idx + 1, i);
-                            if (GetValueIgnoreCase(CommonProps, propKey, out prop))
-                            {
-                                len = i;
-                                break;
-                            }
-                        }
-                    }
-                    if (prop != null)
-                    {
-                        try
-                        {
-                            decimal val = Calculator.Parse(prop, Level);
-                            if (options.ConvertCooltimeMS && propKey == "cooltimeMS")
-                            {
-                                sb.AppendFormat("{0:f2}", val / 1000);
-                            }
-                            else if (options.ConvertPerM && propKey.EndsWith("PerM", StringComparison.Ordinal))
-                            {
-                                sb.AppendFormat("{0:f1}", val / 100);
-                            }
-                            else
-                            {
-                                sb.Append(val);
-                            }
-                        }
-                        catch
-                        {
-                            if (options.IgnoreEvalError)
-                            {
-                                sb.Append("NaN");
-                            }
-                            else
-                            {
-                                throw;
-                            }
+                            sb.Append(H, idx, referenceEnd - idx);
                         }
 
-                        idx += len + 1;
+                        idx = referenceEnd;
                         continue;
                     }
-                    else //试图匹配全局变量
+
+                    int len = ReadPropertyLength(H, idx + 1);
+                    string propertyToken = H.Substring(idx + 1, len);
+                    if (TryResolveProperty(resolver, propertyToken, null, Level,
+                        out string propKey, out ResolvedSkillProperty property))
                     {
-                        string key = null;
-                        for (int i = len; i > 0; i--)
-                        {
-                            key = H.Substring(idx + 1, i);
-                            if (GlobalVariableMapping.TryGetValue(key, out prop))
-                            {
-                                break;
-                            }
-                        }
-                        if (prop != null)
-                        {
-                            if (prop != "" && GetValueIgnoreCase(CommonProps, prop, out prop))
-                            {
-                                try
-                                {
-                                    decimal val = Calculator.Parse(prop, Level);
-                                    sb.Append(val);
-                                }
-                                catch
-                                {
-                                    if (options.IgnoreEvalError)
-                                    {
-                                        sb.Append("NaN");
-                                    }
-                                    else
-                                    {
-                                        throw;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                sb.Append(param.GStart).Append("[").Append(key).Append("]").Append(param.GEnd);
-                            }
-                            idx += len + 1;
-                            continue;
-                        }
+                        AppendPropertyValue(sb, property.Expression, propKey,
+                            property.EvaluationLevel ?? Level, options, true);
+                        idx += propKey.Length + 1;
+                        continue;
                     }
+
+                    if (TryResolveGlobalVariable(sb, propertyToken, Level, resolver, param, options, out int globalLength))
+                    {
+                        idx += globalLength + 1;
+                        continue;
+                    }
+
                     //匹配#c...#段落
                     if (beginC)
                     {
@@ -200,76 +136,185 @@ namespace WzComparerR2.CharaSim
             return sb.ToString();
         }
 
-        private static bool GetValueIgnoreCase(Dictionary<string,string> dict, string key, out string value)
-        {
-            //bool find = false;
-            foreach (var kv in dict)
-            {
-                if (kv.Key.Equals(key, StringComparison.OrdinalIgnoreCase))
-                {
-                    value = kv.Value;
-                    return true;
-                }
-            }
-            value = null;
-            return false;
-        }
-
-        public static string GetSkillSummary(Skill skill, StringResultSkill sr, SummaryParams param)
-        {
-            if (skill == null)
-                return null;
-            return GetSkillSummary(skill, skill.Level, sr, param);
-        }
-
-        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr, SummaryParams param, SkillSummaryOptions options = default, Dictionary<string, string> overrideSkillCommon = null)
+        public static string GetSkillSummary(Skill skill, int level, StringResultSkill sr,
+            ISkillPropertyResolver resolver, SummaryParams param, SkillSummaryOptions options = default)
         {
             if (skill == null || sr == null)
                 return null;
 
-            string h = null;
-            if (skill.PreBBSkill) //用level声明的技能
+            string summary = SelectSkillSummary(skill, level, sr, resolver);
+            return GetSkillSummary(summary, level, resolver, param, options);
+        }
+
+        private static string SelectSkillSummary(Skill skill, int level, StringResultSkill sr, ISkillPropertyResolver resolver)
+        {
+            if (skill.PreBBSkill)
             {
-                var levelCommon = overrideSkillCommon ?? skill.GetCommon(level);
-                string hsSummary;
-                if (skill.Level == level && levelCommon.TryGetValue("hs", out string hs)
-                    && (hsSummary = sr[hs]) != null) // fix for skill 170001005, 170011005
+                if (skill.Level == level
+                    && resolver != null
+                    && resolver.TryResolve("hs", null, level, out ResolvedSkillProperty selector)
+                    && selector.Expression != null
+                    && sr[selector.Expression] is string selectedSummary)
                 {
-                    h = hsSummary;
+                    return selectedSummary;
                 }
-                else if (sr.SkillH.Count >= level)
-                {
-                    h = sr.SkillH[level - 1];
-                }
-                else if (sr.SkillH.Count == 1)
-                {
-                    h = sr.SkillH[0];
-                }
-                return GetSkillSummary(h, level, levelCommon, param, options);
+
+                if (level <= 0)
+                    return null;
+                if (sr.SkillH.Count >= level)
+                    return sr.SkillH[level - 1];
+                return sr.SkillH.Count == 1 ? sr.SkillH[0] : null;
             }
-            else
+
+            string summary = sr.SkillH.Count > 0 ? sr.SkillH[0] : null;
+            foreach (var entry in sr.SkillExtraH)
             {
-                if (sr.SkillH.Count > 0)
+                if (level < entry.Key)
+                    break;
+                summary = entry.Value;
+            }
+            return summary;
+        }
+
+        private static bool TryResolveProperty(ISkillPropertyResolver resolver, string token, int? skillId, int? skillLevel,
+            out string propertyName, out ResolvedSkillProperty value)
+        {
+            if (resolver != null)
+            {
+                for (int length = token.Length; length > 0; length--)
                 {
-                    h = sr.SkillH[0];
-                }
-                if (sr.SkillExtraH.Count > 0)
-                {
-                    // SkillExtraH is always sorted
-                    foreach (var kv in sr.SkillExtraH)
+                    string candidate = token.Substring(0, length);
+                    if (resolver.TryResolve(candidate, skillId, skillLevel, out value) && value.Expression != null)
                     {
-                        if (level < kv.Key)
-                        {
-                            break;
-                        }
-                        h = kv.Value;
+                        propertyName = candidate;
+                        return true;
                     }
                 }
-                return GetSkillSummary(h, level, overrideSkillCommon ?? skill.Common, param, options);
+            }
+
+            propertyName = null;
+            value = default;
+            return false;
+        }
+
+        private static bool TryResolveGlobalVariable(StringBuilder output, string token, int level,
+            ISkillPropertyResolver resolver, SummaryParams param, SkillSummaryOptions options, out int matchedLength)
+        {
+            for (int length = token.Length; length > 0; length--)
+            {
+                string key = token.Substring(0, length);
+                if (!GlobalVariableMapping.TryGetValue(key, out string propertyName) || propertyName == null)
+                    continue;
+
+                if (propertyName.Length > 0
+                    && resolver != null
+                    && resolver.TryResolve(propertyName, null, level, out ResolvedSkillProperty property)
+                    && property.Expression != null)
+                {
+                    AppendPropertyValue(output, property.Expression, key,
+                        property.EvaluationLevel ?? level, options, false);
+                }
+                else
+                {
+                    output.Append(param.GStart).Append("[").Append(key).Append("]").Append(param.GEnd);
+                }
+
+                matchedLength = length;
+                return true;
+            }
+
+            matchedLength = 0;
+            return false;
+        }
+
+        private static bool TryReadSkillReference(string text, int start, out int end, out int skillId, out string propertyName)
+        {
+            end = start;
+            skillId = 0;
+            propertyName = null;
+            if (start + 1 >= text.Length || text[start + 1] != '[')
+            {
+                return false;
+            }
+
+            int idStart = start + 2;
+            int cursor = idStart;
+            while (cursor < text.Length && text[cursor] >= '0' && text[cursor] <= '9')
+            {
+                cursor++;
+            }
+            if (cursor == idStart
+                || cursor >= text.Length
+                || text[cursor] != ']'
+                || !int.TryParse(text.Substring(idStart, cursor - idStart), out skillId))
+            {
+                return false;
+            }
+
+            int propertyStart = cursor + 1;
+            int propertyLength = ReadPropertyLength(text, propertyStart);
+            if (propertyLength == 0)
+            {
+                return false;
+            }
+
+            propertyName = text.Substring(propertyStart, propertyLength);
+            end = propertyStart + propertyLength;
+            return true;
+        }
+
+        private static int ReadPropertyLength(string text, int start)
+        {
+            if (start >= text.Length || !IsPropertyStart(text[start]))
+                return 0;
+
+            int end = start + 1;
+            while (end < text.Length && (IsPropertyStart(text[end]) || text[end] >= '0' && text[end] <= '9'))
+            {
+                end++;
+            }
+            return end - start;
+        }
+
+        private static bool IsPropertyStart(char value)
+        {
+            return value == '_'
+                || value >= 'a' && value <= 'z'
+                || value >= 'A' && value <= 'Z';
+        }
+
+        private static void AppendPropertyValue(StringBuilder sb, string expression, string propertyName, int level,
+            SkillSummaryOptions options, bool applyPropertyFormatting)
+        {
+            try
+            {
+                decimal value = Calculator.Parse(expression, level);
+                if (applyPropertyFormatting && options.ConvertCooltimeMS && propertyName == "cooltimeMS")
+                {
+                    sb.AppendFormat("{0:f2}", value / 1000);
+                }
+                else if (applyPropertyFormatting && options.ConvertPerM && propertyName.EndsWith("PerM", StringComparison.Ordinal))
+                {
+                    sb.AppendFormat("{0:f1}", value / 100);
+                }
+                else
+                {
+                    sb.Append(value);
+                }
+            }
+            catch
+            {
+                if (options.IgnoreEvalError)
+                {
+                    sb.Append("NaN");
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
-        public static Dictionary<string,string> GlobalVariableMapping { get; private set; }
     }
 
     public struct SkillSummaryOptions
@@ -278,5 +323,22 @@ namespace WzComparerR2.CharaSim
         public bool ConvertPerM { get; set; }
         public bool IgnoreEvalError { get; set; }
         public bool EndColorOnNewLine { get; set; }
+    }
+
+    public interface ISkillPropertyResolver
+    {
+        bool TryResolve(string propertyName, int? skillId, int? skillLevel, out ResolvedSkillProperty value);
+    }
+
+    public readonly struct ResolvedSkillProperty
+    {
+        public ResolvedSkillProperty(string expression, int? evaluationLevel)
+        {
+            Expression = expression;
+            EvaluationLevel = evaluationLevel;
+        }
+
+        public string Expression { get; }
+        public int? EvaluationLevel { get; }
     }
 }
