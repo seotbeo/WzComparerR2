@@ -150,6 +150,19 @@ namespace WzComparerR2.MapRender
         bool isUnloaded;
         bool isExiting;
 
+        UISpineSelector _uiSpineSelectorInstance;
+        UISpineSelector UISpineSelectorInstance
+        {
+            get
+            {
+                if (_uiSpineSelectorInstance == null)
+                {
+                    _uiSpineSelectorInstance = CreateUISpineSelector();
+                }
+                return _uiSpineSelectorInstance;
+            }
+        }
+
         protected override void Initialize()
         {
 
@@ -192,6 +205,20 @@ namespace WzComparerR2.MapRender
         protected override void OnDeactivated(object sender, EventArgs args)
         {
             base.OnDeactivated(sender, args);
+        }
+
+        private UISpineSelector CreateUISpineSelector()
+        {
+            var uiSpineSelector = new UISpineSelector()
+            {
+                Visibility = EmptyKeys.UserInterface.Visibility.Collapsed,
+                Parent = this.ui
+            };
+
+            uiSpineSelector.Visible += SpineSelector_Visible;
+            this.ui.Windows.Add(uiSpineSelector);
+
+            return uiSpineSelector;
         }
 
         private void BindingUIInput()
@@ -912,16 +939,6 @@ namespace WzComparerR2.MapRender
                         this.ui.ChatBox.AppendTextSystem("No map is loaded.");
                         break;
                     }
-                    var uiSpineSelector = this.ui.Windows.OfType<UISpineSelector>().FirstOrDefault();
-                    if (uiSpineSelector == null)
-                    {
-                        uiSpineSelector = new UISpineSelector();
-                        uiSpineSelector.Visible += SpineSelector_Visible;
-                        uiSpineSelector.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-                        this.ui.Windows.Add(uiSpineSelector);
-                        uiSpineSelector.Parent = this.ui;
-                        uiSpineSelector.Hide();
-                    }
 
                     var back = this.mapData?.Scene.Back.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)
                         .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().Where(item => item.View.Animator is ISpineAnimator)).ToList().AsReadOnly()
@@ -931,9 +948,9 @@ namespace WzComparerR2.MapRender
                             .Where(item => item.View.Animator is ISpineAnimator)
                             .ToList().AsReadOnly()).ToList().AsReadOnly()
                             ?? new List<IReadOnlyList<ObjItem>>().AsReadOnly();
-                    uiSpineSelector.LoadTabContents(back, obj);
+                    UISpineSelectorInstance.LoadTabContents(back, obj);
 
-                    uiSpineSelector.Show();
+                    UISpineSelectorInstance.Show();
                     break;
 
                 default:

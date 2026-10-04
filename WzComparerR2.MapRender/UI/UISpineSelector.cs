@@ -132,6 +132,19 @@ namespace WzComparerR2.MapRender.UI
             this.EnableButtons();
         }
 
+        public void ClearContents()
+        {
+            this.Hide();
+            this.DisableButtons();
+
+            this.Back = null;
+            this.Obj = null;
+            this.ResetCmbs();
+
+            TabControl tabControl = (TabControl)(this.Content as Grid).Children.OfType<TabControl>().FirstOrDefault();
+            tabControl.ItemsSource = null;
+        }
+
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
             this.ApplyAnimation();
