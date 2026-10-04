@@ -76,7 +76,7 @@ namespace WzComparerR2.CharaSim
             Wz_Node linkNode = null;
             if (map.Link != null && findNode != null)
             {
-                linkNode = findNode(string.Format(@$"Map\Map\Map{map.Link / 100000000}\{map.Link:d9}.img"));
+                linkNode = findNode(@$"Map\Map\Map{map.Link / 100000000}\{map.Link:d9}.img");
             }
             if (linkNode == null)
             {
@@ -93,7 +93,7 @@ namespace WzComparerR2.CharaSim
                 map.MiniMapCenterY = miniMapNode.FindNodeByPath("centerY").GetValueEx<int>(0);
             }
 
-            var mapInfo = findNode?.Invoke(string.Format($"Etc/MapObjectInfo.img/{map.MapID}"));
+            var mapInfo = findNode?.Invoke($"Etc/MapObjectInfo.img/{map.MapID}");
             bool mapObjectInfoReadied = false;
             if (mapInfo != null)
             {
@@ -142,7 +142,7 @@ namespace WzComparerR2.CharaSim
                                 // 2 : event npc
                                 // 3 : transport
                                 // 4 : trunk
-                                var npcNode = findNode?.Invoke(string.Format($"Npc/{lifeId:D7}.img/info"));
+                                var npcNode = findNode?.Invoke($"Npc/{lifeId:D7}.img/info");
                                 if (npcNode != null)
                                 {
                                     if (npcNode.FindNodeByPath("shop").GetValueEx<int>(0) != 0 || npcNode.FindNodeByPath("miniMapType").GetValueEx<int>(0) == 1)
