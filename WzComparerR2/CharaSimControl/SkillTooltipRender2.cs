@@ -7,8 +7,9 @@ using System.Windows.Forms;
 using Resource = CharaSimResource.Resource;
 using WzComparerR2.Common;
 using WzComparerR2.CharaSim;
-using WzComparerR2.WzLib;
 using System.Text.RegularExpressions;
+using WzComparerR2.PluginBase;
+using WzComparerR2.WzLib;
 
 namespace WzComparerR2.CharaSimControl
 {
@@ -170,16 +171,8 @@ namespace WzComparerR2.CharaSimControl
                 { "$x", ((SolidBrush)GearGraphics.QuestBrushMap).Color }, // color for extra job props
             };
 
-            //初始化 skillCommon
-            Dictionary<string, string> skillCommon = Skill.GetCommon(Skill.Level);
-            if (!ShowSkillValuesByJob && Skill.AttackInfo.Count > 0)
-            {
-                var perJobInfo = Skill.AttackInfo.ElementAt(Skill.PerJobIndex).Value;
-                foreach (var prop in perJobInfo)
-                {
-                    skillCommon[prop.Key] = prop.Value;
-                }
-            }
+            using var referencedSkills = new ReferencedSkillCache(this.SourceWzFile);
+            var currentLevelResolver = new TooltipSkillPropertyResolver(Skill, Skill.Level, referencedSkills);
 
             picH = 0;
             splitterH = new List<int>();
@@ -224,8 +217,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (sr.Desc != null)
             {
-                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, skillCommon, SummaryParams.Default, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
-                //string hStr = SummaryParser.GetSkillSummary(skill, skill.Level, sr, SummaryParams.Default);
+                string hdesc = SummaryParser.GetSkillSummary(sr.Desc, Skill.Level, currentLevelResolver, SummaryParams.Default);
                 if (ShowReqSkill && Skill.ReqSkill.Count > 0)
                 {
                     foreach (var kv in Skill.ReqSkill)
@@ -327,7 +319,8 @@ namespace WzComparerR2.CharaSimControl
                 string nowLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.Level != Skill.ComparisonLevel ?
                     $"[현재레벨 #$g{Skill.Level}{SummaryParams.Default.BracketIcon}{Skill.ComparisonLevel}#]" :
                     $"[현재레벨 {Skill.Level}]";
-                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, SummaryParams.Default, skillSummaryOptions, doHighlight, overrideSkillCommon: skillCommon, DiffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
+                string hStr = SummaryParser.GetSkillSummary(Skill, Skill.Level, sr, currentLevelResolver, SummaryParams.Default, skillSummaryOptions,
+                    doHighlight: doHighlight, diffSkillTags: this.DiffSkillTags, convertExtraProps: !this.ShowSkillValuesByJob);
                 GearGraphics.DrawString(g, nowLevel, GearGraphics.ItemDetailFont, null, null, SkillTooltipRender2.ImageTable, region.LevelDescLeft, region.TextRight, ref picH, 16, ImageVerticalAlignment: GearGraphics.TRImageAlignment.Center);
                 if (Skill.SkillID / 10000 / 1000 == 10 && Skill.ReqLevel > 0 &&
                     (this.LevelViewMode == SkillLevelViewMode.CurrentAndNext && Skill.Level == 1 || this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected && Skill.ComparisonLevel == 1))
@@ -344,13 +337,14 @@ namespace WzComparerR2.CharaSimControl
             if ((this.LevelViewMode == SkillLevelViewMode.CurrentAndNext || Skill.Level == 0) &&
                 Skill.Level < Skill.MaxLevel && !Skill.DisableNextLevelInfo)
             {
-                int targetLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected ? Skill.ComparisonLevel : Skill.Level + 1;
+                int nextLevel = this.LevelViewMode == SkillLevelViewMode.CurrentAndSelected ? Skill.ComparisonLevel : Skill.Level + 1;
                 skillSummaryOptions.LevelViewMode = SkillLevelViewMode.CurrentAndNext;
-                string hStr = SummaryParser.GetSkillSummary(Skill, targetLevel, sr, SummaryParams.Default, skillSummaryOptions, overrideSkillCommon: skillCommon, convertExtraProps: !this.ShowSkillValuesByJob, findNode: PluginBase.PluginManager.FindWz, sourceWzFile: this.SourceWzFile);
+                var resolver = new TooltipSkillPropertyResolver(Skill, nextLevel, referencedSkills);
+                string hStr = SummaryParser.GetSkillSummary(Skill, nextLevel, sr, resolver, SummaryParams.Default, skillSummaryOptions);
                 skillSummaryOptions.LevelViewMode = this.LevelViewMode;
 
-                GearGraphics.DrawString(g, "[다음레벨 " + targetLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
-                if (Skill.SkillID / 10000 / 1000 == 10 && targetLevel == 1 && Skill.ReqLevel > 0)
+                GearGraphics.DrawString(g, "[다음레벨 " + nextLevel + "]", GearGraphics.ItemDetailFont, region.LevelDescLeft, region.TextRight, ref picH, 16);
+                if (Skill.SkillID / 10000 / 1000 == 10 && nextLevel == 1 && Skill.ReqLevel > 0)
                 {
                     GearGraphics.DrawPlainText(g, "[필요 레벨: " + Skill.ReqLevel.ToString() + "레벨 이상]", GearGraphics.ItemDetailFont2, GearGraphics.skillYellowColor, region.LevelDescLeft, region.TextRight, ref picH, 16);
                 }
@@ -465,9 +459,11 @@ namespace WzComparerR2.CharaSimControl
             if (ShowDelay)
             {
                 List<string> actions = new List<string>(Skill.Action);
-                if (skillCommon.TryGetValue("action", out string levelAction) && !string.IsNullOrEmpty(levelAction) && !actions.Contains(levelAction))
+                if (currentLevelResolver.TryResolve("action", null, null, out ResolvedSkillProperty resolvedAction)
+                    && !string.IsNullOrEmpty(resolvedAction.Expression)
+                    && !actions.Contains(resolvedAction.Expression))
                 {
-                    actions.Add(levelAction);
+                    actions.Add(resolvedAction.Expression);
                 }
 
                 foreach (string action in actions)
@@ -499,9 +495,9 @@ namespace WzComparerR2.CharaSimControl
                 }
             }
             
-            if (!ShowSkillValuesByJob && Skill.AttackInfo.Count > 0)
+            if (!ShowSkillValuesByJob && Skill.PerJobAttackInfo.Count > 0)
             {
-                int jobID = Skill.AttackInfo.ElementAt(Skill.PerJobIndex).Key;
+                int jobID = Skill.PerJobAttackInfo.ElementAt(Skill.PerJobIndex).Key;
                 skillDescEx.Add($"#c[기준 직업] {ItemStringHelper.GetJobName(jobID)}({jobID})#");
             }
 
@@ -562,7 +558,7 @@ namespace WzComparerR2.CharaSimControl
             const int Max_Height = 850;
 
             // calculate width and height
-            var box = this.Skill.AttackInfo.Values.Select(list => list.Count + 1);
+            var box = this.Skill.PerJobAttackInfo.Values.Select(list => list.Count + 1);
             int picH = Margin;
             extraWidth += Margin + Interval;
             List<int> rows = new List<int>();
@@ -611,7 +607,7 @@ namespace WzComparerR2.CharaSimControl
             int sx = 0;
             int col = 0;
             count = 0;
-            foreach (var kv in Skill.AttackInfo)
+            foreach (var kv in Skill.PerJobAttackInfo)
             {
                 GearGraphics.DrawString(g, $"#c[{Regex.Replace(ItemStringHelper.GetJobName(kv.Key), @"\s*\(\d{1,2}차\)$", "")}({kv.Key})]#", GearGraphics.EquipMDMoris9Font, v6SkillSummaryFontColorTable, sx + Margin, sx + Interval - Margin, ref picH, Line_Height);
                 foreach (var prop in kv.Value)
@@ -655,6 +651,75 @@ namespace WzComparerR2.CharaSimControl
             }
 
             return bitmap;
+        }
+
+        private sealed class TooltipSkillPropertyResolver : SkillPropertyResolver
+        {
+            public TooltipSkillPropertyResolver(Skill skill, int level, ReferencedSkillCache referencedSkills)
+                : base(skill, level, true)
+            {
+                this.referencedSkills = referencedSkills;
+            }
+
+            private readonly ReferencedSkillCache referencedSkills;
+
+            protected override Skill FindSkill(int skillId)
+            {
+                return this.referencedSkills.FindSkill(skillId);
+            }
+        }
+
+        private sealed class ReferencedSkillCache : IDisposable
+        {
+            public ReferencedSkillCache() : this(null)
+            {
+            }
+
+            public ReferencedSkillCache(Wz_File sourceWzFile)
+            {
+                this.sourceWzFile = sourceWzFile;
+            }
+
+            private readonly Dictionary<int, Skill> skills = new Dictionary<int, Skill>();
+            private readonly Wz_File sourceWzFile;
+
+            public Skill FindSkill(int skillId)
+            {
+                if (this.skills.TryGetValue(skillId, out Skill skill))
+                {
+                    return skill;
+                }
+
+                Wz_Node skillNode = PluginManager.FindWz($@"Skill\{skillId / 10000:D3}.img\skill\{skillId:D7}", this.sourceWzFile);
+                if (skillNode != null)
+                {
+                    skill = Skill.CreateFromNode(skillNode, PluginManager.FindWz);
+                }
+                else
+                {
+                    skill = null;
+                }
+                this.skills[skillId] = skill;
+                return skill;
+            }
+
+            public void Dispose()
+            {
+                var icons = new HashSet<Bitmap>();
+                foreach (Skill skill in this.skills.Values)
+                {
+                    if (skill == null)
+                        continue;
+                    icons.Add(skill.Icon.Bitmap);
+                    icons.Add(skill.IconMouseOver.Bitmap);
+                    icons.Add(skill.IconDisabled.Bitmap);
+                }
+                foreach (Bitmap icon in icons)
+                {
+                    icon?.Dispose();
+                }
+                this.skills.Clear();
+            }
         }
 
         private class CanvasRegion

@@ -22,6 +22,8 @@ namespace WzComparerR2.MapRender.Patches2
         public bool W { get; set; }
         public int Wx { get; set; }
         public int Wy { get; set; }
+        public int? FlowX { get; set; }
+        public int? FlowY { get; set; }
         public int Alpha { get; set; }
         public TileMode TileMode { get; set; }
         public int ScreenMode { get; set; }
@@ -50,6 +52,8 @@ namespace WzComparerR2.MapRender.Patches2
                 W = node.Nodes["w"].GetValueEx(false),
                 Wx = node.Nodes["wx"].GetValueEx(0),
                 Wy = node.Nodes["wy"].GetValueEx(0),
+                FlowX = node.Nodes["flowX"].GetValueEx<int?>(null),
+                FlowY = node.Nodes["flowY"].GetValueEx<int?>(null),
                 Alpha = node.Nodes["a"].GetValueEx(255),
 
                 TileMode = GetBackTileMode(node.Nodes["type"].GetValueEx(0)),

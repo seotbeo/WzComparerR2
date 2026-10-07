@@ -21,7 +21,7 @@ namespace WzComparerR2.CharaSim
             this.Action = new List<string>();
             this.Lt = new Dictionary<string, Wz_Vector>();
             this.Rb = new Dictionary<string, Wz_Vector>();
-            this.AttackInfo = new Dictionary<int, List<ExtraProps>>();
+            this.PerJobAttackInfo = new Dictionary<int, Dictionary<string, string>>();
             this.perJobIndex = 0;
         }
 
@@ -82,7 +82,7 @@ namespace WzComparerR2.CharaSim
             get { return perJobIndex; }
             set
             {
-                perJobIndex = Math.Max(0, Math.Min(value, this.AttackInfo.Count - 1));
+                perJobIndex = Math.Max(0, Math.Min(value, this.PerJobAttackInfo.Count - 1));
             }
         }
 
@@ -121,10 +121,10 @@ namespace WzComparerR2.CharaSim
         public int VehicleID { get; set; }
         public Dictionary<string, Wz_Vector> Lt { get; set; }
         public Dictionary<string, Wz_Vector> Rb { get; set; }
-        public Dictionary<int, List<ExtraProps>> AttackInfo { get; set; }
+        public Dictionary<int,  Dictionary<string, string>> PerJobAttackInfo { get; private set; }
         public List<string> ExtraPropNames
         {
-            get { return this.AttackInfo.SelectMany(kv => kv.Value).Select(info => info.Key).Distinct().ToList(); }
+            get { return this.PerJobAttackInfo.SelectMany(kv => kv.Value).Select(info => info.Key).Distinct().ToList(); }
         }
         public bool BlockInBossFieldset { get; set; }
 
@@ -186,17 +186,19 @@ namespace WzComparerR2.CharaSim
                             }
                             else if (commonNode.Text == "attackInfo")
                             {
-                                foreach (var jobNode in commonNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
+                                if (commonNode.Nodes.Count > 0)
                                 {
-                                    if (Int32.TryParse(jobNode.Text, out int jobID))
+                                    foreach (Wz_Node jobNode in commonNode.Nodes)
                                     {
-                                        if (!skill.AttackInfo.ContainsKey(jobID))
+                                        int jobID;
+                                        if (Int32.TryParse(jobNode.Text, out jobID))
                                         {
-                                            skill.AttackInfo[jobID] = new List<ExtraProps>();
-                                        }
-                                        foreach (var prop in jobNode.Nodes ?? new Wz_Node.WzNodeCollection(null))
-                                        {
-                                            skill.AttackInfo[jobID].Add(new ExtraProps(prop.Text, prop.GetValueEx<string>("")));
+                                            Dictionary<string, string> attackInfo = new Dictionary<string, string>();
+                                            foreach (Wz_Node infoNode in jobNode.Nodes)
+                                            {
+                                                attackInfo[infoNode.Text] = infoNode.Value.ToString();
+                                            }
+                                            skill.PerJobAttackInfo[jobID] = attackInfo;
                                         }
                                     }
                                 }
@@ -359,18 +361,6 @@ namespace WzComparerR2.CharaSim
             skill.PreBBSkill = skill.levelCommon.Count > 0;
 
             return skill;
-        }
-    }
-
-    public readonly struct ExtraProps
-    {
-        public readonly string Key;
-        public readonly string Value;
-
-        public ExtraProps(string prop, string value)
-        {
-            Key = prop;
-            Value = value;
         }
     }
 

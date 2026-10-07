@@ -88,6 +88,18 @@ namespace WzComparerR2.WzLib.Utilities
             return baseStream.Read(buffer, offset, (int)Math.Min(count, maxCount));
         }
 
+#if NET6_0_OR_GREATER
+        public override int Read(Span<byte> buffer)
+        {
+            long curPos = this.Position;
+            if (curPos < 0 || curPos >= this.length)
+                return 0;
+
+            int count = (int)Math.Min(buffer.Length, this.length - curPos);
+            return this.baseStream.Read(buffer.Slice(0, count));
+        }
+#endif
+
         public override long Seek(long offset, SeekOrigin origin)
         {
             switch (origin)
