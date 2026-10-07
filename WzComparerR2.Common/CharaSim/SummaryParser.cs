@@ -1,7 +1,5 @@
-﻿using SharpDX.Direct2D1.Effects;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using WzComparerR2.Common;
