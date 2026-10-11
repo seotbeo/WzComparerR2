@@ -149,6 +149,8 @@ namespace WzComparerR2.CharaSim
                 return;
 
             LoadedDestinyWeapons.Clear();
+            LoadedDestinyWeapons[1] = new List<int>();
+            LoadedDestinyWeapons[2] = new List<int>();
 
             List<KeyValuePair<int, Wz_Node>> destinyWeaponPhases = new List<KeyValuePair<int, Wz_Node>>()
             {
@@ -165,9 +167,13 @@ namespace WzComparerR2.CharaSim
                     {
                         temp.AddRange(job.Nodes.Select(n => n.GetValueEx<int>(0)));
                     }
-                    LoadedDestinyWeapons[phase.Key] = temp;
+                    LoadedDestinyWeapons[phase.Key].AddRange(temp);
                 }
             }
+
+            // 제로 무기
+            LoadedDestinyWeapons[1].AddRange(new int[] { 1562011, 1572011 });
+            LoadedDestinyWeapons[2].AddRange(new int[] { 1562012, 1572012 });
         }
 
         public static SetItem LoadSetItem(int setID, Wz_File sourceWzFile)
