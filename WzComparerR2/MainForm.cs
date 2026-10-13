@@ -1685,15 +1685,19 @@ namespace WzComparerR2
             Wz_File questWzFile = baseNode?.FindNodeByPath("Quest")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Quest);
             Wz_File reactorWzFile = baseNode?.FindNodeByPath("Reactor")?.GetNodeWzFile() ?? findWzByType(Wz_Type.Reactor);
 
-            Wz_Node stringNode = updateNode?.FindNodeByPath("String");
-            Wz_Node itemNode = updateNode?.FindNodeByPath("Item");
-            Wz_Node etcNode = updateNode?.FindNodeByPath("Etc");
-            Wz_Node questNode = updateNode?.FindNodeByPath("Quest");
-            Wz_Node reactorNode = updateNode?.FindNodeByPath("Reactor");
+            Wz_Node stringNode = updateNode?.FindNodeByPath("String") ?? updateNode?.FindNodeByPath("String.img", true);
+            Wz_Node itemNode = updateNode?.FindNodeByPath("Item") ?? updateNode?.FindNodeByPath("Item.img", true);
+            Wz_Node etcNode = updateNode?.FindNodeByPath("Etc") ?? updateNode?.FindNodeByPath("Etc.img", true);
+            Wz_Node questNode = updateNode?.FindNodeByPath("Quest") ?? updateNode?.FindNodeByPath("Quest.img", true);
+            Wz_Node reactorNode = updateNode?.FindNodeByPath("Reactor") ?? updateNode?.FindNodeByPath("Reactor.img", true);
 
             if (doStopWatch) QueryPerformance.Start();
             this.stringLinker.Clear();
-            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile, reactorWzFile) && stringLinker.Update(stringNode, itemNode, etcNode, questNode, reactorNode);
+            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile, reactorWzFile);
+            if (updateNode != null)
+            {
+                r = stringLinker.Update(stringNode, itemNode, etcNode, questNode, reactorNode);
+            }
             if (doStopWatch) QueryPerformance.End();
             if (r)
             {
@@ -2456,6 +2460,14 @@ namespace WzComparerR2
                     wzPath.Add("Quest");
                     wzPath.Add("QuestInfo.img");
                     imagePath.Add($"{id}");
+                    addPath();
+                    break;
+
+                case "AchievementData":
+                    wzPath.Add("Etc");
+                    wzPath.Add("Achievement");
+                    wzPath.Add("AchievementData");
+                    wzPath.Add($"{id}.img");
                     addPath();
                     break;
 
