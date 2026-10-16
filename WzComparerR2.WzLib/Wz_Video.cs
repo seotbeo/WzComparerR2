@@ -94,6 +94,15 @@ namespace WzComparerR2.WzLib
                     }
                 }
 
+                if (((int)dataFlag & 8) != 0)
+                {
+                    var c = br.ReadInt32();
+                    for (int i = 0; i < c; i++)
+                    {
+                        br.ReadInt32();
+                    }
+                }
+
                 // reassign data offset
                 long dataStartPosition = s.Position - this.Offset;
                 foreach (var fi in frames)
