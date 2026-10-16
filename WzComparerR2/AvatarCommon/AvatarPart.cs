@@ -66,7 +66,7 @@ namespace WzComparerR2.AvatarCommon
         public Wz_Node EffectNode { get; set; }
         public Dictionary<string, string> CustomOriginMap { get; set; } = new();
 
-        private void LoadInfo()
+        protected virtual void LoadInfo()
         {
             var m = Regex.Match(Node.Text, @"^(\d+)\.img$");
             if (!m.Success)

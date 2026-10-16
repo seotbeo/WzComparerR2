@@ -591,7 +591,7 @@ namespace WzComparerR2.AvatarCommon
                 try
                 {
                     tamingMobID = this.Chair.GroupTamingID[index];
-                    brm = this.Chair.GroupBodyRelMove[index];
+                    brm = this.Chair.GetBodyRelMove(index);
                 }
                 catch
                 {
@@ -1033,6 +1033,14 @@ namespace WzComparerR2.AvatarCommon
                 }
             }
 
+            if (this.Chair != null)
+            {
+                if (this.Taming == null && this.Chair.SitRight)
+                {
+                    bodyFlip = true;
+                }
+            }
+
             if (this.FaceAccessory != null && this.FaceAccessory.Visible)
             {
                 var fixedEmotion = this.FaceAccessory.Node.FindNodeByPath(@"info\fixedEmotion").GetValueEx<string>(null);
@@ -1254,7 +1262,8 @@ namespace WzComparerR2.AvatarCommon
 
                     Skin skin = new Skin();
                     skin.Name = frameIdx;
-                    string pos = linkPartNode.ParentNode.FindNodeByPath("pos")?.GetValueEx<string>(null) ?? "0";
+                    int pos = linkPartNode.ParentNode.FindNodeByPath("pos").GetValueEx<int>(0);
+                    bool isFixed = linkPartNode.ParentNode.FindNodeByPath("fixed").GetValueEx<int>(0) != 0;
                     skin.Offset = new Point(0, 0);
 
                     if (SkinCache.ContainsKey(linkPartNode.FullPathToFile))
@@ -1285,22 +1294,15 @@ namespace WzComparerR2.AvatarCommon
                     {
                         skin.ZIndex = linkPartNode.ParentNode.FindNodeByPath("z")?.GetValueEx<int?>(null) ?? -2;
                         var index = Convert.ToInt32(this.GroupChair);
-                        Wz_Vector brm = null;
-                        try
-                        {
-                            brm = this.Chair?.GroupBodyRelMove[index];
-                        }
-                        catch
-                        {
-                        }
+                        Wz_Vector brm = this.Chair?.GetBodyRelMove(index, isFixed);
 
                         if (brm != null)
                         {
                             bool finalApplyBrm = false;
 
-                            if ((pos == "3" || this.Chair.ForceAction || groupTamingExists) && !effectNode)
+                            if ((pos == 3 || this.Chair.ForceAction || groupTamingExists) && !effectNode)
                             {
-                                pos = "3";
+                                pos = 3;
                                 finalApplyBrm = !groupTamingExists;
                             }
 
@@ -1315,22 +1317,27 @@ namespace WzComparerR2.AvatarCommon
                             }
                         }
 
+                        if (!isFixed && (this.Chair?.SitRight ?? false))
+                        {
+                            skin.Flip = true;
+                        }
+
                         Bone parentBone = null;
                         Point mapOrigin = new Point(0, 0);
                         string map = "";
-                        if (pos == "1") // effect combined with character
+                        if (pos == 1) // effect combined with character
                         {
                             map = "brow";
                         }
-                        else if (pos == "2")
+                        else if (pos == 2)
                         {
                             map = "neck";
                         }
-                        else if (pos == "3") // effect offset fixed as background
+                        else if (pos == 3) // effect offset fixed as background
                         {
                             map = "";
                         }
-                        else if (pos == "4")
+                        else if (pos == 4)
                         {
                             map = "navel";
                         }
@@ -1767,6 +1774,21 @@ namespace WzComparerR2.AvatarCommon
                         Rectangle rect2;
                         if (RotateFlipImage(bmp, new Rectangle(position, bmp.Size),
                             prop.Flip, prop.Rotate, prop.Move, rootPos,
+                            out bmp2, out rect2))
+                        {
+                            if (bmp2 != null)
+                            {
+                                bmp = bmp2;
+                            }
+                            position = rect2.Location;
+                        }
+                    }
+                    else if (skin.Flip)
+                    {
+                        Bitmap bmp2;
+                        Rectangle rect2;
+                        if (RotateFlipImage(bmp, new Rectangle(position, bmp.Size),
+                            skin.Flip, 0, Point.Empty, rootPos,
                             out bmp2, out rect2))
                         {
                             if (bmp2 != null)

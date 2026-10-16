@@ -13,5 +13,6 @@ namespace WzComparerR2.AvatarCommon
         public Point Offset { get; set; }
         public string Z { get; set; }
         public int ZIndex { get; set; }
+        public bool Flip { get; set; }
     }
 }

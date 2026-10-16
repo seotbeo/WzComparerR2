@@ -26,6 +26,28 @@ namespace WzComparerR2.AvatarCommon
         public CustomChairType CustomChairType { get; set; }
         public int CustomChairAvatarScale { get; set; }
         public bool ForceAction { get; set; }
+        public bool SitRight { get; private set; }
+
+        protected override void LoadInfo()
+        {
+            base.LoadInfo();
+
+            Wz_Node infoNode = this.Node.FindNodeByPath("info").ResolveUol();
+            if (infoNode == null)
+            {
+                return;
+            }
+
+            foreach (var node in infoNode.Nodes)
+            {
+                switch (node.Text)
+                {
+                    case "sitRight":
+                        this.SitRight = node.GetValueEx<int>(0) != 0;
+                        break;
+                }
+            }
+        }
 
         public void LoadGroupTaming()
         {
@@ -52,6 +74,21 @@ namespace WzComparerR2.AvatarCommon
         public void LoadChairEffectNode()
         {
             this.EffectNode = (this.ID / 10000 == 301) ? PluginBase.PluginManager.FindWz("Effect/ItemEff.img/" + this.ID) : this.EffectNode;
+        }
+
+        public Wz_Vector GetBodyRelMove(int groupIndex, bool isFixedAni = false)
+        {
+            if (groupIndex >= 0 && groupIndex < this.GroupBodyRelMove.Count)
+            {
+                Wz_Vector src = this.GroupBodyRelMove[groupIndex];
+                if (src != null)
+                {
+                    Wz_Vector ret = this.GroupBodyRelMove[groupIndex].Clone();
+                    if (this.SitRight && isFixedAni) ret.X *= -1;
+                    return ret;
+                }
+            }
+            return null;
         }
     }
 

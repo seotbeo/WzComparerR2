@@ -34,6 +34,11 @@ namespace WzComparerR2.WzLib
             set { y = value; }
         }
 
+        public Wz_Vector Clone()
+        {
+            return new Wz_Vector(x, y);
+        }
+
         public static implicit operator Point(Wz_Vector vector)
         {
             return vector == null ? new Point() : new Point(vector.x, vector.y);
