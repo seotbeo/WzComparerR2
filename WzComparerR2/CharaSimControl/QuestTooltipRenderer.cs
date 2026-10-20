@@ -879,7 +879,6 @@ namespace WzComparerR2.CharaSimControl
             return text;
         }
 
-            var para = info.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         private Bitmap GetIconBitmap(int id, Wz_Node itemNode = null, bool raw = false)
         {
             return GetIcon(id, null, raw).Bitmap;
