@@ -1172,7 +1172,22 @@ namespace WzComparerR2.CharaSimControl
 
                 if (item.Props.TryGetValue(ItemPropType.noPetEquipCoupon, out value) && value > 0)
                 {
-                    tags.Add("#$r펫장비 교환권 사용 불가#");
+                    if (Item.Props.TryGetValue(ItemPropType.wonderGrade, out var wonderGradeValue) && wonderGradeValue > 0)
+                    {
+                        switch (wonderGradeValue)
+                        {
+                            case 6:
+                                tags.Add("#$r루나 쁘띠 펫장비 교환권 사용 불가#");
+                                break;
+                            default:
+                                tags.Add("#$r원더 블랙 펫장비 교환권 사용 불가#");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        tags.Add("#$r펫장비 교환권 사용 불가#");
+                    }
                 }
             }
 
