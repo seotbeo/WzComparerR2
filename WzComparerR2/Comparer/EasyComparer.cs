@@ -1570,7 +1570,7 @@ namespace WzComparerR2.Comparer
 
             if (!match.Success)
             {
-                match = Regex.Match(node.FullPathToFile, @"^Mob\\(\d+).img\\info\\([^\\]+)"); // 변경점 중 툴팁 출력할 것들
+                match = Regex.Match(node.FullPathToFile, @"^Mob\\(\d+).img\\info\\([^\\]+)$"); // 변경점 중 툴팁 출력할 것들
                 tag = node.Text;
             }
 
