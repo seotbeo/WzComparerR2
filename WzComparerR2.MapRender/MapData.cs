@@ -1051,7 +1051,7 @@ namespace WzComparerR2.MapRender
         private void PreloadResource(ResourceLoader resLoader, ParticleItem particle)
         {
             string path = $@"Effect\particle.img\{particle.ParticleName}";
-            var particleNode = PluginManager.FindWz(path);
+            var particleNode = PluginManager.FindWz(path) ?? PluginManager.FindWz($@"{particle.SubItems[0].Path}\{particle.ParticleName}");
 
             if (particleNode == null)
             {

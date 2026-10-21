@@ -50,6 +50,10 @@ namespace WzComparerR2.MapRender.Patches2
                 {
                     X = subNode.Nodes["x"].GetValueEx(0),
                     Y = subNode.Nodes["y"].GetValueEx(0),
+                    Rx = subNode.Nodes["rx"].GetValueEx(-100),
+                    Ry = subNode.Nodes["ry"].GetValueEx(-100),
+                    Z = subNode.Nodes["z"].GetValueEx(0),
+                    Path = subNode.Nodes["path"].GetValueEx<string>(null)
                 };
 
                 if (subNode.Nodes["quest"] != null)
@@ -81,6 +85,10 @@ namespace WzComparerR2.MapRender.Patches2
         {
             public int X { get; set; }
             public int Y { get; set; }
+            public int Rx { get; set; }
+            public int Ry { get; set; }
+            public int Z { get; set; }
+            public string Path { get; set; }
             public List<QuestInfo> Quest { get; private set; } = new List<QuestInfo>();
         }
 
