@@ -784,6 +784,11 @@ namespace WzComparerR2.AvatarCommon
                 else
                 {
                     var frameNode = this.Face.Node.FindNodeByPath($@"{emotion}\{frameIndex}");
+                    if (frameNode == null)
+                    {
+                        frameIndex = 0;
+                        frameNode = this.Face.Node.FindNodeByPath($@"{emotion}\{frameIndex}");
+                    }
                     if (frameNode != null)
                     {
                         var frame = LoadStandardFrame(frameNode);
