@@ -1330,21 +1330,27 @@ namespace WzComparerR2.AvatarCommon
                         Bone parentBone = null;
                         Point mapOrigin = new Point(0, 0);
                         string map = "";
-                        if (pos == 1) // effect combined with character
+                        switch (pos)
                         {
-                            map = "brow";
-                        }
-                        else if (pos == 2)
-                        {
-                            map = "neck";
-                        }
-                        else if (pos == 3) // effect offset fixed as background
-                        {
-                            map = "";
-                        }
-                        else if (pos == 4)
-                        {
-                            map = "navel";
+                            // effect combined with character
+                            case 1:
+                                map = "brow";
+                                break;
+
+                            case 2:
+                                if (partNode.Part != this.Cape)
+                                {
+                                    map = "neck";
+                                }
+                                break;
+
+                            case 4:
+                                map = "navel";
+                                break;
+
+                            // effect offset fixed as background
+                            default:
+                                break;
                         }
                         
                         if (string.IsNullOrEmpty(map))
