@@ -596,13 +596,27 @@ namespace WzComparerR2
 
             if (aniItem is SpineAnimatorV2 spinev2)
             {
+                spinev2.Skeleton.FlipX ^= options.FlipX;
+                spinev2.Skeleton.FlipY ^= options.FlipY;
                 spinev2.Skeleton.X += options.PosX;
                 spinev2.Skeleton.Y += options.PosY;
             }
             else if (aniItem is SpineAnimatorV4 spinev4)
             {
+                if (options.FlipX)
+                {
+                    spinev4.Skeleton.ScaleX = -spinev4.Skeleton.ScaleX;
+                }
+                if (options.FlipY)
+                {
+                    spinev4.Skeleton.ScaleY = -spinev4.Skeleton.ScaleY * (Spine.Bone.yDown ? -1 : 1);
+                }
                 spinev4.Skeleton.X += options.PosX;
                 spinev4.Skeleton.Y += options.PosY;
+            }
+            if (aniItem is ISpineAnimator spine)
+            {
+                spine.RepeatInterval = endPoint;
             }
             AddItem(aniItem, options.AniOffset, endPoint);
 

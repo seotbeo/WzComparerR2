@@ -117,8 +117,7 @@ namespace WzComparerR2.Controls
             }
             */
             var curTime = (int)(this.lastUpdateTime + this.timeOffset).TotalMilliseconds;
-            var margin = this.timer.Interval; // 부자연스러운 전환 완화
-            if (curTime > maxLength - margin)
+            if (curTime >= maxLength)
             {
                 ResetTimer();
                 ResetAll();
@@ -269,7 +268,8 @@ namespace WzComparerR2.Controls
         public void AddItem(AnimationItem item, int start = 0, int end = 0)
         {
             this.Items.Add(item);
-            this.ItemTimes.Add(new Tuple<int, int>(0 + start, Math.Max(item.Length, end) + start));
+            int length = item is ISpineAnimator spine && spine.RepeatInterval > 0 ? spine.RepeatInterval : Math.Max(item.Length, end);
+            this.ItemTimes.Add(new Tuple<int, int>(start, length + start));
             UpdateMaxLength();
             ResetTimer();
             ResetAll();

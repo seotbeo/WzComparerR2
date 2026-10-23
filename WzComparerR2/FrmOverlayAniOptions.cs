@@ -125,8 +125,6 @@ namespace WzComparerR2
             this.txtGoX.Enabled = false;
             this.txtGoY.Enabled = false;
             this.chkFullMove.Enabled = false;
-            this.chkFlipX.Enabled = false;
-            this.chkFlipY.Enabled = false;
         }
 
         public OverlayOptions GetValues()

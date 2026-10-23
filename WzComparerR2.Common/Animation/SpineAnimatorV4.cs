@@ -101,6 +101,7 @@ namespace WzComparerR2.Animation
 
         public override void Reset()
         {
+            this.repeatElapsed = TimeSpan.Zero;
             this.SelectedAnimationIndex = this.SelectedAnimationIndex;
         }
 
@@ -114,6 +115,9 @@ namespace WzComparerR2.Animation
 
         public Queue<string> NextAnimationName { get; set; } = new Queue<string>();  
 
+        public int RepeatInterval { get; set; }
+
+        private TimeSpan repeatElapsed;
         private int _selectedAniIndex;
         private AnimationState _animationState;
 
@@ -122,6 +126,18 @@ namespace WzComparerR2.Animation
             if (this.NextAnimationName.Count() > 0 && CurrentTime > Length)
             {
                 this.SelectedAnimationName = this.NextAnimationName.Dequeue();
+            }
+            if (this.RepeatInterval > 0)
+            {
+                this.repeatElapsed += elapsedTime;
+                var interval = TimeSpan.FromMilliseconds(this.RepeatInterval);
+                if (this.repeatElapsed >= interval)
+                {
+                    var remainder = TimeSpan.FromTicks(this.repeatElapsed.Ticks % interval.Ticks);
+                    this.Reset();
+                    this.repeatElapsed = remainder;
+                    elapsedTime = remainder;
+                }
             }
             this._animationState.Update((float)elapsedTime.TotalSeconds);
             this._animationState.Apply(Skeleton);
@@ -201,10 +217,13 @@ namespace WzComparerR2.Animation
         {
             var clonedAnimator = new SpineAnimatorV4(this.Data);
             clonedAnimator.SelectedAnimationIndex = this.SelectedAnimationIndex;
+            clonedAnimator.RepeatInterval = this.RepeatInterval;
             if (this.SelectedSkin != null)
             {
                 clonedAnimator.SelectedSkin = this.SelectedSkin;
             }
+            clonedAnimator.Skeleton.ScaleX = this.Skeleton.ScaleX;
+            clonedAnimator.Skeleton.ScaleY = this.Skeleton.ScaleY * (Bone.yDown ? -1 : 1);
             clonedAnimator.Skeleton.X = this.Skeleton.X;
             clonedAnimator.Skeleton.Y = this.Skeleton.Y;
             return clonedAnimator;

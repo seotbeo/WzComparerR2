@@ -15,6 +15,7 @@ namespace WzComparerR2.Animation
         string SelectedSkin { get; set; }
         Queue<string> NextAnimationName { get; set; }
         int CurrentTime { get; }
+        int RepeatInterval { get; set; }
         void Render(Spine.SkeletonRenderer renderer);
         Microsoft.Xna.Framework.Rectangle GetSlotBounds(string slot);
     }
