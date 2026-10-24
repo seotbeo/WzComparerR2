@@ -1003,6 +1003,126 @@ namespace WzComparerR2.CharaSim
             return combinedProps;
         }
 
+
+        public static IEnumerable<KeyValuePair<GearPropType, object>> CombinePropertiesV2(IEnumerable<KeyValuePair<GearPropType, object>> props)
+        {
+            var combinedProps = new SortedDictionary<GearPropType, object>();
+            var propCache = new SortedDictionary<GearPropType, object>();
+            foreach (var kv in props)
+            {
+                propCache.Add(kv.Key, kv.Value);
+            }
+
+            object obj;
+            foreach (var prop in propCache)
+            {
+                switch (prop.Key)
+                {
+                    case GearPropType.incAllStat:
+                        if (combinedProps.ContainsKey(GearPropType.incAllStat_incMHP) || combinedProps.ContainsKey(GearPropType.incAllStat_incMHP_incMMP))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(GearPropType.incMHP, out obj)
+                            && !propCache.ContainsKey(GearPropType.incMMP))
+                        {
+                            combinedProps.Add(GearPropType.incAllStat_incMHP, new List<int>() { (int)prop.Value, (int)obj });
+                            break;
+                        }
+                        else if (propCache.TryGetValue(GearPropType.incMHP, out obj)
+                            && propCache.TryGetValue(GearPropType.incMMP, out var obj2)
+                            && object.Equals(obj, obj2))
+                        {
+                            combinedProps.Add(GearPropType.incAllStat_incMHP_incMMP, new List<int>() { (int)prop.Value, (int)obj });
+                            break;
+                        }
+                        goto default;
+
+                    case GearPropType.incMHP:
+                        if (combinedProps.ContainsKey(GearPropType.incAllStat_incMHP))
+                        {
+                            break;
+                        }
+                        goto case GearPropType.incMMP;
+
+                    case GearPropType.incMMP:
+                        if (combinedProps.ContainsKey(GearPropType.incMHP_incMMP) || combinedProps.ContainsKey(GearPropType.incAllStat_incMHP_incMMP))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(prop.Key == GearPropType.incMHP ? GearPropType.incMMP : GearPropType.incMHP, out obj)
+                            && object.Equals(prop.Value, obj)
+                            && !combinedProps.ContainsKey(GearPropType.incAllStat_incMHP_incMMP))
+                        {
+                            combinedProps.Add(GearPropType.incMHP_incMMP, prop.Value);
+                            break;
+                        }
+                        goto default;
+
+                    case GearPropType.incMHPr:
+                    case GearPropType.incMMPr:
+                        if (combinedProps.ContainsKey(GearPropType.incMHPr_incMMPr))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(prop.Key == GearPropType.incMHPr ? GearPropType.incMMPr : GearPropType.incMHPr, out obj)
+                            && object.Equals(prop.Value, obj))
+                        {
+                            combinedProps.Add(GearPropType.incMHPr_incMMPr, prop.Value);
+                            break;
+                        }
+                        goto default;
+
+                    case GearPropType.incPAD:
+                    case GearPropType.incMAD:
+                        if (combinedProps.ContainsKey(GearPropType.incPAD_incMAD))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(prop.Key == GearPropType.incPAD ? GearPropType.incMAD : GearPropType.incPAD, out obj)
+                            && object.Equals(prop.Value, obj))
+                        {
+                            combinedProps.Add(GearPropType.incPAD_incMAD, prop.Value);
+                            break;
+                        }
+                        goto default;
+
+                    case GearPropType.incPDD:
+                    case GearPropType.incMDD:
+                        if (combinedProps.ContainsKey(GearPropType.incPDD_incMDD))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(prop.Key == GearPropType.incPDD ? GearPropType.incMDD : GearPropType.incPDD, out obj)
+                            && object.Equals(prop.Value, obj))
+                        {
+                            combinedProps.Add(GearPropType.incPDD_incMDD, prop.Value);
+                            break;
+                        }
+                        goto default;
+
+                    case GearPropType.incACC:
+                    case GearPropType.incEVA:
+                        if (combinedProps.ContainsKey(GearPropType.incACC_incEVA))
+                        {
+                            break;
+                        }
+                        else if (propCache.TryGetValue(prop.Key == GearPropType.incACC ? GearPropType.incEVA : GearPropType.incACC, out obj)
+                            && object.Equals(prop.Value, obj))
+                        {
+                            combinedProps.Add(GearPropType.incACC_incEVA, prop.Value);
+                            break;
+                        }
+                        goto default;
+
+                    default:
+                        combinedProps.Add(prop.Key, prop.Value);
+                        break;
+                }
+            }
+            return combinedProps;
+        }
+
         public static Gear CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
         {
             if (node == null) return null;
