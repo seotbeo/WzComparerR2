@@ -441,7 +441,7 @@ namespace WzComparerR2.CharaSimControl
                 }
 
                 //T116 合并套装
-                var props = IsCombineProperties ? Gear.CombineProperties(effect.Value.PropsV5) : effect.Value.PropsV5;
+                var props = IsCombineProperties ? Gear.CombinePropertiesV2(effect.Value.PropsV5) : effect.Value.PropsV5;
                 foreach (KeyValuePair<GearPropType, object> prop in props)
                 {
                     if (prop.Key == GearPropType.Option)
@@ -486,6 +486,16 @@ namespace WzComparerR2.CharaSimControl
                                 var summary = ItemStringHelper.GetGearPropString(bonusProp.Key, Convert.ToInt32(bonusProp.Value));
                                 GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                             }
+                        }
+                    }
+                    else if (prop.Key == GearPropType.incAllStat_incMHP || prop.Key == GearPropType.incAllStat_incMHP_incMMP)
+                    {
+                        List<int> ops = (List<int>)prop.Value;
+                        string secondOption = prop.Key == GearPropType.incAllStat_incMHP ? "최대 HP" : "최대 HP / 최대 MP";
+                        if (ops.Count == 2)
+                        {
+                            var summary = $"올스탯: +{ops[0]}, {secondOption} : +{ops[1]}";
+                            GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                         }
                     }
                     else
