@@ -8,6 +8,7 @@ using WzComparerR2.Common;
 using WzComparerR2.PluginBase;
 using WzComparerR2.Rendering;
 using WzComparerR2.WzLib;
+using WzComparerR2.MapRender.Particles;
 using WzComparerR2.AvatarCommon;
 
 namespace WzComparerR2.MapRender
@@ -28,7 +29,7 @@ namespace WzComparerR2.MapRender
         protected Dictionary<string, object> loadedAnimationData;
         private bool isCounting;
 
-        private GraphicsDevice GraphicsDevice
+        internal GraphicsDevice GraphicsDevice
         {
             get
             {
@@ -122,8 +123,13 @@ namespace WzComparerR2.MapRender
             {
                 case 0: return LoadParticleDesc0(node);
                 case 1: return LoadParticleDesc1(node);
+                case 2: return LoadModularParticle(node, true);
                 case 3: return LoadParticleDesc3(node);
-                default: throw new Exception($"Unknown particle data type {dataType}.");
+                case 4: // 맵에 사용안됨
+                case 5: // 맵에 사용안됨
+                default:
+                    System.Diagnostics.Trace.TraceWarning($"Unsupported particle type {dataType}: {node.FullPathToFile}");
+                    throw new NotSupportedException($"Unsupported particle type {dataType}: {node.FullPathToFile}");
             }
         }
 
@@ -214,12 +220,154 @@ namespace WzComparerR2.MapRender
 
         public ParticleDesc1 LoadParticleDesc1(Wz_Node node)
         {
-            return new ParticleDesc1();
+            return this.LoadModularParticle(node, false);
+        }
+
+        private ParticleDesc1 LoadModularParticle(Wz_Node node, bool trail)
+        {
+            ParticleDesc1 desc = trail ? new ParticleDesc2() : new ParticleDesc1();
+            desc.Name = node.FullPathToFile;
+            desc.MaxParticleCount = Math.Max(0, (int)ParticleParameter.Number(node.Nodes["max_particle_count"]));
+            desc.BurstCount = Math.Max(0, ParticleParameter.Number(node.Nodes["burst_count"], 1));
+            desc.BurstRate = Math.Max(0, ParticleParameter.Number(node.Nodes["burst_rate"], 1));
+            desc.EmitterLifeTime = ParticleParameter.Number(node.Nodes["emitter_life_time"]);
+            desc.DesignedFps = ParticleParameter.Number(node.Nodes["designed_fps"], 60);
+            desc.Loop = node.Nodes["loop"].GetValueEx(false);
+            desc.Prewarm = node.Nodes["prewarm"].GetValueEx(false);
+            desc.PrewarmTime = ParticleParameter.Number(node.Nodes["prewarm_time"]);
+            desc.PrewarmFps = ParticleParameter.Number(node.Nodes["prewarm_fps"]);
+            desc.LongestLifeTime = ParticleParameter.Number(node.Nodes["longest_lifetime"]);
+            desc.UpdateProgram = ParticleProgramInfo.Decode(node.Nodes["update_cs5_bin"]);
+            var shared = node.Nodes["value_objects"];
+            ReadParticleModules(node.Nodes["init_modules"], shared, desc.Initializers);
+            ReadParticleModules(node.Nodes["update_modules"], shared, desc.Updaters);
+            if (desc.LongestLifeTime <= 0)
+            {
+                foreach (var module in desc.Initializers)
+                {
+                    if (module.Parameters.TryGetValue("life_time", out var life))
+                    {
+                        desc.LongestLifeTime = Math.Max(desc.LongestLifeTime, Math.Max(life.Lower.X, life.Upper.X));
+                        for (int sample = 0; sample <= 64; sample++)
+                        {
+                            desc.LongestLifeTime = Math.Max(desc.LongestLifeTime, Math.Max(life.SampleCurve(0, sample / 64f).X, life.SampleCurve(1, sample / 64f).X));
+                        }
+                    }
+                }
+            }
+            if (desc is ParticleDesc2 desc2)
+            {
+                desc2.LifeTime = Math.Max(0, ParticleParameter.Number(node.Nodes["particle_life_time"], 1));
+                desc2.MinimumDistance = Math.Max(0, ParticleParameter.Number(node.Nodes["minimum_vertex_distance"], 1));
+                desc2.ReceiveRate = Math.Max(0, ParticleParameter.Number(node.Nodes["receive_per_time"], 30));
+                desc2.Probability = MathHelper.Clamp(ParticleParameter.Number(node.Nodes["probability"], 1), 0, 1);
+                desc2.DieWithSource = node.Nodes["die_with_particles"].GetValueEx(false);
+                desc2.SizeAffectsLife = node.Nodes["size_affects_lifetime"].GetValueEx(false);
+                desc2.SizeAffectsWidth = node.Nodes["size_affects_width"].GetValueEx(false);
+                desc2.StretchTexture = node.Nodes["texture_stretch"].GetValueEx(false);
+            }
+            var renderers = node.Nodes["renderers"];
+            if (node.Nodes["output_cs5_bin"] != null || renderers == null || renderers.Nodes.Count == 0)
+            {
+                desc.Materials.Add(this.ReadParticleMaterial(node, node, shared));
+            }
+            else
+            {
+                foreach (var renderer in renderers.Nodes)
+                {
+                    desc.Materials.Add(this.ReadParticleMaterial(renderer, node, shared));
+                }
+            }
+            int slots = CountParticleSlots(desc.Initializers) + CountParticleSlots(desc.Updaters);
+            foreach (var material in desc.Materials)
+            {
+                slots += CountParticleSlots(material.Modules);
+            }
+            if (desc.UpdateProgram?.ParameterSlots > slots || desc.Materials.Any(material => material.OutputProgram?.ParameterSlots > slots))
+            {
+                System.Diagnostics.Trace.TraceWarning("Particle parameter layout needs review: {0}, packed slots {1}.", desc.Name, slots);
+            }
+            return desc;
+        }
+
+        private static int CountParticleSlots(List<ParticleModule> modules)
+        {
+            return modules.Sum(module => module.Parameters.Values.Sum(value => value.Components == 0 ? 0 : value.Components == 1 ? 1 : value.Components == 2 ? 2 : 3));
+        }
+
+        private static void ReadParticleModules(Wz_Node group, Wz_Node shared, List<ParticleModule> target)
+        {
+            if (group == null)
+            {
+                return;
+            }
+            foreach (var entry in group.Nodes)
+            {
+                string name = entry.Nodes["module_name"].GetValueEx(entry.Value as string);
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+                var module = new ParticleModule { Name = name };
+                var values = entry.Nodes["value_objects"] ?? shared?.Nodes[name];
+                if (values != null)
+                {
+                    foreach (var value in values.Nodes)
+                    {
+                        var parameter = ParticleParameter.Read(value);
+                        module.Parameters[value.Text] = parameter;
+                        module.OrderedParameters.Add(parameter);
+                    }
+                }
+                target.Add(module);
+            }
+        }
+
+        private ParticleMaterial ReadParticleMaterial(Wz_Node renderer, Wz_Node owner, Wz_Node shared)
+        {
+            Wz_Node Property(string key) => renderer.Nodes[key] ?? owner.Nodes[key];
+            var grid = ParticleParameter.Vector(Property("sprite_grid_size"));
+            var offset = ParticleParameter.Vector(Property("sprite_offset"));
+            var uv = ParticleParameter.Vector(Property("sprite_uv_scale"));
+            var material = new ParticleMaterial
+            {
+                Texture = this.LoadFrame(Property("texture")),
+                Grid = new Vector2(Math.Max(1, grid.X), Math.Max(1, grid.Y)), Offset = new Vector2(offset.X, offset.Y),
+                UvScale = Property("sprite_uv_scale") == null ? Vector2.One : new Vector2(uv.X, uv.Y),
+                BlendEnabled = Property("blend").GetValueEx(true), SourceBlend = (ParticleBlendFunc)Property("blend_src").GetValueEx(5),
+                DestinationBlend = (ParticleBlendFunc)Property("blend_dst").GetValueEx(6), PixelPerfect = Property("pixel_perfect").GetValueEx(false),
+                OutputProgram = ParticleProgramInfo.Decode(Property("output_cs5_bin"))
+            };
+            ReadParticleModules(Property("output_modules"), shared, material.Modules);
+            return material;
+        }
+
+        private static ParticleTrack ReadParticleTrack(Wz_Node node)
+        {
+            return new ParticleTrack
+            {
+                Index = int.TryParse(node.Text, out int index) ? index : -1,
+                LeaderIndex = node.Nodes["leader_emitter_index"].GetValueEx(-1),
+                Position = ParticleParameter.Read(node.Nodes["position"]), Scale = ParticleParameter.Read(node.Nodes["scale"]),
+                Rotation = ParticleParameter.Read(node.Nodes["rotation"]), Delay = ParticleParameter.Read(node.Nodes["delay"]),
+                Duration = ParticleParameter.Read(node.Nodes["duration"]), Loop = node.Nodes["loop"].GetValueEx(false),
+                LocalSpace = node.Nodes["local_space"].GetValueEx(false), AnimateProperties = node.Nodes["update_properties_every_tick"].GetValueEx(false)
+            };
         }
 
         public ParticleDesc3 LoadParticleDesc3(Wz_Node node)
         {
-            return new ParticleDesc3();
+            var desc = new ParticleDesc3 { Transform = ReadParticleTrack(node) };
+            foreach (var child in node.Nodes)
+            {
+                if (int.TryParse(child.Text, out _) && child.Nodes["item"] is Wz_Node item)
+                {
+                    var track = ReadParticleTrack(child);
+                    track.Item = this.LoadParticleDesc(item);
+                    desc.Tracks.Add(track);
+                }
+            }
+            return desc;
         }
 
         public void BeginCounting()

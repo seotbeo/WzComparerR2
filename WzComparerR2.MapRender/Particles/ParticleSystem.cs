@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.Animation;
 
-namespace WzComparerR2.MapRender
+namespace WzComparerR2.MapRender.Particles
 {
-    public class ParticleSystem
+    public class ParticleSystem : IDisposable
     {
         public ParticleSystem(IRandom random)
         {
@@ -31,9 +31,24 @@ namespace WzComparerR2.MapRender
         public ParticleBlendFunc BlendFuncDst { get; set; }
 
         private AlphaPoint[] alphaPoints;
+        internal ModularParticleEffect ModularEffect { get; private set; }
+
+        internal void LoadModularDescription(object description, GraphicsDevice graphics)
+        {
+            this.ModularEffect?.Dispose();
+            this.ModularEffect = null;
+            this.ModularEffect = new ModularParticleEffect(description, graphics, this.Rand);
+        }
+
+        public void Dispose()
+        {
+            this.ModularEffect?.Dispose();
+            this.ModularEffect = null;
+        }
 
         public void LoadDescription(ParticleDesc desc)
         {
+            this.Dispose();
             this.Texture = desc.Texture;
             this.ParticleCount = desc.TotalParticle;
             this.Duration = desc.Duration;
@@ -123,6 +138,11 @@ namespace WzComparerR2.MapRender
 
         public void Update(TimeSpan elapsed)
         {
+            if (this.ModularEffect != null)
+            {
+                this.ModularEffect.Update(elapsed);
+                return;
+            }
             foreach (var pGroup in this.Groups)
             {
                 this.UpdateGroup(pGroup, elapsed);

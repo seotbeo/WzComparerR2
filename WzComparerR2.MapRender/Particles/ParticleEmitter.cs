@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace WzComparerR2.MapRender
+namespace WzComparerR2.MapRender.Particles
 {
     public class ParticleEmitter
     {

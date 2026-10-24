@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.WzLib;
+using WzComparerR2.MapRender.Particles;
 using WzComparerR2.Common;
 using WzComparerR2.MapRender.Effects;
 using WzComparerR2.MapRender.Patches2;
@@ -86,6 +87,7 @@ namespace WzComparerR2.MapRender
         }
         public Action<string> SoundEffPlayer;
         public Action<SceneItem> LoadSceneItemResource;
+        public Action<string> ParticleLoadLogger;
 
         private readonly IRandom random;
         private bool enableMobMovement;
@@ -554,7 +556,11 @@ namespace WzComparerR2.MapRender
             {
                 var item = ParticleItem.LoadFromNode(particleNode);
                 item.Name = node.Text;
-                Scene.Effect.Slots.Add(item);
+                foreach (var placement in item.SubItems)
+                {
+                    var placedItem = item.ForPlacement(placement);
+                    placedItem.GetRenderContainer(this.Scene).Slots.Add(placedItem);
+                }
             }
         }
 
@@ -1050,42 +1056,137 @@ namespace WzComparerR2.MapRender
 
         private void PreloadResource(ResourceLoader resLoader, ParticleItem particle)
         {
-            string path = $@"Effect\particle.img\{particle.ParticleName}";
-            var particleNode = PluginManager.FindWz(path) ?? PluginManager.FindWz($@"{particle.SubItems[0].Path}\{particle.ParticleName}");
-
-            if (particleNode == null)
+            var pendingSystem = particle.View?.ParticleSystem;
+            particle.View = null;
+            string directory = particle.Path;
+            string fallback = $@"Effect\particle.img\{particle.ParticleName}";
+            string path = string.IsNullOrEmpty(directory) ? fallback : directory.Replace('/', '\\') + "\\" + particle.ParticleName;
+            try
             {
-                return;
-            }
+                pendingSystem?.Dispose();
+                pendingSystem = null;
+                var particleNode = PluginManager.FindWz(path);
+                if (particleNode == null && path != fallback)
+                {
+                    path = fallback;
+                    particleNode = PluginManager.FindWz(path);
+                }
 
-            var desc = resLoader.LoadParticleDesc(particleNode);
-            switch (desc)
-            {
-                case ParticleDesc desc0:
-                    {
-                        var pSystem = new ParticleSystem(this.random);
-                        pSystem.LoadDescription(desc0);
+                if (particleNode == null)
+                {
+                    return;
+                }
 
-                        for (int i = 0; i < particle.SubItems.Length; i++)
+                var desc = resLoader.LoadParticleDesc(particleNode);
+                if (desc is ParticleDesc1 || desc is ParticleDesc3)
+                {
+                    pendingSystem = new ParticleSystem(this.random);
+                    pendingSystem.LoadModularDescription(desc, resLoader.GraphicsDevice);
+                    particle.View = new ParticleItem.ItemView { ParticleSystem = pendingSystem };
+                    pendingSystem = null;
+                    return;
+                }
+                switch (desc)
+                {
+                    case ParticleDesc desc0:
                         {
-                            var subItem = particle.SubItems[i];
-                            if (subItem.Quest.Exists(quest => !resLoader.PatchVisibility.IsQuestVisible(quest.ID, quest.State)))
+                            pendingSystem = new ParticleSystem(this.random);
+                            pendingSystem.LoadDescription(desc0);
+
+                            for (int i = 0; i < particle.SubItems.Length; i++)
                             {
-                                continue;
+                                var subItem = particle.SubItems[i];
+                                if (subItem.Quest.Exists(quest => !resLoader.PatchVisibility.IsQuestVisible(quest.ID, quest.State)))
+                                {
+                                    continue;
+                                }
+                                var pGroup = pendingSystem.CreateGroup(i.ToString());
+                                pGroup.Position = new Vector2(subItem.X, subItem.Y);
+                                pGroup.Active();
+                                pendingSystem.Groups.Add(pGroup);
                             }
-                            var pGroup = pSystem.CreateGroup(i.ToString());
-                            pGroup.Position = new Vector2(subItem.X, subItem.Y);
-                            pGroup.Active();
-                            pSystem.Groups.Add(pGroup);
-                        }
 
-                        particle.View = new ParticleItem.ItemView()
-                        {
-                            ParticleSystem = pSystem
-                        };
-                    }
-                    break;
+                            particle.View = new ParticleItem.ItemView { ParticleSystem = pendingSystem };
+                            pendingSystem = null;
+                        }
+                        break;
+                }
             }
+            catch (Exception ex) when (IsRecoverableParticleLoadError(ex))
+            {
+                this.ReportParticleLoadError("파티클 로딩 실패", particle, path, ex);
+            }
+            finally
+            {
+                if (pendingSystem != null)
+                {
+                    try
+                    {
+                        pendingSystem.Dispose();
+                    }
+                    catch (Exception ex) when (IsRecoverableParticleLoadError(ex))
+                    {
+                        this.ReportParticleLoadError("파티클 리소스 해제 실패", particle, path, ex);
+                    }
+                }
+            }
+        }
+
+        internal void DisposeParticleResources()
+        {
+            var nodes = new Stack<SceneNode>();
+            nodes.Push(this.Scene);
+            while (nodes.Count > 0)
+            {
+                var node = nodes.Pop();
+                if (node is ContainerNode container)
+                {
+                    foreach (var particle in container.Slots.OfType<ParticleItem>())
+                    {
+                        particle.View?.ParticleSystem?.Dispose();
+                        particle.View = null;
+                    }
+                }
+                foreach (var child in node.Nodes)
+                {
+                    nodes.Push(child);
+                }
+            }
+        }
+
+        private void ReportParticleLoadError(string operation, ParticleItem particle, string path, Exception exception)
+        {
+            string message = $"{operation}: 파티클={particle.ParticleName}, 경로={path}, {exception.GetType().Name}: {exception.Message}";
+            System.Diagnostics.Trace.TraceWarning("{0}, requested directory={1}. {2}", message, particle.Path, exception);
+            try
+            {
+                this.ParticleLoadLogger?.Invoke(message);
+            }
+            catch (Exception ex) when (IsRecoverableParticleLoadError(ex))
+            {
+                System.Diagnostics.Trace.TraceWarning("Particle UI logging failed: {0}", ex);
+            }
+        }
+
+        private static bool IsRecoverableParticleLoadError(Exception exception)
+        {
+            for (var error = exception; error != null; error = error.InnerException)
+            {
+                if (error is OutOfMemoryException || error is StackOverflowException || error is AccessViolationException
+                    || error is OperationCanceledException || error is System.Threading.ThreadAbortException)
+                {
+                    return false;
+                }
+                switch (error.HResult)
+                {
+                    case unchecked((int)0x887A0005): // DXGI_ERROR_DEVICE_REMOVED
+                    case unchecked((int)0x887A0006): // DXGI_ERROR_DEVICE_HUNG
+                    case unchecked((int)0x887A0007): // DXGI_ERROR_DEVICE_RESET
+                    case unchecked((int)0x887A0020): // DXGI_ERROR_DRIVER_INTERNAL_ERROR
+                        return false;
+                }
+            }
+            return true;
         }
 
         private void PreloadResource(ResourceLoader resLoader, SkillItem skill)

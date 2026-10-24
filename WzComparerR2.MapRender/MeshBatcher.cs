@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using WzComparerR2.Animation;
 using WzComparerR2.Rendering;
+using WzComparerR2.MapRender.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,6 +27,7 @@ namespace WzComparerR2.MapRender
         Spine.SkeletonRenderer spineRender;
         D2DRenderer d2dRender;
         MsSpriteRenderer msSpriteRenderer;
+        ParticleMaterialRenderer particleMaterialRenderer;
         ItemType lastItem;
         Stack<MeshItem> meshPool;
 
@@ -360,6 +362,21 @@ namespace WzComparerR2.MapRender
 
         private void DrawItem(MeshItem mesh, ParticleSystem particleSystem)
         {
+            if (particleSystem.ModularEffect != null)
+            {
+                this.InnerFlush();
+                this.lastItem = ItemType.Unknown;
+                if (this.sprite == null)
+                {
+                    this.sprite = new SpriteBatchEx(this.GraphicsDevice);
+                }
+                if (this.particleMaterialRenderer == null)
+                {
+                    this.particleMaterialRenderer = new ParticleMaterialRenderer(this.GraphicsDevice);
+                }
+                this.particleMaterialRenderer.Draw(particleSystem.ModularEffect, this.sprite, mesh.Position, this.matrix);
+                return;
+            }
             if (particleSystem.Texture?.Texture != null)
             {
                 ItemType itemType = ItemType.Unknown;
@@ -717,6 +734,7 @@ namespace WzComparerR2.MapRender
 
         public void Dispose()
         {
+            this.particleMaterialRenderer?.Dispose();
             this.sprite?.Dispose();
             this.spineRender?.Dispose();
             this.alphaBlendState.Dispose();

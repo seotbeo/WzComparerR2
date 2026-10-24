@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using WzComparerR2.WzLib;
+using WzComparerR2.MapRender.Particles;
 using WzComparerR2.Common;
 using WzComparerR2.MapRender.Config;
 using WzComparerR2.MapRender.Patches2;
@@ -1022,12 +1023,12 @@ namespace WzComparerR2.MapRender
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            List<QuestInfo> questList = this.mapData?.Scene.Back.Slots.SelectMany(item => ((BackItem)item).Quest)
-                                .Concat(this.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Quest)))
+                            List<QuestInfo> questList = this.mapData?.Scene.Back.Slots.OfType<BackItem>().SelectMany(item => item.Quest)
+                                .Concat(this.mapData.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.OfType<ObjItem>().SelectMany(item => item.Quest)))
                                 .Concat(this.mapData.Scene.Npcs.SelectMany(item => item.Quest))
-                                .Concat(this.mapData.Scene.Front.Slots.SelectMany(item => ((BackItem)item).Quest))
-                                .Concat(this.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).Quest))
-                                .Concat(this.mapData.Scene.Effect.Slots.Where(item => item is ParticleItem).SelectMany(item => ((ParticleItem)item).SubItems).SelectMany(item => item.Quest))
+                                .Concat(this.mapData.Scene.Front.Slots.OfType<BackItem>().SelectMany(item => item.Quest))
+                                .Concat(GetSceneContainers(this.mapData.Scene).SelectMany(container => container.Slots).OfType<ParticleItem>().SelectMany(item => item.Quest))
+                                .Concat(GetSceneContainers(this.mapData.Scene).SelectMany(container => container.Slots).OfType<ParticleItem>().SelectMany(item => item.SubItems).SelectMany(item => item.Quest))
                                 .Distinct().ToList() ?? new();
                             this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 개수: ({questList.Count()})");
                             foreach (QuestInfo item in questList)
@@ -1071,7 +1072,7 @@ namespace WzComparerR2.MapRender
                     switch (arguments.ElementAtOrDefault(1))
                     {
                         case "list":
-                            List<QuestExInfo> questList = this.mapData?.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.SelectMany(item => ((ObjItem)item).Questex))
+                            List<QuestExInfo> questList = this.mapData?.Scene.Layers.Nodes.SelectMany(l => ((LayerNode)l).Obj.Slots.OfType<ObjItem>().SelectMany(item => item.Questex))
                                 .Distinct().ToList() ?? new();
                             this.ui.ChatBox.AppendTextHelp($"관련된 퀘스트 키 개수: ({questList.Count()})");
                             foreach (QuestExInfo item in questList)
@@ -1808,6 +1809,7 @@ namespace WzComparerR2.MapRender
 
             if (!this.isUnloaded)
             {
+                this.mapData?.DisposeParticleResources();
                 this.resLoader?.Unload();
                 this.ui?.UnloadContents();
                 this.Content.Unload();
