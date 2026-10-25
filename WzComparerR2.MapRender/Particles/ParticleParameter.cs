@@ -37,8 +37,7 @@ namespace WzComparerR2.MapRender.Particles
 
         private static float ReadCurveMultiplier(Wz_Node node)
         {
-            float value = Number(node, 1f);
-            return value == 0f ? 1f : value;
+            return Number(node, 1f);
         }
 
         internal static Vector4 Vector(Wz_Node node)
