@@ -452,8 +452,11 @@ namespace WzComparerR2.CharaSimControl
             g.DrawImage(Resource.UIToolTipNew_img_Item_Equip_imgFont_atkPow_plus_0, 293, picH + 38); //暂时画个
             picH += 78;
 
-            // 장비 분류
-            DrawCategory(g, picH);
+            // 장비 
+            if (Gear.type != GearType.equipBag)
+            {
+                DrawCategory(g, picH);
+            }
             picH += 18;
 
             // 착용 직업

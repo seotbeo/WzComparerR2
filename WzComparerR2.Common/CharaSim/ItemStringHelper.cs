@@ -640,6 +640,7 @@ namespace WzComparerR2.CharaSim
                 case GearType.demonShield: return "포스실드";
                 case GearType.totem: return "토템";
                 case GearType.petEquip: return "펫장비";
+                case GearType.equipBag: return "장비 가방";
                 case GearType.taming:
                 case GearType.taming2:
                 case GearType.taming3: 
