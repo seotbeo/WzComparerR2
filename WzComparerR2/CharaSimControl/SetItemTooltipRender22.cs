@@ -494,7 +494,7 @@ namespace WzComparerR2.CharaSimControl
                         string secondOption = prop.Key == GearPropType.incAllStat_incMHP ? "최대 HP" : "최대 HP / 최대 MP";
                         if (ops.Count == 2)
                         {
-                            var summary = $"올스탯: +{ops[0]}, {secondOption} : +{ops[1]}";
+                            var summary = $"올스탯  +{ops[0]}, {secondOption}  +{ops[1]}";
                             GearGraphics.DrawPlainText(g, summary, GearGraphics.EquipMDMoris9Font, color, 14 + dx, 283, ref picHeight, 15);
                         }
                     }
