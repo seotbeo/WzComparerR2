@@ -17,6 +17,7 @@ namespace WzComparerR2.MapRender.Config
             this.MuteOnLeaveFocus = true;
             this.ClipMapRegion = true;
             this.EnableMobMovement = true;
+            this.EnableMobDownJump = false;
         }
 
         [ConfigurationProperty("volume")]
@@ -94,6 +95,13 @@ namespace WzComparerR2.MapRender.Config
         {
             get { return (ConfigItem<bool>)this["showFootholdBoundary"]; }
             set { this["showFootholdBoundary"] = value; }
+        }
+
+        [ConfigurationProperty("enableMobDownJump")]
+        public ConfigItem<bool> EnableMobDownJump
+        {
+            get { return (ConfigItem<bool>)this["enableMobDownJump"]; }
+            set { this["enableMobDownJump"] = value; }
         }
 
         [ConfigurationProperty("enableMobMovement")]

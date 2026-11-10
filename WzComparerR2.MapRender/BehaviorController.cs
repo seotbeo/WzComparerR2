@@ -75,6 +75,8 @@ namespace WzComparerR2.MapRender
 
         private float hSpeed = 0;
         private float vSpeed = 0;
+        private float? downJumpStartY;
+        private FootholdItem downJumpStartFoothold;
         private int hp = 100;
 
         private TimeSpan restTime;
@@ -157,6 +159,7 @@ namespace WzComparerR2.MapRender
         public bool PlayDieSound { get; set; } = true;
         public bool FlipX => this.MovementEnabled && !this.Fixed ? this._flipX : this.baseFlipX;
         public bool MovementEnabled { get; private set; }
+        public bool DownJumpEnabled { get; set; } = false;
         public bool Fixed { get; set; }
         public bool BlockRevive { get; set; }
         public bool ForceMoveStop => this.bState == BaseState.Hit || this.bState == BaseState.Died || this.bState == BaseState.Attack;
@@ -476,6 +479,11 @@ namespace WzComparerR2.MapRender
 
         private void MoveX(TimeSpan elapsedTime, Vector2 prevPos)
         {
+            if (this.downJumpStartY.HasValue)
+            {
+                return;
+            }
+
             if (this.hState != HorizontalState.Stop && !this.ForceMoveStop && !this.flyingToTarget)
             {
                 var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
@@ -1000,6 +1008,19 @@ namespace WzComparerR2.MapRender
                 {
                     foreach (var fh in group.Footholds.Where(f => !f.IsWall && FootholdManager.GetCandidateFootholds(f, prevPos, nextPos)))
                     {
+                        if (this.downJumpStartY.HasValue)
+                        {
+                            // 하단 점프는 출발 발판과 출발 높이 이상의 발판을 통과
+                            var slope = (float)(fh.Y2 - fh.Y1) / (fh.X2 - fh.X1);
+                            var delta = nextPos - prevPos;
+                            var denominator = delta.Y - slope * delta.X;
+                            var t = denominator == 0 ? 0 : (fh.Y1 + slope * (prevPos.X - fh.X1) - prevPos.Y) / denominator;
+                            var landingY = prevPos.Y + delta.Y * t;
+                            if (fh == this.downJumpStartFoothold || landingY <= this.downJumpStartY.Value)
+                            {
+                                continue;
+                            }
+                        }
                         if (FootholdManager.Intersects(fh, prevPos, nextPos))
                         {
                             HandleFallVCollision(fh); // 착지한 발판으로 curFoothold와 curFootholdGroup 변경
@@ -1019,6 +1040,8 @@ namespace WzComparerR2.MapRender
         {
             if (fh.IsWall) return;
 
+            this.downJumpStartY = null;
+            this.downJumpStartFoothold = null;
             SetCurFoothold(fh);
         }
 
@@ -1178,14 +1201,50 @@ namespace WzComparerR2.MapRender
             {
                 if (this.Random.NextPercent(RandomJumpProb)) // RandomJumpProb 확률로 점프
                 {
-                    DoJump();
+                    if (this.Random.NextPercent(0.5f))
+                    {
+                        DoJump();
+                    }
+                    else
+                    {
+                        DoDownJump();
+                    }
                 }
             }
         }
 
         private void DoJump()
         {
+            this.downJumpStartY = null;
+            this.downJumpStartFoothold = null;
             this.vSpeed = -JumpSpeed;
+            this.curFoothold = null;
+            SetVerticalState(VerticalState.Jump);
+        }
+
+        private void DoDownJump()
+        {
+            if (!this.DownJumpEnabled)
+            {
+                DoJump();
+                return;
+            }
+
+            var pos = this.CurPos;
+            var group = FHManager.GetGroupByIndex(this.curFootholdGroupID);
+            var startY = this.curFoothold == null ? pos.Y : FHManager.GetYOnFoothold(this.curFoothold, pos.X);
+            var hasBelowFoothold = group != null && group.Footholds.Any(fh =>
+                !fh.IsWall && fh != this.curFoothold && pos.X >= fh.FootholdArea.Left && pos.X <= fh.FootholdArea.Right &&
+                FHManager.GetYOnFoothold(fh, pos.X) >= startY + 1 && FHManager.GetYOnFoothold(fh, pos.X) <= startY + 75);
+            if (!hasBelowFoothold)
+            {
+                DoJump();
+                return;
+            }
+
+            this.downJumpStartY = startY;
+            this.downJumpStartFoothold = this.curFoothold;
+            this.vSpeed = -JumpSpeed * 0.5f;
             this.curFoothold = null;
             SetVerticalState(VerticalState.Jump);
         }

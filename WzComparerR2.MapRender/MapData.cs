@@ -85,12 +85,33 @@ namespace WzComparerR2.MapRender
                 }
             }
         }
+        public bool EnableMobDownJump
+        {
+            get { return enableMobDownJump; }
+            set
+            {
+                if (enableMobDownJump == value)
+                {
+                    return;
+                }
+
+                enableMobDownJump = value;
+                foreach (var life in this.Scene.Mobs)
+                {
+                    if (life.Controller != null)
+                    {
+                        life.Controller.DownJumpEnabled = value;
+                    }
+                }
+            }
+        }
         public Action<string> SoundEffPlayer;
         public Action<SceneItem> LoadSceneItemResource;
         public Action<string> ParticleLoadLogger;
 
         private readonly IRandom random;
         private bool enableMobMovement;
+        private bool enableMobDownJump = false;
         private List<Tuple<SceneItem, int, int>> moveLayerQueue = new();
         private List<Tuple<SceneItem, int>> addToLayerQueue = new();
         private List<SceneItem> removeFromLayerQueue = new();
@@ -384,7 +405,7 @@ namespace WzComparerR2.MapRender
                 }
 
                 // init controller
-                item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement);
+                item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement) { DownJumpEnabled = this.EnableMobDownJump };
                 item.Controller.InitRandom(this.random);
                 if (!hs.Add(item.Controller.ID)) item.Controller.PlayRegenSound = false; // 소리 테러 방지
             }
@@ -1663,7 +1684,7 @@ namespace WzComparerR2.MapRender
             if (mobNode != null && mob != null)
             {
                 // init controller
-                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion);
+                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion) { DownJumpEnabled = this.EnableMobDownJump };
                 mob.Controller.InitRandom(this.random);
 
                 LoadSceneItemResource?.Invoke(mob);

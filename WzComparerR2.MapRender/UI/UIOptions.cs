@@ -126,7 +126,7 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetColumn(footer, 0);
 
             this.Width = 400;
-            this.Height = 300;
+            this.Height = 450;
             this.SetResourceReference(BackgroundProperty, MapRenderResourceKey.TooltipBrush);
             base.InitializeComponents();
         }
@@ -174,8 +174,10 @@ namespace WzComparerR2.MapRender.UI
         private UIElement GetTabContent1()
         {
             Grid grid = new Grid();
-            for (int i = 0; i < 13; i++)
+            for (int i = 0; i < 14; i++)
+            {
                 grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(24, GridUnitType.Pixel) });
+            }
             for (int i = 0; i < 2; i++)
                 grid.ColumnDefinitions.Add(new ColumnDefinition());
 
@@ -329,6 +331,17 @@ namespace WzComparerR2.MapRender.UI
             Grid.SetColumn(chk7, 0);
             Grid.SetColumnSpan(chk7, 2);
             grid.Children.Add(chk7);
+
+            CheckBox chk8 = new CheckBox();
+            chk8.Content = "몬스터 하단 점프 활성화";
+            chk8.Margin = new Thickness(36, 0, 0, 0);
+            chk8.Background = Brushes.Gray;
+            chk8.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(UIOptionsDataModel.EnableMobDownJump)));
+            chk8.SetBinding(CheckBox.IsEnabledProperty, new Binding(nameof(UIOptionsDataModel.EnableMobMovement)));
+            Grid.SetRow(chk8, 13);
+            Grid.SetColumn(chk8, 0);
+            Grid.SetColumnSpan(chk8, 2);
+            grid.Children.Add(chk8);
 
             /*TextBlock lbl6 = new TextBlock();
             lbl6.VerticalAlignment = VerticalAlignment.Center;
@@ -683,6 +696,7 @@ namespace WzComparerR2.MapRender.UI
         private bool _forceCaptureWithResolution;
         private bool _showFootholdBoundary;
         private bool _enableMobMovement;
+        private bool _enableMobDownJump;
         private string _screenshotBackgroundColor;
         private string _scLeft;
         private string _scTop;
@@ -741,6 +755,12 @@ namespace WzComparerR2.MapRender.UI
         {
             get { return this._enableMobMovement; }
             set { base.SetProperty(ref this._enableMobMovement, value); }
+        }
+
+        public bool EnableMobDownJump
+        {
+            get { return this._enableMobDownJump; }
+            set { base.SetProperty(ref this._enableMobDownJump, value); }
         }
 
         public string ScreenshotBackgroundColor

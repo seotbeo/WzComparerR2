@@ -142,6 +142,7 @@ namespace WzComparerR2.MapRender
         bool ForceCaptureWithResolution;
         bool showFootholdBoundary;
         bool enableMobMovement;
+        bool enableMobDownJump;
         bool objRemoveMode;
         Task captureTask;
         Resolution resolution;
@@ -1708,9 +1709,11 @@ namespace WzComparerR2.MapRender
             this.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
             this.showFootholdBoundary = config.ShowFootholdBoundary;
             this.enableMobMovement = config.EnableMobMovement;
+            this.enableMobDownJump = config.EnableMobDownJump;
             if (this.mapData != null)
             {
                 this.mapData.EnableMobMovement = this.enableMobMovement;
+                this.mapData.EnableMobDownJump = this.enableMobDownJump;
             }
         }
 
@@ -1731,6 +1734,7 @@ namespace WzComparerR2.MapRender
             model.ForceCaptureWithResolution = config.ForceCaptureWithResolution;
             model.ShowFootholdBoundary = config.ShowFootholdBoundary;
             model.EnableMobMovement = config.EnableMobMovement;
+            model.EnableMobDownJump = config.EnableMobDownJump;
             LoadCaptureRectOptionData(model);
         }
 
@@ -1752,6 +1756,7 @@ namespace WzComparerR2.MapRender
             config.ForceCaptureWithResolution = model.ForceCaptureWithResolution;
             config.ShowFootholdBoundary = model.ShowFootholdBoundary;
             config.EnableMobMovement = model.EnableMobMovement;
+            config.EnableMobDownJump = model.EnableMobDownJump;
             WzComparerR2.Config.ConfigManager.Save();
 
             if (int.TryParse(model.ScLeft, out int left) && int.TryParse(model.ScTop, out int top)
