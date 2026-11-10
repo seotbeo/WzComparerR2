@@ -72,7 +72,14 @@ namespace WzComparerR2.MapRender.UI
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "레벨: " + info.level + (info.boss ? " (보스)" : null), ref current, Color.White, ref size.X));
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "HP/MP: " + info.maxHP + " / " + info.maxMP, ref current, Color.White, ref size.X));
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법공격력: " + info.PADamage + " / " + info.MADamage, ref current, Color.White, ref size.X));
-            blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법방어율: " + info.PDRate + "% / " + info.MDRate + "%", ref current, Color.White, ref size.X));
+            if (info.PDDamage > 0 || info.MDDamage > 0)
+            {
+                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법방어력: " + info.PDDamage + " / " + info.MDDamage, ref current, Color.White, ref size.X));
+            }
+            if (info.PDRate > 0 || info.MDRate > 0)
+            {
+                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "물리/마법방어율: " + info.PDRate + "% / " + info.MDRate + "%", ref current, Color.White, ref size.X));
+            }
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "회피/명중치: " + info.acc + " / " + info.eva, ref current, Color.White, ref size.X));
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "넉백: " + info.pushed, ref current, Color.White, ref size.X));
             blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "경험치: " + info.exp, ref current, Color.White, ref size.X));
