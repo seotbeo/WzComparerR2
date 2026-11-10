@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using WzComparerR2.Common;
+using WzComparerR2.MapRender.Patches2;
 using WzComparerR2.Rendering;
 
 namespace WzComparerR2.MapRender.UI
@@ -61,8 +62,9 @@ namespace WzComparerR2.MapRender.UI
             return blocks;
         }
 
-        public static TextBlock[] Prepare(LifeInfo info, MapRenderFonts fonts, out Vector2 size)
+        public static TextBlock[] Prepare(LifeItem life, MapRenderFonts fonts, out Vector2 size)
         {
+            LifeInfo info = life.LifeInfo;
             var blocks = new List<TextBlock>();
             var current = Vector2.Zero;
             size = Vector2.Zero;
@@ -78,9 +80,33 @@ namespace WzComparerR2.MapRender.UI
             StringBuilder sb;
             if ((sb = GetLifeElemAttrString(ref info.elemAttr)).Length > 0)
                 blocks.Add(PrepareTextLine(fonts.TooltipContentFont, "속성: " + sb.ToString(), ref current, Color.White, ref size.X));
+            if (life.MobTime > 5)
+            {
+                blocks.Add(PrepareTextLine(fonts.TooltipContentFont, GetMobTimeString(life.MobTime), ref current, Color.White, ref size.X));
+            }
             size.Y = current.Y;
 
             return blocks.ToArray();
+        }
+
+        private static string GetMobTimeString(int mobTime)
+        {
+            string FormatTime(long seconds)
+            {
+                var parts = new List<string>();
+
+                long hours = seconds / 3600;
+                long minutes = (seconds % 3600) / 60;
+                long secs = seconds % 60;
+
+                if (hours > 0) parts.Add($"{hours}시간");
+                if (minutes > 0) parts.Add($"{minutes}분");
+                if (secs > 0) parts.Add($"{secs}초");
+
+                return string.Join(" ", parts);
+            }
+
+            return $"리젠 시간: {FormatTime(mobTime)} ~ {FormatTime((long)mobTime * 2)}";
         }
 
         public static StringBuilder GetLifeElemAttrString(ref LifeInfo.ElemAttr elemAttr)

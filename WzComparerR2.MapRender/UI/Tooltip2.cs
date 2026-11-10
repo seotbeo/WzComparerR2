@@ -170,7 +170,7 @@ namespace WzComparerR2.MapRender.UI
                         current = new Vector2(0, current.Y + 16);
 
                         Vector2 size2;
-                        var blocks2 = TooltipHelper.Prepare(item.LifeInfo, env.Fonts, out size2);
+                        var blocks2 = TooltipHelper.Prepare(item, env.Fonts, out size2);
                         for (int i = 0; i < blocks2.Length; i++)
                         {
                             blocks2[i].Position.Y += current.Y;
@@ -184,6 +184,7 @@ namespace WzComparerR2.MapRender.UI
                         {
                             blocks.Add(PrepareTextLine(env.Fonts.TooltipContentFont, "동작: " + aniName, ref current, Color.White, ref size.X));
                         }
+
                         size.Y = current.Y;
                     }
                     break;
