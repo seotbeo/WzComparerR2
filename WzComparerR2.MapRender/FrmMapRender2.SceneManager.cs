@@ -184,6 +184,7 @@ namespace WzComparerR2.MapRender
             this.mapImgLoading = null;
             this.mapData = mapData;
             this.mapData.EnableMobMovement = this.enableMobMovement;
+            this.mapData.EnableMobDownJump = this.enableMobDownJump;
             this.bgm = newBgm;
             if (willSwitchBgm && this.bgm != null)
             {
