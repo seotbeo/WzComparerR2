@@ -148,7 +148,9 @@ namespace WzComparerR2.WzLib
             Span<byte> zlibHeader = stackalloc byte[2];
             stream.ReadExactly(zlibHeader);
 
-            if (MemoryMarshal.Read<ushort>(zlibHeader) == 0x9C78) //TODO: more generic zlib header validation
+            bool isZlib = (zlibHeader[0] & 0x0F) == 8 && (zlibHeader[0] >> 4) <= 7
+                && (zlibHeader[1] & 0x20) == 0 && ((zlibHeader[0] << 8) | zlibHeader[1]) % 31 == 0;
+            if (isZlib)
             {
                 Stream dataStream = new PartialStream(stream, stream.Position, endPosition - stream.Position, true);
                 zlib = new DeflateStream(dataStream, CompressionMode.Decompress);
