@@ -8,27 +8,43 @@ namespace WzComparerR2.Common
 {
     public static class Wz_NodeExtension2
     {
-        public static Wz_Node GetLinkedSourceNode(this Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
+        public static Wz_Node GetLinkedSourceNode(this Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null, bool recursive = true)
         {
-            string path;
+            var visited = recursive ? new HashSet<Wz_Node>() : null;
+            while (node != null)
+            {
+                if (recursive && !visited.Add(node))
+                {
+                    return null;
+                }
 
-            if (!string.IsNullOrEmpty(path = node.Nodes["source"].GetValueEx<string>(null)))
-            {
-                return findNode?.Invoke(path, wzf);
+                string path;
+                Wz_Node linkedNode;
+                if (!string.IsNullOrEmpty(path = node.Nodes["source"].GetValueEx<string>(null)))
+                {
+                    linkedNode = findNode?.Invoke(path, wzf);
+                }
+                else if (!string.IsNullOrEmpty(path = node.Nodes["_inlink"].GetValueEx<string>(null)))
+                {
+                    var img = node.GetNodeWzImage();
+                    linkedNode = img?.Node.FindNodeByPath(true, path.Split('/'));
+                }
+                else if (!string.IsNullOrEmpty(path = node.Nodes["_outlink"].GetValueEx<string>(null)))
+                {
+                    linkedNode = findNode?.Invoke(path, wzf);
+                }
+                else
+                {
+                    return node;
+                }
+
+                if (!recursive)
+                {
+                    return linkedNode;
+                }
+                node = linkedNode;
             }
-            else if (!string.IsNullOrEmpty(path = node.Nodes["_inlink"].GetValueEx<string>(null)))
-            {
-                var img = node.GetNodeWzImage();
-                return img?.Node.FindNodeByPath(true, path.Split('/'));
-            }
-            else if (!string.IsNullOrEmpty(path = node.Nodes["_outlink"].GetValueEx<string>(null)))
-            {
-                return findNode?.Invoke(path, wzf);
-            }
-            else
-            {
-                return node;
-            }
+            return null;
         }
 
         public static Wz_Node HandleFullUol(this Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
