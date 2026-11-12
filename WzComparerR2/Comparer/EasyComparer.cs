@@ -1990,7 +1990,7 @@ namespace WzComparerR2.Comparer
                 return null;
 
             Wz_Node linkNode;
-            if ((linkNode = value.GetLinkedSourceNode(PluginBase.PluginManager.FindWz, value.GetNodeWzFile())) != value)
+            if ((linkNode = value.GetLinkedSourceNode(PluginBase.PluginManager.FindWz, value.GetNodeWzFile(), recursive: false)) != value)
             {
                 return "(link) " + OutputNodeValue(fullPath, linkNode, col, outputDir);
             }
