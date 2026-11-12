@@ -166,7 +166,7 @@ namespace WzComparerR2.CharaSimControl
 
             if (MobInfo.PDRate >= 0)
                 propBlocks.Add(PrepareText(g, "물리방어율: " + MobInfo.PDRate + "%", GearGraphics.ItemDetailFont,
-                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDRage")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
+                (doHighlight && this.DiffMobTags[MobInfo.ID].Contains("PDRate")) ? GearGraphics.Equip22BrushRare : Brushes.White, 0, picY += 16));
 
             if (MobInfo.MDRate >= 0)
                 propBlocks.Add(PrepareText(g, "마법방어율: " + MobInfo.MDRate + "%", GearGraphics.ItemDetailFont,
