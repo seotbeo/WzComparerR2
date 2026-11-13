@@ -87,6 +87,9 @@
             this.btnLock = new DevComponents.DotNetBar.ButtonItem();
             this.btnSaveAsGif = new DevComponents.DotNetBar.ButtonItem();
             this.btnExport = new DevComponents.DotNetBar.ButtonItem();
+            this.btnExportHair = new DevComponents.DotNetBar.ButtonItem();
+            this.btnExportFace = new DevComponents.DotNetBar.ButtonItem();
+            this.btnExportMix = new DevComponents.DotNetBar.ButtonItem();
             this.btnZoom = new DevComponents.DotNetBar.ButtonItem();
             this.dockSite3 = new DevComponents.DotNetBar.DockSite();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -893,7 +896,10 @@
             this.btnZoom,
             this.btnLock,
             this.btnSaveAsGif,
-            this.btnExport});
+            this.btnExport,
+            this.btnExportHair,
+            this.btnExportFace,
+            this.btnExportMix});
             this.bar3.Location = new System.Drawing.Point(0, 0);
             this.bar3.Name = "bar3";
             this.bar3.Size = new System.Drawing.Size(168, 27);
@@ -971,6 +977,34 @@
             this.btnExport.Name = "btnExport";
             this.btnExport.Tooltip = "동작 내보내기";
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            //
+            // btnExportHair
+            //
+            this.btnExportHair.BeginGroup = true;
+            this.btnExportHair.Image = global::WzComparerR2.Avatar.Properties.Resources.ExportHair;
+            this.btnExportHair.ImageFixedSize = new System.Drawing.Size(20, 20);
+            this.btnExportHair.Name = "btnExportHair";
+            this.btnExportHair.Text = "헤어 내보내기";
+            this.btnExportHair.Tooltip = "헤어 내보내기";
+            this.btnExportHair.Click += new System.EventHandler(this.btnExportHair_Click);
+            //
+            // btnExportFace
+            //
+            this.btnExportFace.Image = global::WzComparerR2.Avatar.Properties.Resources.ExportFace;
+            this.btnExportFace.ImageFixedSize = new System.Drawing.Size(20, 20);
+            this.btnExportFace.Name = "btnExportFace";
+            this.btnExportFace.Text = "성형 내보내기";
+            this.btnExportFace.Tooltip = "성형 내보내기";
+            this.btnExportFace.Click += new System.EventHandler(this.btnExportFace_Click);
+            //
+            // btnExportMix
+            //
+            this.btnExportMix.AutoCheckOnClick = true;
+            this.btnExportMix.Image = global::WzComparerR2.Avatar.Properties.Resources.ExportMix;
+            this.btnExportMix.ImageFixedSize = new System.Drawing.Size(20, 20);
+            this.btnExportMix.Name = "btnExportMix";
+            this.btnExportMix.Text = "믹스 염색으로 내보내기";
+            this.btnExportMix.Tooltip = "믹스 염색으로 내보내기";
             // 
             // dockSite3
             // 
@@ -1080,6 +1114,9 @@
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbEar;
         private DevComponents.DotNetBar.LabelX labelX5;
         private DevComponents.DotNetBar.ButtonItem btnExport;
+        private DevComponents.DotNetBar.ButtonItem btnExportHair;
+        private DevComponents.DotNetBar.ButtonItem btnExportFace;
+        private DevComponents.DotNetBar.ButtonItem btnExportMix;
         private DevComponents.DotNetBar.ButtonItem btnZoom;
         private DevComponents.DotNetBar.LabelX labelX6;
         private DevComponents.DotNetBar.Controls.ComboBoxEx cmbGroupChair;
