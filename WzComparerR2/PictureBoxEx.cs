@@ -321,6 +321,86 @@ namespace WzComparerR2
             this.Invalidate();
         }
 
+        public bool ShowChatBalloonRingOverlay(MultiFrameAnimationData data)
+        {
+            string[] required = { "nw", "n", "ne", "w", "c", "e", "sw", "s", "se" };
+            if (required.Any(key => !data.Frames.TryGetValue(key, out var frames) || frames.Count == 0))
+            {
+                return false;
+            }
+
+            var placements = new (string Key, int X, int Y)[]
+            {
+                ("nw", 0, 0),
+                ("n", 0, 0), ("n", 28, 0),
+                (data.Frames.ContainsKey("head") ? "head" : "n", 14, 0),
+                ("ne", 42, 0),
+                ("w", 0, 0),
+                ("c", 0, 0), ("c", 14, 0), ("c", 28, 0),
+                ("e", 42, 0),
+                ("sw", 0, 14),
+                ("s", 0, 14), ("s", 28, 14),
+                (data.Frames.ContainsKey("arrow") ? "arrow" : "s", 14, 14),
+                ("se", 42, 14)
+            };
+            int count = data.Frames["nw"].Count;
+            if (placements.Any(part => data.Frames[part.Key].Count != count))
+            {
+                return false;
+            }
+
+            var result = new FrameAnimationData();
+            var options = new OverlayOptions { Color = Color.White, Alpha = 100 };
+            try
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    var merged = new Frame(null, Point.Zero, 0, data.Frames["nw"][i].Delay, true);
+                    try
+                    {
+                        foreach (var part in placements)
+                        {
+                            var source = data.Frames[part.Key][i];
+                            var shifted = new Frame(source.Texture, new Point(source.Origin.X - part.X, source.Origin.Y - part.Y), source.Z, source.Delay, source.Blend);
+                            var texture = FrameAnimationData.MergeFrameTextures(merged, shifted, this.GraphicsDevice, 100, options, out var origin);
+                            merged.Texture?.Dispose();
+                            merged.Texture = texture;
+                            merged.Origin = origin;
+                        }
+                        result.Frames.Add(merged);
+                    }
+                    catch
+                    {
+                        merged.Texture?.Dispose();
+                        throw;
+                    }
+                }
+            }
+            catch
+            {
+                this.DisposeAnimationItem(new FrameAnimator(result));
+                throw;
+            }
+
+            if (!this.ShowOverlayAni)
+            {
+                this.DisposeItemList();
+                this.ShowOverlayAni = true;
+            }
+            if (this.Items.Count > 0 && this.Items[this.Items.Count - 1] is FrameAnimator baseAnimator)
+            {
+                result = FrameAnimationData.MergeAnimationData(baseAnimator.Data, result, this.GraphicsDevice, 0, 0, 0, 0, result.Frames.Count - 1, options, null);
+                this.RemoveTopItem();
+            }
+            this.AddItem(new FrameAnimator(result));
+            if (this.AutoAdjustPosition)
+            {
+                this.AdjustPosition();
+            }
+            this.Invalidate();
+            return true;
+        }
+
         public void AddHitboxOverlay(FrameAnimationData autoData)
         {
             bool removeTopItem = true;
