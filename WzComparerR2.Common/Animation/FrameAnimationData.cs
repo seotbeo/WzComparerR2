@@ -513,7 +513,7 @@ namespace WzComparerR2.Animation
                 return null;
         }
 
-        private static Texture2D MergeFrameTextures(Frame frame1, Frame frame2, GraphicsDevice graphicsDevice, int alpha2, OverlayOptions options, out Point newOrigin)
+        public static Texture2D MergeFrameTextures(Frame frame1, Frame frame2, GraphicsDevice graphicsDevice, int alpha2, OverlayOptions options, out Point newOrigin)
         {
             Texture2D texture1 = frame1.Texture;
             Texture2D texture2 = frame2.Texture;

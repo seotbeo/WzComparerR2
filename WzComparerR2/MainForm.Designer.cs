@@ -184,6 +184,7 @@
             this.buttonDisableOverlayAni = new DevComponents.DotNetBar.ButtonItem();
             this.buttonHitboxOverlay = new DevComponents.DotNetBar.ButtonItem();
             this.buttonLoadMultiFrameAniList = new DevComponents.DotNetBar.ButtonItem();
+            this.buttonMergeChatBalloonRing = new DevComponents.DotNetBar.ButtonItem();
             this.buttonOverlayExtractGifEx = new DevComponents.DotNetBar.ButtonItem();
             this.textBoxX1 = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.expandableSplitter1 = new DevComponents.DotNetBar.ExpandableSplitter();
@@ -2348,6 +2349,7 @@
             this.itemContainer44.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.buttonDisableOverlayAni,
             this.buttonHitboxOverlay,
+            this.buttonMergeChatBalloonRing,
             this.buttonOverlayExtractGifEx});
             // 
             // 
@@ -2374,6 +2376,12 @@
             this.buttonOverlayExtractGifEx.Tooltip = "0부터 순서대로가 아닌, 모든 하위 노드에서 애니메이션을 불러와서 중첩합니다.";
             this.buttonOverlayExtractGifEx.Click += new System.EventHandler(this.buttonItemGif2_Click);
             // 
+            // buttonMergeChatBalloonRing
+            //
+            this.buttonMergeChatBalloonRing.Name = "buttonMergeChatBalloonRing";
+            this.buttonMergeChatBalloonRing.Text = "말풍선 반지 합치기";
+            this.buttonMergeChatBalloonRing.Click += new System.EventHandler(this.buttonMergeChatBalloonRing_Click);
+            //
             // buttonLoadMultiFrameAniList
             // 
             this.buttonLoadMultiFrameAniList.Name = "buttonLoadMultiFrameAniList";
@@ -3750,6 +3758,7 @@
         private DevComponents.DotNetBar.ButtonItem buttonDisableOverlayAni;
         private DevComponents.DotNetBar.ButtonItem buttonHitboxOverlay; 
         private DevComponents.DotNetBar.ButtonItem buttonLoadMultiFrameAniList;
+        private DevComponents.DotNetBar.ButtonItem buttonMergeChatBalloonRing;
         private DevComponents.DotNetBar.ButtonItem buttonOverlayExtractGifEx;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem tsmi2ExpandAll;
