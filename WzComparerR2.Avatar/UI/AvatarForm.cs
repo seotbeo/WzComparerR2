@@ -3426,6 +3426,231 @@ namespace WzComparerR2.Avatar.UI
             }
         }
 
+        private void btnExportHair_Click(object sender, EventArgs e)
+        {
+            ExportAvatarColors(true);
+        }
+
+        private void btnExportFace_Click(object sender, EventArgs e)
+        {
+            ExportAvatarColors(false);
+        }
+
+        private void ExportAvatarColors(bool hair)
+        {
+            var originalPart = hair ? this.avatar.Hair : this.avatar.Face;
+            if (this.avatar.Body == null || this.avatar.Head == null || originalPart?.ID == null)
+            {
+                MessageBoxEx.Show(hair ? "캐릭터 또는 헤어가 없습니다." : "캐릭터 또는 성형이 없습니다.");
+                return;
+            }
+
+            bool mix = this.btnExportMix.Checked;
+            using var dialog = new SaveFileDialog
+            {
+                Title = hair ? "헤어 내보내기" : "성형 내보내기",
+                Filter = "PNG (*.png)|*.png",
+                FileName = $"{(hair ? "헤어" : "성형")}_{originalPart.ID.Value}{(mix ? "_mix" : "")}.png"
+            };
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.GetSelectedBodyFrame(out int bodyFrame, out _);
+            this.GetSelectedEmotionFrame(out int emotionFrame, out _);
+            this.GetSelectedTamingFrame(out int tamingFrame, out _);
+            this.GetSelectedEffectFrames(out int[] effectFrames, out _);
+            int partIndex = Array.IndexOf(this.avatar.Parts, originalPart);
+            int multiplier = hair ? 1 : 100;
+            int baseID = originalPart.ID.Value - originalPart.ID.Value / multiplier % 10 * multiplier;
+            var originalCache = this.avatar.SkinCache;
+            var frames = new List<BitmapOrigin>();
+            var colors = new List<int>();
+            this.avatar.SkinCache = new Dictionary<string, BitmapOrigin>();
+            try
+            {
+                if (mix)
+                {
+                    ExportAvatarMixColors(hair, originalPart, partIndex, baseID, multiplier, bodyFrame, emotionFrame, tamingFrame, effectFrames, dialog.FileName);
+                    return;
+                }
+                for (int color = 0; color < (hair ? 8 : 9); color++)
+                {
+                    int id = baseID + color * multiplier;
+                    var node = PluginManager.FindWz($@"Character\{(hair ? "Hair" : "Face")}\{id:D8}.img");
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
+                    this.avatar.Parts[partIndex] = new AvatarPart(node)
+                    {
+                        Visible = originalPart.Visible,
+                        EffectVisible = originalPart.EffectVisible,
+                        PrismData = originalPart.PrismData
+                    };
+                    this.avatar.ClearSkinCache();
+                    var frame = this.avatar.DrawFrame(this.avatar.CreateFrame(bodyFrame, emotionFrame, tamingFrame, effectFrames));
+                    if (frame.Bitmap == null)
+                    {
+                        continue;
+                    }
+                    frames.Add(frame);
+                    colors.Add(color);
+                }
+
+                if (frames.Count == 0)
+                {
+                    MessageBoxEx.Show("내보낼 수 있는 색상이 없습니다.");
+                    return;
+                }
+
+                const int cellSize = 120;
+                using var image = new Bitmap(frames.Count * cellSize, cellSize + cellSize / 2, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                using (var graphics = Graphics.FromImage(image))
+                {
+                    DrawAvatarExportBackground(graphics, image.Size);
+                    for (int i = 0; i < frames.Count; i++)
+                    {
+                        var cell = new Rectangle(i * cellSize, 0, cellSize, cellSize);
+                        var frame = frames[i];
+                        var state = graphics.Save();
+                        try
+                        {
+                            graphics.SetClip(cell);
+                            graphics.DrawImageUnscaled(frame.Bitmap, cell.X + cellSize / 2 - frame.Origin.X, cell.Bottom - cellSize / 5 - frame.Origin.Y);
+                        }
+                        finally
+                        {
+                            graphics.Restore(state);
+                        }
+                        cell = new Rectangle(i * cellSize, cellSize, cellSize, cellSize / 2);
+                        var icon = (Bitmap)Properties.Resources.ResourceManager.GetObject($"UtilDlgEx_Mix{(hair ? "Hair" : "Lens")}_KR_BtColor_button_BtColor{colors[i]}_normal_0");
+                        if (icon != null)
+                        {
+                            graphics.DrawImageUnscaled(icon, cell.X + (cell.Width - icon.Width) / 2, cell.Top + (cell.Height - icon.Height) / 2);
+                        }
+                    }
+                }
+                image.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show("색상 내보내기에 실패했습니다.\r\n" + ex.Message);
+            }
+            finally
+            {
+                this.avatar.Parts[partIndex] = originalPart;
+                this.avatar.ClearSkinCache();
+                this.avatar.SkinCache = originalCache;
+                foreach (var frame in frames)
+                {
+                    frame.Bitmap.Dispose();
+                }
+            }
+        }
+
+        private void ExportAvatarMixColors(bool hair, AvatarPart originalPart, int partIndex, int baseID, int multiplier, int bodyFrame, int emotionFrame, int tamingFrame, int[] effectFrames, string fileName)
+        {
+            const int cellSize = 120;
+            var colors = new List<int>();
+            var nodes = new Wz_Node[9];
+            for (int color = 0; color < (hair ? 8 : 9); color++)
+            {
+                nodes[color] = PluginManager.FindWz($@"Character\{(hair ? "Hair" : "Face")}\{baseID + color * multiplier:D8}.img");
+                if (nodes[color] != null)
+                {
+                    colors.Add(color);
+                }
+            }
+            if (colors.Count == 0)
+            {
+                MessageBoxEx.Show("내보낼 수 있는 색상이 없습니다.");
+                return;
+            }
+
+            int size = (colors.Count + 1) * cellSize;
+            using var image = new Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using (var graphics = Graphics.FromImage(image))
+            {
+                DrawAvatarExportBackground(graphics, image.Size);
+                for (int i = 0; i < colors.Count; i++)
+                {
+                    var icon = (Bitmap)Properties.Resources.ResourceManager.GetObject($"UtilDlgEx_Mix{(hair ? "Hair" : "Lens")}_KR_BtColor_button_BtColor{colors[i]}_normal_0");
+                    if (icon != null)
+                    {
+                        int center = (i + 1) * cellSize + cellSize / 2;
+                        graphics.DrawImageUnscaled(icon, center - icon.Width / 2, cellSize / 2 - icon.Height / 2);
+                        graphics.DrawImageUnscaled(icon, cellSize / 2 - icon.Width / 2, center - icon.Height / 2);
+                    }
+                }
+
+                for (int row = 0; row < colors.Count; row++)
+                {
+                    for (int column = row; column < colors.Count; column++)
+                    {
+                        this.avatar.Parts[partIndex] = new AvatarPart(nodes[colors[row]])
+                        {
+                            Visible = originalPart.Visible,
+                            EffectVisible = originalPart.EffectVisible,
+                            PrismData = originalPart.PrismData,
+                            MixNodes = nodes,
+                            MixColor = colors[column],
+                            MixOpacity = row == column ? 0 : 50
+                        };
+                        this.avatar.ClearSkinCache();
+                        var frame = this.avatar.DrawFrame(this.avatar.CreateFrame(bodyFrame, emotionFrame, tamingFrame, effectFrames));
+                        if (frame.Bitmap == null)
+                        {
+                            continue;
+                        }
+                        using (frame.Bitmap)
+                        {
+                            var cell = new Rectangle((column + 1) * cellSize, (row + 1) * cellSize, cellSize, cellSize);
+                            var state = graphics.Save();
+                            try
+                            {
+                                graphics.SetClip(cell);
+                                graphics.DrawImageUnscaled(frame.Bitmap, cell.X + cellSize / 2 - frame.Origin.X, cell.Bottom - (cellSize / 5) - frame.Origin.Y);
+                            }
+                            finally
+                            {
+                                graphics.Restore(state);
+                            }
+                        }
+                    }
+                }
+            }
+            image.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        private static void DrawAvatarExportBackground(Graphics graphics, Size size)
+        {
+            var config = ImageHandlerConfig.Default;
+            graphics.Clear(Color.Transparent);
+            if (config.BackgroundType.Value == ImageBackgroundType.Color)
+            {
+                graphics.Clear(config.BackgroundColor.Value);
+            }
+            else if (config.BackgroundType.Value == ImageBackgroundType.Mosaic)
+            {
+                int blockSize = Math.Max(1, config.MosaicInfo.BlockSize);
+                using var texture = new Bitmap(blockSize * 2, blockSize * 2);
+                using (var background = Graphics.FromImage(texture))
+                using (var brush0 = new SolidBrush(config.MosaicInfo.Color0))
+                using (var brush1 = new SolidBrush(config.MosaicInfo.Color1))
+                {
+                    background.FillRectangle(brush0, 0, 0, blockSize, blockSize);
+                    background.FillRectangle(brush0, blockSize, blockSize, blockSize, blockSize);
+                    background.FillRectangle(brush1, 0, blockSize, blockSize, blockSize);
+                    background.FillRectangle(brush1, blockSize, 0, blockSize, blockSize);
+                }
+                using var brush = new TextureBrush(texture);
+                graphics.FillRectangle(brush, 0, 0, size.Width, size.Height);
+            }
+        }
+
         private void btnExport_Click(object sender, EventArgs e)
         {
             ExportAvatar2(sender, e);

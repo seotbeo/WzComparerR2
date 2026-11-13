@@ -93,6 +93,33 @@ namespace WzComparerR2.Avatar.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        public static System.Drawing.Bitmap ExportFace
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ExportFace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        public static System.Drawing.Bitmap ExportMix
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ExportMix", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        public static System.Drawing.Bitmap ExportHair
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ExportHair", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         public static System.Drawing.Bitmap export {
             get {
                 object obj = ResourceManager.GetObject("export", resourceCulture);
