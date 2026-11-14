@@ -72,6 +72,7 @@ namespace WzComparerR2.CharaSimControl
         private Wz_Node MedalResNode { get; set; }
         private Wz_Node ChatBalloonResNode { get; set; }
         private Wz_Node NameTagResNode { get; set; }
+        private bool SpecialNameTag { get; set; }
         private Bitmap AvatarSample { get; set; }
         public Wz_File sourceWzFile { get; set; }
 
@@ -1178,6 +1179,16 @@ namespace WzComparerR2.CharaSimControl
                 hasDescPart = true;
 
                 GearGraphics.DrawString(g, "#c일부 상황에서는 보이지 않는 아이템입니다.#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
+            }
+            // 안드로이드 장착 불가 설명
+            if (this.SpecialNameTag)
+            {
+                AddLines(0, 7, ref picH, condition: secondLineNeeded);
+                secondLineNeeded = false;
+                hasThirdContents = true;
+                hasDescPart = true;
+
+                GearGraphics.DrawString(g, "#c안드로이드는 장착 불가능한 아이템입니다.#", GearGraphics.EquipMDMoris9Font, equip22ColorTable, 15, 305, ref picH, 16, strictlyAlignLeft: 1);
             }
             // 캐시 성향
             if (Gear.State == GearState.itemList)
@@ -2316,6 +2327,7 @@ namespace WzComparerR2.CharaSimControl
             this.MedalResNode = _medalResNode;
             this.ChatBalloonResNode = _chatBalloonResNode;
             this.NameTagResNode = _nameTagResNode;
+            this.SpecialNameTag = (this.NameTagResNode?.FindNodeByPath("SpecialNameTag").GetValueEx(0) ?? 0) == 1;
         }
 
         public bool HasSamples()

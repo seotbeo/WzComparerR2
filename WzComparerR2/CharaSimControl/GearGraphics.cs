@@ -651,6 +651,12 @@ namespace WzComparerR2.CharaSimControl
             if (g == null || resNode == null)
                 return;
 
+            if (resNode.FindNodeByPath("SpecialNameTag").GetValueEx(0) == 1)
+            {
+                DrawSpecialNameTag(g, resNode, tagName, picW, out rectResult, ref picH);
+                return;
+            }
+
             //加载资源和文本颜色
             var wce = new[] { "w", "c", "e" }.Select(n =>
             {
@@ -673,7 +679,9 @@ namespace WzComparerR2.CharaSimControl
             else
             {
                 // 명찰 애니메이션 체크
-                foreach (var path in new[] { "2", "1", "0" })
+                int measuredWidth = string.IsNullOrEmpty(tagName) ? 0 : TextRenderer.MeasureText(g, tagName, ItemDetailFont2, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
+                string sizeIndex = GetNameTagSizeIndex(resNode, measuredWidth);
+                foreach (var path in sizeIndex == null ? new[] { "2", "1", "0" } : new[] { sizeIndex })
                 {
                     ani0Node = resNode.FindNodeByPath(false, path, "0");
                     if (ani0Node != null)
@@ -789,6 +797,115 @@ namespace WzComparerR2.CharaSimControl
 
             rectResult.Height = height - offsetY;
             rectResult.Y = picH - rectResult.Height;
+        }
+
+        private static string GetNameTagSizeIndex(Wz_Node resNode, int nameWidth)
+        {
+            Wz_Node[] sizes = resNode.FindNodeByPath("NameTagSize")?.Nodes
+                .Where(node => int.TryParse(node.Text, out _))
+                .OrderBy(node => int.Parse(node.Text, CultureInfo.InvariantCulture)).ToArray();
+            if (sizes == null || sizes.Length == 0)
+            {
+                return null;
+            }
+            for (int i = 1; i < sizes.Length; i++)
+            {
+                if (nameWidth < sizes[i].GetValueEx(0))
+                {
+                    return sizes[i - 1].Text;
+                }
+            }
+            return sizes[sizes.Length - 1].Text;
+        }
+
+        public static void DrawSpecialNameTag(Graphics g, Wz_Node resNode, string tagName, int picW, out Rectangle rectResult, ref int picH)
+        {
+            rectResult = Rectangle.Empty;
+            if (g == null || resNode == null)
+            {
+                return;
+            }
+
+            const string LevelString = "200";
+            Wz_File sourceWzFile = resNode.GetNodeWzFile();
+            using var nameFont = new Font(ItemDetailFont2.FontFamily, Math.Max(1, resNode.FindNodeByPath("nameFontSize").GetValueEx(12)), ItemDetailFont2.Style, GraphicsUnit.Pixel);
+            using var levelFont = new Font(ItemDetailFont2.FontFamily, Math.Max(1, resNode.FindNodeByPath("levelFontSize").GetValueEx(12)), ItemDetailFont2.Style, GraphicsUnit.Pixel);
+            const TextFormatFlags flags = TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine;
+            Size Measure(string text, Font font)
+            {
+                return string.IsNullOrEmpty(text) ? Size.Empty : TextRenderer.MeasureText(g, text, font, new Size(int.MaxValue, int.MaxValue), flags);
+            }
+
+            Size nameSize = Measure(tagName, nameFont);
+            Size levelSize = Measure(LevelString, levelFont);
+            string sizeIndex = GetNameTagSizeIndex(resNode, nameSize.Width) ?? "0";
+            var sizeNode = resNode.FindNodeByPath(sizeIndex);
+            if (sizeNode == null)
+            {
+                return;
+            }
+
+            Point GetVectorPosition(string path)
+            {
+                var vector = sizeNode.FindNodeByPath("vector:" + path)?.GetValue<Wz_Vector>();
+                return vector == null ? Point.Empty : new Point(vector.X, vector.Y);
+            }
+
+            var images = new[]
+            {
+                BitmapOrigin.CreateFromNode(sizeNode.FindNodeByPath("backgrnd"), PluginBase.PluginManager.FindWz, sourceWzFile),
+                BitmapOrigin.CreateFromNode(sizeNode.FindNodeByPath("levelBar"), PluginBase.PluginManager.FindWz, sourceWzFile),
+                BitmapOrigin.CreateFromNode(resNode.FindNodeByPath(false, "jobLabel", "1"), PluginBase.PluginManager.FindWz, sourceWzFile)
+            };
+            var positions = new[] { Point.Empty, GetVectorPosition("levelBar"), GetVectorPosition("jobIcon") };
+            Point namePosition = GetVectorPosition("Name");
+            Point levelPosition = GetVectorPosition("Level");
+            Rectangle bounds = Rectangle.Empty;
+            bool hasBounds = false;
+            void Include(Rectangle rectangle)
+            {
+                if (rectangle.Width > 0 && rectangle.Height > 0)
+                {
+                    bounds = hasBounds ? Rectangle.Union(bounds, rectangle) : rectangle;
+                    hasBounds = true;
+                }
+            }
+
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i].Bitmap != null)
+                {
+                    Rectangle rectangle = images[i].Rectangle;
+                    rectangle.Offset(positions[i]);
+                    Include(rectangle);
+                }
+            }
+            Include(new Rectangle(namePosition, nameSize));
+            Include(new Rectangle(levelPosition, levelSize));
+            if (!hasBounds)
+            {
+                return;
+            }
+
+            int x = picW / 2;
+            int y = picH - bounds.Top;
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i].Bitmap != null)
+                {
+                    g.DrawImage(images[i].Bitmap, x + positions[i].X - images[i].Origin.X, y + positions[i].Y - images[i].Origin.Y);
+                }
+            }
+            Color nameColor = Color.FromArgb(unchecked((int)resNode.FindNodeByPath("nameClr").GetValueEx(uint.MaxValue)));
+            Color levelColor = Color.FromArgb(unchecked((int)resNode.FindNodeByPath("levelClr").GetValueEx(uint.MaxValue)));
+            if (!string.IsNullOrEmpty(tagName))
+            {
+                TextRenderer.DrawText(g, tagName, nameFont, new Point(x + namePosition.X, y + namePosition.Y), nameColor, flags);
+            }
+            TextRenderer.DrawText(g, LevelString, levelFont, new Point(x + levelPosition.X, y + levelPosition.Y), levelColor, flags);
+            bounds.Offset(x, y);
+            rectResult = bounds;
+            picH = bounds.Bottom;
         }
 
         public static void DrawChatBalloon(Graphics g, Wz_Node resNode, string tagName, int picW, ref int picH)
