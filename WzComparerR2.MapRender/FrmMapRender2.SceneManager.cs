@@ -151,6 +151,7 @@ namespace WzComparerR2.MapRender
 
             //加载地图数据
             var mapData = new MapData(this.Services.GetService<IRandom>());
+            mapData.ParticleLoadLogger = this.ui.ChatBox.AppendTextWarning;
             mapData.Load(this.mapImgLoading.Node, resLoader);
             mapData.SoundEffPlayer = PlaySoundEff;
             mapData.LoadSceneItemResource = LoadSceneItemResource;
@@ -165,17 +166,25 @@ namespace WzComparerR2.MapRender
             }
 
             //加载资源
-            mapData.PreloadResource(resLoader);
-
-            //准备UI和初始化
-            this.AfterLoadMap(mapData);
-
-            if (bgmTask != null)
+            try
             {
-                await bgmTask;
+                mapData.PreloadResource(resLoader);
+
+                //准备UI和初始化
+                this.AfterLoadMap(mapData);
+                if (bgmTask != null)
+                {
+                    await bgmTask;
+                }
+            }
+            catch
+            {
+                mapData.DisposeParticleResources();
+                throw;
             }
 
             //回收资源
+            this.mapData?.DisposeParticleResources();
             this.resLoader.EndCounting();
             this.resLoader.Recycle();
 

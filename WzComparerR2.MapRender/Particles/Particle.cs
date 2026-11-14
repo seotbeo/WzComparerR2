@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace WzComparerR2.MapRender
+namespace WzComparerR2.MapRender.Particles
 {
     public class Particle
     {

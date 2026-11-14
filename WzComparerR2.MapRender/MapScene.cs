@@ -14,6 +14,7 @@ namespace WzComparerR2.MapRender
                 Back = new ContainerNode(),
                 Layers = new SceneNode(),
                 Fly = new FlyLayerNode(),
+                TopObj = new ContainerNode(),
                 Front = new ContainerNode(),
                 Effect = new ContainerNode()
             });
@@ -27,6 +28,7 @@ namespace WzComparerR2.MapRender
         public ContainerNode Back { get; private set; }
         public SceneNode Layers { get; private set; }
         public FlyLayerNode Fly { get; private set; }
+        public ContainerNode TopObj { get; private set; }
         public ContainerNode Front { get; private set; }
         public ContainerNode Effect { get; private set; }
 

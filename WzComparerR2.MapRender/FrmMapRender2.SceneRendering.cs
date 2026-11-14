@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using WzComparerR2.WzLib;
+using WzComparerR2.MapRender.Particles;
 using WzComparerR2.Common;
 using WzComparerR2.Rendering;
 using WzComparerR2.MapRender.UI;
@@ -1266,7 +1267,21 @@ namespace WzComparerR2.MapRender
                         }
                     }
                 }
-                kvList.Sort((kv1, kv2) => kv1.Value.CompareTo(kv2.Value));
+                kvList.Sort((kv1, kv2) =>
+                {
+                    if (kv1.Value.Z0 == kv2.Value.Z0)
+                    {
+                        if (kv1.Key is ObjItem && kv2.Key is ParticleItem)
+                        {
+                            return -1;
+                        }
+                        if (kv1.Key is ParticleItem && kv2.Key is ObjItem)
+                        {
+                            return 1;
+                        }
+                    }
+                    return kv1.Value.CompareTo(kv2.Value);
+                });
                 foreach (var kv in kvList)
                 {
                     yield return kv;
@@ -1478,8 +1493,8 @@ namespace WzComparerR2.MapRender
             var mesh = batcher.MeshPop();
             mesh.RenderObject = renderObj;
             mesh.Position = position;
-            mesh.Z0 = 0;
-            mesh.Z1 = back.Index;
+            mesh.Z0 = back.Index;
+            mesh.Z1 = -1;
             mesh.Alpha = back.Alpha;
             mesh.FlipX = back.Flip;
             mesh.TileRegion = tileRect;
@@ -1619,7 +1634,8 @@ namespace WzComparerR2.MapRender
         private MeshItem GetMeshParticle(ParticleItem particle)
         {
             var pSystem = particle.View?.ParticleSystem;
-            if (pSystem == null)
+            var placement = particle.SubItems[0];
+            if (pSystem == null || placement.StartHidden || placement.Quest.Exists(quest => !patchVisibility.IsQuestVisible(quest.ID, quest.State)))
             {
                 return null;
             }
@@ -1627,11 +1643,17 @@ namespace WzComparerR2.MapRender
             Vector2 position;
             position.X = renderEnv.Camera.Center.X * (100 + particle.Rx) / 100;
             position.Y = renderEnv.Camera.Center.Y * (100 + particle.Ry) / 100;
+            if (pSystem.ModularEffect != null)
+            {
+                position += new Vector2(placement.X, placement.Y);
+            }
 
             var mesh = batcher.MeshPop();
             mesh.RenderObject = pSystem;
             mesh.Position = position;
-            mesh.Z0 = particle.Z;
+            particle.GetRenderZ(out int z, out int order);
+            mesh.Z0 = z;
+            mesh.Z1 = order;
             return mesh;
         }
 

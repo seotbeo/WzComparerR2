@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using WzComparerR2.WzLib;
 using WzComparerR2.Animation;
 
-namespace WzComparerR2.MapRender
+namespace WzComparerR2.MapRender.Particles
 {
     public class ParticleDesc
     {
