@@ -98,33 +98,14 @@ namespace WzComparerR2.WzLib
                 // 1. pre-read and detect version/read rule
                 WzPreReadResult preReadResult = null;
                 IWzFormatProfile matchedProfile = null;
-                Pkg2EntryNamePosition entryNamePosition = Pkg2EntryNamePosition.AfterData;
-                bool use8ByteKey = false;
-                if (!file.UnknownPkg2)
+                foreach (var preReader in WzPreReaders.All)
                 {
-                    foreach (var preReader in WzPreReaders.All)
+                    if (preReader.TryPreRead(file, out var result))
                     {
-                        if (preReader.TryPreRead(file, out var result))
-                        {
-                            matchedProfile = this.TryDetectWzProfile(file, result);
-                            if (matchedProfile != null)
-                            {
-                                preReadResult = result;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (matchedProfile == null)
-                {
-                    file.UnknownPkg2 = true;
-                    foreach (var preReader in WzPreReaders.All_UNK)
-                    {
-                        if (preReader.TryPreRead(file, out var result))
+                        matchedProfile = this.TryDetectWzProfile(file, result);
+                        if (matchedProfile != null)
                         {
                             preReadResult = result;
-                            entryNamePosition = result.EntryNamePosition;
-                            use8ByteKey = result.use8ByteKey;
                             break;
                         }
                     }
@@ -145,28 +126,6 @@ namespace WzComparerR2.WzLib
                     }
 
                     matchedProfile.AssignDirStringReader(file, this.encryption);
-                }
-
-                // temp workaround for unknown pkg2 encryption
-                // brute-force search for all possible image offsets
-                if (file.Header.IsPkg2 && matchedProfile == null && file.CandidateImageInfos.Count == 0)
-                {
-                    if (preReadResult != null && file.Header is Wz_Header.WzPkg2Header64 pkg2Header)
-                    {
-                        var profile = WzFormatProfiles.GetPkg2UnknownProfile64(entryNamePosition);
-                        file.ReadContext = profile.CreateReadContext(file.Header as Wz_Header.WzPkg2Header64, 0, null, null);
-                        profile.AssignDirStringReader(file, this.encryption);
-                        file.ReadContext.DirStringReader.Use8ByteKey = use8ByteKey;
-                        if (preReadResult.Pkg2DirEntryCounts.Count > 0)
-                        {
-                            file.ForcedCounts = new Queue<int>(preReadResult.Pkg2DirEntryCounts.Select(ec => ec.ActualEntryCount)); 
-                            var imgSearchCount = preReadResult.Pkg2DirEntryCounts.Sum(ec => ec.ActualImgCount);
-                            if (imgSearchCount >= 1)
-                            {
-                                file.FindAllHits(imgSearchCount);
-                            }
-                        }
-                    }
                 }
 
                 // 3. full dir tree read
@@ -281,13 +240,6 @@ namespace WzComparerR2.WzLib
                     return false;
                 }
                 foreach (var preReader in WzPreReaders.All)
-                {
-                    if (preReader.TryPreRead(file, out var result))
-                    {
-                        return !result.Nodes.Any(n => n.NodeType == 0x02 || n.NodeType == 0x04);
-                    }
-                }
-                foreach (var preReader in WzPreReaders.All_UNK)
                 {
                     if (preReader.TryPreRead(file, out var result))
                     {

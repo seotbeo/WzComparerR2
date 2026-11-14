@@ -8,8 +8,6 @@ namespace WzComparerR2.WzLib.Compatibility
     public interface IPkg2DirStringReader
     {
         string ReadName(WzBinaryReader reader, bool isFirstEntry);
-        string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath);
-        bool Use8ByteKey { get; set; }
     }
 
     public enum Pkg2EntryNameVersion
@@ -21,6 +19,7 @@ namespace WzComparerR2.WzLib.Compatibility
         KMST1204,
         KMST1205,
         KMST1206,
+        KMST1208,
     }
 
     /// <summary>
@@ -39,13 +38,6 @@ namespace WzComparerR2.WzLib.Compatibility
         {
             return reader.ReadString(keys);
         }
-
-        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
-        {
-            return reader.ReadString(keys);
-        }
-
-        public bool Use8ByteKey { get; set; } = false;
     }
 
     /// <summary>
@@ -66,13 +58,6 @@ namespace WzComparerR2.WzLib.Compatibility
         {
             return isFirstEntry ? reader.ReadPkg2DirString(pkg2Keys) : reader.ReadString(pkg1Keys);
         }
-
-        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
-        {
-            return isFirstEntry ? reader.ForceReadPkg2DirString(nodeType, fullpath) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
-        }
-
-        public bool Use8ByteKey { get; set; } = false;
     }
 
     /// <summary>
@@ -95,7 +80,7 @@ namespace WzComparerR2.WzLib.Compatibility
         {
             if (this.allNamesUseV2 || isFirstEntry)
             {
-                 // The reader's base stream must start from dirStartOffset.
+                // The reader's base stream must start from dirStartOffset.
                 if (this.firstNameKey is IWzStatefulDecrypter statefulDecrypter)
                     statefulDecrypter.ApplyState((ulong)reader.BaseStream.Position);
 
@@ -104,12 +89,5 @@ namespace WzComparerR2.WzLib.Compatibility
 
             return reader.ReadString(pkg1Keys);
         }
-
-        public string ForceReadName(WzBinaryReader reader, bool isFirstEntry, byte nodeType, string fullpath)
-        {
-            return (this.allNamesUseV2 || isFirstEntry) ? reader.ForceReadPkg2DirString(nodeType, fullpath, true, Use8ByteKey) : reader.ReadStringWDirNameContainer(nodeType, fullpath, pkg1Keys);
-        }
-
-        public bool Use8ByteKey { get; set; } = false;
     }
 }
