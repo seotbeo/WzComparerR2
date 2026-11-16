@@ -13,7 +13,6 @@ using WzComparerR2.CharaSimControl;
 using WzComparerR2.CharaSim;
 using System.Text.RegularExpressions;
 using WzComparerR2.Config;
-using DevComponents.DotNetBar;
 
 namespace WzComparerR2.Comparer
 {
@@ -1352,11 +1351,34 @@ namespace WzComparerR2.Comparer
             g.Dispose();
         }
 
+        private static readonly object compareErrorLogLock = new object();
+
+        private static void LogCompareError(string message, Exception error = null)
+        {
+            try
+            {
+                string logPath = Path.Combine(AppContext.BaseDirectory, "compare_error.log");
+                string entry = $"[{DateTimeOffset.Now:O}] {message}{Environment.NewLine}";
+                if (error != null)
+                {
+                    entry += error + Environment.NewLine;
+                }
+                lock (compareErrorLogLock)
+                {
+                    File.AppendAllText(logPath, entry + Environment.NewLine, Encoding.UTF8);
+                }
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
+            {
+                System.Diagnostics.Trace.TraceError("Failed to write compare_error.log: {0}", ex);
+            }
+        }
+
         private void HandleSaveTooltipException(string type)
         {
             if (ExceptionTooltipIDs.Count > 0)
             {
-                MessageBoxEx.Show($"{type} 툴팁 생성에 실패한 항목이 {ExceptionTooltipIDs.Count}개 있습니다.\r\n확인 버튼을 누르면 비교가 계속됩니다.\r\n\r\n실패 목록: {string.Join(", ", ExceptionTooltipIDs)}", "오류");
+                LogCompareError($"{type} 툴팁 생성 실패: {ExceptionTooltipIDs.Count}개. 실패 목록: {string.Join(", ", ExceptionTooltipIDs)}");
                 ExceptionTooltipIDs.Clear();
             }
         }
@@ -2032,13 +2054,13 @@ namespace WzComparerR2.Comparer
                         if (isCanvas)
                         {
                             outputDir = Path.Combine(outputDir, canvas);
-                            if (!Directory.Exists(outputDir))
-                            {
-                                Directory.CreateDirectory(outputDir);
-                            }
                         }
                         try
                         {
+                            if (isCanvas && !Directory.Exists(outputDir))
+                            {
+                                Directory.CreateDirectory(outputDir);
+                            }
                             using (Bitmap bmp = png.ExtractPng())
                             {
                                 try
@@ -2052,9 +2074,9 @@ namespace WzComparerR2.Comparer
                                 }
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            MessageBoxEx.Show($"이미지 파일 저장에 실패했습니다.\r\n확인 버튼을 누르면 비교가 계속됩니다.\r\n\r\n실패 대상: {fileName}", "오류");
+                            LogCompareError($"이미지 파일 출력 실패: {fileName}", ex);
                         }
                         return string.Format("<img src=\"{0}/{1}\" />", isCanvas ? Path.Combine(outputDirName, canvas) : outputDirName, WebUtility.UrlEncode(fileName));
                     }
