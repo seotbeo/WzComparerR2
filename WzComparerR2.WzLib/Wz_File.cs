@@ -24,11 +24,31 @@ namespace WzComparerR2.WzLib
     public class Wz_File : IMapleStoryFile, IDisposable
     {
         public Wz_File(string fileName, Wz_Structure wz, string fallbackFileName = null)
+            : this(fileName, wz, false)
+        {
+        }
+
+        internal Wz_File(string fileName, Wz_Structure wz, bool scanOnly)
         {
             this.imageCount = 0;
             this.wzStructure = wz;
             this.fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            this.loaded = this.GetHeader(fileName);
+            try
+            {
+                if (scanOnly)
+                {
+                    this.header = new Wz_Header(null, null, fileName, 0, this.fileStream.Length, this.fileStream.Length, 0);
+                }
+                else
+                {
+                    this.loaded = this.GetHeader(fileName);
+                }
+            }
+            catch
+            {
+                this.fileStream.Dispose();
+                throw;
+            }
         }
 
         private FileStream fileStream;
@@ -777,6 +797,44 @@ namespace WzComparerR2.WzLib
             this.mergedWzFiles.Add(wz_File);
 
             wz_File.ownerWzFile = this;
+        }
+
+        private long unknownImageIndex;
+
+        public bool IsImageScanFallback { get; private set; }
+
+        internal void LoadScannedImages(Wz_Node parent, List<Tuple<long, long>> images, Wz_File imageNameOwner = null)
+        {
+            foreach (var candidate in images)
+            {
+                if (candidate.Item2 > int.MaxValue)
+                {
+                    throw new NotSupportedException("A scanned IMG candidate exceeds the supported 2 GB size.");
+                }
+            }
+            parent.Value = this;
+            this.Node = parent;
+            this.IsImageScanFallback = true;
+            this.loaded = true;
+            imageNameOwner = imageNameOwner ?? this;
+            foreach (var candidate in images)
+            {
+                string name;
+                do
+                {
+                    name = "__unknown_img_" + imageNameOwner.unknownImageIndex++;
+                }
+                while (parent.Nodes[name] != null || imageNameOwner.Node.Nodes[name] != null);
+                var img = new Wz_Image(name, (int)candidate.Item2, 0, 0, 0, this)
+                {
+                    Offset = candidate.Item1,
+                    IgnoreChecksum = true
+                };
+                Wz_Node child = parent.Nodes.Add(name);
+                child.Value = img;
+                img.OwnerNode = child;
+                this.imageCount++;
+            }
         }
 
         private struct Pkg2DirEntry

@@ -1475,6 +1475,10 @@ namespace WzComparerR2
                 WcR2Config.Default.RecentDocuments.Insert(0, wzFilePath);
                 ConfigManager.Save();
                 refreshRecentDocItems();
+                if (wz.wz_files.Any(file => file.IsImageScanFallback))
+                {
+                    this.BeginInvoke(new Action(() => ToastNotification.Show(this, "Wz 파일 형식을 해석할 수 없습니다.", null, 5000, eToastGlowColor.Red, eToastPosition.TopCenter)));
+                }
             }
             catch (FileNotFoundException)
             {
