@@ -151,6 +151,7 @@ namespace WzComparerR2.MapRender
 
             //加载地图数据
             var mapData = new MapData(this.Services.GetService<IRandom>());
+            mapData.Timer = this.Timer;
             mapData.ParticleLoadLogger = this.ui.ChatBox.AppendTextWarning;
             mapData.Load(this.mapImgLoading.Node, resLoader);
             mapData.SoundEffPlayer = PlaySoundEff;
@@ -184,6 +185,7 @@ namespace WzComparerR2.MapRender
             }
 
             //回收资源
+            this.Timer.OnMapChange();
             this.mapData?.DisposeParticleResources();
             this.resLoader.EndCounting();
             this.resLoader.Recycle();
@@ -655,6 +657,9 @@ namespace WzComparerR2.MapRender
         {
             var gameTime = cm.GameTime;
             var mapData = this.mapData;
+
+            mapData?.UpdateProjectiles(gameTime.ElapsedGameTime);
+            this.Timer.Update(gameTime.ElapsedGameTime);
 
             if (this.IsActive)
             {

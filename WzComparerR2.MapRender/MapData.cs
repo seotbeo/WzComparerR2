@@ -107,6 +107,7 @@ namespace WzComparerR2.MapRender
         }
         public Action<string> SoundEffPlayer;
         public Action<SceneItem> LoadSceneItemResource;
+        internal MapRenderTimer Timer { get; set; }
         public Action<string> ParticleLoadLogger;
 
         private readonly IRandom random;
@@ -115,6 +116,7 @@ namespace WzComparerR2.MapRender
         private List<Tuple<SceneItem, int, int>> moveLayerQueue = new();
         private List<Tuple<SceneItem, int>> addToLayerQueue = new();
         private List<SceneItem> removeFromLayerQueue = new();
+        private readonly List<MobProjectileItem> projectiles = new List<MobProjectileItem>();
 
         public void Load(Wz_Node mapImgNode, ResourceLoader resLoader)
         {
@@ -882,7 +884,7 @@ namespace WzComparerR2.MapRender
                         {
                             (life.View.Animator as StateMachineAnimator)?.SetEffectData(effAniItem);
                         }
-                        AddMobAI(life);
+                        AddMobAI(life, CreateProjectileData(mobNode, resLoader));
                         life.Controller.InitFlyState();
                     }
                     break;
@@ -1411,10 +1413,73 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        private void AddMobAI(LifeItem life)
+        private void AddMobAI(LifeItem life, IDictionary<string, MobProjectileItem.Definition> projectileData)
         {
-            var binding = new MobBehaviorBinding(life, PlaySoundEff, TrySummonMob, RequestMoveLayer, RequestRemoveFromLayer);
+            var binding = new MobBehaviorBinding(life, PlaySoundEff, TrySummonMob, RequestMoveLayer, RequestRemoveFromLayer, projectileData, SpawnProjectile, this.Timer);
             binding.Bind();
+        }
+
+        private Dictionary<string, MobProjectileItem.Definition> CreateProjectileData(Wz_Node node, ResourceLoader resLoader)
+        {
+            var result = new Dictionary<string, MobProjectileItem.Definition>();
+            foreach (var action in node.Nodes)
+            {
+                Wz_Node infoNode = action.Nodes["info"];
+                if (infoNode == null) continue;
+
+                Wz_Node ballNode = infoNode?.Nodes["ball"];
+                if (ballNode == null) continue;
+
+                Wz_Vector sp = infoNode.FindNodeByPath(@"range\sp").GetValueEx<Wz_Vector>(null);
+                int range = infoNode.FindNodeByPath(@"range\r").GetValueEx<int>(0);
+                int speed = 200 * infoNode.Nodes["bulletSpeed"].GetValueEx<int>(100) / 100;
+                if (sp == null || range <= 0 || speed <= 0)
+                {
+                    continue;
+                }
+
+                var animation = resLoader.LoadAnimationData(ballNode) as FrameAnimationData;
+                if (animation == null || animation.Frames.Count == 0)
+                {
+                    continue;
+                }
+
+                result[action.Text] = new MobProjectileItem.Definition
+                {
+                    Animation = new RepeatableFrameAnimationData(animation.Frames),
+                    StartPoint = new Vector2(sp.X, sp.Y),
+                    Range = range,
+                    Speed = speed,
+                    AttackAfter = Math.Max(0, infoNode.Nodes["attackAfter"].GetValueEx<int>(0))
+                };
+            }
+            return result;
+        }
+
+
+        private void SpawnProjectile(BehaviorController owner, MobProjectileItem.Definition definition, TimeSpan elapsed)
+        {
+            var projectile = new MobProjectileItem(definition, owner);
+            projectile.Update(elapsed);
+            if (!projectile.IsExpired)
+            {
+                this.projectiles.Add(projectile);
+                this.addToLayerQueue.Add(Tuple.Create<SceneItem, int>(projectile, owner.CurLayerFoothold));
+            }
+        }
+
+        internal void UpdateProjectiles(TimeSpan elapsed)
+        {
+            for (int i = this.projectiles.Count - 1; i >= 0; i--)
+            {
+                var projectile = this.projectiles[i];
+                projectile.Update(elapsed);
+                if (projectile.IsExpired)
+                {
+                    RequestRemoveFromLayer(projectile);
+                    this.projectiles.RemoveAt(i);
+                }
+            }
         }
 
         private void AddNpcAI(StateMachineAnimator ani)
@@ -1638,7 +1703,7 @@ namespace WzComparerR2.MapRender
             {
                 SceneItem target = task.Item1;
                 int foothold = task.Item2;
-                if (target is LifeItem)
+                if (target is LifeItem || target is MobProjectileItem)
                 {
                     ContainerNode<FootholdItem> fhNode;
                     if (foothold != -1 && (fhNode = FindFootholdByID(foothold)) != null)
@@ -1662,7 +1727,7 @@ namespace WzComparerR2.MapRender
         {
             foreach (var target in removeFromLayerQueue)
             {
-                if (target is LifeItem life)
+                if (target is LifeItem || target is MobProjectileItem)
                 {
                     foreach (var fhNode in this.Scene.Layers.Nodes.OfType<LayerNode>()
                 .SelectMany(layerNode => layerNode.Foothold.Nodes).OfType<ContainerNode<FootholdItem>>())

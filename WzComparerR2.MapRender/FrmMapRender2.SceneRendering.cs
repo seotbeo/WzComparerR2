@@ -1333,6 +1333,20 @@ namespace WzComparerR2.MapRender
                     }
                     break;
 
+                case MobProjectileItem projectile:
+                    if (patchVisibility.MobVisible && !projectile.IsExpired)
+                    {
+                        var mesh = batcher.MeshPop();
+                        mesh.RenderObject = projectile.Animator.CurrentFrame;
+                        mesh.Alpha = projectile.Alpha;
+                        mesh.Position = projectile.Position;
+                        mesh.FlipX = projectile.FlipX;
+                        mesh.Z0 = projectile.Animator.CurrentFrame?.Z ?? 0;
+                        mesh.Z1 = projectile.Index;
+                        return mesh;
+                    }
+                    break;
+
                 case LifeItem life:
                     if ((life.Type == LifeItem.LifeType.Mob && patchVisibility.MobVisible)
                         || (life.Type == LifeItem.LifeType.Npc && patchVisibility.NpcVisible))

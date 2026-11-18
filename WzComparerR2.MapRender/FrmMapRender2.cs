@@ -156,6 +156,8 @@ namespace WzComparerR2.MapRender
         WcR2Engine engine;
         Music bgm;
 
+        public MapRenderTimer Timer { get; } = new MapRenderTimer();
+
         CoroutineManager cm;
         FpsCounter fpsCounter;
         readonly List<IDisposable> attachedEvent = new List<IDisposable>();
@@ -1814,6 +1816,7 @@ namespace WzComparerR2.MapRender
 
             if (!this.isUnloaded)
             {
+                this.Timer.Clear();
                 this.mapData?.DisposeParticleResources();
                 this.resLoader?.Unload();
                 this.ui?.UnloadContents();

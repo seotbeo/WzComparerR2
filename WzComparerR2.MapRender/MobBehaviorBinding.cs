@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WzComparerR2.Animation;
 using WzComparerR2.MapRender.Patches2;
 
@@ -6,7 +7,7 @@ namespace WzComparerR2.MapRender
 {
     public class MobBehaviorBinding
     {
-        public MobBehaviorBinding(LifeItem life, Action<int, string> playSoundEff, Action<BehaviorController> trySummonMob, Action<LifeItem, int, int> requestMoveLayer, Action<SceneItem> requestRemoveFromLayer)
+        public MobBehaviorBinding(LifeItem life, Action<int, string> playSoundEff, Action<BehaviorController> trySummonMob, Action<LifeItem, int, int> requestMoveLayer, Action<SceneItem> requestRemoveFromLayer, IDictionary<string, MobProjectileItem.Definition> projectiles, Action<BehaviorController, MobProjectileItem.Definition, TimeSpan> spawnProjectile, MapRenderTimer timer)
         {
             this.life = life;
             this.animator = life.View.Animator as StateMachineAnimator;
@@ -15,6 +16,9 @@ namespace WzComparerR2.MapRender
             this.trySummonMob = trySummonMob;
             this.requestMoveLayer = requestMoveLayer;
             this.requestRemoveFromLayer = requestRemoveFromLayer;
+            this.projectiles = projectiles;
+            this.spawnProjectile = spawnProjectile;
+            this.timer = timer;
         }
 
         private readonly LifeItem life;
@@ -24,6 +28,11 @@ namespace WzComparerR2.MapRender
         private readonly Action<BehaviorController> trySummonMob;
         private readonly Action<LifeItem, int, int> requestMoveLayer;
         private readonly Action<SceneItem> requestRemoveFromLayer;
+
+        private readonly IDictionary<string, MobProjectileItem.Definition> projectiles;
+        private readonly Action<BehaviorController, MobProjectileItem.Definition, TimeSpan> spawnProjectile;
+        private readonly MapRenderTimer timer;
+        private MapRenderTimer.Handle projectileTimer;
 
         public void Bind()
         {
@@ -84,6 +93,11 @@ namespace WzComparerR2.MapRender
                         return;
 
                     case BehaviorController.BaseState.Died:
+                        if (e.StateType == BehaviorController.StateType.Base)
+                        {
+                            this.timer.Unregister(this.projectileTimer);
+                            this.projectileTimer = null;
+                        }
                         aniName = Prefer("die1", "die");
                         if (aniName == null)
                         {
@@ -111,6 +125,21 @@ namespace WzComparerR2.MapRender
                         }
                         if (SetIfDifferent(aniName))
                         {
+                            if (this.projectiles.TryGetValue(aniName, out var projectile))
+                            {
+                                if (projectile.AttackAfter <= 0)
+                                {
+                                    this.spawnProjectile(this.controller, projectile, TimeSpan.Zero);
+                                }
+                                else
+                                {
+                                    this.projectileTimer = this.timer.Register(TimeSpan.FromMilliseconds(projectile.AttackAfter), elapsed =>
+                                    {
+                                        this.projectileTimer = null;
+                                        this.spawnProjectile(this.controller, projectile, elapsed);
+                                    }, removeOnMapChange: true);
+                                }
+                            }
                             this.playSoundEff(this.controller.ID, this.controller.SelectedAttack.Replace("attack", "Attack").Replace("skill", "Skill"));
                         }
                         SetEffectIfDifferent(aniName + "_effect");
