@@ -657,6 +657,8 @@ namespace WzComparerR2.CharaSimControl
                 return;
             }
 
+            bool customNameTag = resNode.FindNodeByPath("custom") != null;
+
             //加载资源和文本颜色
             var wce = new[] { "w", "c", "e" }.Select(n =>
             {
@@ -741,7 +743,7 @@ namespace WzComparerR2.CharaSimControl
                 }
 
                 //绘制文字
-                if (!string.IsNullOrEmpty(tagName))
+                if (!string.IsNullOrEmpty(tagName) && !customNameTag)
                 {
                     //using var brush = new SolidBrush(color);
                     //g.DrawString(tagName, font, brush, left, picH, fmt);
