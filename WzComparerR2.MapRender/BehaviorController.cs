@@ -57,7 +57,6 @@ namespace WzComparerR2.MapRender
         private const int SpeedBase = 125;
         private const int Fly_SpeedBase = 200;
         private const int Fly_Force = 1200;
-        private const float Fly_Dec = 0.35f;
         private const int Max_FallSpeed = 670;
         private const int JumpSpeed = 555;
         private const int GravityAcc = 2000;
@@ -166,6 +165,7 @@ namespace WzComparerR2.MapRender
         public bool FlipX => this.MovementEnabled && !this.Fixed ? this._flipX : this.baseFlipX;
         public bool MovementEnabled { get; private set; }
         public bool DownJumpEnabled { get; set; } = false;
+        public bool SwimEnabled { get; set; }
         public bool Fixed { get; set; }
         public bool BlockRevive { get; set; }
         public bool ForceMoveStop => this.bState == BaseState.Hit || this.bState == BaseState.Died || this.bState == BaseState.Attack;
@@ -797,6 +797,11 @@ namespace WzComparerR2.MapRender
         {
             if (this.ForceMoveStop) return;
 
+            float gravityAcc = GravityAcc * 0.5f;
+            float MaxJumpSpeed = this.SwimEnabled ? JumpSpeed * 0.8f : JumpSpeed * 0.5f;
+            float MaxFallSpeed = Max_FallSpeed * 0.15f;
+            float bounceSpeed = this.SwimEnabled ? -MaxJumpSpeed : -Math.Min(MaxJumpSpeed, this.finalSpeed);
+
             if (this.fState == FlyingState.Start) // 첫 소환 시; 같은 그룹/모든 그룹 50% 확률
             {
                 SetFlyTarget(prevPos, 0.5f, differentGroup: false);
@@ -810,14 +815,14 @@ namespace WzComparerR2.MapRender
             {
                 if (this.Random.NextPercent(0.97f)) // 97% 확률로 제자리 통통 튐
                 {
-                    this.vSpeed += GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
-                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * Fly_Dec);
+                    this.vSpeed += gravityAcc * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, MaxFallSpeed);
                     var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
 
                     this.relPos.Y += newY;
                     if (this.CurPos.Y >= this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
+                        this.vSpeed = bounceSpeed;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }
@@ -879,20 +884,22 @@ namespace WzComparerR2.MapRender
                     var dir = this.fly_ToTargetDirY;
                     if ((dir < 0 && this.vSpeed >= 0))
                     {
-                        this.vSpeed = dir * JumpSpeed * Fly_Dec;
+                        this.vSpeed = dir * MaxJumpSpeed;
                     }
                     else
                     {
-                        this.vSpeed += dir * GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
+                        this.vSpeed += dir * gravityAcc * (float)elapsedTime.TotalSeconds;
                     }
-                    this.vSpeed = MathHelper.Clamp(this.vSpeed, -this.finalSpeed, this.finalSpeed);
+                    this.vSpeed = this.SwimEnabled ?
+                        MathHelper.Clamp(this.vSpeed, -MaxJumpSpeed, MaxFallSpeed) :
+                        MathHelper.Clamp(this.vSpeed, -this.finalSpeed, this.finalSpeed);
 
                     var newY = this.relPos.Y + this.vSpeed * (float)elapsedTime.TotalSeconds;
                     if ((dir < 0 && this.basePos.Y + newY <= this.fly_TargetPos.Y) ||
                             (dir > 0 && this.basePos.Y + newY >= this.fly_TargetPos.Y))
                     {
                         this.finishFlyY = true;
-                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
+                        this.vSpeed = bounceSpeed;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                     else
@@ -902,14 +909,14 @@ namespace WzComparerR2.MapRender
                 }
                 else // Y축 이동 끝일 때는 통통 튐
                 {
-                    this.vSpeed += GravityAcc * Fly_Dec * (float)elapsedTime.TotalSeconds;
-                    this.vSpeed = Math.Min(this.vSpeed, Max_FallSpeed * Fly_Dec);
+                    this.vSpeed += gravityAcc * (float)elapsedTime.TotalSeconds;
+                    this.vSpeed = Math.Min(this.vSpeed, MaxFallSpeed);
                     var newY = this.vSpeed * (float)elapsedTime.TotalSeconds;
 
                     this.relPos.Y += newY;
                     if (this.CurPos.Y > this.fly_TargetPos.Y)
                     {
-                        this.vSpeed = -Math.Min(JumpSpeed * Fly_Dec, this.finalSpeed);
+                        this.vSpeed = bounceSpeed;
                         this.relPos.Y = (this.fly_TargetPos - this.basePos).Y;
                     }
                 }

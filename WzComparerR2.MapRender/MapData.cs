@@ -405,7 +405,11 @@ namespace WzComparerR2.MapRender
                 }
 
                 // init controller
-                item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement) { DownJumpEnabled = this.EnableMobDownJump };
+                item.Controller = new BehaviorController(item, FootholdManager, movementEnabled: this.EnableMobMovement)
+                {
+                    DownJumpEnabled = this.EnableMobDownJump,
+                    SwimEnabled = this.CanSwim
+                };
                 item.Controller.InitRandom(this.random);
                 if (!hs.Add(item.Controller.ID)) item.Controller.PlayRegenSound = false; // 소리 테러 방지
             }
@@ -1477,7 +1481,11 @@ namespace WzComparerR2.MapRender
             if (mobNode != null && mob != null)
             {
                 // init controller
-                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion) { DownJumpEnabled = this.EnableMobDownJump };
+                mob.Controller = new BehaviorController(mob, FootholdManager, movementEnabled: this.EnableMobMovement, summoned: true, playRegenMotion: playRegenMotion)
+                {
+                    DownJumpEnabled = this.EnableMobDownJump,
+                    SwimEnabled = this.CanSwim
+                };
                 mob.Controller.InitRandom(this.random);
 
                 LoadSceneItemResource?.Invoke(mob);
