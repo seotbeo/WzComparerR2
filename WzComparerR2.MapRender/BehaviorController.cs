@@ -50,6 +50,10 @@ namespace WzComparerR2.MapRender
         #region Consts
         private const int Walk_Force = 1400;
         private const int Walk_Drag = 800;
+        private const float Slip_Force = 600.0f;
+        private const int Slip_SpeedBase = 120;
+        private const float Slip_SlopeThreshold = 0.9f;
+        private const int MaxGroundMoveSteps = 64;
         private const int SpeedBase = 125;
         private const int Fly_SpeedBase = 200;
         private const int Fly_Force = 1200;
@@ -73,6 +77,7 @@ namespace WzComparerR2.MapRender
         private VerticalState vState;
         private ProvokeState pState;
 
+        private bool deceleratingToStop;
         private float hSpeed = 0;
         private float vSpeed = 0;
         private float? downJumpStartY;
@@ -130,6 +135,7 @@ namespace WzComparerR2.MapRender
         private int speed;
         private int flySpeed;
         private int chaseSpeed;
+        private float slipSpeed;
 
         private bool hasMoveMotion;
         private bool hasJumpMotion;
@@ -226,9 +232,10 @@ namespace WzComparerR2.MapRender
 
         public void SetSpeed(int speed, int flySpeed, int chaseSpeed)
         {
-            this.speed = Math.Min((int)(SpeedBase * (100f + speed) / 100f), 200);
+            this.speed = Math.Min((int)(SpeedBase * (100f + speed) / 100f), 300);
+            this.slipSpeed = Math.Min((int)(Slip_SpeedBase * (100f + speed) / 100f), 300);
             this.flySpeed = (int)(Fly_SpeedBase * (100f + flySpeed) / 100f);
-            this.chaseSpeed = Math.Min((int)(SpeedBase * (100f + chaseSpeed) / 100f), 200);
+            this.chaseSpeed = Math.Min((int)(SpeedBase * (100f + chaseSpeed) / 100f), 300);
             this.inited |= InitState.Speed;
         }
 
@@ -282,6 +289,7 @@ namespace WzComparerR2.MapRender
             this.finishFlyY = false;
             this.hSpeed = 0;
             this.vSpeed = 0;
+            this.deceleratingToStop = false;
             this._flipX = this.baseFlipX;
             InitCurFoothold(this.basePos);
             this.hp = 100;
@@ -468,8 +476,8 @@ namespace WzComparerR2.MapRender
             }
             else
             {
-                MoveX(elapsedTime, prevPos);
-                MoveY(elapsedTime, prevPos);
+                MoveX(elapsedTime, prevPos, out var verticalElapsedTime, out var verticalPrevPos);
+                MoveY(verticalElapsedTime, verticalPrevPos);
                 DecideJump(CurPos);
                 RandomJump();
             }
@@ -477,131 +485,228 @@ namespace WzComparerR2.MapRender
             PosGuard();
         }
 
-        private void MoveX(TimeSpan elapsedTime, Vector2 prevPos)
+        private void MoveX(TimeSpan elapsedTime, Vector2 prevPos, out TimeSpan verticalElapsedTime, out Vector2 verticalPrevPos)
         {
-            if (this.downJumpStartY.HasValue)
+            verticalElapsedTime = elapsedTime;
+            verticalPrevPos = prevPos;
+            if (this.downJumpStartY.HasValue || this.ForceMoveStop)
+            {
+                this.hSpeed = 0;
+                return;
+            }
+            if (this.flyingToTarget)
             {
                 return;
             }
 
-            if (this.hState != HorizontalState.Stop && !this.ForceMoveStop && !this.flyingToTarget)
+            float remainingTime = (float)elapsedTime.TotalSeconds;
+            for (int step = 0; step < MaxGroundMoveSteps && remainingTime > 0f; step++)
             {
-                var dir = this.hState == HorizontalState.MoveL ? -1 : 1;
-                /* TODO: hspeed 감/가속 반영
-                this.hSpeed += dir * Walk_Force * (float)elapsedTime.TotalSeconds;
-                this.hSpeed = MathHelper.Clamp(this.hSpeed, -this.finalSpeed, this.finalSpeed);
-                var newX = this.relPos.X + this.hSpeed * (float)elapsedTime.TotalSeconds;
-                this.relPos.X += newX;
-                */
-                var newX = this.relPos.X + dir * Math.Max(0, this.finalSpeed) * (float)elapsedTime.TotalSeconds;
+                float previousSpeed = this.hSpeed;
+                float startSpeed = previousSpeed;
+                float acceleration = 0f;
+                float moveTime = remainingTime;
+                var curfh = this.curFoothold;
+                if (this.grounded) // 공중에서는 속도 일정
+                {
+                    moveTime = UpdateGroundSpeed(remainingTime, out startSpeed, out acceleration);
+                }
+                float deltaX = startSpeed * moveTime + 0.5f * acceleration * moveTime * moveTime;
+                if (deltaX == 0f)
+                {
+                    remainingTime = Math.Max(0f, remainingTime - moveTime);
+                    continue;
+                }
 
+                int dir = Math.Sign(deltaX);
+                bool crossingBoundary = false;
+                float boundaryX = 0f;
+                if (this.grounded && curfh != null)
+                {
+                    boundaryX = dir < 0 ? curfh.X1 : curfh.X2;
+                    float distance = Math.Max(0f, dir * (boundaryX - this.CurPos.X));
+                    if (dir * deltaX > distance)
+                    {
+                        crossingBoundary = true;
+                        float speed = dir * startSpeed;
+                        float endSpeed = (float)Math.Sqrt(Math.Max(0f, speed * speed + 2f * dir * acceleration * distance));
+                        float denominator = speed + endSpeed;
+                        moveTime = denominator > 0f ? Math.Min(moveTime, 2f * distance / denominator) : 0f;
+                        deltaX = dir * distance;
+                        this.hSpeed = startSpeed + acceleration * moveTime;
+                    }
+                }
+
+                float newX = crossingBoundary ? boundaryX - this.basePos.X : this.relPos.X + deltaX;
+                bool decelerating = Math.Abs(this.hSpeed) < Math.Abs(previousSpeed) || previousSpeed * this.hSpeed < 0f;
                 var isOutOfRange = IsEndOfAvailableRange(basePos.X + newX);
                 if (isOutOfRange) // 가능 범위 밖이면 무조건 flip
                 {
+                    if (decelerating || this.hState == HorizontalState.Stop) // 감속 중에는 flip 없이 즉시 정지
+                    {
+                        this.hSpeed = 0;
+                        return;
+                    }
+
                     if (this.floating) // 점프 중에는 X이동 정지
                     {
                         SetHorizontalState(HorizontalState.Stop);
                         this.restTime = TimeSpan.Zero; // 착지 후 바로 다음 행동 결정
-                        //this.hSpeed = 0;
+                        this.hSpeed = 0;
                         return;
                     }
                     else
                     {
                         DoFlipX();
-                        //this.hSpeed = 0;
+                        this.hSpeed = 0;
                         return;
                     }
                 }
 
-                var curfh = this.curFoothold;
-                var nextFH = GetNextFoothold(dir, basePos.X + newX);
+                this.relPos.X = newX;
+                remainingTime = Math.Max(0f, remainingTime - moveTime);
+                if (!crossingBoundary)
+                {
+                    continue;
+                }
+                this.relPos.Y = GetRelYOnFoothold(this.CurPos.X, this.basePos.Y);
+                var nextFH = GetNextFoothold(dir);
                 var IsEndOfCurFoothold = nextFH == null;
                 if (IsEndOfCurFoothold && curfh != null) // 이어진 발판 끝인 경우
                 {
                     var canJumpOrFall = this.CanJump;
-                    if (this.flying || !canJumpOrFall)
-                    {
-                        DoFlipX();
-                        //this.hSpeed = 0;
-                        return;
-                    }
-                    else
+                    if (canJumpOrFall)
                     {
                         if (IsLastFoothold(curfh, dir)) // 마지막 발판인 경우 점프 가능 else 낙하 가능
                         {
-                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, -80, 1500, -JumpSpeed); // 점프 가능 발판 있는지 탐색
+                            float jumpSpeedX = curfh.SlopeNormalFactor > 0f ? this.hSpeed / curfh.SlopeNormalFactor : this.hSpeed;
+                            canJumpOrFall = HasPossibleFoothold(this.CurPos, dir, 1000, -80, 1500, jumpSpeedX, -JumpSpeed); // 점프 가능 발판 있는지 탐색
                             if (canJumpOrFall)
                             {
                                 DoJump();
-                                this.relPos.X = newX;
-                                return;
-                            }
-                            else
-                            {
-                                DoFlipX();
-                                //this.hSpeed = 0;
-                                return;
                             }
                         }
                         else
                         {
-                            if (canJumpOrFall) // 낙하는 아래쪽으로만
+                            var nextfh = dir < 0 ? curfh.PrevFH : curfh.NextFH;
+                            if (nextfh != null) // 낙하는 아래쪽으로만
                             {
-                                var nextfh = dir < 0 ? curfh.PrevFH : curfh.NextFH;
-                                if (nextfh != null)
-                                {
-                                    var startPosY = dir < 0 ? curfh.Y1 : curfh.Y2;
-                                    var endPosY = dir < 0 ? nextfh.Y1 : nextfh.Y2;
-                                    if (startPosY <= endPosY) canJumpOrFall = true;
-                                    else canJumpOrFall = false;
-                                }
-                                else canJumpOrFall = false;
-                            }
-                            canJumpOrFall = canJumpOrFall && HasPossibleFoothold(new Vector2(basePos.X + newX, this.CurPos.Y), dir, 1000, 0, 1500, 0); // 낙하 가능 발판 있는지 탐색
-                            if (canJumpOrFall)
-                            {
-                                DoFall();
-                                this.relPos.X = newX;
-                                return;
+                                var startPosY = dir < 0 ? curfh.Y1 : curfh.Y2;
+                                var endPosY = dir < 0 ? nextfh.Y1 : nextfh.Y2;
+                                canJumpOrFall = startPosY <= endPosY;
                             }
                             else
                             {
-                                DoFlipX();
-                                //this.hSpeed = 0;
-                                return;
+                                canJumpOrFall = false;
+                            }
+                            var fallPos = this.CurPos;
+                            if (nextfh != null && nextfh.IsWall)
+                            {
+                                fallPos.X += dir;
+                            }
+                            canJumpOrFall = canJumpOrFall && !IsEndOfAvailableRange(fallPos.X) && HasPossibleFoothold(fallPos, dir, 1000, 0, 1500, this.hSpeed, 0); // 낙하 가능 발판 있는지 탐색
+                            if (canJumpOrFall)
+                            {
+                                this.relPos.X = fallPos.X - this.basePos.X;
+                                DoFall();
                             }
                         }
                     }
+                    if (!canJumpOrFall)
+                    {
+                        if (this.hState != HorizontalState.Stop)
+                        {
+                            DoFlipX();
+                        }
+                        this.hSpeed = 0;
+                        return;
+                    }
+
                 }
                 else // 이어진 발판 내 이동
                 {
-                    if (nextFH != this.curFoothold)
-                    {
-                        SetCurFoothold(nextFH);
-                    }
-                    this.relPos.X = newX;
-                    return;
+                    SetCurFoothold(nextFH);
+                    continue;
                 }
+
+                verticalElapsedTime = TimeSpan.FromSeconds(remainingTime);
+                verticalPrevPos = this.CurPos;
             }
-            else if (this.hState == HorizontalState.Stop) // TODO: 감속
+
+            if (remainingTime > 0f) // 반복 한도 넘으면 정지
             {
-                /*
-                if (this.hSpeed < 0)
-                {
-                    this.hSpeed += Walk_Drag * (float)elapsedTime.TotalSeconds;
-                    this.hSpeed = Math.Min(this.hSpeed, 0);
-                    var newX = this.hSpeed * (float)elapsedTime.TotalSeconds;
-                    this.relPos.X += newX;
-                }
-                else if (this.hSpeed > 0)
-                {
-                    this.hSpeed -= Walk_Drag * (float)elapsedTime.TotalSeconds;
-                    this.hSpeed = Math.Max(this.hSpeed, 0);
-                    var newX = this.hSpeed * (float)elapsedTime.TotalSeconds;
-                    this.relPos.X += newX;
-                }
-                */
+                this.hSpeed = 0;
             }
+        }
+
+        // ref: https://docs.openms.dev/client/physics-evidence
+        private float UpdateGroundSpeed(float dt, out float startSpeed, out float acceleration)
+        {
+            float slope = this.curFoothold?.SlopeFactor ?? 0f;
+            float normal = this.curFoothold?.SlopeNormalFactor ?? 1f;
+            int input = this.hState == HorizontalState.Stop ? 0 : this.hState == HorizontalState.MoveL ? -1 : 1;
+            bool steepSlope = Math.Abs(slope) > Slip_SlopeThreshold;
+            float slipScale = input * slope < 0f ? 0.5f : 1f;
+            float slipForce = steepSlope ? Slip_Force * slope * slipScale : 0f;
+            float force = input * Walk_Force * normal + slipForce;
+            float drag = Walk_Drag * normal;
+            float oldSpeed = this.hSpeed;
+            int dir = oldSpeed != 0f ? Math.Sign(oldSpeed) : Math.Sign(force);
+            float slipLimit = steepSlope ? Math.Max(0f, this.slipSpeed) * Math.Abs(slope) * normal * slipScale : 0f;
+            float limit = Math.Max(0, this.finalSpeed) * normal;
+            if (dir * slope > 0f)
+            {
+                if (steepSlope)
+                {
+                    limit += slipLimit;
+                }
+                else
+                {
+                    limit *= 1f + slope * slope;
+                }
+            }
+            if (input == 0 && steepSlope)
+            {
+                limit = Math.Max(limit, slipLimit);
+                if (dir * slope > 0f)
+                {
+                    limit = Math.Min(limit, Math.Max(Math.Abs(oldSpeed), slipLimit));
+                }
+            }
+
+            startSpeed = MathHelper.Clamp(oldSpeed, -limit, limit);
+            acceleration = startSpeed == 0f ? Math.Sign(force) * Math.Max(0f, Math.Abs(force) - drag) : force - Math.Sign(startSpeed) * drag;
+            float moveTime = dt;
+            bool stopping = startSpeed * acceleration < 0f;
+            bool reachingLimit = false;
+            if (stopping)
+            {
+                moveTime = Math.Min(moveTime, -startSpeed / acceleration);
+            }
+            else if (dir * acceleration > 0f)
+            {
+                if (Math.Abs(startSpeed) >= limit)
+                {
+                    acceleration = 0f;
+                }
+                else
+                {
+                    float limitTime = (limit - Math.Abs(startSpeed)) / Math.Abs(acceleration);
+                    reachingLimit = limitTime <= moveTime;
+                    moveTime = Math.Min(moveTime, limitTime);
+                }
+            }
+            this.hSpeed = startSpeed + acceleration * moveTime;
+            if (stopping && moveTime >= -startSpeed / acceleration)
+            {
+                this.hSpeed = 0f;
+            }
+            else if (reachingLimit)
+            {
+                this.hSpeed = dir * limit;
+            }
+            this.deceleratingToStop = this.deceleratingToStop && stopping && this.hSpeed != 0f;
+            return moveTime;
         }
 
         private void MoveY(TimeSpan elapsedTime, Vector2 prevPos)
@@ -630,12 +735,62 @@ namespace WzComparerR2.MapRender
                     if (this.relPos.Y >= collisionOn) // 착지 판정
                     {
                         this.relPos.Y = collisionOn;
+                        ApplyLandingVelocity((float)elapsedTime.TotalSeconds);
                         this.vSpeed = 0;
                         this.HasMoveTarget = false;
                         SetVerticalState(VerticalState.Stop);
                     }
                 }
             }
+        }
+
+        // ref: https://docs.openms.dev/client/physics-evidence
+        private void ApplyLandingVelocity(float dt)
+        {
+            if (this.ForceMoveStop || this.curFoothold == null || this.curFoothold.IsWall || this.curFoothold.Flat)
+            {
+                return;
+            }
+
+            float slope = this.curFoothold.SlopeFactor;
+            float normal = this.curFoothold.SlopeNormalFactor;
+            float tangentSpeed = this.hSpeed * normal + this.vSpeed * slope;
+            int input = this.hState == HorizontalState.Stop ? 0 : this.hState == HorizontalState.MoveL ? -1 : 1;
+            if (input * tangentSpeed < 0f)
+            {
+                tangentSpeed = 0f;
+            }
+            else
+            {
+                tangentSpeed *= 0.5f;
+            }
+            float landingSpeed = tangentSpeed * normal;
+            bool steepSlope = Math.Abs(slope) > Slip_SlopeThreshold;
+            float slipScale = input * slope < 0f ? 0.5f : 1f;
+            float slipLimit = steepSlope ? Math.Max(0f, this.slipSpeed) * Math.Abs(slope) * normal * slipScale : 0f;
+            float groundLimit = Math.Max(0, this.finalSpeed) * normal;
+            if (landingSpeed * slope > 0f)
+            {
+                if (steepSlope)
+                {
+                    groundLimit += slipLimit;
+                }
+                else
+                {
+                    groundLimit *= 1f + slope * slope;
+                }
+            }
+            if (input == 0 && steepSlope)
+            {
+                groundLimit = Math.Max(groundLimit, slipLimit);
+            }
+            landingSpeed = MathHelper.Clamp(landingSpeed, -groundLimit, groundLimit);
+            if (IsEndOfAvailableRange(this.CurPos.X + landingSpeed * dt))
+            {
+                this.hSpeed = 0;
+                return;
+            }
+            this.hSpeed = landingSpeed;
         }
 
         private void FlyToTarget(TimeSpan elapsedTime, Vector2 prevPos)
@@ -768,9 +923,20 @@ namespace WzComparerR2.MapRender
 
         private void DoFlipX()
         {
+            this.deceleratingToStop = false;
             if (this.hState == HorizontalState.MoveL) this.hState = HorizontalState.MoveR;
             else this.hState = HorizontalState.MoveL;
             this._flipX = !this._flipX;
+        }
+
+        /// <summary>
+        /// dir 방향으로 이동할 때, 바로 다음 발판을 반환합니다. 없다면 null을 반환합니다.
+        /// </summary>
+        /// <param name="dir">왼쪽으로 이동하면 음수, 아니면  양수</param>
+        private FootholdItem GetNextFoothold(int dir)
+        {
+            var next = dir < 0 ? this.curFoothold?.PrevFH : this.curFoothold?.NextFH;
+            return next != null && !next.IsWall ? next : null;
         }
 
         /// <summary>
@@ -1056,7 +1222,7 @@ namespace WzComparerR2.MapRender
             if (!fh.IsWall) return;
 
             SetHorizontalState(HorizontalState.Stop);
-            //this.hSpeed = 0;
+            this.hSpeed = 0;
             this.relPos.X = prevPos.X - basePos.X;
             nextPos.X = prevPos.X;
             if (fh.Reversed)
@@ -1086,9 +1252,13 @@ namespace WzComparerR2.MapRender
         {
             if (!this.grounded || !this.CanJump || this.HasMoveTarget || this.hState == HorizontalState.Stop) return;
 
+            if (this.hSpeed == 0)
+            {
+                return;
+            }
             bool canJump = false;
             int x = (int)pos.X;
-            int dir = this.hState == HorizontalState.MoveL ? -1 : 1;
+            int dir = Math.Sign(this.hSpeed);
             var fh = this.curFoothold;
             if ((x >= this.minMovePosX || dir > 0) &&
                 (x <= this.maxMovePosX || dir < 0) &&
@@ -1138,7 +1308,8 @@ namespace WzComparerR2.MapRender
                 }
 
                 var limitX1 = dir < 0 ? Math.Max(Math.Min(0, this.minMovePosX - x), -100) : Math.Min(Math.Max(0, this.maxMovePosX - x), 100);
-                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -80, 0, -JumpSpeed, sameGroup: true); // 점프 가능 발판 있는지 탐색
+                float jumpSpeedX = fh.SlopeNormalFactor > 0f ? this.hSpeed / fh.SlopeNormalFactor : this.hSpeed;
+                canJump = HasPossibleFoothold(new Vector2(x, this.CurPos.Y), dir, Math.Abs(limitX1), -80, 0, jumpSpeedX, -JumpSpeed, sameGroup: true); // 점프 가능 발판 있는지 탐색
                 if (canJump)
                 {
                     DoJump();
@@ -1147,7 +1318,7 @@ namespace WzComparerR2.MapRender
             }
         }
 
-        public bool HasPossibleFoothold(Vector2 pos, int dir, int limitX, int minLimitY, int maxLimitY, float startVSpeed = 0f, bool sameGroup = false)
+        public bool HasPossibleFoothold(Vector2 pos, int dir, int limitX, int minLimitY, int maxLimitY, float horizontalSpeed, float startVSpeed = 0f, bool sameGroup = false)
         {
             if (limitX == 0 || maxLimitY - minLimitY == 0) return false;
 
@@ -1156,10 +1327,10 @@ namespace WzComparerR2.MapRender
             var minX = dir < 0 ? pos.X - limitX : pos.X;
             var maxX = dir < 0 ? pos.X : pos.X + limitX;
 
-            var hSpeed = this.finalSpeed;
+            var hSpeed = horizontalSpeed;
             var vSpeed = startVSpeed;
             var dt = 1 / 30f; // 30프레임으로 이동경로 시뮬레이션
-            var timestamps = Math.Max(1, Math.Max((int)Math.Ceiling(limitX / Math.Max(1f, hSpeed * dt)), (int)Math.Ceiling((maxLimitY - minLimitY) / Math.Max(1f, Max_FallSpeed * dt))));
+            var timestamps = Math.Max(1, Math.Max((int)Math.Ceiling(limitX / Math.Max(1f, Math.Abs(hSpeed) * dt)), (int)Math.Ceiling((maxLimitY - minLimitY) / Math.Max(1f, Max_FallSpeed * dt))));
             var hPos = pos.X;
             var vPos = pos.Y;
             var prevPos = pos;
@@ -1169,7 +1340,7 @@ namespace WzComparerR2.MapRender
             for (int i = 0; i < timestamps; i++)
             {
                 prevPos = nextPos;
-                hPos += dir * hSpeed * (float)dt;
+                hPos += hSpeed * (float)dt;
                 hPos = Math.Min(Math.Max(hPos, this.minMovePosX), this.maxMovePosX);
                 vSpeed += GravityAcc * (float)dt;
                 vSpeed = Math.Min(vSpeed, Max_FallSpeed);
@@ -1197,6 +1368,11 @@ namespace WzComparerR2.MapRender
 
         private void RandomJump()
         {
+            if (this.deceleratingToStop && this.hState == HorizontalState.Stop && this.hSpeed != 0f) // 정지로 감속 중에는 점프 x
+            {
+                return;
+            }
+
             if (!this.HasMoveTarget && this.CanJump && this.grounded)
             {
                 if (this.Random.NextPercent(RandomJumpProb)) // RandomJumpProb 확률로 점프
@@ -1215,6 +1391,11 @@ namespace WzComparerR2.MapRender
 
         private void DoJump()
         {
+            float normal = this.curFoothold?.SlopeNormalFactor ?? 1f;
+            if (this.grounded && normal > 0f)
+            {
+                this.hSpeed /= normal;
+            }
             this.downJumpStartY = null;
             this.downJumpStartFoothold = null;
             this.vSpeed = -JumpSpeed;
@@ -1242,6 +1423,7 @@ namespace WzComparerR2.MapRender
                 return;
             }
 
+            this.hSpeed = 0;
             this.downJumpStartY = startY;
             this.downJumpStartFoothold = this.curFoothold;
             this.vSpeed = -JumpSpeed * 0.5f;
@@ -1557,12 +1739,17 @@ namespace WzComparerR2.MapRender
         {
             if (this.hState == state) return;
             var prev = this.hState;
+            this.deceleratingToStop = state == HorizontalState.Stop && (prev == HorizontalState.MoveL || prev == HorizontalState.MoveR) && this.grounded && this.hSpeed != 0f;
             this.hState = state;
             if (invoke) OnStateChanged(new StateChangedEventArgs(StateType.Horizontal, prev, this.bState, this.hState, this.vState, this.pState));
         }
 
         private void SetVerticalState(VerticalState state, bool invoke = true)
         {
+            if (state != VerticalState.Stop)
+            {
+                this.deceleratingToStop = false;
+            }
             if (this.vState == state) return;
             var prev = this.vState;
             this.vState = state;

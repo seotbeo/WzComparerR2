@@ -20,9 +20,11 @@ namespace WzComparerR2.MapRender.Patches2
 
         #region for FootholdManager
         public bool IsWall => this.Vertical || this.Reversed;
-        public bool Vertical { get; set; }
-        public bool Flat { get; set; }
-        public bool Reversed { get; set; }
+        public bool Vertical { get; private set; }
+        public bool Flat { get; private set; }
+        public bool Reversed { get; private set; }
+        public float SlopeFactor { get; private set; }
+        public float SlopeNormalFactor { get; private set; }
         public Rectangle FootholdArea { get; set; }
         public int GroupIndex { get; set; }
         public int LayerLevel { get; set; }
@@ -45,6 +47,11 @@ namespace WzComparerR2.MapRender.Patches2
             item.Vertical = item.X1 == item.X2;
             item.Flat = item.Y1 == item.Y2;
             item.Reversed = item.X1 > item.X2;
+            float dx = item.X2 - (float)item.X1;
+            float dy = item.Y2 - (float)item.Y1;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            item.SlopeFactor = !item.IsWall && length > 0 ? dy / length : 0f;
+            item.SlopeNormalFactor = !item.IsWall && length > 0 ? Math.Abs(dx) / length : 1f;
             item.FootholdArea = new Rectangle(Math.Min(item.X1, item.X2), Math.Min(item.Y1, item.Y2), Math.Abs(item.X2 - item.X1), Math.Abs(item.Y2 - item.Y1));
             return item;
         }
