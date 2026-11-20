@@ -694,38 +694,27 @@ namespace WzComparerR2.MapRender
         private void DrawFootholds(GameTime gameTime)
         {
             var color = MathHelper2.HSVtoColor((float)gameTime.TotalGameTime.TotalSeconds * 100 % 360, 1f, 1f);
-            if (patchVisibility.FootHoldVisible)
+            if (patchVisibility.FootHoldVisible && this.mapData.FootholdManager != null)
             {
-                var lines = new List<Point>();
-                foreach (LayerNode layer in this.mapData.Scene.Layers.Nodes)
+                Rectangle cameraRect = this.renderEnv.Camera.ScaledClipRect;
+                foreach (FootholdGroup group in this.mapData.FootholdManager.AllFootholdGroups)
                 {
-                    var fhList = layer.Foothold.Nodes.OfType<ContainerNode<FootholdItem>>()
-                        .Select(container => container.Item);
-                    foreach (var fh in fhList)
+                    Rectangle bounds = group.GroupArea;
+                    int padding = showFootholdBoundary ? 12 : 2;
+                    bounds.Inflate(padding, padding);
+                    if (!bounds.Intersects(cameraRect))
                     {
-                        lines.Add(new Point(fh.X1, fh.Y1));
-                        lines.Add(new Point(fh.X2, fh.Y2));
-                        if (showFootholdBoundary)
-                        {
-                            lines.Add(new Point(fh.X1, fh.Y1));
-                            lines.Add(new Point(fh.X1, fh.Y1 + 10));
-                            lines.Add(new Point(fh.X1, fh.Y1 + 10));
-                            lines.Add(new Point(fh.X1 - 5, fh.Y1 + 5));
-
-                            lines.Add(new Point(fh.X2, fh.Y2));
-                            lines.Add(new Point(fh.X2, fh.Y2 - 10));
-                            lines.Add(new Point(fh.X2, fh.Y2 - 10));
-                            lines.Add(new Point(fh.X2 + 5, fh.Y2 - 5));
-                        }
+                        continue;
                     }
-                }
 
-                if (lines.Count > 0)
-                {
-                    var meshItem = this.batcher.MeshPop();
-                    meshItem.RenderObject = new LineListMesh(lines.ToArray(), color, 2);
-                    this.batcher.Draw(meshItem);
-                    this.batcher.MeshPush(meshItem);
+                    Point[] lines = showFootholdBoundary ? group.BoundaryLines : group.Lines;
+                    if (lines.Length > 0)
+                    {
+                        var meshItem = this.batcher.MeshPop();
+                        meshItem.RenderObject = new LineListMesh(lines, color, 2);
+                        this.batcher.Draw(meshItem);
+                        this.batcher.MeshPush(meshItem);
+                    }
                 }
             }
 

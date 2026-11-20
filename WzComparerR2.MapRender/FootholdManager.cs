@@ -211,6 +211,8 @@ namespace WzComparerR2.MapRender
         public List<FootholdItem> Footholds { get; set; }
         public Rectangle GroupArea { get; set; }
         public int Index { get; private set; }
+        public Point[] Lines { get; private set; } = Array.Empty<Point>();
+        public Point[] BoundaryLines { get; private set; } = Array.Empty<Point>();
 
         public void Add(FootholdItem item)
         {
@@ -221,6 +223,32 @@ namespace WzComparerR2.MapRender
                 this.GroupArea = item.FootholdArea;
             }
             else this.GroupArea = Rectangle.Union(this.GroupArea, item.FootholdArea);
+        }
+
+        private void CacheFootholdLines()
+        {
+            var lines = new Point[this.Footholds.Count * 2];
+            var boundaryLines = new Point[this.Footholds.Count * 10];
+            for (int i = 0; i < this.Footholds.Count; i++)
+            {
+                var fh = this.Footholds[i];
+                int lineIndex = i * 2;
+                int boundaryIndex = i * 10;
+                lines[lineIndex] = new Point(fh.X1, fh.Y1);
+                lines[lineIndex + 1] = new Point(fh.X2, fh.Y2);
+                boundaryLines[boundaryIndex] = lines[lineIndex];
+                boundaryLines[boundaryIndex + 1] = lines[lineIndex + 1];
+                boundaryLines[boundaryIndex + 2] = new Point(fh.X1, fh.Y1);
+                boundaryLines[boundaryIndex + 3] = new Point(fh.X1, fh.Y1 + 10);
+                boundaryLines[boundaryIndex + 4] = new Point(fh.X1, fh.Y1 + 10);
+                boundaryLines[boundaryIndex + 5] = new Point(fh.X1 - 5, fh.Y1 + 5);
+                boundaryLines[boundaryIndex + 6] = new Point(fh.X2, fh.Y2);
+                boundaryLines[boundaryIndex + 7] = new Point(fh.X2, fh.Y2 - 10);
+                boundaryLines[boundaryIndex + 8] = new Point(fh.X2, fh.Y2 - 10);
+                boundaryLines[boundaryIndex + 9] = new Point(fh.X2 + 5, fh.Y2 - 5);
+            }
+            this.Lines = lines;
+            this.BoundaryLines = boundaryLines;
         }
 
         public void Build(Dictionary<int, FootholdItem> layerFootholdsByID, Dictionary<int, FootholdItem> allFootholdsByID)
@@ -240,6 +268,7 @@ namespace WzComparerR2.MapRender
                         fh.NextFH = nextFH;
                 }
             }
+            CacheFootholdLines();
         }
     }
 }
