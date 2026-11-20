@@ -423,7 +423,13 @@ namespace WzComparerR2.Patcher
         {
             if (this.OldFileHash != null && this.OldFileHash.Count > 0)
             {
-                foreach(var kv in this.OldFileHash)
+                var eventLock = new object();
+                var options = new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = -1,
+                    CancellationToken = cancellationToken
+                };
+                Parallel.ForEach(this.OldFileHash, options, kv =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     // The temporary context is only used for triggering event.
@@ -432,7 +438,7 @@ namespace WzComparerR2.Patcher
                         OldFilePath = Path.Combine(msDir, kv.Key)
                     };
 
-                    this.OnPrepareVerifyOldChecksumBegin(part);
+                    //this.OnPrepareVerifyOldChecksumBegin(part);
                     uint oldCheckSum = 0;
                     if (!File.Exists(part.OldFilePath))
                     {
@@ -449,13 +455,16 @@ namespace WzComparerR2.Patcher
                         kv.Value.ActualHash = oldCheckSum;
                         kv.Value.VerifyState = (oldCheckSum == kv.Value.Hash) ? FileHashVerifyState.Verified : FileHashVerifyState.HashNotMatch;
                     }
-                    this.OnPrepareVerifyOldChecksumEnd(part);
+                    lock (eventLock)
+                    {
+                        this.OnPrepareVerifyOldChecksumEnd(part);
+                    }
 
                     if (failOnValidationFailed)
                     {
                         VerifyCheckSum(kv.Value.Hash, oldCheckSum, part.FileName, "origin");
                     }
-                }
+                });
             }
         }
 

@@ -707,16 +707,16 @@ namespace WzComparerR2
                     progressBarX1.Text = string.Empty;
                     break;
                 case PatchingState.PrepareVerifyOldChecksumBegin:
-                    logFunc($"패치 전 체크섬 확인: {e.Part.FileName}");
+                    //logFunc($"패치 전 체크섬 확인: {e.Part.FileName}");
                     break;
                 case PatchingState.PrepareVerifyOldChecksumEnd:
                     if (e.Part.OldChecksum != e.Part.OldChecksumActual)
                     {
-                        logFunc(" 불일치\r\n");
+                        logFunc($"패치 전 체크섬 확인: {e.Part.FileName} 불일치\r\n");
                     }
                     else
                     {
-                        logFunc(" 완료\r\n");
+                        logFunc($"패치 전 체크섬 확인: {e.Part.FileName} 완료\r\n");
                     }
                     break;
                 case PatchingState.ApplyFile:
