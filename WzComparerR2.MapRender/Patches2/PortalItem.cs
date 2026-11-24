@@ -64,7 +64,18 @@ namespace WzComparerR2.MapRender.Patches2
             return item;
         }
 
-        public static readonly IReadOnlyList<string> PortalTypes = new[] { "sp", "pi", "pv", "pc", "pg", "tp", "ps", "pgi", "psi", "pcs", "ph", "psh", "pcj", "pci", "pci2", "pcig", "pshg", "pcc", "pcir" };
+        private static readonly IReadOnlyList<string> portalTypes = new[] { "sp", "pi", "pv", "pc", "pg", "tp", "ps", "pgi", "psi", "pcs", "ph", "psh", "pcj", "pci", "pci2", "pcig", "pshg", "pcc", "pcir" };
+        public static string TryGetPortalType(int index)
+        {
+            try
+            {
+                return portalTypes[index];
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
 
         public class ItemView
         {

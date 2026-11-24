@@ -509,7 +509,8 @@ namespace WzComparerR2.MapRender.UI
 
             public void LoadWzResource()
             {
-                var mapHelperNode = PluginBase.PluginManager.FindWz("Map/MapHelper.img/minimap");
+                var mapHelperNode = PluginBase.PluginManager.FindWz("Map/MapHelper.img/minimap")
+                    ?? PluginBase.PluginManager.FindWz($"Base/{UnityLib.Classic.ClassicWzBridge.PrefabNodeName}/UI/UIMiniMap.prefab/UIMiniMap/_Components/1");
                 Action<string> addResource = (key) =>
                 {
                     Wz_Node resNode = mapHelperNode.Nodes[key];

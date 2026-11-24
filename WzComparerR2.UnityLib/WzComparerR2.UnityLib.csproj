@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
+    <AssemblyName>WzComparerR2.UnityLib</AssemblyName>
+    <RootNamespace>WzComparerR2.UnityLib</RootNamespace>
+    <IsPublishable>false</IsPublishable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+    <Platforms>AnyCPU;ARM64</Platforms>
+  </PropertyGroup>
+  <Import Project="$(ProjectDir)..\Build\Common.props" />
+  <ItemGroup>
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
+    <EmbeddedResource Include="Audio/vorbis_setups.bin" LogicalName="WzComparerR2.UnityLib.Audio.vorbis_setups.bin" />
+  </ItemGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'framework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WzComparerR2.WzLib\WzComparerR2.WzLib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('..\Build\CommonAssemblyInfo.cs')">
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

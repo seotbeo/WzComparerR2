@@ -34,6 +34,10 @@
       <Private>false</Private>
       <ExcludeAssets>all</ExcludeAssets>
     </ProjectReference>
+    <ProjectReference Include="..\WzComparerR2.UnityLib\WzComparerR2.UnityLib.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
     <ProjectReference Include="..\WzComparerR2.WzLib\WzComparerR2.WzLib.csproj">
       <Private>false</Private>
       <ExcludeAssets>all</ExcludeAssets>

@@ -148,6 +148,7 @@
             this.itemContainer2 = new DevComponents.DotNetBar.ItemContainer();
             this.itemContainer3 = new DevComponents.DotNetBar.ItemContainer();
             this.btnItemOpenWz = new DevComponents.DotNetBar.ButtonItem();
+            this.btnItemOpenUnityFolder = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemClose = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItemCloseAll = new DevComponents.DotNetBar.ButtonItem();
             this.galleryContainerRecent = new DevComponents.DotNetBar.GalleryContainer();
@@ -168,6 +169,7 @@
             this.pictureBoxEx1 = new WzComparerR2.PictureBoxEx();
             this.ribbonBar5 = new DevComponents.DotNetBar.RibbonBar();
             this.cmbItemAniNames = new DevComponents.DotNetBar.ComboBoxItem();
+            this.cmbItemPngRegion = new DevComponents.DotNetBar.ComboBoxItem();
             this.cmbItemSkins = new DevComponents.DotNetBar.ComboBoxItem();
             this.buttonItemSaveImage = new DevComponents.DotNetBar.ButtonItem();
             this.itemContainer27 = new DevComponents.DotNetBar.ItemContainer();
@@ -1771,6 +1773,7 @@
             this.itemContainer3.Name = "itemContainer3";
             this.itemContainer3.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.btnItemOpenWz,
+            this.btnItemOpenUnityFolder,
             this.btnItemOpenImg,
             this.buttonItemClose,
             this.buttonItemCloseAll});
@@ -1786,6 +1789,9 @@
             this.btnItemOpenWz.SubItemsExpandWidth = 24;
             this.btnItemOpenWz.Text = "Wz 열기(&O)...";
             this.btnItemOpenWz.Click += new System.EventHandler(this.btnItemOpenWz_Click);
+            this.btnItemOpenUnityFolder.Name = "btnItemOpenUnityFolder";
+            this.btnItemOpenUnityFolder.Text = "Unity 폴더 열기(&U)...";
+            this.btnItemOpenUnityFolder.Click += new System.EventHandler(this.btnItemOpenUnityFolder_Click);
             // 
             // btnItemOpenImg
             // 
@@ -2150,6 +2156,7 @@
             this.itemContainerPB2.Name = "itemContainerPB2";
             this.itemContainerPB2.SubItems.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.cmbItemAniNames,
+            this.cmbItemPngRegion,
             this.cmbItemSkins,
             this.buttonItemSaveImage,
             this.buttonItemGif,
@@ -2212,6 +2219,12 @@
             this.cmbItemAniNames.ItemHeight = 14;
             this.cmbItemAniNames.Name = "cmbItemAniNames";
             this.cmbItemAniNames.SelectedIndexChanged += new System.EventHandler(this.cmbItemAniNames_SelectedIndexChanged);
+            this.cmbItemPngRegion.ComboWidth = 72;
+            this.cmbItemPngRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbItemPngRegion.Name = "cmbItemPngRegion";
+            this.cmbItemPngRegion.Tooltip = "PNG region";
+            this.cmbItemPngRegion.Visible = false;
+            this.cmbItemPngRegion.SelectedIndexChanged += new System.EventHandler(this.cmbItemPngRegion_SelectedIndexChanged);
             // 
             // cmbItemSkins
             // 
@@ -3615,6 +3628,7 @@
         private DevComponents.DotNetBar.ItemContainer itemContainer2;
         private DevComponents.DotNetBar.ItemContainer itemContainer3;
         private DevComponents.DotNetBar.ButtonItem btnItemOpenWz;
+        private DevComponents.DotNetBar.ButtonItem btnItemOpenUnityFolder;
         private DevComponents.DotNetBar.ButtonItem buttonItemClose;
         private DevComponents.DotNetBar.GalleryContainer galleryContainerRecent;
         private DevComponents.DotNetBar.LabelItem labelItem8;
@@ -3832,6 +3846,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmi2HandleUol;
         private PictureBoxEx pictureBoxEx1;
         private DevComponents.DotNetBar.ComboBoxItem cmbItemAniNames;
+        private DevComponents.DotNetBar.ComboBoxItem cmbItemPngRegion;
         private DevComponents.DotNetBar.ButtonItem buttonItemUpdate;
         private System.Windows.Forms.ToolStripMenuItem tsmi1DumpAsXml;
         private System.Windows.Forms.ToolStripMenuItem tsmi1UpdateStringLinker;

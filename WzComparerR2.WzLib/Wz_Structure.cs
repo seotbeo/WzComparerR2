@@ -23,6 +23,7 @@ namespace WzComparerR2.WzLib
 
         public List<Wz_File> wz_files;
         public List<IMapleStoryFile> ms_files;
+        public List<IDisposable> UnitySources { get; } = new List<IDisposable>();
         public Wz_Crypto encryption;
         public Wz_Node WzNode;
         public int img_number;
@@ -48,6 +49,11 @@ namespace WzComparerR2.WzLib
                 f.Dispose();
             }
             this.ms_files.Clear();
+            foreach (IDisposable source in this.UnitySources)
+            {
+                source.Dispose();
+            }
+            this.UnitySources.Clear();
             this.encryption.Reset();
             this.img_number = 0;
             this.has_basewz = false;

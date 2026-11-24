@@ -938,7 +938,7 @@ namespace WzComparerR2.MapRender
             var view = new PortalItem.ItemView();
             //加载editor
             {
-                var typeName = PortalItem.PortalTypes[portal.Type];
+                var typeName = PortalItem.TryGetPortalType(portal.Type);
                 path = $@"Map\MapHelper.img\portal\editor\{typeName}";
                 var aniData = resLoader.LoadAnimationData(path);
                 if (aniData != null)
@@ -953,9 +953,9 @@ namespace WzComparerR2.MapRender
                 switch (portal.Type)
                 {
                     case 7:
-                        typeName = PortalItem.PortalTypes[2]; break;
+                        typeName = PortalItem.TryGetPortalType(2); break;
                     default:
-                        typeName = PortalItem.PortalTypes[portal.Type]; break;
+                        typeName = PortalItem.TryGetPortalType(portal.Type); break;
                 }
 
                 switch (portal.Image)

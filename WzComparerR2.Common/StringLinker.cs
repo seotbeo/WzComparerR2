@@ -6,7 +6,7 @@ using WzComparerR2.WzLib;
 
 namespace WzComparerR2.Common
 {
-    public class StringLinker
+    public partial class StringLinker
     {
         public StringLinker()
         {
@@ -37,9 +37,14 @@ namespace WzComparerR2.Common
             return Load(stringNode, itemNode, etcNode, questNode, reactorNode, update: true);
         }
 
-        public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz, Wz_File reactorWz)
+        public bool Load(Wz_File stringWz, Wz_File itemWz, Wz_File etcWz, Wz_File questWz, Wz_File reactorWz, string langType = null)
         {
             this.Clear();
+
+            if (!string.IsNullOrEmpty(langType))
+            {
+                return Load(stringWz?.Node, itemWz?.Node, etcWz?.Node, questWz?.Node, reactorWz?.Node, langType);
+            }
 
             return Load(stringWz?.Node, itemWz?.Node, etcWz?.Node, questWz?.Node, reactorWz?.Node);
         }

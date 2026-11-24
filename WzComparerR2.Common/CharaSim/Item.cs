@@ -62,21 +62,12 @@ namespace WzComparerR2.CharaSim
 
         public static ItemType GetItemType(int code)
         {
-            switch (code / 1000000)
-            {
-                case 2:
-                    return ItemType.Consume;
-                case 3:
-                    return ItemType.Install;
-                case 4:
-                    return ItemType.Etc;
-                case 5:
-                    if (code / 10000 != 500)
-                        return ItemType.Cash;
-                    return ItemType.Pet;
-                default:
-                    return ItemType.Unknown;
-            }
+            code = code / 10000;
+            if (code == 501) return ItemType.Cash;
+            if (code == 910) return ItemType.CashPackage;
+            code = code / 100 * 100;
+            var type = (ItemType)(code);
+            return Enum.IsDefined(typeof(ItemType), type) ? type : ItemType.Unknown;
         }
 
         public static Item CreateFromNode(Wz_Node node, GlobalFindNodeFunction findNode, Wz_File wzf = null)
@@ -394,15 +385,16 @@ namespace WzComparerR2.CharaSim
             item.type = GetItemType(item.ItemID);
             return item;
         }
+    }
 
-        public enum ItemType
-        {
-            Unknown = 0,
-            Consume = 200,
-            Install = 300,
-            Etc = 400,
-            Pet = 500,
-            Cash = 501,
-        }
+    public enum ItemType
+    {
+        Unknown = 0,
+        Consume = 200,
+        Install = 300,
+        Etc = 400,
+        Pet = 500,
+        Cash = 501,
+        CashPackage = 910,
     }
 }

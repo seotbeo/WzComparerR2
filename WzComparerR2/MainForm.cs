@@ -47,6 +47,8 @@ namespace WzComparerR2
             this.MinimumSize = new Size(600, 450);
             advTree1.AfterNodeSelect += new AdvTreeNodeEventHandler(advTree1_AfterNodeSelect_2);
             advTree2.AfterNodeSelect += new AdvTreeNodeEventHandler(advTree2_AfterNodeSelect_2);
+            advTree2.BeforeExpand += PrefabTree_BeforeExpand;
+            advTree3.BeforeExpand += PrefabTree_BeforeExpand;
             //new ImageDragHandler(this.pictureBox1).AttachEvents();
             RegisterPluginEvents();
             createStyleItems();
@@ -455,6 +457,17 @@ namespace WzComparerR2
                         }
                     }
                 }
+                foreach (var structure in preSearchWz)
+                {
+                    foreach (var unity in structure.UnitySources.OfType<UnityLib.Classic.WzJs_Structure>())
+                    {
+                        foreach (var file in unity.Files)
+                        {
+                            if (file.Type == e.WzType && file.Node.Nodes.Count > 0)
+                                preSearch.Add(file.Node);
+                        }
+                    }
+                }
             }
 
             if (fullPath == null || fullPath.Length <= 1)
@@ -546,15 +559,37 @@ namespace WzComparerR2
         #endregion
 
         #region 读取wz相关方法
-        private Node createNode(Wz_Node wzNode)
+        private static bool IsUnityAssetFolder(Wz_Node node)
+        {
+            return node.ParentNode?.Value is UnityLib.Classic.WzJs_File
+                && (node.Text == UnityLib.Classic.ClassicWzBridge.WzssNodeName
+                    || node.Text == UnityLib.Classic.ClassicWzBridge.SpriteSheetNodeName
+                    || node.Text == UnityLib.Classic.ClassicWzBridge.PrefabNodeName
+                    || node.Text == UnityLib.Classic.ClassicWzBridge.SpriteNodeName
+                    || node.Text == UnityLib.Classic.ClassicWzBridge.TextureNodeName);
+        }
+
+        private Node createNode(Wz_Node wzNode, bool isArchiveTree = false)
         {
             if (wzNode == null)
                 return null;
 
             Node parentNode = new Node(wzNode.Text) { Tag = new WeakReference(wzNode) };
+            if (isArchiveTree && IsUnityAssetFolder(wzNode))
+            {
+                parentNode.ExpandVisibility = eNodeExpandVisibility.Hidden;
+                return parentNode;
+            }
+
+            if (!isArchiveTree && wzNode.Value is UnityLib.Classic.WzJs_Image prefab && prefab.IsPrefab)
+            {
+                parentNode.Nodes.Add(new Node("…"));
+                return parentNode;
+            }
+
             foreach (Wz_Node subNode in wzNode.Nodes)
             {
-                Node subTreeNode = createNode(subNode);
+                Node subTreeNode = createNode(subNode, isArchiveTree);
                 if (subTreeNode != null)
                     parentNode.Nodes.Add(subTreeNode);
             }
@@ -608,7 +643,8 @@ namespace WzComparerR2
                     if (frameAni.Data.Frames.Count == 1)
                     {
                         var png = frameAni.Data.Frames[0].Png;
-                        if (png != null && png.ActualPages > 1 && 0 <= selectedpage && selectedpage < png.ActualPages)
+                        if (png != null && png.ActualPages > 1 && 0 <= selectedpage && selectedpage < png.ActualPages
+                            && frameAni.Data.Frames[0].Page != selectedpage)
                         {
                             this.pictureBoxEx1.ShowImage(png, selectedpage);
                         }
@@ -1395,6 +1431,20 @@ namespace WzComparerR2
             }
         }
 
+        private void btnItemOpenUnityFolder_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Maplestory_Classic_Data 또는 Unity 번들 폴더를 선택하세요.";
+                dialog.ShowNewFolderButton = false;
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    string path = dialog.SelectedPath;
+                    Task.Run(() => openWz(path));
+                }
+            }
+        }
+
         private async void openWz(string wzFilePath)
         {
             foreach (Wz_Structure wzs in openedWz)
@@ -1416,6 +1466,7 @@ namespace WzComparerR2
             try
             {
                 btnItemOpenWz.Enabled = false;
+                btnItemOpenUnityFolder.Enabled = false;
                 btnItemOpenImg.Enabled = false;
                 buttonItemClose.Enabled = false;
                 buttonItemCloseAll.Enabled = false;
@@ -1423,7 +1474,28 @@ namespace WzComparerR2
                 buttonItemSearchString.Enabled = false;
                 galleryContainerRecent.Enabled = false;
                 string[] msFileExtensions = { ".ms", ".mn" };
-                if (msFileExtensions.Any(ext => string.Equals(Path.GetExtension(wzFilePath), ext, StringComparison.OrdinalIgnoreCase)))
+                bool isUnityFolder = Directory.Exists(wzFilePath);
+                if (isUnityFolder)
+                {
+                    string bundleDirectory = UnityLib.Classic.ClassicCatalog.ResolveBundleDirectory(wzFilePath);
+                    if (openedWz.Any(opened => opened.UnitySources.OfType<UnityLib.Classic.WzJs_Structure>()
+                        .Any(file => string.Equals(file.BundleDirectory, bundleDirectory, StringComparison.OrdinalIgnoreCase))))
+                    {
+                        labelItemStatus.Text = "이미 열린 Unity 번들 폴더입니다.";
+                        return;
+                    }
+
+                    var file = new UnityLib.Classic.WzJs_Structure(bundleDirectory, wz);
+                    wz.UnitySources.Add(file);
+                    wz.WzNode = file.Node;
+                    wz.img_number = file.ImageCount;
+                }
+                else if (string.Equals(Path.GetExtension(wzFilePath), ".bundle", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBoxEx.Show("Unity 폴더 열기에서 번들 폴더를 선택하세요.");
+                    return;
+                }
+                else if (msFileExtensions.Any(ext => string.Equals(Path.GetExtension(wzFilePath), ext, StringComparison.OrdinalIgnoreCase)))
                 {
                     wz.LoadMsFile(wzFilePath);
                 }
@@ -1454,7 +1526,7 @@ namespace WzComparerR2
                 {
                     sortWzNode(wz.WzNode);
                 }
-                Node node = createNode(wz.WzNode);
+                Node node = createNode(wz.WzNode, isArchiveTree: true);
                 node.Expand();
                 advTree1.Nodes.Add(node);
                 this.openedWz.Add(wz);
@@ -1464,7 +1536,7 @@ namespace WzComparerR2
                 UpdateLanguageCombobox();
                 if (!this.stringLinker.HasValues)
                 {
-                    UpdateStringLinker(null, (this.comboBoxItemPrefLan.SelectedItem as DevComponents.Editors.ComboItem).Tag as Wz_Node, doStopWatch: false);
+                    UpdateStringLinker(null, (this.comboBoxItemPrefLan.SelectedItem as DevComponents.Editors.ComboItem)?.Tag as Wz_Node, doStopWatch: false);
                     //this.stringLinker.Load(findStringWz(), findItemWz(), findEtcWz(), findQuestWz());
                 }
                 QueryPerformance.End();
@@ -1492,6 +1564,7 @@ namespace WzComparerR2
             finally
             {
                 btnItemOpenWz.Enabled = true;
+                btnItemOpenUnityFolder.Enabled = true;
                 btnItemOpenImg.Enabled = true;
                 buttonItemClose.Enabled = true;
                 buttonItemCloseAll.Enabled = true;
@@ -1537,6 +1610,7 @@ namespace WzComparerR2
             try
             {
                 btnItemOpenWz.Enabled = false;
+                btnItemOpenUnityFolder.Enabled = false;
                 btnItemOpenImg.Enabled = false;
                 buttonItemClose.Enabled = false;
                 buttonItemCloseAll.Enabled = false;
@@ -1545,7 +1619,7 @@ namespace WzComparerR2
                 galleryContainerRecent.Enabled = false;
                 wz.LoadImg(imgFileName);
 
-                Node node = createNode(wz.WzNode);
+                Node node = createNode(wz.WzNode, isArchiveTree: true);
                 node.Expand();
                 advTree1.Nodes.Add(node);
                 this.openedWz.Add(wz);
@@ -1566,6 +1640,7 @@ namespace WzComparerR2
             finally
             {
                 btnItemOpenWz.Enabled = true;
+                btnItemOpenUnityFolder.Enabled = true;
                 btnItemOpenImg.Enabled = true;
                 buttonItemClose.Enabled = true;
                 buttonItemCloseAll.Enabled = true;
@@ -1593,13 +1668,14 @@ namespace WzComparerR2
                 return;
             }
 
+            var unityFile = baseWzNode.AsWzNode()?.Value as UnityLib.Classic.WzJs_File;
             Wz_File wz_f = advTree1.SelectedNode.AsWzNode()?.GetNodeWzFile();
-            if (wz_f == null)
+            if (wz_f == null && unityFile == null)
             {
                 MessageBoxEx.Show("올바른 wz 파일을 선택하세요.", "오류");
                 return;
             }
-            Wz_Structure wz = wz_f.WzStructure;
+            Wz_Structure wz = unityFile?.WzStructure ?? wz_f.WzStructure;
 
             advTree1.Nodes.Remove(baseWzNode);
 
@@ -1608,14 +1684,14 @@ namespace WzComparerR2
             Wz_Image image = null;
             if (advTree2.Nodes.Count > 0
                 && (image = advTree2.Nodes[0].AsWzNode()?.GetValue<Wz_Image>()) != null
-                && image.WzFile.WzStructure == wz)
+                && (image.WzFile ?? image.OwnerNode.GetNodeWzFile())?.WzStructure == wz)
             {
                 advTree2.Nodes.Clear();
             }
 
             if (advTree3.Nodes.Count > 0
                 && (image = advTree3.Nodes[0].AsWzNode()?.GetNodeWzImage()) != null
-                && image.WzFile.WzStructure == wz)
+                && (image.WzFile ?? image.OwnerNode.GetNodeWzFile())?.WzStructure == wz)
             {
                 advTree3.Nodes.Clear();
             }
@@ -1692,7 +1768,7 @@ namespace WzComparerR2
             if (this.openedWz.Count == 0) return;
 
             Wz_Node language = PluginManager.FindWz(Wz_Type.Language) ?? PluginManager.FindWz(Wz_Type.Etc)?.FindNodeByPath("Language");
-            if (language != null)
+            if (language?.Nodes.Count > 0)
             {
                 this.comboBoxItemPrefLan.Items.AddRange(language.Nodes.Select(n =>
                 {
@@ -1703,6 +1779,28 @@ namespace WzComparerR2
                 }).ToArray());
                 this.comboBoxItemPrefLan.Enabled = true;
                 this.buttonItemApplyPrefLan.Enabled = true;
+            }
+            else
+            {
+                var stringRoot = PluginManager.FindWz(Wz_Type.String);
+                if (stringRoot != null)
+                {
+                    this.comboBoxItemPrefLan.Items.AddRange(stringRoot.Nodes
+                        .Where(n => n.Text.Length == 2 && n.Value == null && n.Nodes.Count > 0)
+                        .Select(n =>
+                        {
+                            var item = new DevComponents.Editors.ComboItem();
+                            item.Text = n.Text;
+                            item.Tag = null;
+                            return item;
+                        }).ToArray());
+                }
+                if (this.comboBoxItemPrefLan.Items.Count > 1)
+                {
+                    this.comboBoxItemPrefLan.Items.RemoveAt(0);
+                    this.comboBoxItemPrefLan.Enabled = true;
+                    this.buttonItemApplyPrefLan.Enabled = true;
+                }
             }
 
             ConfigManager.Reload();
@@ -1725,9 +1823,26 @@ namespace WzComparerR2
             Wz_Node questNode = updateNode?.FindNodeByPath("Quest") ?? updateNode?.FindNodeByPath("Quest.img", true);
             Wz_Node reactorNode = updateNode?.FindNodeByPath("Reactor") ?? updateNode?.FindNodeByPath("Reactor.img", true);
 
+            string langType = (this.comboBoxItemPrefLan.SelectedItem as DevComponents.Editors.ComboItem)?.Text;
+            if (!string.IsNullOrEmpty(langType) && langType != "기본")
+            {
+                if (stringWzFile?.Node?.FindNodeByPath(langType) is Wz_Node stringLangNode && stringLangNode != null)
+                {
+                    updateNode = null;
+                }
+                else
+                {
+                    langType = null;
+                }
+            }
+            else
+            {
+                langType = null;
+            }
+
             if (doStopWatch) QueryPerformance.Start();
             this.stringLinker.Clear();
-            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile, reactorWzFile);
+            bool r = this.stringLinker.Load(stringWzFile, itemWzFile, etcWzFile, questWzFile, reactorWzFile, langType);
             if (updateNode != null)
             {
                 r = stringLinker.Update(stringNode, itemNode, etcNode, questNode, reactorNode);
@@ -1813,7 +1928,14 @@ namespace WzComparerR2
             listViewExWzDetail.BeginUpdate();
             listViewExWzDetail.Items.Clear();
 
-            if (selectedNode.Value == null)
+            if (IsUnityAssetFolder(selectedNode))
+            {
+                advTree2.ClearAndDisposeAllNodes();
+                var assetTree = createNode(selectedNode);
+                advTree2.Nodes.Add(assetTree);
+                assetTree.Expand();
+            }
+            else if (selectedNode.Value == null)
             {
                 listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Dir Name", Path.GetFileName(e.Node.Text) }));
                 autoResizeColumns(listViewExWzDetail);
@@ -1823,7 +1945,7 @@ namespace WzComparerR2
                 listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "File Name", wzFile.Header.FileName }));
                 listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "File Size", wzFile.Header.FileSize + " bytes" }));
                 listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Copyright", wzFile.Header.Copyright }));
-                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Version", wzFile.GetMergedVersion().ToString() }));
+                listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Version", wzFile is UnityLib.Classic.WzJs_File wzjsFile ? wzjsFile.Version : wzFile.GetMergedVersion().ToString() }));
                 listViewExWzDetail.Items.Add(new ListViewItem(new string[] { "Wz Type", wzFile.IsSubDir ? "SubDir" : wzFile.Type.ToString() }));
 
                 foreach (Wz_File subFile in wzFile.MergedWzFiles)
@@ -1885,6 +2007,33 @@ namespace WzComparerR2
             }
         }
 
+        private void PrefabTree_BeforeExpand(object sender, AdvTreeNodeCancelEventArgs e)
+        {
+            if (e.Node.AsWzNode()?.Value is UnityLib.Classic.WzJs_Image prefab && prefab.IsPrefab)
+                e.Cancel = !PopulatePrefabNode(e.Node, prefab, showDetails: sender == advTree3);
+        }
+
+        private bool PopulatePrefabNode(Node node, UnityLib.Classic.WzJs_Image prefab, bool showDetails = false)
+        {
+            if (node.Nodes.Count != 1 || node.Nodes[0].Tag != null)
+                return true;
+
+            if (!prefab.TryExtract(out var error))
+            {
+                labelItemStatus.Text = error?.Message;
+                return false;
+            }
+
+            node.Nodes.Clear();
+            foreach (Wz_Node child in prefab.Node.Nodes)
+            {
+                Node childNode = createNode(child);
+                node.Nodes.Add(showDetails ? createNodeDetail(childNode) : childNode);
+            }
+
+            return true;
+        }
+
         private void advTree2_NodeDoubleClick(object sender, TreeNodeMouseEventArgs e)
         {
             if (e.Node == null || e.Button != MouseButtons.Left)
@@ -1898,9 +2047,13 @@ namespace WzComparerR2
                 advTree3.BeginUpdate();
                 try
                 {
+                    if (selectedNode.Value is UnityLib.Classic.WzJs_Image prefab && prefab.IsPrefab
+                        && !PopulatePrefabNode(e.Node, prefab))
+                        return;
+
                     var node = createNodeDetail(e.Node);
-                    node.ExpandAll();
                     advTree3.Nodes.Add(node);
+                    node.ExpandAll();
                     advTree3.SelectedNode = node;
                 }
                 finally
@@ -1912,6 +2065,9 @@ namespace WzComparerR2
 
         private Node createNodeDetail(Node parentNode)
         {
+            if (parentNode.AsWzNode()?.Value is UnityLib.Classic.WzJs_Image prefab && prefab.IsPrefab)
+                PopulatePrefabNode(parentNode, prefab);
+
             Node newNode = new Node(parentNode.Text);
             newNode.Tag = parentNode.Tag;
             Wz_Node wzNode = newNode.AsWzNode();
@@ -1932,6 +2088,9 @@ namespace WzComparerR2
         {
             switch (value)
             {
+                case UnityLib.Classic.UnityCanvas:
+                    return "UnityCanvas PNG";
+
                 case Wz_Png png:
                     return $"PNG {png.Width}*{png.Height} ({(int)png.Format}{(png.Scale > 0 ? $", {png.Scale}" : null)})";
 
@@ -1986,6 +2145,9 @@ namespace WzComparerR2
 
         private void advTree3_AfterNodeSelect(object sender, AdvTreeNodeEventArgs e)
         {
+            this.regionalPreview = null;
+            this.cmbItemPngRegion.Visible = false;
+            this.cmbItemPngRegion.Items.Clear();
             if (e.Node == null)
                 return;
 
@@ -2004,7 +2166,15 @@ namespace WzComparerR2
 
             switch (selectedNode.Value)
             {
+                case UnityLib.Classic.UnityPrefabNodeInfo prefabInfo:
+                    textBoxX1.Text = prefabInfo.GetDetails();
+                    break;
+
                 case Wz_Png png:
+                    var linkedNode = selectedNode.GetLinkedSourceNode(PluginManager.FindWz);
+                    if (TryShowRegionalPreview(linkedNode.GetValueEx<Wz_Png>(null)))
+                        break;
+
                     pictureBoxEx1.PictureName = GetSelectedNodeImageName();
                     pictureBoxEx1.ShowImage(png);
                     this.cmbItemAniNames.Items.Clear();
@@ -2027,7 +2197,7 @@ namespace WzComparerR2
                         "pages: " + png.Pages + "(" + png.ActualPages + ")\r\n" +
                         "unknown1: " + png.Unknown1;
 
-                    var sourceNode = selectedNode.GetLinkedSourceNode(PluginManager.FindWz);
+                    var sourceNode = linkedNode;
                     if (sourceNode != selectedNode)
                     {
                         png = sourceNode.GetValueEx<Wz_Png>(null);
@@ -2130,6 +2300,9 @@ namespace WzComparerR2
 
                                     if (png != null)
                                     {
+                                        if (TryShowRegionalPreview(png))
+                                            break;
+
                                         pictureBoxEx1.PictureName = GetSelectedNodeImageName();
                                         pictureBoxEx1.ShowImage(png);
                                         this.cmbItemAniNames.Items.Clear();
@@ -2147,6 +2320,57 @@ namespace WzComparerR2
                     }
                     break;
             }
+        }
+
+        private UnityLib.Classic.UnityCanvas regionalPreview;
+
+        private bool TryShowRegionalPreview(Wz_Png png)
+        {
+            if (!(png is UnityLib.Classic.UnityCanvas canvas) || canvas.DefaultRegion == null
+                || this.pictureBoxEx1.ShowOverlayAni)
+                return false;
+
+            foreach (string region in canvas.Regions)
+                this.cmbItemPngRegion.Items.Add(region);
+            this.cmbItemPngRegion.SelectedIndex = this.cmbItemPngRegion.Items.IndexOf(canvas.DefaultRegion);
+            this.regionalPreview = canvas;
+            this.cmbItemPngRegion.Visible = this.cmbItemPngRegion.Items.Count > 1;
+            ShowRegionalPreview(canvas.DefaultRegion);
+            return true;
+        }
+
+        private void cmbItemPngRegion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.cmbItemPngRegion.SelectedItem is string region && !this.pictureBoxEx1.ShowOverlayAni)
+                ShowRegionalPreview(region);
+        }
+
+        private void ShowRegionalPreview(string region)
+        {
+            if (this.regionalPreview == null || !this.regionalPreview.TryGetVariant(region, out var png))
+                return;
+
+            this.cmbItemAniNames.Items.Clear();
+            this.pictureBoxEx1.PictureName = GetSelectedNodeImageName();
+            this.pictureBoxEx1.ShowImage(png);
+            if (this.pictureBoxEx1.IsPaused)
+                ResumePictureBox();
+            if (png.ActualPages > 1)
+            {
+                for (int page = 0; page < png.ActualPages; page++)
+                    this.cmbItemAniNames.Items.Add(page);
+                this.cmbItemAniNames.SelectedIndex = 0;
+            }
+
+            this.advTree3.PathSeparator = ".";
+            this.textBoxX1.Text = "dataLength: " + png.DataLength + " bytes\r\n" +
+                "offset: " + png.Offset + "\r\n" +
+                "size: " + png.Width + "*" + png.Height + "\r\n" +
+                "png format: " + png.Format + "(" + (int)png.Format + ")\r\n" +
+                "scale: " + png.Scale + "(x" + png.ActualScale + ")\r\n" +
+                "pages: " + png.Pages + "(" + png.ActualPages + ")\r\n" +
+                "unknown1: " + png.Unknown1 + "\r\n" +
+                "region: " + region;
         }
 
         private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -2215,6 +2439,16 @@ namespace WzComparerR2
                         if (wzf.Type == wzType && wzf.OwnerWzFile == null)
                         {
                             allWzFile.Add(wzf.Node);
+                        }
+                    }
+                    foreach (var unity in wzs.UnitySources.OfType<UnityLib.Classic.WzJs_Structure>())
+                    {
+                        foreach (var wzf in unity.Files)
+                        {
+                            if (wzf.Type == wzType && wzf.OwnerWzFile == null)
+                            {
+                                allWzFile.Add(wzf.Node);
+                            }
                         }
                     }
                 }
@@ -2628,7 +2862,7 @@ namespace WzComparerR2
                     foreach (Wz_Structure wz in openedWz)
                     {
                         sortWzNode(wz.WzNode);
-                        Node node = createNode(wz.WzNode);
+                        Node node = createNode(wz.WzNode, isArchiveTree: true);
                         node.Expand();
                         advTree1.Nodes.Add(node);
                     }
@@ -3115,6 +3349,16 @@ namespace WzComparerR2
                         return file;
                     }
                 }
+                foreach (var unity in wz.UnitySources.OfType<UnityLib.Classic.WzJs_Structure>())
+                {
+                    foreach (var file in unity.Files)
+                    {
+                        if (file.Type == type && file.Node.Nodes.Count > 0)
+                        {
+                            return file;
+                        }
+                    }
+                }
             }
             return null;
         }
@@ -3231,6 +3475,7 @@ namespace WzComparerR2
             {
                 case Wz_SoundType.Mp3: soundName += ".mp3"; break;
                 case Wz_SoundType.Pcm: soundName += ".wav"; break;
+                case Wz_SoundType.Ogg: soundName += ".ogg"; break;
             }
             soundPlayer.PlayingSoundName = soundName;
             labelItemSoundTitle.Tooltip = soundName;
@@ -3427,6 +3672,7 @@ namespace WzComparerR2
                     {
                         case Wz_SoundType.Mp3: dlg.FileName += ".mp3"; break;
                         case Wz_SoundType.Pcm: dlg.FileName += ".pcm"; break;
+                        case Wz_SoundType.Ogg: dlg.FileName += ".ogg"; break;
                     }
                 }
                 dlg.Filter = "모든 파일 (*.*)|*.*";

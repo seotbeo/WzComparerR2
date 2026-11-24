@@ -1583,7 +1583,18 @@ namespace WzComparerR2.MapRender
             var renderObj = GetRenderObject(portal.View.IsEditorMode ? portal.View.EditorAnimator : portal.View.Animator);
             if (renderObj == null)
             {
-                return null;
+                if (portal.View.IsEditorMode)
+                {
+                    const int r = 50;
+                    int hash = 0;
+                    foreach (char c in PortalItem.TryGetPortalType(portal.Type))
+                    {
+                        hash = unchecked(hash * 31 + c);
+                    }
+                    var color = new Color(128 + ((hash & 0xFF) / 2), 128 + (((hash >> 8) & 0xFF) / 2), 255);
+                    renderObj = new RectMesh(new Rectangle(portal.X - r, portal.Y - r, r * 2, r * 2), color, 1);
+                }
+                else return null;
             }
             var mesh = batcher.MeshPop();
             mesh.RenderObject = renderObj;

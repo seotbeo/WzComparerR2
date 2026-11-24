@@ -7,6 +7,9 @@ namespace WzComparerR2.WzLib
         Unknown = 0,
         Mp3,
         Pcm,
-        Binary
+        Binary,
+
+        /// <summary>Ogg Vorbis（Unity 資料集的 FSB5 轉封裝結果）。</summary>
+        Ogg
     }
 }

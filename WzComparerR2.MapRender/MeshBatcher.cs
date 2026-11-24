@@ -484,6 +484,14 @@ namespace WzComparerR2.MapRender
                 region[0] = rect;
                 return;
             }
+            else if (item is Patches2.PortalItem portal && mesh.RenderObject is RectMesh rectMesh)
+            {
+                rect = rectMesh.Rect;
+                count = 1;
+                EnsureArraySize(ref region, count);
+                region[0] = rect;
+                return;
+            }
             else if (mesh.RenderObject is Frame)
             {
                 var frame = (Frame)mesh.RenderObject;

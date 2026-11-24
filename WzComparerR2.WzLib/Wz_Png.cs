@@ -17,10 +17,13 @@ namespace WzComparerR2.WzLib
 {
     public class Wz_Png
     {
+        private int width;
+        private int height;
+
         public Wz_Png(int w, int h, int data_length, Wz_TextureFormat format, int scale, int pages, int unknown1, uint offs, Wz_Image wz_i)
         {
-            this.Width = w;
-            this.Height = h;
+            this.width = w;
+            this.height = h;
             this.DataLength = data_length;
             this.Format = format;
             this.Scale = scale;
@@ -33,12 +36,12 @@ namespace WzComparerR2.WzLib
         /// <summary>
         /// 获取或设置图片的宽度。
         /// </summary>
-        public int Width { get; set; }
+        public virtual int Width { get => this.width; set => this.width = value; }
 
         /// <summary>
         /// 获取或设置图片的高度。
         /// </summary>
-        public int Height { get; set; }
+        public virtual int Height { get => this.height; set => this.height = value; }
 
         /// <summary>
         /// 获取或设置数据块的长度。
@@ -105,7 +108,7 @@ namespace WzComparerR2.WzLib
             return this.GetRawData(0, buffer);
         }
 
-        public int GetRawData(int skipBytes, Span<byte> buffer)
+        public virtual int GetRawData(int skipBytes, Span<byte> buffer)
         {
             lock (this.WzFile.ReadLock)
             {
@@ -138,7 +141,7 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        public Stream UnsafeOpenRead()
+        public virtual Stream UnsafeOpenRead()
         {
             DeflateStream zlib;
 
@@ -172,7 +175,7 @@ namespace WzComparerR2.WzLib
             return this.ExtractPng(page: 0);
         }
 
-        public Bitmap ExtractPng(int page)
+        public virtual Bitmap ExtractPng(int page)
         {
             if (this.Pages > 0)
             {

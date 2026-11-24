@@ -70,9 +70,20 @@ namespace WzComparerR2
             if (this.ShowOverlayAni) return; // 애니메이션 중첩 중일때는 자동 png 미리보기 없음
 
             //添加到动画控件
+            Texture2D texture;
+            if (png is UnityLib.Classic.UnityCanvas)
+            {
+                using (var bitmap = png.ExtractPng(page))
+                    texture = bitmap.ToTexture(this.GraphicsDevice);
+            }
+            else
+            {
+                texture = png.ToTexture(page, this.GraphicsDevice);
+            }
+
             var frame = new Animation.Frame()
             {
-                Texture = png.ToTexture(page, this.GraphicsDevice),
+                Texture = texture,
                 Png = png,
                 Page = page,
                 Delay = 0,

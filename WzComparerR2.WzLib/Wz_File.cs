@@ -51,6 +51,17 @@ namespace WzComparerR2.WzLib
             }
         }
 
+        protected Wz_File(Wz_Node node, Wz_Structure structure, Wz_Type type, object readLock)
+        {
+            this.node = node ?? throw new ArgumentNullException(nameof(node));
+            this.wzStructure = structure ?? throw new ArgumentNullException(nameof(structure));
+            this.virtualFileReadLock = readLock ?? throw new ArgumentNullException(nameof(readLock));
+            this.type = type;
+            this.header = new Wz_Header(null, null, node.Text, 0, 0, 0, 0);
+            this.loaded = true;
+        }
+
+        private readonly object virtualFileReadLock;
         private FileStream fileStream;
         private Wz_Structure wzStructure;
         private Wz_Header header;
@@ -66,7 +77,7 @@ namespace WzComparerR2.WzLib
 
         public Encoding TextEncoding { get; set; }
 
-        public object ReadLock => this.fileStream;
+        public object ReadLock => this.virtualFileReadLock ?? this.fileStream;
 
         public FileStream FileStream
         {

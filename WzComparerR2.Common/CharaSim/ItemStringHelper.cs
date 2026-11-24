@@ -1908,15 +1908,15 @@ namespace WzComparerR2.CharaSim
             }
         }
 
-        public static string GetItemCategoryName(Item.ItemType type)
+        public static string GetItemCategoryName(ItemType type)
         {
             switch (type)
             {
-                case Item.ItemType.Consume: return "소비";
-                case Item.ItemType.Install: return "설치";
-                case Item.ItemType.Etc: return "기타";
-                case Item.ItemType.Cash: return "캐시";
-                case Item.ItemType.Pet: return "펫";
+                case ItemType.Consume: return "소비";
+                case ItemType.Install: return "설치";
+                case ItemType.Etc: return "기타";
+                case ItemType.Cash: return "캐시";
+                case ItemType.Pet: return "펫";
                 default: return null;
             }
         }
